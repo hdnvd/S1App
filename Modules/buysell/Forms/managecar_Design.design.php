@@ -283,7 +283,7 @@ class managecar_Design extends FormDesign {
 			    $this->carmodel_fid->addOption($item->getID(), $item->getTitle());
         $this->carmodel_fid->setMotherComboboxName($this->carmaker_fid->getName());
         $this->carmodel_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_AJAX);
-        $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/managecar.jsp?");
+        $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/carlist.jsp?");
 		if (key_exists("car", $this->Data))
 			$this->carmodel_fid->setSelectedValue($this->Data['car']->getCarmodel_fid());
 		foreach ($this->Data['cartagtype_fid'] as $item)
@@ -380,12 +380,5 @@ class managecar_Design extends FormDesign {
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
-	public function getJSON()
-    {
-        $result=array();
-        foreach ($this->Data['carmodel_fid'] as $item)
-            array_push($result,["id"=>$item->getID(),"title"=>$item->getTitle()]);
-        return json_encode($result);
-    }
 }
 ?>

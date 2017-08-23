@@ -1,6 +1,7 @@
 <?php
 namespace Modules\buysell\Forms;
 use core\CoreClasses\services\FormCode;
+use Modules\buysell\Controllers\carmodelLoadController;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -22,7 +23,16 @@ class carlist_Code extends FormCode {
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try
         {
-            if(isset($_GET['action']) && $_GET['action']=="search_Click"){
+            $carmakerID=$this->getHttpGETparameter('carmaker_fid_id',-5);
+            if($carmakerID!=-5)
+            {
+                $carmodelController = new carmodelLoadController();
+                $Result = $carmodelController->loadCarModels($carmakerID);
+                $design=new carlist_Design();
+                $design->setData($Result);
+                $design->setMessage("");
+            }
+            elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
                 return $this->search_Click();
             }
             else
@@ -40,7 +50,7 @@ class carlist_Code extends FormCode {
 			echo $uex->getMessage();
 			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
 		}
-		return $design->getBodyHTML();
+        return $design->getResponse();
 	}
 
     public function search_Click()
@@ -68,22 +78,23 @@ class carlist_Code extends FormCode {
             $shasitype_fid_ID=$_GET['shasitype_fid'];
             $isautogearbox="";
             $carmodel_fid_ID=$_GET['carmodel_fid'];
+            $carmaker_fid_ID=$_GET['carmaker_fid'];
             $cartagtype_fid_ID=$_GET['cartagtype_fid'];
             $carentitytype_fid_ID=$_GET['carentitytype_fid'];
             $sortby_ID=$_GET['sortby'];
             $isdesc_ID=$_GET['isdesc'];
             $groupID=$_GET['groupid'];
-            $Result=$carlistController->Search($this->getHttpGETparameter('pn',-1),$details,$pricemin,$pricemax,$adddate,$body_carcolor_fid_ID,$inner_carcolor_fid_ID,$paytype_fid_ID,$cartype_fid_ID,$usagecountmin,$usagecountmax,$wheretodate,$carbodystatus_fid_ID,$makedatemin,$makedatemax,$carstatus_fid_ID,$shasitype_fid_ID,$isautogearbox,$carmodel_fid_ID,$cartagtype_fid_ID,$carentitytype_fid_ID,$sortby_ID,$isdesc_ID,$groupID);
+            $Result=$carlistController->Search($this->getHttpGETparameter('pn',-1),$details,$pricemin,$pricemax,$adddate,$body_carcolor_fid_ID,$inner_carcolor_fid_ID,$paytype_fid_ID,$cartype_fid_ID,$usagecountmin,$usagecountmax,$wheretodate,$carbodystatus_fid_ID,$makedatemin,$makedatemax,$carstatus_fid_ID,$shasitype_fid_ID,$isautogearbox,$carmodel_fid_ID,$cartagtype_fid_ID,$carentitytype_fid_ID,$sortby_ID,$isdesc_ID,$groupID,$carmaker_fid_ID);
             $design->setData($Result);
         }
         catch(DataNotFoundException $dnfex){
             $design=new message_Design();
             $design->setMessage("آیتم مورد نظر پیدا نشد");
         }
-        catch(\Exception $uex){
-            $design=new message_Design();
-            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-        }
+//        catch(\Exception $uex){
+//            $design=new message_Design();
+//            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//        }
         return $design->getBodyHTML();
     }
 }

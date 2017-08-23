@@ -77,22 +77,7 @@ class managecarController extends Controller {
         $DBAccessor->close_connection();
         return $result;
     }
-	public function loadCarModels($CarMakerID)
-	{
-		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
-		$DBAccessor=new dbaccess();
-		$su=new sessionuser();
-		$role_systemuser_fid=$su->getSystemUserID();
-		$result=array();
 
-			$carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
-			$q=new QueryLogic();
-			$q->addCondition(new FieldCondition("carmaker_fid",$CarMakerID));
-			$result['carmodel_fid']=$carmodelEntityObject->FindAll($q);
-		$result['param1']="";
-		$DBAccessor->close_connection();
-		return $result;
-	}
 	public function BtnSave($ID,$details,$price,$adddate,$body_carcolor_fid,$inner_carcolor_fid,$paytype_fid,$cartype_fid,$usagecount,$wheretodate,$carbodystatus_fid,$makedate,$carstatus_fid,$shasitype_fid,$isautogearbox,$carmodel_fid,$cartagtype_fid,$carentitytype_fid)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

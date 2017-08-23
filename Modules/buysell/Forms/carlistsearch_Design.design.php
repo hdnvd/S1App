@@ -308,12 +308,15 @@ class carlistsearch_Design extends FormDesign {
 		if (key_exists("car", $this->Data))
 			$this->isautogearbox->addSelectedValue($this->Data['car']->getIsautogearbox());
 
+        $this->carmaker_fid->addOption("", "مهم نیست");
         foreach ($this->Data['carmaker_fid'] as $item)
             $this->carmaker_fid->addOption($item->getID(), $item->getTitle());
 			$this->carmodel_fid->addOption("", "مهم نیست");
-		foreach ($this->Data['carmodel_fid'] as $item)
-            $this->carmodel_fid->addGroupedOption($item->getCarmaker_fid(),$item->getID(), $item->getTitle());
+
         $this->carmodel_fid->setMotherComboboxName($this->carmaker_fid->getName());
+        $this->carmodel_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_AJAX);
+        $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/carlist.jsp?");
+        $this->carmodel_fid->setDefaultOption("مهم نیست");
 		if (key_exists("car", $this->Data))
 			$this->carmodel_fid->setSelectedValue($this->Data['car']->getCarmodel_fid());
 			$this->cartagtype_fid->addOption("", "مهم نیست");

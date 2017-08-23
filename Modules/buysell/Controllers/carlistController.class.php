@@ -114,7 +114,7 @@ class carlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-    public function Search($PageNum,$details,$pricemin,$pricemax,$adddate,$body_carcolor_fid,$inner_carcolor_fid,$paytype_fid,$cartype_fid,$usagecountmin,$usagecountmax,$wheretodate,$carbodystatus_fid,$makedatemin,$makedatemax,$carstatus_fid,$shasitype_fid,$isautogearbox,$carmodel_fid,$cartagtype_fid,$carentitytype_fid,$sortby,$isdesc,$GroupID)
+    public function Search($PageNum,$details,$pricemin,$pricemax,$adddate,$body_carcolor_fid,$inner_carcolor_fid,$paytype_fid,$cartype_fid,$usagecountmin,$usagecountmax,$wheretodate,$carbodystatus_fid,$makedatemin,$makedatemax,$carstatus_fid,$shasitype_fid,$isautogearbox,$carmodel_fid,$cartagtype_fid,$carentitytype_fid,$sortby,$isdesc,$GroupID,$carmaker_fid)
     {
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor=new dbaccess();
@@ -178,12 +178,17 @@ class carlistController extends Controller {
             $q->addCondition(new FieldCondition("isautogearbox","$isautogearbox",LogicalOperator::Equal));
         if($carmodel_fid!="")
             $q->addCondition(new FieldCondition("carmodel_fid","$carmodel_fid",LogicalOperator::Equal));
+        elseif($carmaker_fid!="")
+            $q->addCondition(new FieldCondition("carmaker_fid","$carmaker_fid",LogicalOperator::Equal));
+
         if($cartagtype_fid!="")
             $q->addCondition(new FieldCondition("cartagtype_fid","$cartagtype_fid",LogicalOperator::Equal));
         if($carentitytype_fid!="")
             $q->addCondition(new FieldCondition("carentitytype_fid","$carentitytype_fid",LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
         $q->addOrderBy($sortby,$isdesc);
         $q->addResultField(new DBField("buysell_car.*",true));
+
         $allcount=$carEnt->FindAllCount($q);
         $result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
         $q->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));

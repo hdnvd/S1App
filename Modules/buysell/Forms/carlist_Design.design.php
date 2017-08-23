@@ -132,5 +132,14 @@ class carlist_Design extends FormDesign {
 		}
 		return $div;
 	}
+
+    public function getJSON()
+    {
+        $result=array();
+            foreach ($this->Data['carmodel_fid'] as $item)
+                array_push($result,["id"=>$item->getID(),"title"=>$item->getTitle()]);
+
+        return json_encode($result);
+    }
 }
 ?>
