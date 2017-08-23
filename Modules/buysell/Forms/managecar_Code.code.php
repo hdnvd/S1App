@@ -27,11 +27,19 @@ class managecar_Code extends FormCode
         $managecarController = new managecarController();
         $translator = new ModuleTranslator("buysell");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-        $Result = $managecarController->load($this->getID(),$this->getHttpGETparameter('groupid',1));
+        $carmakerID=$this->getHttpGETparameter('carmaker_fid_id',-1);
+        if($carmakerID>0)
+        {
+            $Result = $managecarController->loadCarModels($carmakerID);
+        }
+        else
+        {
+            $Result = $managecarController->load($this->getID(),$this->getHttpGETparameter('groupid',1));
+        }
         $design = new managecar_Design();
         $design->setData($Result);
         $design->setMessage("");
-        return $design->getBodyHTML();
+        return $design->getResponse();
     }
 
     public function getID()
