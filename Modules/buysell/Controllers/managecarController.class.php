@@ -27,47 +27,69 @@ use Modules\buysell\Entity\buysell_carentitytypeEntity;
 *@SweetFrameworkVersion 1.018
 */
 class managecarController extends Controller {
-	public function load($ID,$GroupID)
+    public function load($ID,$GroupID)
+    {
+        $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
+        $DBAccessor=new dbaccess();
+        $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $result=array();
+        $carEntityObject=new buysell_carEntity($DBAccessor);
+        $body_carcolorEntityObject=new buysell_carcolorEntity($DBAccessor);
+        $result['body_carcolor_fid']=$body_carcolorEntityObject->FindAll(new QueryLogic());
+        $inner_carcolorEntityObject=new buysell_carcolorEntity($DBAccessor);
+        $result['inner_carcolor_fid']=$inner_carcolorEntityObject->FindAll(new QueryLogic());
+        $paytypeEntityObject=new buysell_paytypeEntity($DBAccessor);
+        $result['paytype_fid']=$paytypeEntityObject->FindAll(new QueryLogic());
+        $cartypeEntityObject=new buysell_cartypeEntity($DBAccessor);
+        $result['cartype_fid']=$cartypeEntityObject->FindAll(new QueryLogic());
+        $carbodystatusEntityObject=new buysell_carbodystatusEntity($DBAccessor);
+        $result['carbodystatus_fid']=$carbodystatusEntityObject->FindAll(new QueryLogic());
+        $carstatusEntityObject=new buysell_carstatusEntity($DBAccessor);
+        $result['carstatus_fid']=$carstatusEntityObject->FindAll(new QueryLogic());
+        $shasitypeEntityObject=new buysell_shasitypeEntity($DBAccessor);
+        $result['shasitype_fid']=$shasitypeEntityObject->FindAll(new QueryLogic());
+        $carmakerEntityObject=new buysell_carmakerEntity($DBAccessor);
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
+        $result['carmaker_fid']=$carmakerEntityObject->FindAll($q);
+        $cartagtypeEntityObject=new buysell_cartagtypeEntity($DBAccessor);
+        $result['cartagtype_fid']=$cartagtypeEntityObject->FindAll(new QueryLogic());
+        $carentitytypeEntityObject=new buysell_carentitytypeEntity($DBAccessor);
+        $result['carentitytype_fid']=$carentitytypeEntityObject->FindAll(new QueryLogic());
+        $date=new SweetDate(false,true,null);
+        $year=$date->date("Y", time(), false, true, 'Asia/Tehran');
+        $result['year']=$year;
+        if($ID!=-1){
+            $carEntityObject->setId($ID);
+            $result['car']=$carEntityObject;
+            $cmd=$carEntityObject->getCarmodel_fid();
+            $carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
+            $carmodelEntityObject->setId($cmd);
+            $makerID=$carmodelEntityObject->getCarmaker_fid();
+            $result['selectedcarmaker_fid']=$makerID;
+            $q=new QueryLogic();
+            $q->addCondition(new FieldCondition("carmaker_fid",$makerID));
+            $result['carmodel_fid']=$carmodelEntityObject->FindAll($q);
+
+        }
+
+        $result['param1']="";
+        $DBAccessor->close_connection();
+        return $result;
+    }
+	public function loadCarModels($CarMakerID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
-		$carEntityObject=new buysell_carEntity($DBAccessor);
-			$body_carcolorEntityObject=new buysell_carcolorEntity($DBAccessor);
-			$result['body_carcolor_fid']=$body_carcolorEntityObject->FindAll(new QueryLogic());
-			$inner_carcolorEntityObject=new buysell_carcolorEntity($DBAccessor);
-			$result['inner_carcolor_fid']=$inner_carcolorEntityObject->FindAll(new QueryLogic());
-			$paytypeEntityObject=new buysell_paytypeEntity($DBAccessor);
-			$result['paytype_fid']=$paytypeEntityObject->FindAll(new QueryLogic());
-			$cartypeEntityObject=new buysell_cartypeEntity($DBAccessor);
-			$result['cartype_fid']=$cartypeEntityObject->FindAll(new QueryLogic());
-			$carbodystatusEntityObject=new buysell_carbodystatusEntity($DBAccessor);
-			$result['carbodystatus_fid']=$carbodystatusEntityObject->FindAll(new QueryLogic());
-			$carstatusEntityObject=new buysell_carstatusEntity($DBAccessor);
-			$result['carstatus_fid']=$carstatusEntityObject->FindAll(new QueryLogic());
-			$shasitypeEntityObject=new buysell_shasitypeEntity($DBAccessor);
-			$result['shasitype_fid']=$shasitypeEntityObject->FindAll(new QueryLogic());
+
 			$carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
 			$q=new QueryLogic();
-			$q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
+			$q->addCondition(new FieldCondition("carmaker_fid",$CarMakerID));
 			$result['carmodel_fid']=$carmodelEntityObject->FindAll($q);
-            $carmakerEntityObject=new buysell_carmakerEntity($DBAccessor);
-        $q=new QueryLogic();
-        $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
-            $result['carmaker_fid']=$carmakerEntityObject->FindAll($q);
-			$cartagtypeEntityObject=new buysell_cartagtypeEntity($DBAccessor);
-			$result['cartagtype_fid']=$cartagtypeEntityObject->FindAll(new QueryLogic());
-			$carentitytypeEntityObject=new buysell_carentitytypeEntity($DBAccessor);
-			$result['carentitytype_fid']=$carentitytypeEntityObject->FindAll(new QueryLogic());
-        $date=new SweetDate(false,true,null);
-        $year=$date->date("Y", time(), false, true, 'Asia/Tehran');
-        $result['year']=$year;
-        if($ID!=-1){
-			$carEntityObject->setId($ID);
-			$result['car']=$carEntityObject;
-		}
 		$result['param1']="";
 		$DBAccessor->close_connection();
 		return $result;
