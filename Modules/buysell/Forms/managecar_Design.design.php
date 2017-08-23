@@ -272,11 +272,15 @@ class managecar_Design extends FormDesign {
 		$this->isautogearbox->addOption("دنده اتوماتیک","1");
 		if (key_exists("car", $this->Data))
 			$this->isautogearbox->addSelectedValue($this->Data['car']->getIsautogearbox());
+        $this->carmaker_fid->addOption(-1, "انتخاب کنید...");
         foreach ($this->Data['carmaker_fid'] as $item)
             $this->carmaker_fid->addOption($item->getID(), $item->getTitle());
-        $this->carmaker_fid->setSelectedValue($this->Data['selectedcarmaker_fid']);
-		foreach ($this->Data['carmodel_fid'] as $item)
-			$this->carmodel_fid->addOption($item->getID(), $item->getTitle());
+        if(isset($this->Data['selectedcarmaker_fid']))
+            $this->carmaker_fid->setSelectedValue($this->Data['selectedcarmaker_fid']);
+        $this->carmodel_fid->addOption(-1, "انتخاب کنید...");
+        if(isset($this->Data['carmodel_fid']))
+		    foreach ($this->Data['carmodel_fid'] as $item)
+			    $this->carmodel_fid->addOption($item->getID(), $item->getTitle());
         $this->carmodel_fid->setMotherComboboxName($this->carmaker_fid->getName());
         $this->carmodel_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_AJAX);
         $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/managecar.jsp?");
