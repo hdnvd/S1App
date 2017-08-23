@@ -274,9 +274,12 @@ class managecar_Design extends FormDesign {
 			$this->isautogearbox->addSelectedValue($this->Data['car']->getIsautogearbox());
         foreach ($this->Data['carmaker_fid'] as $item)
             $this->carmaker_fid->addOption($item->getID(), $item->getTitle());
+        $this->carmaker_fid->setSelectedValue($this->Data['selectedcarmaker_fid']);
 		foreach ($this->Data['carmodel_fid'] as $item)
-			$this->carmodel_fid->addGroupedOption($item->getCarmaker_fid(),$item->getID(), $item->getTitle());
+			$this->carmodel_fid->addOption($item->getID(), $item->getTitle());
         $this->carmodel_fid->setMotherComboboxName($this->carmaker_fid->getName());
+        $this->carmodel_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_AJAX);
+        $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/managecar.jsp?");
 		if (key_exists("car", $this->Data))
 			$this->carmodel_fid->setSelectedValue($this->Data['car']->getCarmodel_fid());
 		foreach ($this->Data['cartagtype_fid'] as $item)
@@ -373,5 +376,12 @@ class managecar_Design extends FormDesign {
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
+	public function getJSON()
+    {
+        $result=array();
+        foreach ($this->Data['carmodel_fid'] as $item)
+            array_push($result,["id"=>$item->getID(),"title"=>$item->getTitle()]);
+        return json_encode($result);
+    }
 }
 ?>
