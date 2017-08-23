@@ -73,7 +73,6 @@ class managecarController extends Controller {
             $result['carmodel_fid']=$carmodelEntityObject->FindAll($q);
 
         }
-
         $result['param1']="";
         $DBAccessor->close_connection();
         return $result;
