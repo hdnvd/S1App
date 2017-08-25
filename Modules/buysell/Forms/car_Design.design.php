@@ -277,10 +277,10 @@ class car_Design extends FormDesign {
         $LTable1->setLastElementClass('form_item_datalabel');
 
 
-        $LTable1->addElement(new Lable("توضیحات"));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->details);
-        $LTable1->setLastElementClass('form_item_datalabel');
+        $LTable1->addElement(new Lable("توضیحات"),2);
+        $LTable1->setLastElementClass('form_item_titlelabel bigtitlelabel');
+        $LTable1->addElement($this->details,2);
+        $LTable1->setLastElementClass('form_item_datalabel bigdatalabel');
 		$Page->addElement($LTable1);
 
         $CarDet=new Div();
