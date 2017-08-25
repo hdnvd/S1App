@@ -1,6 +1,7 @@
 <?php
 namespace Modules\buysell\Forms;
 use core\CoreClasses\html\GRecaptcha;
+use core\CoreClasses\html\TextArea;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\Div;
@@ -84,10 +85,10 @@ class managecomponent_Design extends FormDesign {
 	{
 		return $this->cmbCarModel;
 	}
-	/** @var textbox */
+	/** @var TextArea */
 	private $txtDetails;
 	/**
-	 * @return textbox
+	 * @return TextArea
 	 */
 	public function getTxtDetails()
 	{
@@ -110,14 +111,23 @@ class managecomponent_Design extends FormDesign {
 	public function __construct()
 	{
 		$this->txtTitle= new textbox("txtTitle");
+        $this->txtTitle->setClass("form-control");
 		$this->cmbComponentGroup= new combobox("cmbComponentGroup");
+        $this->cmbComponentGroup->setClass("form-control");
 		$this->txtprice= new textbox("txtprice");
+        $this->txtprice->setClass("form-control");
 		$this->cmbUseStatus= new combobox("cmbUseStatus");
+        $this->cmbUseStatus->setClass("form-control");
 		$this->cmbCountry= new combobox("cmbCountry");
+        $this->cmbCountry->setClass("form-control");
 		$this->cmbCarModel= new combobox("cmbCarModel");
-		$this->txtDetails= new textbox("txtDetails");
+        $this->cmbCarModel->setClass("form-control");
+		$this->txtDetails= new TextArea("txtDetails");
+		$this->txtDetails->SetAttribute("rows",5);
+        $this->txtDetails->setClass("form-control");
 		$this->btnSave= new SweetButton(true,"ذخیره");
 		$this->btnSave->setAction("btnSave");
+        $this->btnSave->setClass("form-control");
         $this->Recaptcha=new GRecaptcha();
 	}
 	public function getBodyHTML($command=null)
