@@ -48,10 +48,10 @@ class roleSystemUserEntity extends EntityClass
 	}
 	public function Update($ID,$Username,$Password,$Password2,$IsDeleted)
 	{
-        if(strlen($Username)<roleSystemUserEntity::$MIN_USERNAME_LENGTH)
+        if($Username!=null && strlen($Username)<roleSystemUserEntity::$MIN_USERNAME_LENGTH)
             throw new TooSmallUsernameException();
 
-        if(strlen($Password)<roleSystemUserEntity::$MIN_PASSWORD_LENGTH)
+        if($Password!=null && strlen($Password)<roleSystemUserEntity::$MIN_PASSWORD_LENGTH)
             throw new TooSmallPasswordException();
 
 		$Database=new dbquery();
