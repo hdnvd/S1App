@@ -123,21 +123,32 @@ class search_Design extends FormDesign {
 	public function __construct()
 	{
 		$this->txtTitle= new textbox("txtTitle");
+        $this->txtTitle->setClass("form-control");
 		$this->cmbGroup= new combobox("cmbGroup");
+        $this->cmbGroup->setClass("form-control");
 		$this->txtPriceLB= new textbox("txtPriceLB");
+        $this->txtPriceLB->setClass("form-control");
 		$this->txtPriceUB= new textbox("txtPriceUB");
+        $this->txtPriceUB->setClass("form-control");
 		$this->cmbCountry= new combobox("cmbCountry");
+        $this->cmbCountry->setClass("form-control");
 		$this->cmbStatus= new combobox("cmbStatus");
+        $this->cmbStatus->setClass("form-control");
         $this->cmbStatus->addOption(-1,"مهم نیست");
         $this->cmbStatus->addOption(1,"نو");
         $this->cmbStatus->addOption(2,"کارکرده");
         $this->cmbStatus->addOption(3,"اسقاطی");
 		$this->cmbCarModel= new combobox("cmbCarModel");
+        $this->cmbCarModel->setClass("form-control");
         $this->cmbProvince= new combobox("cmbProvince");
+        $this->cmbProvince->setClass("form-control");
         $this->cmbSortBY= new combobox("cmbSortBY");
+        $this->cmbSortBY->setClass("form-control");
         $this->cmbSortBYOrder= new combobox("cmbSortBYOrder");
+        $this->cmbSortBYOrder->setClass("form-control");
 		$this->btnSearch= new SweetButton(true,"جستجو");
 		$this->btnSearch->setAction("btnSearch");
+        $this->btnSearch->setClass("form-control");
 	}
 	public function getBodyHTML($command=null)
 	{
