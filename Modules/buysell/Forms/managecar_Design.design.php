@@ -122,10 +122,10 @@ class managecar_Design extends FormDesign {
 	{
 		return $this->carbodystatus_fid;
 	}
-	/** @var combobox */
+	/** @var TextBox */
 	private $makedate;
 	/**
-	 * @return combobox
+	 * @return TextBox
 	 */
 	public function getMakedate()
 	{
@@ -213,7 +213,7 @@ class managecar_Design extends FormDesign {
 		$this->usagecount= new textbox("usagecount");
 		$this->wheretodate= new textbox("wheretodate");
 		$this->carbodystatus_fid= new combobox("carbodystatus_fid");
-		$this->makedate= new ComboBox("makedate");
+		$this->makedate= new TextBox("makedate");
 		$this->carstatus_fid= new combobox("carstatus_fid");
 		$this->shasitype_fid= new combobox("shasitype_fid");
 		$this->isautogearbox= new CheckBox("isautogearbox");
@@ -227,8 +227,8 @@ class managecar_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
-	    for($i=$this->Data['year'];$i>$this->Data['year']-76;$i--)
-	        $this->makedate->addOption($i,$i);
+//	    for($i=$this->Data['year'];$i>$this->Data['year']-76;$i--)
+//	        $this->makedate->addOption($i,$i);
 		if (key_exists("car", $this->Data))
 			$this->details->setValue($this->Data['car']->getDetails());
 		if (key_exists("car", $this->Data))
@@ -260,7 +260,7 @@ class managecar_Design extends FormDesign {
 		if (key_exists("car", $this->Data))
 			$this->carbodystatus_fid->setSelectedValue($this->Data['car']->getCarbodystatus_fid());
 		if (key_exists("car", $this->Data))
-            $this->makedate->setSelectedValue($this->Data['car']->getMakedate());
+            $this->makedate->setValue($this->Data['car']->getMakedate());
 		foreach ($this->Data['carstatus_fid'] as $item)
 			$this->carstatus_fid->addOption($item->getID(), $item->getTitle());
 		if (key_exists("car", $this->Data))

@@ -62,7 +62,7 @@ class managecar_Code extends FormCode
                 $usagecount = $design->getUsagecount()->getValue();
                 $wheretodate = $design->getWheretodate()->getValue();
                 $carbodystatus_fid_ID = $design->getCarbodystatus_fid()->getSelectedID();
-                $makedate = $design->getMakedate()->getSelectedID();
+                $makedate = $design->getMakedate()->getValue();
                 $carstatus_fid_ID = -1;
                 $shasitype_fid_ID = $design->getShasitype_fid()->getSelectedID();
                 $isautogearbox = $design->getIsautogearbox()->getSelectedValues();
