@@ -13,6 +13,13 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 2.001
 */
 class managecars_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت خودروها");
+    }
 	public function load()
 	{
 		$managecarsController=new managecarsController();

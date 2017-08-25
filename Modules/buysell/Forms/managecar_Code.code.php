@@ -23,6 +23,13 @@ use Modules\files\PublicClasses\uploadHelper;
  */
 class managecar_Code extends FormCode
 {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت خودرو");
+    }
     public function load()
     {
         $managecarController = new managecarController();

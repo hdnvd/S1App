@@ -8,6 +8,13 @@ use Modules\users\Controllers\managerolesController;
 
 
 class manageroles_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت دسترسی ها");
+    }
 	public function load()
 	{
 		$managerolesController=new managerolesController();

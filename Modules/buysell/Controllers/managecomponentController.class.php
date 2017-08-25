@@ -1,5 +1,7 @@
 <?php
 namespace Modules\buysell\Controllers;
+use core\CoreClasses\db\FieldCondition;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\buysell\Entity\buysell_carmakerEntity;
@@ -21,7 +23,7 @@ use Modules\users\PublicClasses\sessionuser;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentController extends Controller {
-	public function load($ID)
+	public function load($ID,$GroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -33,6 +35,10 @@ class managecomponentController extends Controller {
 //
 //
 //		$result['cols']=$carcols;
+        $carmakerEntityObject=new buysell_carmakerEntity($DBAccessor);
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
+        $result['carmaker_fid']=$carmakerEntityObject->FindAll($q);
         $CountEnt=new common_countryEntity($DBAccessor);
         $CarModelEnt=new buysell_carmodelEntity($DBAccessor);
         $CompCarModelEnt=new buysell_componentcarmodelEntity($DBAccessor);
@@ -47,6 +53,15 @@ class managecomponentController extends Controller {
             if($result['component']==null || count($result['component'])<=0)
                 throw new ProductNotFoundException();
             $result['component'][0]['carmodels']=$CompCarModelEnt->Select(null,$result['component'][0]['id'],null,array(),array(),"0,10");
+
+            $cmd=$result['component'][0]['carmodels'][0]['carmodel_fid'];
+            $carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
+            $carmodelEntityObject->setId($cmd);
+            $makerID=$carmodelEntityObject->getCarmaker_fid();
+            $result['selectedcarmaker_fid']=$makerID;
+            $q=new QueryLogic();
+            $q->addCondition(new FieldCondition("carmaker_fid",$makerID));
+            $result['carmodel_fid']=$carmodelEntityObject->FindAll($q);
 		}
 		$result['countries']=$CountEnt->Select(null,null,null,array('name'),array(false),"0,200");
         $result['carmodels']=$CarModelEnt->Select(null,null,null,null,-1,array('carmaker_fid','title'),array(false,false),"0,3000");
@@ -59,7 +74,7 @@ class managecomponentController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$txtTitle,$cmbComponentGroup,$txtprice,$cmbUseStatus,$cmbCountry,$cmbCarModel,$txtDetails)
+	public function BtnSave($ID,$txtTitle,$cmbComponentGroup,$txtprice,$cmbUseStatus,$cmbCountry,$cmbCarModel,$txtDetails,$GroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -79,10 +94,11 @@ class managecomponentController extends Controller {
             if($cmp==null || count($cmp)<=0)
                 throw new ProductNotFoundException();
                 $compEnt->Update($ID,$txtTitle,$txtprice,$cmbUseStatus,$sysUser->getSystemUserID(),$cmbCountry,$cmbComponentGroup,time(),$txtDetails,"-1");
-                $CarModelEnt->Insert($ID,$cmbCarModel);
+
                 $carmods=$CarModelEnt->Select(null,$ID,null,array(),array(),"0,10000");
                 for($i=0;$i<count($carmods);$i++)
                     $CarModelEnt->Delete($carmods[$i]['id']);
+            $CarModelEnt->Insert($ID,$cmbCarModel);
 
 
 
@@ -90,7 +106,7 @@ class managecomponentController extends Controller {
 		}
 
 		$DBAccessor->close_connection();
-        $result=$this->load($ID);
+        $result=$this->load($ID,$GroupID);
         $result['id']=$ID;
 		return $result;
 	}

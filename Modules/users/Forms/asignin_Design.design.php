@@ -50,7 +50,9 @@ class asignin_Design extends FormDesign
 		{
 
 			$usernameField=new TextBox("username");
+            $usernameField->setClass("form-control usernamefield");
 			$passwordField=new PasswordBox("password");
+            $passwordField->setClass("form-control passwordfield");
 			$lbl1=new Lable($this->lbl1);
 			$lbl2=new Lable($this->lbl2);
 			$table=new ListTable(2);

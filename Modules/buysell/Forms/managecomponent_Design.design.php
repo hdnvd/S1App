@@ -76,15 +76,17 @@ class managecomponent_Design extends FormDesign {
 	{
 		return $this->cmbCountry;
 	}
-	/** @var combobox */
-	private $cmbCarModel;
-	/**
-	 * @return combobox
-	 */
-	public function getCmbCarModel()
-	{
-		return $this->cmbCarModel;
-	}
+    /** @var combobox */
+    private $carmaker_fid;
+    /** @var combobox */
+    private $carmodel_fid;
+    /**
+     * @return combobox
+     */
+    public function getCarmodel_fid()
+    {
+        return $this->carmodel_fid;
+    }
 	/** @var TextArea */
 	private $txtDetails;
 	/**
@@ -120,8 +122,10 @@ class managecomponent_Design extends FormDesign {
         $this->cmbUseStatus->setClass("form-control");
 		$this->cmbCountry= new combobox("cmbCountry");
         $this->cmbCountry->setClass("form-control");
-		$this->cmbCarModel= new combobox("cmbCarModel");
-        $this->cmbCarModel->setClass("form-control");
+        $this->carmodel_fid= new combobox("carmodel_fid");
+        $this->carmodel_fid->setClass("form-control");
+        $this->carmaker_fid= new combobox("carmaker_fid");
+        $this->carmaker_fid->setClass("form-control");
 		$this->txtDetails= new TextArea("txtDetails");
 		$this->txtDetails->SetAttribute("rows",5);
         $this->txtDetails->setClass("form-control");
@@ -144,8 +148,22 @@ class managecomponent_Design extends FormDesign {
 		$Page=new Div();
         for ($i=0;$i<count($this->Data['countries']);$i++)
             $this->cmbCountry->addOption($this->Data['countries'][$i]['id'],$this->Data['countries'][$i]['name']);
-        for ($i=0;$i<count($this->Data['carmodels']);$i++)
-            $this->cmbCarModel->addOption($this->Data['carmodels'][$i]['id'],$this->Data['carmodels'][$i]['carmakertitle'] . " " . $this->Data['carmodels'][$i]['title']);
+
+        $this->carmaker_fid->addOption(-1, "انتخاب کنید...");
+        foreach ($this->Data['carmaker_fid'] as $item)
+            $this->carmaker_fid->addOption($item->getID(), $item->getTitle());
+        if(isset($this->Data['selectedcarmaker_fid']))
+            $this->carmaker_fid->setSelectedValue($this->Data['selectedcarmaker_fid']);
+        $this->carmodel_fid->addOption(-1, "انتخاب کنید...");
+        if(isset($this->Data['carmodel_fid']))
+            foreach ($this->Data['carmodel_fid'] as $item)
+                $this->carmodel_fid->addOption($item->getID(), $item->getTitle());
+        $this->carmodel_fid->setMotherComboboxName($this->carmaker_fid->getName());
+        $this->carmodel_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_AJAX);
+        $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/carlist.jsp?");
+        if (key_exists("car", $this->Data))
+            $this->carmodel_fid->setSelectedValue($this->Data['car']->getCarmodel_fid());
+
         for ($i=0;$i<count($this->Data['componentgroups']);$i++)
             $this->cmbComponentGroup->addOption($this->Data['componentgroups'][$i]['id'],$this->Data['componentgroups'][$i]['title']);
         $this->cmbUseStatus->addOption(1,"نو");
@@ -157,7 +175,7 @@ class managecomponent_Design extends FormDesign {
             $this->txtprice->setValue($this->Data['component'][0]['price']);
             $this->txtDetails->setValue($this->Data['component'][0]['details']);
             $this->cmbComponentGroup->setSelectedValue($this->Data['component'][0]['componentgroup_fid']);
-            $this->cmbCarModel->setSelectedValue($this->Data['component'][0]['carmodels'][0]['carmodel_fid']);
+            $this->carmodel_fid->setSelectedValue($this->Data['component'][0]['carmodels'][0]['carmodel_fid']);
             $this->cmbCountry->setSelectedValue($this->Data['component'][0]['country_fid']);
             $this->cmbUseStatus->setSelectedValue($this->Data['component'][0]['usestatus']);
         }
@@ -182,8 +200,15 @@ class managecomponent_Design extends FormDesign {
 		$LTable1->addElement($this->cmbUseStatus);
 		$LTable1->addElement(new Lable("کشور سازنده"));
 		$LTable1->addElement($this->cmbCountry);
-		$LTable1->addElement(new Lable("مدل خودرو"));
-		$LTable1->addElement($this->cmbCarModel);
+
+        $LTable1->addElement(new Lable("برند خودرو"));
+        $LTable1->setLastElementClass('form_item_caption');
+        $LTable1->addElement($this->carmaker_fid);
+        $LTable1->setLastElementClass('form_item_field');
+        $LTable1->addElement(new Lable(" مدل خودرو"));
+        $LTable1->setLastElementClass('form_item_caption');
+        $LTable1->addElement($this->carmodel_fid);
+        $LTable1->setLastElementClass('form_item_field');
 		$LTable1->addElement(new Lable("توضیحات"));
 		$LTable1->addElement($this->txtDetails);
         $LTable1->addElement($this->Recaptcha,2);

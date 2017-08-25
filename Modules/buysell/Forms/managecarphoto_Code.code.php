@@ -18,6 +18,13 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecarphoto_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت تصویر خودرو");
+    }
 	public function load()
 	{
 		$managecarphotoController=new managecarphotoController();

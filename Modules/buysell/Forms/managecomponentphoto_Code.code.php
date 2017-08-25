@@ -19,6 +19,13 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentphoto_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت تصاویر قطعه");
+    }
 	public function load()
 	{
 		$managecomponentphotoController=new managecomponentphotoController();

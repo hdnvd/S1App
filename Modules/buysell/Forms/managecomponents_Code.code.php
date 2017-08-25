@@ -15,6 +15,13 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponents_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت قطعات");
+    }
 	public function load()
     {
         $managecomponentsController = new managecomponentsController();

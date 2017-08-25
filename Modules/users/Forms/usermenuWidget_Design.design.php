@@ -26,7 +26,9 @@ class usermenuWidget_Design extends WidgetDesign {
 		for($i=0;$i<count($this->Links);$i++)
 		{
 			$l=new link($this->Links[$i], $this->Texts[$i]);
-			$page->addElement(new UListElement($l));
+            $l->setClass($l->getClass() . " btn-info");
+			$ll=new UListElement($l);
+			$page->addElement($ll);
 		}
 		
 		$form=new SweetFrom("", "POST", $page);

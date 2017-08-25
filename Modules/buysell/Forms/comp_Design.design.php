@@ -54,7 +54,6 @@ class comp_Design extends FormDesign {
         $lblTit->setId("comptitle");
 //        $CompDet->addElement($lblTit);
 
-
         $lblCarModel=new Lable($comp['carmodels'][0]['title']);
         $lblDetails=new Lable($comp['details']);
         $lblprice=new Lable($comp['price'] . " ریال");

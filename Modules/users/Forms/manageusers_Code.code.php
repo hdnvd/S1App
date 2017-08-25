@@ -16,6 +16,13 @@ use Modules\users\Controllers\manageusersController;
 
 
 class manageusers_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت کاربران");
+    }
 	public function load()
 	{
 		$manageusersController=new manageusersController();

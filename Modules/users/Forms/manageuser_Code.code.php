@@ -17,6 +17,13 @@ use core\CoreClasses\SweetDate;
 
 
 class manageuser_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت کاربر");
+    }
 	public function load()
 	{
 		$manageuserController=new manageuserController();

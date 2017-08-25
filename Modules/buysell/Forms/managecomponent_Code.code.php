@@ -19,6 +19,13 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponent_Code extends FormCode {
+
+    public function __construct($namespace=null)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("admin.php");
+        $this->setTitle("مدیریت قطعه");
+    }
 	public function load()
 	{
 		$managecomponentController=new managecomponentController();
@@ -26,7 +33,7 @@ class managecomponent_Code extends FormCode {
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try
         {
-            $Result=$managecomponentController->load($this->getID());
+            $Result=$managecomponentController->load($this->getID(),$this->getHttpGETparameter('groupid',1));
             $design=new managecomponent_Design();
             $design->setData($Result);
             $design->setMessage("");
@@ -57,9 +64,10 @@ class managecomponent_Code extends FormCode {
         $txtprice = $design->getTxtprice()->getValue();
         $cmbUseStatus_ID = $design->getCmbUseStatus()->getSelectedID();
         $cmbCountry_ID = $design->getCmbCountry()->getSelectedID();
-		$cmbCarModel_ID=$design->getCmbCarModel()->getSelectedID();
+		$cmbCarModel_ID=$design->getCarmodel_fid()->getSelectedID();
 		$txtDetails=$design->getTxtDetails()->getValue();
-		$Result=$managecomponentController->BtnSave($this->getID(),$txtTitle,$cmbComponentGroup_ID,$txtprice,$cmbUseStatus_ID,$cmbCountry_ID,$cmbCarModel_ID,$txtDetails);
+            $carGroup=$this->getHttpGETparameter('groupid',1);
+		$Result=$managecomponentController->BtnSave($this->getID(),$txtTitle,$cmbComponentGroup_ID,$txtprice,$cmbUseStatus_ID,$cmbCountry_ID,$cmbCarModel_ID,$txtDetails,$carGroup);
 		$design->setData($Result);
         $Ar=new AppRooter('buysell','managecomponentphoto');
         $Ar->addParameter(new UrlParameter('id',$Result['id']));

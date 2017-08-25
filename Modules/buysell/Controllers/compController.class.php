@@ -38,7 +38,7 @@ class compController extends Controller {
             $result['component']['country']=$CountEnt->Select($result['component']['country_fid'],null,null,array(),array(),"0,1")[0];
 //            $result['component']['carmodel']=$CountEnt->Select($result['component']['country_fid'],null,null,array(),array(),"0,1")[0];
             $carModelID=$CarModelComponentEnt->Select(null,$ID,null,array(),array(),"0,1");
-            $result['component']['carmodels']=$CarModelEnt->Select($carModelID[0]['carmodel_fid'],null,null,null,-1,array('title'),array(false),"0,100");
+            $result['component']['carmodels']=$CarModelEnt->Select($carModelID[0]['carmodel_fid'],null,null,null,null,array('title'),array(false),"0,100");
             $result['component']['user']=$user->Select(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$result['component']['role_systemuser_fid'],array(),array(),"0,1")[0];
 //            $result['component']['componentgroups']=$CompGroupEnt->Select(null,null,null,null,null,array('title'),array(false),"0,1000");
 		}

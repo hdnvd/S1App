@@ -174,113 +174,42 @@ class car_Design extends FormDesign {
         }
 		$LTable1=new ListTable(2);
 		$LTable1->setClass("formtable");
-        $LTable1->addElement(new Lable("برند"));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->carmaker_fid);
-        $LTable1->setLastElementClass('form_item_datalabel');
 
-        $LTable1->addElement(new Lable("مدل"));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->carmodel_fid);
-        $LTable1->setLastElementClass('form_item_datalabel');
+        $LTable1=$this->getDataRow($LTable1,$this->carmaker_fid,"برند",false);
 
-        $LTable1->addElement(new Lable("سال ساخت"));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->makedate);
-        $LTable1->setLastElementClass('form_item_datalabel');
+        $LTable1=$this->getDataRow($LTable1,$this->carmodel_fid,"مدل",false);
 
-		$LTable1->addElement(new Lable("قیمت"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->price);
-		$LTable1->setLastElementClass('form_item_datalabel');
+        $LTable1=$this->getDataRow($LTable1,$this->makedate,"سال ساخت",false);
 
 
+        $LTable1=$this->getDataRow($LTable1,$this->price,"قیمت",false);
 
-        $LTable1->addElement(new Lable("شهر"));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->city);
-        $LTable1->setLastElementClass('form_item_datalabel');
+        $LTable1=$this->getDataRow($LTable1,$this->city,"شهر",false);
 
-		$LTable1->addElement(new Lable(" تاریخ ثبت آگهی"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->adddate);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("رنگ بدنه"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->body_carcolor_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("رنگ داخل"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->inner_carcolor_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("روش پرداخت"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->paytype_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("نوع خودرو"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->cartype_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("کیلومتر"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->usagecount);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("محله بازدید"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->wheretodate);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("وضعیت بدنه"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->carbodystatus_fid);
-        $LTable1->setLastElementClass('form_item_datalabel');
+        $LTable1=$this->getDataRow($LTable1,$this->adddate," تاریخ ثبت آگهی",false);
+
+        $LTable1=$this->getDataRow($LTable1,$this->body_carcolor_fid,"رنگ بدنه",false);
+
+        $LTable1=$this->getDataRow($LTable1,$this->inner_carcolor_fid,"رنگ داخل",false);
+        $LTable1=$this->getDataRow($LTable1,$this->paytype_fid,"روش پرداخت",false);
+        $LTable1=$this->getDataRow($LTable1,$this->cartype_fid,"نوع خودرو",false);
+        $LTable1=$this->getDataRow($LTable1,$this->usagecount,"کیلومتر",false);
+        $LTable1=$this->getDataRow($LTable1,$this->wheretodate,"محله بازدید",false);
+        $LTable1=$this->getDataRow($LTable1,$this->carbodystatus_fid,"وضعیت بدنه",false);
+        $LTable1=$this->getDataRow($LTable1,$this->shasitype_fid,"شاسی",false);
+        $LTable1=$this->getDataRow($LTable1,$this->isautogearbox,"گیربکس",false);
         /*
 		$LTable1->addElement(new Lable("وضعیت"));
 		$LTable1->setLastElementClass('form_item_titlelabel');
 		$LTable1->addElement($this->carstatus_fid);
 		$LTable1->setLastElementClass('form_item_datalabel');*/
-		$LTable1->addElement(new Lable("شاسی"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->shasitype_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("گیربکس "));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->isautogearbox);
-		$LTable1->setLastElementClass('form_item_datalabel');
 
-
-
-		$LTable1->addElement(new Lable("نوع پلاک"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->cartagtype_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-		$LTable1->addElement(new Lable("موجودیت"));
-		$LTable1->setLastElementClass('form_item_titlelabel');
-		$LTable1->addElement($this->carentitytype_fid);
-		$LTable1->setLastElementClass('form_item_datalabel');
-
-
-        $LTable1->addElement(new Lable("ثبت کننده "));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->user);
-        $LTable1->setLastElementClass('form_item_datalabel');
-
-
-        $LTable1->addElement(new Lable("تلفن تماس "));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->usermob);
-        $LTable1->setLastElementClass('form_item_datalabel');
-
-
-        $LTable1->addElement(new Lable("روش تحویل"));
-        $LTable1->setLastElementClass('form_item_titlelabel');
-        $LTable1->addElement($this->carentitytype_fid);
-        $LTable1->setLastElementClass('form_item_datalabel');
-
-
-        $LTable1->addElement(new Lable("توضیحات"),2);
-        $LTable1->setLastElementClass('form_item_titlelabel bigtitlelabel');
-        $LTable1->addElement($this->details,2);
-        $LTable1->setLastElementClass('form_item_datalabel bigdatalabel');
+        $LTable1=$this->getDataRow($LTable1,$this->cartagtype_fid,"نوع پلاک",false);
+        $LTable1=$this->getDataRow($LTable1,$this->carentitytype_fid,"موجودیت",false);
+        $LTable1=$this->getDataRow($LTable1,$this->user,"ثبت کننده",false);
+        $LTable1=$this->getDataRow($LTable1,$this->usermob,"تلفن تماس",false);
+        $LTable1=$this->getDataRow($LTable1,$this->carentitytype_fid,"روش تحویل",false);
+        $LTable1=$this->getDataRow($LTable1,$this->details,"توضیحات",true);
 		$Page->addElement($LTable1);
 
         $CarDet=new Div();
@@ -296,5 +225,28 @@ class car_Design extends FormDesign {
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
+	private function getDataRow($Table,$DataField,$DataTitle,$isBig)
+    {
+        if(trim($DataField->getText())!="")
+        {
+
+            if(!$isBig)
+            {
+                $Table->addElement(new Lable($DataTitle));
+                $Table->setLastElementClass('form_item_titlelabel');
+                $Table->addElement($DataField);
+                $Table->setLastElementClass('form_item_datalabel');
+            }
+            else
+            {
+
+                $Table->addElement(new Lable("$DataTitle"),2);
+                $Table->setLastElementClass('form_item_titlelabel bigtitlelabel');
+                $Table->addElement($DataField,2);
+                $Table->setLastElementClass('form_item_datalabel bigdatalabel');
+            }
+        }
+        return $Table;
+    }
 }
 ?>
