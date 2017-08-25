@@ -87,7 +87,8 @@ class carlist_Design extends FormDesign {
             {
                 $img[$i]=new Image(DEFAULT_PUBLICURL . "content/files/img/noimage.png");
             }
-            $innerDiv[$i]->addElement($img[$i]);
+            $liImg[$i]=new link($url->getAbsoluteURL(),$img[$i]);
+            $innerDiv[$i]->addElement($liImg[$i]);
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$innerDiv[$i]->addElement($liTit[$i]);
