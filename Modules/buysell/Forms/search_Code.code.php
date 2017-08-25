@@ -24,7 +24,7 @@ class search_Code extends FormCode {
             $searchController=new searchController();
             $translator=new ModuleTranslator("buysell");
             $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-            $Result=$searchController->load($this->getID());
+            $Result=$searchController->load($this->getID(),$this->getHttpGETparameter('groupid',1));
             $design=new search_Design();
             $design->setData($Result);
             $design->setMessage("");
@@ -50,11 +50,12 @@ class search_Code extends FormCode {
 		$txtPriceUB=$_GET['txtPriceUB'];
 		$cmbCountry_ID=$_GET['cmbCountry'];
 		$cmbStatus_ID=$_GET['cmbStatus'];
-		$cmbCarModel_ID=$_GET['cmbCarModel'];
+		$cmbCarModel_ID=$_GET['carmodel_fid'];
         $cmbProvince_ID=$_GET['cmbProvince'];
         $cmbSortBY_ID=$_GET['cmbSortBY'];
         $cmbSortBYOrder_ID=$_GET['cmbSortBYOrder'];
-		$Result=$searchController->BtnSearch(1,$txtTitle,$cmbGroup_ID,$txtPriceLB,$txtPriceUB,$cmbCountry_ID,$cmbStatus_ID,$cmbCarModel_ID,$cmbSortBY_ID,$cmbSortBYOrder_ID,$cmbProvince_ID);
+        $groupID=$this->getHttpGETparameter('groupid',1);
+		$Result=$searchController->BtnSearch(1,$txtTitle,$cmbGroup_ID,$txtPriceLB,$txtPriceUB,$cmbCountry_ID,$cmbStatus_ID,$cmbCarModel_ID,$cmbSortBY_ID,$cmbSortBYOrder_ID,$cmbProvince_ID,$groupID);
 
         $design2=new complist_Design();
 		$design2->setData($Result);

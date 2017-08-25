@@ -15,6 +15,7 @@ use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\Image;
 use core\CoreClasses\html\FileUploadBox;
 use core\CoreClasses\services\WidgetDesign;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 
@@ -53,7 +54,10 @@ class groupedcomplistWidget_Design extends WidgetDesign {
 			$Item=new Div();
             $img=new Image($this->Data['components'][$i]['photos'][0]['url']);
             $lbl=new Lable($this->Data['components'][$i]['title']);
-            $ar=new AppRooter('buysell','comp');
+
+            $cg=new CarGroups();
+            $groupName[$i]=$cg->getGroupName($this->Data['components'][$i]['carmodels'][0]['cargroup_fid']);
+            $ar=new AppRooter($groupName[$i],'comp');
             $ar->addParameter(new UrlParameter('id',$this->Data['components'][$i]['id']));
             $lnk=new link($ar->getAbsoluteURL(),$img);
             $lnk2=new link($ar->getAbsoluteURL(),$lbl);

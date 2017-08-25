@@ -13,6 +13,7 @@ use core\CoreClasses\html\RadioBox;
 use core\CoreClasses\html\SweetFrom;
 use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
@@ -36,6 +37,8 @@ class managecomponents_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+        $cg=new CarGroups();
+        $groupName=$cg->getGroupName($this->Data['group']['id']);
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("buysell_managecomponents");
@@ -47,8 +50,8 @@ class managecomponents_Design extends FormDesign {
 		$MessagePart->setClass("sweet_messagepart");
 		$MessagePart->addElement(new Lable($this->getMessage()));
 		$Page->addElement($MessagePart);
-		$addUrl=new AppRooter('buysell','managecomponent');
-		$LblAdd=new Lable("فروش قطعه جدید");
+		$addUrl=new AppRooter($groupName,'managecomponent');
+		$LblAdd=new Lable("افزودن آگهی جدید");
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass("linkbutton");
         $lnkAdd->setId("addcomponentlink");
@@ -62,9 +65,9 @@ class managecomponents_Design extends FormDesign {
 		$LTable1->addElement(new Lable('عملیات'));
         $LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
-			$url=new AppRooter('buysell','managecomponent');
+			$url=new AppRooter($groupName,'managecomponent');
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]['id']));
-			$delurl=new AppRooter('buysell','managecomponents');
+			$delurl=new AppRooter($groupName,'managecomponents');
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]['id']));
 			$delurl->addParameter(new UrlParameter('delete',1));
 			if($this->Data['data'][$i]['title']=="")

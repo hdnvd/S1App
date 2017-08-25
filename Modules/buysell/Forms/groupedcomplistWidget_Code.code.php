@@ -19,7 +19,7 @@ class groupedcomplistWidget_Code extends WidgetCode {
 		$complistWidgetController=new complistWidgetController("buysell");
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-		$Result=$complistWidgetController->load(-1,array(),array(),-1,null);
+		$Result=$complistWidgetController->load(-1,array(),array(),-1,null,null);
 		$design=new groupedcomplistWidget_Design();
 		$design->setData($Result);
 		return $design->getBodyHTML();

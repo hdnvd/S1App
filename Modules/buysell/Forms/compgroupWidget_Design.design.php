@@ -14,6 +14,7 @@ use core\CoreClasses\html\SweetFrom;
 use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
 use core\CoreClasses\services\WidgetDesign;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 
@@ -38,6 +39,9 @@ class compgroupWidget_Design extends WidgetDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+
+        $cg=new CarGroups();
+        $groupName=$cg->getGroupName($this->Data['group']['id']);
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("buysell_compgroupWidget");
@@ -45,7 +49,7 @@ class compgroupWidget_Design extends WidgetDesign {
         for ($i=0;$i<count($this->Data['groups']);$i++)
         {
             $lbl=new Lable($this->Data['groups'][$i]['title']);
-            $ar=new AppRooter('buysell','complist');
+            $ar=new AppRooter($groupName,'complist');
             $ar->addParameter(new UrlParameter('g',$this->Data['groups'][$i]['id']));
             $lnk=new link($ar->getAbsoluteURL(),$lbl);
             $LTable1->addElement($lnk);

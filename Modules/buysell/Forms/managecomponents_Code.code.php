@@ -41,7 +41,7 @@ class managecomponents_Code extends FormCode {
             }
         }
 		else{
-			$Result=$managecomponentsController->load($this->getID());
+			$Result=$managecomponentsController->load($this->getID(),$this->getHttpGETparameter('groupid',1));
             $design->setData($Result);
 		}
 		$design->setMessage("");

@@ -14,6 +14,7 @@ use core\CoreClasses\html\RadioBox;
 use core\CoreClasses\html\SweetFrom;
 use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 
@@ -38,6 +39,8 @@ class complist_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+        $cg=new CarGroups();
+        $groupName=$cg->getGroupName($this->Data['group']['id']);
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("buysell_complist");
@@ -68,7 +71,7 @@ class complist_Design extends FormDesign {
             $com=$this->Data['components'][$i];
 //            print_r($com);
             $item=new Div();
-            $ar=new AppRooter("buysell","comp");
+            $ar=new AppRooter($groupName,"comp");
             $ar->addParameter(new UrlParameter("id",$com['id']));
             if($com['photos'][0]['url']==null)
                 $com['photos'][0]['url']="content/files/img/noimage.png";
@@ -98,15 +101,17 @@ class complist_Design extends FormDesign {
 	}
 	private function getPaginationPart($PageCount)
     {
+        $cg=new CarGroups();
+        $groupName=$cg->getGroupName($this->Data['group']['id']);
         $div=new Div();
         for($i=1;$i<=$PageCount;$i++)
         {
             $RTR=null;
             if(isset($_GET['action']) && $_GET['action']=="btnSearch_Click")
-                $RTR=new AppRooter("buysell","search");
+                $RTR=new AppRooter($groupName,"search");
             else
             {
-                $RTR=new AppRooter("buysell","complist");
+                $RTR=new AppRooter($groupName,"complist");
                 $RTR->addParameter(new UrlParameter("g",$this->Data['groupid']));
             }
             $RTR->addParameter(new UrlParameter("p",$i));

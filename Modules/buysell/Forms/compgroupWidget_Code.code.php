@@ -19,7 +19,7 @@ class compgroupWidget_Code extends WidgetCode {
 		$compgroupWidgetController=new compgroupWidgetController();
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-		$Result=$compgroupWidgetController->load($this->getID());
+		$Result=$compgroupWidgetController->load($this->getID(),$_GET['groupid']);
 		$design=new compgroupWidget_Design();
 		$design->setData($Result);
 		return $design->getBodyHTML();

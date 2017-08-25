@@ -16,15 +16,15 @@ use Modules\users\PublicClasses\sessionuser;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentsController extends Controller {
-	public function load($ID)
+	public function load($ID,$GroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$result=array();
 		$componentEnt=new buysell_componentEntity($DBAccessor);
 		$su=new sessionuser();
-		$result['data']=$componentEnt->Select(null,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array(),array(),'0,1000');
-		$result['param1']="";
+		$result['data']=$componentEnt->FullSelect(null,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,null,null,$GroupID,array(),array(),'0,1000');
+		$result['group']['id']=$GroupID;
 		$DBAccessor->close_connection();
 		return $result;
 	}

@@ -92,15 +92,17 @@ class search_Design extends FormDesign {
 	{
 		return $this->cmbStatus;
 	}
-	/** @var combobox */
-	private $cmbCarModel;
-	/**
-	 * @return combobox
-	 */
-	public function getCmbCarModel()
-	{
-		return $this->cmbCarModel;
-	}
+    /** @var combobox */
+    private $carmaker_fid;
+    /** @var combobox */
+    private $carmodel_fid;
+    /**
+     * @return combobox
+     */
+    public function getCarmodel_fid()
+    {
+        return $this->carmodel_fid;
+    }
 	/** @var combobox */
 	private $cmbSortBY;
 	/**
@@ -138,8 +140,10 @@ class search_Design extends FormDesign {
         $this->cmbStatus->addOption(1,"نو");
         $this->cmbStatus->addOption(2,"کارکرده");
         $this->cmbStatus->addOption(3,"اسقاطی");
-		$this->cmbCarModel= new combobox("cmbCarModel");
-        $this->cmbCarModel->setClass("form-control");
+        $this->carmaker_fid= new combobox("carmaker_fid");
+        $this->carmaker_fid->setClass("form-control");
+        $this->carmodel_fid= new combobox("carmodel_fid");
+        $this->carmodel_fid->setClass("form-control");
         $this->cmbProvince= new combobox("cmbProvince");
         $this->cmbProvince->setClass("form-control");
         $this->cmbSortBY= new combobox("cmbSortBY");
@@ -153,13 +157,23 @@ class search_Design extends FormDesign {
 	public function getBodyHTML($command=null)
 	{
         $this->cmbCountry->addOption(-1,"مهم نیست");
-        $this->cmbCarModel->addOption(-1,"مهم نیست");
         $this->cmbProvince->addOption(-1,"مهم نیست");
         $this->cmbGroup->addOption(-1,"مهم نیست");
         for ($i=0;$i<count($this->Data['countries']);$i++)
             $this->cmbCountry->addOption($this->Data['countries'][$i]['id'],$this->Data['countries'][$i]['name']);
-        for ($i=0;$i<count($this->Data['carmodels']);$i++)
-            $this->cmbCarModel->addOption($this->Data['carmodels'][$i]['id'],$this->Data['carmodels'][$i]['carmakertitle'] . " " . $this->Data['carmodels'][$i]['title']);
+
+        $this->carmaker_fid->addOption("", "مهم نیست");
+        foreach ($this->Data['carmaker_fid'] as $item)
+            $this->carmaker_fid->addOption($item->getID(), $item->getTitle());
+        $this->carmodel_fid->addOption("", "مهم نیست");
+
+        $this->carmodel_fid->setMotherComboboxName($this->carmaker_fid->getName());
+        $this->carmodel_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_AJAX);
+        $this->carmodel_fid->setDataLoadJSONURL(DEFAULT_APPURL . "json/fa/buysell/carlist.jsp?");
+        $this->carmodel_fid->setDefaultOption("مهم نیست");
+        if (key_exists("car", $this->Data))
+            $this->carmodel_fid->setSelectedValue($this->Data['car']->getCarmodel_fid());
+
         for ($i=0;$i<count($this->Data['componentgroups']);$i++)
             $this->cmbGroup->addOption($this->Data['componentgroups'][$i]['id'],$this->Data['componentgroups'][$i]['title']);
         for ($i=0;$i<count($this->Data['provinces']);$i++)
@@ -196,8 +210,14 @@ class search_Design extends FormDesign {
 		$LTable1->addElement($this->cmbCountry,2);
 		$LTable1->addElement(new Lable("وضعیت"));
 		$LTable1->addElement($this->cmbStatus,2);
-		$LTable1->addElement(new Lable("مدل خودرو"));
-		$LTable1->addElement($this->cmbCarModel,2);
+        $LTable1->addElement(new Lable("برند خودرو"));
+        $LTable1->setLastElementClass('form_item_caption');
+        $LTable1->addElement($this->carmaker_fid,2);
+        $LTable1->setLastElementClass('form_item_field');
+        $LTable1->addElement(new Lable("مدل خودرو"));
+        $LTable1->setLastElementClass('form_item_caption');
+        $LTable1->addElement($this->carmodel_fid,2);
+        $LTable1->setLastElementClass('form_item_field');
         $LTable1->addElement(new Lable("استان"));
         $LTable1->addElement($this->cmbProvince,2);
 		$LTable1->addElement(new Lable("مرتب سازی بر اساس"));

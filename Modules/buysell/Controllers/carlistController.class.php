@@ -58,14 +58,16 @@ class carlistController extends Controller {
         $GroupQ=new QueryLogic();
         $GroupQ->addCondition(new FieldCondition("cargroup_fid",$GroupID));
         $result['carmodel_fid']=$carmodelEntityObject->FindAll($GroupQ);
-        $cartagtypeEntityObject=new buysell_cartagtypeEntity($DBAccessor);
-        $result['cartagtype_fid']=$cartagtypeEntityObject->FindAll(new QueryLogic());
-        $carentitytypeEntityObject=new buysell_carentitytypeEntity($DBAccessor);
-        $result['carentitytype_fid']=$carentitytypeEntityObject->FindAll(new QueryLogic());
+
         $carmakerEntityObject=new buysell_carmakerEntity($DBAccessor);
         $GroupQ=new QueryLogic();
         $GroupQ->addCondition(new FieldCondition("cargroup_fid",$GroupID));
         $result['carmaker_fid']=$carmakerEntityObject->FindAll($GroupQ);
+
+        $cartagtypeEntityObject=new buysell_cartagtypeEntity($DBAccessor);
+        $result['cartagtype_fid']=$cartagtypeEntityObject->FindAll(new QueryLogic());
+        $carentitytypeEntityObject=new buysell_carentitytypeEntity($DBAccessor);
+        $result['carentitytype_fid']=$carentitytypeEntityObject->FindAll(new QueryLogic());
 		if($PageNum<=0)
 			$PageNum=1;
 		$carEnt=new buysell_carEntity($DBAccessor);

@@ -166,8 +166,6 @@ class carlistsearch_Design extends FormDesign {
 		return $this->carstatus_fid;
 	}
 
-    /** @var combobox */
-    private $carmaker_fid;
 	/** @var combobox */
 	private $shasitype_fid;
 	/**
@@ -186,6 +184,10 @@ class carlistsearch_Design extends FormDesign {
 	{
 		return $this->isautogearbox;
 	}
+
+
+    /** @var combobox */
+    private $carmaker_fid;
 	/** @var combobox */
 	private $carmodel_fid;
 	/**
@@ -268,14 +270,14 @@ class carlistsearch_Design extends FormDesign {
         $this->shasitype_fid->setClass("form-control");
 		$this->isautogearbox= new CheckBox("isautogearbox");
         $this->isautogearbox->setClass("form-control");
-		$this->carmodel_fid= new combobox("carmodel_fid");
-        $this->carmodel_fid->setClass("form-control");
 		$this->cartagtype_fid= new combobox("cartagtype_fid");
         $this->cartagtype_fid->setClass("form-control");
 		$this->carentitytype_fid= new combobox("carentitytype_fid");
         $this->carentitytype_fid->setClass("form-control");
         $this->carmaker_fid= new combobox("carmaker_fid");
         $this->carmaker_fid->setClass("form-control");
+        $this->carmodel_fid= new combobox("carmodel_fid");
+        $this->carmodel_fid->setClass("form-control");
 		$this->sortby= new combobox("sortby");
         $this->sortby->setClass("form-control");
 		$this->isdesc= new combobox("isdesc");

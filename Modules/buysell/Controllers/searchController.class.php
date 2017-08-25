@@ -1,6 +1,8 @@
 <?php
 namespace Modules\buysell\Controllers;
 use core\CoreClasses\db\DBField;
+use core\CoreClasses\db\FieldCondition;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\buysell\Entity\buysell_carmakerEntity;
@@ -21,7 +23,7 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
 */
 class searchController extends Controller {
     private $PAGESIZE=5;
-	public function load($ID)
+	public function load($ID,$CarGroupID)
 	{
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor=new dbaccess();
@@ -33,16 +35,24 @@ class searchController extends Controller {
         $ProvinceEnt=new common_provinceEntity($DBAccessor);
         $result['provinces']=$ProvinceEnt->Select(null,null,array('title'),array(false),"0,1000");
         $result['countries']=$CountEnt->Select(null,null,null,array('name'),array(false),"0,200");
-        $result['carmodels']=$CarModelEnt->Select(null,null,null,null,-1,array('carmaker_fid','title'),array(false,false),"0,3000");
-        for ($i=0;$i<count($result['carmodels']);$i++)
-        {
-            $result['carmodels'][$i]['carmakertitle']=$carmakEnt->Select($result['carmodels'][$i]['carmaker_fid'],null,null,null,array(),array(),"0,1")[0]['title'];
-        }
+
+        $carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
+        $GroupQ=new QueryLogic();
+        $GroupQ->addCondition(new FieldCondition("cargroup_fid",$CarGroupID));
+        $result['carmodel_fid']=$carmodelEntityObject->FindAll($GroupQ);
+
+        $carmakerEntityObject=new buysell_carmakerEntity($DBAccessor);
+        $GroupQ=new QueryLogic();
+        $GroupQ->addCondition(new FieldCondition("cargroup_fid",$CarGroupID));
+        $result['carmaker_fid']=$carmakerEntityObject->FindAll($GroupQ);
+
+
         $result['componentgroups']=$CompGroupEnt->Select(null,null,null,null,null,array('title'),array(false),"0,1000");
+        $result['group']['id']=$CarGroupID;
         $DBAccessor->close_connection();
         return $result;
 	}
-	public function BtnSearch($PageNumber,$txtTitle,$cmbGroup,$txtPriceLB,$txtPriceUB,$cmbCountry,$cmbStatus,$cmbCarModel,$cmbSortBY,$cmbSortBYOrder,$cmbProvince)
+	public function BtnSearch($PageNumber,$txtTitle,$cmbGroup,$txtPriceLB,$txtPriceUB,$cmbCountry,$cmbStatus,$cmbCarModel,$cmbSortBY,$cmbSortBYOrder,$cmbProvince,$CarGroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		if($txtPriceLB=="")
@@ -84,12 +94,12 @@ class searchController extends Controller {
         $Compent=new buysell_componentEntity($DBAccessor);
         $photEnt=new buysell_componentphotoEntity($DBAccessor);
         $countEnt=new common_countryEntity($DBAccessor);
-        $allComps=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,array($orderFiled),array($IsDesc),"0,1000000");
+        $allComps=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,$CarGroupID,array($orderFiled),array($IsDesc),"0,1000000");
         $allcount=count($allComps);
         $result['pagecount']=$allcount/$this->PAGESIZE;
         if($allcount%$this->PAGESIZE!=0)
             $result['pagecount']++;
-        $result['components']=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,array($orderFiled),array($IsDesc),$this->getLimit($PageNumber));
+        $result['components']=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,$CarGroupID,array($orderFiled),array($IsDesc),$this->getLimit($PageNumber));
 
         for ($i=0;$i<count($result['components']);$i++)
         {
@@ -99,6 +109,8 @@ class searchController extends Controller {
         {
             $result['components'][$i]['country']=$countEnt->Select($result['components'][$i]['country_fid'],null,null,array('id'),array(false),"0,1")[0];
         }
+
+        $result['group']['id']=$CarGroupID;
         $DBAccessor->close_connection();
 		return $result;
 	}

@@ -15,6 +15,7 @@ use core\CoreClasses\html\SweetFrom;
 use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
 use core\CoreClasses\services\MessageType;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\buysell\PublicClasses\Constants;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
@@ -54,6 +55,8 @@ class managecomponentphoto_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+        $cg=new CarGroups();
+        $groupName=$cg->getGroupName($_GET['groupid']);
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("buysell_managecomponentphoto");
@@ -71,7 +74,7 @@ class managecomponentphoto_Design extends FormDesign {
         for ($i=0;$i<count($this->Data['photos']);$i++)
         {
             $lb=new Lable("حذف");
-            $ar=new AppRooter('buysell','managecomponentphoto');
+            $ar=new AppRooter($groupName,'managecomponentphoto');
             $ar->addParameter(new UrlParameter('photoid',$this->Data['photos'][$i]['id']));
             $ar->addParameter(new UrlParameter('id',$this->Data['id']));
             $ar->addParameter(new UrlParameter('delete',null));

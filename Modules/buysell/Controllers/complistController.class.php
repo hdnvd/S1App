@@ -19,7 +19,7 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
 */
 class complistController extends Controller {
     private $PAGESIZE=5;
-	public function load($PageNumber,array $SortBy,array $IsDESC,$GroupID,$Status_fid)
+	public function load($PageNumber,array $SortBy,array $IsDESC,$GroupID,$Status_fid,$CarGroupID)
 	{
 
 	    if($GroupID<0)
@@ -40,10 +40,10 @@ class complistController extends Controller {
         $carEnt=new buysell_carmodelEntity($DBAccessor);
         $countEnt=new common_countryEntity($DBAccessor);
         $compCarModEnt=new buysell_componentcarmodelEntity($DBAccessor);
-        $allComps=$Compent->Select(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,array(),array(),null);
+        $allComps=$Compent->FullSelect(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,null,null,$CarGroupID,array(),array(),null);
         $allcount=count($allComps);
         $result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-        $result['components']=$Compent->Select(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,$SortBy,$IsDESC,$this->getPageRowsLimit($PageNumber,$this->PAGESIZE));
+        $result['components']=$Compent->FullSelect(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,null,null,$CarGroupID,$SortBy,$IsDESC,$this->getPageRowsLimit($PageNumber,$this->PAGESIZE));
 		for ($i=0;$i<count($result['components']);$i++)
         {
             $result['components'][$i]['photos']=$photEnt->Select(null,$result['components'][$i]['id'],null,null,array('priority'),array(false),"0,1");
@@ -56,8 +56,10 @@ class complistController extends Controller {
         {
             $carmodelIds[$i]=$compCarModEnt->Select(null,$result['components'][$i]['id'],null,array(),array(),"0,100");
             for($j=0;$j<count($carmodelIds[$i]);$j++)
-                $result['components'][$i]['carmodels']=$carEnt->Select($carmodelIds[$i][$j]['carmodel_fid'],null,null,null,-1,array('id'),array(false),"0,1");
+                $result['components'][$i]['carmodels']=$carEnt->Select($carmodelIds[$i][$j]['carmodel_fid'],null,null,null,$CarGroupID,array('id'),array(false),"0,1");
         }
+
+        $result['group']['id']=$CarGroupID;
         $DBAccessor->close_connection();
 		return $result;
 	}

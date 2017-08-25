@@ -49,7 +49,7 @@ class managecomponentController extends Controller {
 
 		if($ID!=-1){
 
-            $result['component']=$compEnt->Select(null,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array('id'),array(false),"0,1");
+            $result['component']=$compEnt->Select($ID,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array('id'),array(false),"0,1");
             if($result['component']==null || count($result['component'])<=0)
                 throw new ProductNotFoundException();
             $result['component'][0]['carmodels']=$CompCarModelEnt->Select(null,$result['component'][0]['id'],null,array(),array(),"0,10");
@@ -58,6 +58,7 @@ class managecomponentController extends Controller {
             $carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
             $carmodelEntityObject->setId($cmd);
             $makerID=$carmodelEntityObject->getCarmaker_fid();
+
             $result['selectedcarmaker_fid']=$makerID;
             $q=new QueryLogic();
             $q->addCondition(new FieldCondition("carmaker_fid",$makerID));

@@ -4,6 +4,7 @@ use core\CoreClasses\html\GRecaptchaValidationStatus;
 use core\CoreClasses\services\FormCode;
 use Modules\buysell\Constants;
 use Modules\buysell\Exceptions\ProductNotFoundException;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\common\Forms\message_Design;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
@@ -69,8 +70,12 @@ class managecomponent_Code extends FormCode {
             $carGroup=$this->getHttpGETparameter('groupid',1);
 		$Result=$managecomponentController->BtnSave($this->getID(),$txtTitle,$cmbComponentGroup_ID,$txtprice,$cmbUseStatus_ID,$cmbCountry_ID,$cmbCarModel_ID,$txtDetails,$carGroup);
 		$design->setData($Result);
-        $Ar=new AppRooter('buysell','managecomponentphoto');
+            $cg=new CarGroups();
+            $groupName=$cg->getGroupName($carGroup);
+        $Ar=new AppRooter($groupName,'managecomponentphoto');
         $Ar->addParameter(new UrlParameter('id',$Result['id']));
+
+
         $design->setMessage(AppRooter::redirect($Ar->getAbsoluteURL()));
 		return $design->getBodyHTML();
         } else if ($recaptchaStatus == GRecaptchaValidationStatus::$NOTCLICKED) {

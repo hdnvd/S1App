@@ -135,12 +135,16 @@ class buysell_componentEntity extends EntityClass {
         //die();
         return $this->SelectQuery->ExecuteAssociated();
     }
-    public function FullSelect($ID,$Title,$MinPrice,$MaxPrice,$Usestatus,$Role_systemuser_fid,$Country_fid,$Componentgroup_fid,$MinAddDate,$Details,$Expiredate,$Carmodel_fid,$Province_fid,array $OrderByFields,array $IsDescendings,$Limit)
+    public function FullSelect($ID,$Title,$MinPrice,$MaxPrice,$Usestatus,$Role_systemuser_fid,$Country_fid,$Componentgroup_fid,$MinAddDate,$Details,$Expiredate,$Carmodel_fid,$Province_fid,$CarGroupID,array $OrderByFields,array $IsDescendings,$Limit)
     {
-        $this->SelectQuery=$this->getDatabase()->Select(array("co.*","ci.title city"))->From(array($this->getTableName() . " co" ,"buysell_user u","common_city ci"))->Where()->Equal(new DBField("co.role_systemuser_fid",false),new DBField("u.id",false))->AndLogic()->Equal(new DBField("u.common_city_fid",false),new DBField("ci.id",false));
-        if($Province_fid!==null)
+        $this->SelectQuery=$this->getDatabase()->Select(array("co.*","ci.title city"))->From(array($this->getTableName() . " co" ,"buysell_user u","common_city ci","buysell_carmodel cm","buysell_componentcarmodel cocm"))->Where()->Equal(new DBField("co.role_systemuser_fid",false),new DBField("u.id",false))->AndLogic()->Equal(new DBField("u.common_city_fid",false),new DBField("ci.id",false));
+        $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cocm.component_fid",false),new DBField("co.id",false));
+        $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cocm.carmodel_fid",false),new DBField("cm.id",false));
+        if($CarGroupID!==null)
+            $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cm.cargroup_fid",false),$CarGroupID);
+        if($Province_fid!==null && $Province_fid>0)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("ci.province_fid",false),$Province_fid);
-        if($ID!==null)
+        if($ID!==null && $ID>0)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("co.id",false),$ID);
         if($Title!==null)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Like(new DBField("co.title",false),$Title);
@@ -148,13 +152,13 @@ class buysell_componentEntity extends EntityClass {
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Bigger("price",$MinPrice);
         if($MaxPrice!==null)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Smaller("price",$MaxPrice);
-        if($Usestatus!==null)
+        if($Usestatus!==null && $Usestatus>0)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal("usestatus",$Usestatus);
-        if($Role_systemuser_fid!==null)
-            $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("co.role_systemuser_fid"),$Role_systemuser_fid);
-        if($Country_fid!==null)
+        if($Role_systemuser_fid!==null && $Role_systemuser_fid>0)
+            $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("co.role_systemuser_fid",false),$Role_systemuser_fid);
+        if($Country_fid!==null && $Country_fid>0)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal("country_fid",$Country_fid);
-        if($Componentgroup_fid!==null)
+        if($Componentgroup_fid!==null && $Componentgroup_fid>0)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal("componentgroup_fid",$Componentgroup_fid);
         if($MinAddDate!==null)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Bigger("adddate",$MinAddDate);
@@ -162,15 +166,17 @@ class buysell_componentEntity extends EntityClass {
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Like("details",$Details);
         if($Expiredate!==null)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal("expiredate",$Expiredate);
-        if($Carmodel_fid!==null)
-            $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal("carmodel_fid",$Carmodel_fid);
+        if($Carmodel_fid!==null && $Carmodel_fid>0)
+            $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cocm.carmodel_fid",false),$Carmodel_fid);
         for($i=0;$OrderByFields!==null && $i<count($OrderByFields);$i++)
             $this->SelectQuery=$this->SelectQuery->AddOrderBy($OrderByFields[$i], $IsDescendings[$i]);
         if($Limit!==null)
             $this->SelectQuery=$this->SelectQuery->setLimit($Limit);
+
         $this->SelectQuery=$this->SelectQuery->AndLogic()->Smaller(new DBField("co.deletetime",false), "0");
-        //echo $this->SelectQuery->getQueryString();
-        //die();
+        $this->SelectQuery=$this->SelectQuery->AddGroupBy(new DBField("co.id",false));
+//        echo $this->SelectQuery->getQueryString();
+//        die();
         return $this->SelectQuery->ExecuteAssociated();
     }
 }

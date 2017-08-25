@@ -15,6 +15,7 @@ use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\Image;
 use core\CoreClasses\html\FileUploadBox;
 use core\CoreClasses\services\WidgetDesign;
+use Modules\buysell\PublicClasses\CarGroups;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 
@@ -39,6 +40,8 @@ class groupedcarlistWidget_Design extends WidgetDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+        $cg=new CarGroups();
+        $groupName=$cg->getGroupName($this->Data['group']['id']);
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("buysell_groupedcomplistWidget");
@@ -61,7 +64,7 @@ class groupedcarlistWidget_Design extends WidgetDesign {
             $Title=$this->Data['cardata'][$i]['brand']->getTitle() . " " . $this->Data['cardata'][$i]['model']->getTitle() . " مدل " . $this->Data['data'][$i]->getMakedate();
 //
             $lbl=new Lable($Title);
-            $ar=new AppRooter('buysell','car');
+            $ar=new AppRooter($groupName,'car');
             $ar->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
             $lnk=new link($ar->getAbsoluteURL(),$img);
             $lnk2=new link($ar->getAbsoluteURL(),$lbl);

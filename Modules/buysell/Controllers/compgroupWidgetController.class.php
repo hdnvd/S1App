@@ -12,7 +12,7 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
 *@SweetFrameworkVersion 1.018
 */
 class compgroupWidgetController extends Controller {
-	public function load($ID)
+	public function load($ID,$CarGroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -22,6 +22,7 @@ class compgroupWidgetController extends Controller {
 			//Do Something...
 		}
 		$result['groups']=$compGroup->Select(null,-1,null,null,null,array(),array(),"0,100");
+		$result['group']['id']=$CarGroupID;
 		$DBAccessor->close_connection();
 		return $result;
 	}

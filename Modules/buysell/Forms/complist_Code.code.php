@@ -25,7 +25,8 @@ class complist_Code extends FormCode {
         $translator = new ModuleTranslator("buysell");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         $Status=$this->getStatus();
-        $Result = $complistController->load($this->getPageNum(),array(),array(),$this->getGroupID(),$Status);
+        $cargroupid=$this->getHttpGETparameter('groupid',1);
+        $Result = $complistController->load($this->getPageNum(),array(),array(),$this->getGroupID(),$Status,$cargroupid);
         $design = new complist_Design();
         $design->setData($Result);
         $design->setMessage("");
