@@ -1,5 +1,6 @@
 <?php
 namespace Modules\buysell\Forms;
+use core\CoreClasses\html\TextArea;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\Div;
@@ -31,10 +32,10 @@ class carlistsearch_Design extends FormDesign {
 	{
 		$this->Data = $Data;
 	}
-	/** @var textbox */
+	/** @var TextArea */
 	private $details;
 	/**
-	 * @return textbox
+	 * @return TextArea
 	 */
 	public function getDetails()
 	{
@@ -234,31 +235,54 @@ class carlistsearch_Design extends FormDesign {
 	private $search;
 	public function __construct()
 	{
-		$this->details= new textbox("details");
+		$this->details= new TextArea("details");
 		$this->priceMin= new textbox("pricemin");
+        $this->priceMin->setClass("form-control");
         $this->priceMax= new textbox("pricemax");
+        $this->priceMax->setClass("form-control");
 		$this->adddate= new textbox("adddate");
+        $this->adddate->setClass("form-control");
 		$this->body_carcolor_fid= new combobox("body_carcolor_fid");
+		$this->body_carcolor_fid->setClass("form-control");
 		$this->inner_carcolor_fid= new combobox("inner_carcolor_fid");
+        $this->inner_carcolor_fid->setClass("form-control");
 		$this->paytype_fid= new combobox("paytype_fid");
+        $this->paytype_fid->setClass("form-control");
 		$this->cartype_fid= new combobox("cartype_fid");
+        $this->cartype_fid->setClass("form-control");
 		$this->usagecountMin= new textbox("usagecountmin");
+        $this->usagecountMin->setClass("form-control");
         $this->usagecountMax= new textbox("usagecountmax");
+        $this->usagecountMax->setClass("form-control");
 		$this->wheretodate= new textbox("wheretodate");
+        $this->wheretodate->setClass("form-control");
 		$this->carbodystatus_fid= new combobox("carbodystatus_fid");
+        $this->carbodystatus_fid->setClass("form-control");
 		$this->makedateMax= new textbox("makedatemax");
+        $this->makedateMax->setClass("form-control");
         $this->makedateMin= new textbox("makedatemin");
+        $this->makedateMin->setClass("form-control");
 		$this->carstatus_fid= new combobox("carstatus_fid");
+        $this->carstatus_fid->setClass("form-control");
 		$this->shasitype_fid= new combobox("shasitype_fid");
+        $this->shasitype_fid->setClass("form-control");
 		$this->isautogearbox= new CheckBox("isautogearbox");
+        $this->isautogearbox->setClass("form-control");
 		$this->carmodel_fid= new combobox("carmodel_fid");
+        $this->carmodel_fid->setClass("form-control");
 		$this->cartagtype_fid= new combobox("cartagtype_fid");
+        $this->cartagtype_fid->setClass("form-control");
 		$this->carentitytype_fid= new combobox("carentitytype_fid");
+        $this->carentitytype_fid->setClass("form-control");
         $this->carmaker_fid= new combobox("carmaker_fid");
+        $this->carmaker_fid->setClass("form-control");
 		$this->sortby= new combobox("sortby");
+        $this->sortby->setClass("form-control");
 		$this->isdesc= new combobox("isdesc");
+        $this->isdesc->setClass("form-control");
 		$this->search= new SweetButton(true,"جستجو");
 		$this->search->setAction("search");
+        $this->search->setClass("form-control");
 	}
 	public function getBodyHTML($command=null)
 	{
