@@ -19,6 +19,7 @@ use Modules\posts\PublicClasses\maraghehMehrCrawler;
 class updateservice_Code extends FormCode {
 	public function load()
 	{
+
 		$updateserviceController=new updateserviceController();
 		$translator=new ModuleTranslator("posts");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
