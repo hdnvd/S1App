@@ -57,7 +57,7 @@ class generateform_Design extends FormDesign {
 		$this->TxtFormTitle=new TextBox("txtFormTitle");
 		$this->BtnGenerate=new SweetButton(true,"ذخیره");
 		$this->BtnGenerate->setAction("BtnGenerate");
-		$this->CmbModule=new DataComboBox();
+		$this->CmbModule=new DataComboBox(array());
 	}
 
 	/**
