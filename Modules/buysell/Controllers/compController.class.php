@@ -32,7 +32,7 @@ class compController extends Controller {
             $CarModelComponentEnt=new buysell_componentcarmodelEntity($DBAccessor);
             $user=new buysell_userEntity($DBAccessor);
             $CompGroupEnt=new buysell_componentgroupEntity($DBAccessor);
-            $result['component']=$compEnt->FullSelect($ID,null,null,null,null,null,null,null,null,null,null,null,null,null,array(),array(),"0,1");
+            $result['component']=$compEnt->FullSelect($ID,null,null,null,null,null,null,null,null,null,null,null,null,null,null,array(),array(),"0,1");
             $result['component']=$result['component'][0];
             $result['component']['photos']=$compPhotoEnt->Select(null,$ID,null,null,array('priority','id'),array(false,false),"0,".Constants::$MAXPHOTOCOUNT);
             $result['component']['country']=$CountEnt->Select($result['component']['country_fid'],null,null,array(),array(),"0,1")[0];

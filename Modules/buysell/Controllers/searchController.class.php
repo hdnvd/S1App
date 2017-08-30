@@ -52,7 +52,7 @@ class searchController extends Controller {
         $DBAccessor->close_connection();
         return $result;
 	}
-	public function BtnSearch($PageNumber,$txtTitle,$cmbGroup,$txtPriceLB,$txtPriceUB,$cmbCountry,$cmbStatus,$cmbCarModel,$cmbSortBY,$cmbSortBYOrder,$cmbProvince,$CarGroupID)
+	public function BtnSearch($PageNumber,$txtTitle,$cmbGroup,$txtPriceLB,$txtPriceUB,$cmbCountry,$cmbStatus,$cmbCarModel,$cmbSortBY,$cmbSortBYOrder,$cmbProvince,$CarGroupID,$cmbCarMaker_ID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		if($txtPriceLB=="")
@@ -94,12 +94,12 @@ class searchController extends Controller {
         $Compent=new buysell_componentEntity($DBAccessor);
         $photEnt=new buysell_componentphotoEntity($DBAccessor);
         $countEnt=new common_countryEntity($DBAccessor);
-        $allComps=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,$CarGroupID,array($orderFiled),array($IsDesc),"0,1000000");
+        $allComps=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,$CarGroupID,$cmbCarMaker_ID,array($orderFiled),array($IsDesc),"0,1000000");
         $allcount=count($allComps);
         $result['pagecount']=$allcount/$this->PAGESIZE;
         if($allcount%$this->PAGESIZE!=0)
             $result['pagecount']++;
-        $result['components']=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,$CarGroupID,array($orderFiled),array($IsDesc),$this->getLimit($PageNumber));
+        $result['components']=$Compent->FullSelect(null,"%$txtTitle%",$txtPriceLB,$txtPriceUB,$cmbStatus,null,$cmbCountry,$cmbGroup,null,null,null,$cmbCarModel,$cmbProvince,$CarGroupID,$cmbCarMaker_ID,array($orderFiled),array($IsDesc),$this->getLimit($PageNumber));
 
         for ($i=0;$i<count($result['components']);$i++)
         {

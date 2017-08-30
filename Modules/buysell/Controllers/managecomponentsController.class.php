@@ -23,7 +23,7 @@ class managecomponentsController extends Controller {
 		$result=array();
 		$componentEnt=new buysell_componentEntity($DBAccessor);
 		$su=new sessionuser();
-		$result['data']=$componentEnt->FullSelect(null,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,null,null,$GroupID,array(),array(),'0,1000');
+		$result['data']=$componentEnt->FullSelect(null,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,null,null,$GroupID,null,array(),array(),'0,1000');
 		$result['group']['id']=$GroupID;
 		$DBAccessor->close_connection();
 		return $result;

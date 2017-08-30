@@ -40,10 +40,10 @@ class complistController extends Controller {
         $carEnt=new buysell_carmodelEntity($DBAccessor);
         $countEnt=new common_countryEntity($DBAccessor);
         $compCarModEnt=new buysell_componentcarmodelEntity($DBAccessor);
-        $allComps=$Compent->FullSelect(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,null,null,$CarGroupID,array(),array(),null);
+        $allComps=$Compent->FullSelect(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,null,null,$CarGroupID,null,array(),array(),null);
         $allcount=count($allComps);
         $result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-        $result['components']=$Compent->FullSelect(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,null,null,$CarGroupID,$SortBy,$IsDESC,$this->getPageRowsLimit($PageNumber,$this->PAGESIZE));
+        $result['components']=$Compent->FullSelect(null,null,null,null,$Status_fid,null,null,$GroupID,null,null,null,null,null,$CarGroupID,null,$SortBy,$IsDESC,$this->getPageRowsLimit($PageNumber,$this->PAGESIZE));
 		for ($i=0;$i<count($result['components']);$i++)
         {
             $result['components'][$i]['photos']=$photEnt->Select(null,$result['components'][$i]['id'],null,null,array('priority'),array(false),"0,1");
