@@ -30,7 +30,10 @@ class buysell_carEntity extends EntityClass {
             for($i=1;$i<count($fields);$i++)
                 $resFields.="," . $fields[$i];
         }
-        $SelectQuery=$this->getDatabase()->Select(array($resFields))->From([$this->getTableName(),'buysell_carmodel cm','buysell_carmaker cmaker'])->Where()->Equal("cm.id",new DBField($this->getTableName() . '.carmodel_fid',true))->AndLogic()->Equal("cmaker.id",new DBField('cm.carmaker_fid',false));
+        $SelectQuery=$this->getDatabase()->Select(array($resFields))->From([$this->getTableName(),'buysell_carmodel cm','buysell_carmaker cmaker'])->Where()->Equal("cm.id",new DBField($this->getTableName() . '.carmodel_fid',true))->AndLogic()->Equal("cmaker.id",new DBField('cm.carmaker_fid',false))->AndLogic()
+            ->Smaller("cm.deletetime",0)->AndLogic()
+            ->Smaller("cmaker.deletetime",0)->AndLogic()
+            ->Smaller(new DBField($this->getTableName() . ".deletetime",true),0);
         $this->setSelectQuery($SelectQuery);
         $this->fillSelectParams($QueryObject);
 
@@ -55,7 +58,12 @@ class buysell_carEntity extends EntityClass {
     public function FindAllCount(QueryLogic $QueryObject)
     {
         $resFields="count(*) c";
-        $SelectQuery=$this->getDatabase()->Select(array($resFields))->From([$this->getTableName(),'buysell_carmodel cm','buysell_carmaker cmaker'])->Where()->Equal("cm.id",new DBField($this->getTableName() . '.carmodel_fid',true))->AndLogic()->Equal("cmaker.id",new DBField('cm.carmaker_fid',false));
+        $SelectQuery=$this->getDatabase()->Select(array($resFields))->From([$this->getTableName(),'buysell_carmodel cm','buysell_carmaker cmaker'])->Where()
+            ->Equal("cm.id",new DBField($this->getTableName() . '.carmodel_fid',true))->AndLogic()
+            ->Equal("cmaker.id",new DBField('cm.carmaker_fid',false))->AndLogic()
+            ->Smaller("cm.deletetime",0)->AndLogic()
+            ->Smaller("cmaker.deletetime",0)->AndLogic()
+            ->Smaller(new DBField($this->getTableName() . ".deletetime",true),0);
         $this->setSelectQuery($SelectQuery);
         $this->fillSelectParams($QueryObject);
         $SelectQuery=$this->getSelectQuery();

@@ -135,7 +135,7 @@ class buysell_componentEntity extends EntityClass {
         //die();
         return $this->SelectQuery->ExecuteAssociated();
     }
-    public function FullSelect($ID,$Title,$MinPrice,$MaxPrice,$Usestatus,$Role_systemuser_fid,$Country_fid,$Componentgroup_fid,$MinAddDate,$Details,$Expiredate,$Carmodel_fid,$Province_fid,$CarGroupID,array $OrderByFields,array $IsDescendings,$Limit)
+    public function FullSelect($ID,$Title,$MinPrice,$MaxPrice,$Usestatus,$Role_systemuser_fid,$Country_fid,$Componentgroup_fid,$MinAddDate,$Details,$Expiredate,$Carmodel_fid,$Province_fid,$CarGroupID,$cmbCarMaker_ID,array $OrderByFields,array $IsDescendings,$Limit)
     {
         $this->SelectQuery=$this->getDatabase()->Select(array("co.*","ci.title city"))->From(array($this->getTableName() . " co" ,"buysell_user u","common_city ci","buysell_carmodel cm","buysell_componentcarmodel cocm"))->Where()->Equal(new DBField("co.role_systemuser_fid",false),new DBField("u.id",false))->AndLogic()->Equal(new DBField("u.common_city_fid",false),new DBField("ci.id",false));
         $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cocm.component_fid",false),new DBField("co.id",false));
@@ -168,12 +168,16 @@ class buysell_componentEntity extends EntityClass {
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal("expiredate",$Expiredate);
         if($Carmodel_fid!==null && $Carmodel_fid>0)
             $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cocm.carmodel_fid",false),$Carmodel_fid);
+        if($cmbCarMaker_ID!==null && $cmbCarMaker_ID>0)
+            $this->SelectQuery=$this->SelectQuery->AndLogic()->Equal(new DBField("cm.carmaker_fid",false),$cmbCarMaker_ID);
         for($i=0;$OrderByFields!==null && $i<count($OrderByFields);$i++)
             $this->SelectQuery=$this->SelectQuery->AddOrderBy($OrderByFields[$i], $IsDescendings[$i]);
         if($Limit!==null)
             $this->SelectQuery=$this->SelectQuery->setLimit($Limit);
 
         $this->SelectQuery=$this->SelectQuery->AndLogic()->Smaller(new DBField("co.deletetime",false), "0");
+        $this->SelectQuery=$this->SelectQuery->AndLogic()->Smaller(new DBField("cocm.deletetime",false), "0");
+        $this->SelectQuery=$this->SelectQuery->AndLogic()->Smaller(new DBField("cm.deletetime",false), "0");
         $this->SelectQuery=$this->SelectQuery->AddGroupBy(new DBField("co.id",false));
 //        echo $this->SelectQuery->getQueryString();
 //        die();
