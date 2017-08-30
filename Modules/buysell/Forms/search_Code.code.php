@@ -54,8 +54,9 @@ class search_Code extends FormCode {
         $cmbProvince_ID=$_GET['cmbProvince'];
         $cmbSortBY_ID=$_GET['cmbSortBY'];
         $cmbSortBYOrder_ID=$_GET['cmbSortBYOrder'];
+        $cmbCarMaker_ID=$_GET['carmaker_fid'];
         $groupID=$this->getHttpGETparameter('groupid',1);
-		$Result=$searchController->BtnSearch(1,$txtTitle,$cmbGroup_ID,$txtPriceLB,$txtPriceUB,$cmbCountry_ID,$cmbStatus_ID,$cmbCarModel_ID,$cmbSortBY_ID,$cmbSortBYOrder_ID,$cmbProvince_ID,$groupID);
+		$Result=$searchController->BtnSearch(1,$txtTitle,$cmbGroup_ID,$txtPriceLB,$txtPriceUB,$cmbCountry_ID,$cmbStatus_ID,$cmbCarModel_ID,$cmbSortBY_ID,$cmbSortBYOrder_ID,$cmbProvince_ID,$groupID,$cmbCarMaker_ID);
 
         $design2=new complist_Design();
 		$design2->setData($Result);
