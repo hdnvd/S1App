@@ -53,32 +53,31 @@ class selectgroup_Design extends FormDesign {
 		$LTable1=new Div();
 		$cg=new CarGroups();
 
+        $url1=DEFAULT_PUBLICURL . "fa/" . $cg->getGroupName(1) . "/" . $page ;
 		$d1=new Div();
         $d1->setClass("cargroupicon");
         $d1->setId('personalcargroupicon');
 		$img1=new Image(DEFAULT_PUBLICURL . "content/files/buysell/car.png");
-        $url1=DEFAULT_PUBLICURL . "fa/" . $cg->getGroupName(1) . "/" . $page . ".jsp";
-		$lnk1=new link($url1,$img1);
-        $d1->addElement($lnk1);
+        $d1->addElement($img1);
 		$lbl1=new Lable("قطعات خودروهای سواری");
 		$lbl1->setClass("cargrouptitle");
-        $lnklbl1=new link($url1,$lbl1);
-        $d1->addElement($lnklbl1);
-		$LTable1->addElement($d1);
+        $d1->addElement($lbl1);
+        $lnk1=new link($url1,$d1);
+        $LTable1->addElement($lnk1);
 
 
+        $url2=DEFAULT_PUBLICURL . "fa/" . $cg->getGroupName(2) . "/" . $page ;
         $d2=new Div();
         $d2->setClass("cargroupicon");
         $d2->setId('heavyvehiclegroupicon');
         $img2=new Image(DEFAULT_PUBLICURL . "content/files/buysell/sangin.png");
-        $url2=DEFAULT_PUBLICURL . "fa/" . $cg->getGroupName(2) . "/" . $page . ".jsp";
-        $lnk2=new link($url2,$img2);
-        $d2->addElement($lnk2);
+        $d2->addElement($img2);
         $lbl2=new Lable("قطعات خودروهای سنگین");
         $lbl2->setClass("cargrouptitle");
-        $lnklbl2=new link($url2,$lbl2);
-        $d2->addElement($lnklbl2);
-        $LTable1->addElement($d2);
+        $d2->addElement($lbl2);
+
+        $lnk2=new link($url2,$d2);
+        $LTable1->addElement($lnk2);
 
 		$LTable1->setClass("formtable");
 		$Page->addElement($LTable1);
