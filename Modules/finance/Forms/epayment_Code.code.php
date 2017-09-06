@@ -12,6 +12,7 @@ use Modules\finance\Exceptions\InvalidPortalException;
 use Modules\finance\Exceptions\InvalidTransactionIDException;
 use Modules\finance\Exceptions\NonNummericAmountException;
 use Modules\finance\Exceptions\NoRedirectURLException;
+use Modules\finance\Exceptions\PaymentCanceledException;
 use Modules\finance\Exceptions\TooSmallAmountException;
 use Modules\finance\Exceptions\TransactionWithErrorException;
 use Modules\finance\Exceptions\URLmisMatchException;
@@ -38,9 +39,12 @@ class epayment_Code extends FormCode
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         try {
             if (isset($_POST['transId'])) {
-                $epaymentController->Commit($_POST['transId'],$_POST['status'],$_POST['cardNumber'],$_POST['factorNumber'],$_POST['errorCode']);
+                $Result=$epaymentController->Commit($_POST['transId'],$_POST['status'],$_POST['cardNumber'],$_POST['factorNumber'],$_POST['errorCode']);
                 $design = new message_Design();
                 $design->setMessage("پرداخت شما با موفقیت انجام شد.شماره تراکنش: ".$_POST['transId']);
+                $redURL=$Result['paymentinfo']->getInternalRedirectURL();
+                if($redURL!="")
+                    AppRooter::redirect($redURL,3000);
             } else {
 
                 $Result = $epaymentController->load($this->getID());
@@ -82,7 +86,10 @@ class epayment_Code extends FormCode
         }catch (AmountMismatchException $dnfex) {
             $design = new message_Design();
             $design->setMessage("خطا: تراکنش تایید شد ولی مبلغ وارد شده با مبلغ اولیه تراکنش یکسان نیست.به همین دلیل پرداخت شما در سیستم تایید نشد،لطفا با مدیر سیستم تماس بگیرید");
-        }  catch (\Exception $uex) {
+        } catch (PaymentCanceledException $dnfex) {
+            $design = new message_Design();
+            $design->setMessage("پرداخت لغو شد.");
+        } catch (\Exception $uex) {
             $design = new message_Design();
             $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
         }

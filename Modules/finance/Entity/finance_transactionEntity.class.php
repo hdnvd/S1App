@@ -5,8 +5,8 @@ use core\CoreClasses\db\dbquery;
 use core\CoreClasses\db\dbaccess;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-06-14 - 2017-09-05 20:53
-*@lastUpdate 1396-06-14 - 2017-09-05 20:53
+*@creationDate 1396-06-15 - 2017-09-06 13:18
+*@lastUpdate 1396-06-15 - 2017-09-06 13:18
 *@SweetFrameworkHelperVersion 2.001
 *@SweetFrameworkVersion 1.018
 */
@@ -93,6 +93,19 @@ class finance_transactionEntity extends EntityClass {
 	 */
 	public function setIssuccessful($Issuccessful){
 		$this->setField(finance_transactionEntity::$ISSUCCESSFUL,$Issuccessful);
+	}
+	public static $CHAPTER_FID="chapter_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getChapter_fid(){
+		return $this->getField(finance_transactionEntity::$CHAPTER_FID);
+	}
+	/**
+	 * @param mixed $Chapter_fid
+	 */
+	public function setChapter_fid($Chapter_fid){
+		$this->setField(finance_transactionEntity::$CHAPTER_FID,$Chapter_fid);
 	}
 }
 ?>

@@ -1,30 +1,29 @@
 <?php
 namespace Modules\finance\Forms;
 use core\CoreClasses\services\FormCode;
+use Modules\finance\Controllers\usertransactionlistController;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
-use Modules\finance\Controllers\bankpaymentinfoController;
-use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-06-13 - 2017-09-04 18:38
-*@lastUpdate 1396-06-13 - 2017-09-04 18:38
+*@creationDate 1396-06-15 - 2017-09-06 14:09
+*@lastUpdate 1396-06-15 - 2017-09-06 14:09
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
-class bankpaymentinfo_Code extends FormCode {
+class usertransactionlist_Code extends FormCode {
 	public function load()
 	{
-		$bankpaymentinfoController=new bankpaymentinfoController();
+		$transactionlistController=new usertransactionlistController();
 		$translator=new ModuleTranslator("finance");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
-			$Result=$bankpaymentinfoController->load($this->getID());
-			$design=new bankpaymentinfo_Design();
-			$design->setData($Result);
-			$design->setMessage("");
+		    $Result=$transactionlistController->load($this->getHttpGETparameter('pn',-1));
+            $design=new usertransactionlist_Design();
+            $design->setData($Result);
+            $design->setMessage("");
 		}
 		catch(DataNotFoundException $dnfex){
 			$design=new message_Design();
@@ -36,12 +35,6 @@ class bankpaymentinfo_Code extends FormCode {
 		}
 		return $design->getBodyHTML();
 	}
-	public function getID()
-	{
-		$id=-1;
-		if(isset($_GET['id']))
-			$id=$_GET['id'];
-		return $id;
-	}
+
 }
 ?>

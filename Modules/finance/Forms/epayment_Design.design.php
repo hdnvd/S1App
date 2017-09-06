@@ -63,7 +63,7 @@ class epayment_Design extends FormDesign {
 		$Page->addElement($MessagePart);
 		$LTable1=new ListTable(2);
 		$LTable1->addElement(new Lable("مبلغ تراکنش"));
-        $LTable1->addElement(new Lable($t->getAmount()));
+        $LTable1->addElement(new Lable($t->getAmount() . " ریال"));
         $LTable1->addElement(new Lable("شماره فاکتور"));
         $LTable1->addElement(new Lable($p->getFactorserial()));
         $LTable1->addElement(new Lable("توضیحات"));

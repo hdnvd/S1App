@@ -13,6 +13,7 @@ use Modules\finance\Exceptions\InvalidPortalException;
 use Modules\finance\Exceptions\InvalidTransactionIDException;
 use Modules\finance\Exceptions\NonNummericAmountException;
 use Modules\finance\Exceptions\NoRedirectURLException;
+use Modules\finance\Exceptions\PaymentCanceledException;
 use Modules\finance\Exceptions\TooSmallAmountException;
 use Modules\finance\Exceptions\TransactionWithErrorException;
 use Modules\finance\Exceptions\URLmisMatchException;
@@ -60,14 +61,24 @@ class epaymentController extends Controller {
         if($ID!=-1){
             $Pent=new finance_bankpaymentinfoEntity($DBAccessor);
             $Pent->setId($ID);
-            $Tent=new finance_transactionEntity($DBAccessor);
-            $Tent->setId($Pent->getTransaction_fid());
-            $payir = new \payir();
-            $payir->setApiKey("f512812c02020dada05b67e957ae57d0");
-            $tp = new AppRooter("finance", "epayment");
-            $res = $payir->send($Tent->getAmount(), $tp->getAbsoluteURL(), $Pent->getFactorserial());
-            $res = json_decode($res);
-            $result['transactionID']=$res->transId;
+            if($Pent->getBanktransactionid()<=0)
+            {
+                $Tent=new finance_transactionEntity($DBAccessor);
+                $Tent->setId($Pent->getTransaction_fid());
+                $payir = new \payir();
+                $payir->setApiKey("f512812c02020dada05b67e957ae57d0");
+                $tp = new AppRooter("finance", "epayment");
+                $res = $payir->send($Tent->getAmount(), $tp->getAbsoluteURL(), $Pent->getFactorserial());
+                $res = json_decode($res);
+                $Pent->setBanktransactionid($res->transId);
+                $Pent->Save();
+                $result['transactionID']=$res->transId;
+            }
+            else
+            {
+                $result['transactionID']=$Pent->getTransaction_fid();
+            }
+
         }
         $result['param1']="";
         $DBAccessor->close_connection();
@@ -85,18 +96,23 @@ class epaymentController extends Controller {
         $q=new QueryLogic();
         $q->addCondition(new FieldCondition(finance_bankpaymentinfoEntity::$BANKTRANSACTIONID,$BankTransactioID,LogicalOperator::Equal));
         $q->addCondition(new FieldCondition(finance_bankpaymentinfoEntity::$FACTORSERIAL,$FactorSerial,LogicalOperator::Equal));
-        $Pent->FindOne($q);
+        $Pent=$Pent->FindOne($q);
         $Tent->setId($Pent->getTransaction_fid());
+
+        $DBAccessor=new dbaccess();
         $DBAccessor->beginTransaction();
         if($Status==1)
         {
             $pay=new \payir();
+            $pay->setApiKey("f512812c02020dada05b67e957ae57d0");
             $VerifyResult=$pay->verify($BankTransactioID);
             $VerifyResult = json_decode($VerifyResult);
             if($VerifyResult->status==1)
             {
                 if($VerifyResult->amount!=$Tent->getAmount())
+                {
                     throw new AmountMismatchException();
+                }
             }
             else
             {
@@ -108,11 +124,11 @@ class epaymentController extends Controller {
                     throw new InvalidPortalException();
                 if($VerifyResult->errorCode==-5)
                     throw new TransactionWithErrorException();
-
                 throw new \Exception();
             }
             $Pent->setStatus_fid(1);
             $Tent->setIssuccessful(true);
+            $Tent->setCommit_time(time());
             $Tent->Save();
         }
         else
@@ -136,13 +152,15 @@ class epaymentController extends Controller {
                     throw new URLmisMatchException();
                 if ($ErrorCode=="failed")
                     throw new TransactionWithErrorException();
+                if($ErrorCode=="")
+                    throw new PaymentCanceledException();
                 throw new \Exception();
 
         }
         $Pent->setCardnumber($CardNumber);
         $Pent->Save();
         $DBAccessor->commit();
-        $result['param1']="";
+        $result['paymentinfo']=$Pent;
         $DBAccessor->close_connection();
         return $result;
     }
