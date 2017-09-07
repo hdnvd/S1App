@@ -8,6 +8,7 @@ use Modules\contactus\Exceptions\EmptyMessageException;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\languages\PublicClasses\LanguageTranslator;
 use Modules\contactus\Controllers\contactusController;
+use Modules\languages\PublicClasses\ModuleTranslator;
 
 /**
  *
@@ -18,7 +19,10 @@ class contactusform_Code extends FormCode {
 	public function __construct($namespace=null)
 	{
 		parent::__construct($namespace);
-		$this->setTitle("تماس با ما");
+        $LangName=CurrentLanguageManager::getCurrentLanguageName();
+        $translator=new ModuleTranslator("contactus");
+        $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
+		$this->setTitle($translator->getWordTranslation("contactus"));
 	}
 	public function load()
 	{

@@ -59,8 +59,12 @@ class roleSystemUserEntity extends EntityClass
 		->NotNullSet("username", $Username)
 		->NotNullSet("password", $Password)
 		->NotNullSet("password2", $Password2)
-		->NotNullSet("isdeleted", $IsDeleted)
-		->Where()->Equal("id", $ID);
+		->NotNullSet("isdeleted", $IsDeleted);
+		if($IsDeleted==1)
+            $Query=$Query->NotNullSet("deletetime", time());
+
+		$Query=$Query->Where()->Equal("id", $ID);
+
 		$Query->Execute();
 	}
 	public function Select(array $Fields,array $FieldValues,array $Logics=null)

@@ -5,15 +5,15 @@ namespace Modules\posts\PublicClasses;
 /**
  *
  * @author nahavandi
- *        
+ *
  */
 class irnaMaraghehCrawler extends irnaCrawler{
     public function __construct($MaxPosts=10)
-	{
-		$ArchiveUrl="http://www3.as.irna.ir/fa/NewsPage.aspx?action=as&all=&exact=مراغه%20-%20ایرنا&one=&nt=چاراویماق%20هشترود%20عجب%20شیر&from=2/2/2014&to=1/27/2020&kind=-1&area=3&type=-1&ps=10&of=titr&archive=f";
-		$this->setMaxPosts($MaxPosts);
-		parent::__construct($ArchiveUrl);
-	}
+    {
+        $ArchiveUrl="http://www.irna.ir/eazarbaijan/fa/zone/100066/%D8%AF%D9%81%D8%AA%D8%B1_%D9%85%D8%B1%D8%A7%D8%BA%D9%87";
+        $this->setMaxPosts($MaxPosts);
+        parent::__construct($ArchiveUrl);
+    }
 }
 
 ?>

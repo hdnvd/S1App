@@ -170,9 +170,9 @@ class usertransactionlist_Design extends FormDesign {
         $LTable1->setLastElementClass("listtitle");
         $LTable1->addElement(new Lable('تاریخ ثبت'));
         $LTable1->setLastElementClass("listtitle");
-        $LTable1->addElement(new Lable('شماره تراکنش'));
-        $LTable1->setLastElementClass("listtitle");
         $LTable1->addElement(new Lable('توضیحات'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('شماره تراکنش'));
         $LTable1->setLastElementClass("listtitle");
         $LTable1->addElement(new Lable('وضعیت'));
         $LTable1->setLastElementClass("listtitle");
