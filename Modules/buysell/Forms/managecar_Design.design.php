@@ -26,6 +26,27 @@ use Modules\common\PublicClasses\UrlParameter;
 */
 class managecar_Design extends FormDesign {
 	private $Data;
+    private $ListPage;
+    private $ItemPage;
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+        if($this->adminMode)
+        {
+            $this->ListPage="managecars";
+            $this->ItemPage="managecar";
+        }
+        else
+        {
+            $this->ListPage="sell";
+            $this->ItemPage="manageusercar";
+        }
+    }
 	/**
 	 * @param mixed $Data
 	 */
@@ -247,8 +268,6 @@ class managecar_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
-//	    for($i=$this->Data['year'];$i>$this->Data['year']-76;$i--)
-//	        $this->makedate->addOption($i,$i);
 		if (key_exists("car", $this->Data))
 			$this->details->setValue($this->Data['car']->getDetails());
 		if (key_exists("car", $this->Data))

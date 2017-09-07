@@ -15,23 +15,34 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponents_Code extends FormCode {
+    private $adminMode=true;
 
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
     public function __construct($namespace=null)
     {
         parent::__construct($namespace);
         $this->setThemePage("admin.php");
         $this->setTitle("مدیریت قطعات");
+        $this->setAdminMode(true);
     }
 	public function load()
     {
         $managecomponentsController = new managecomponentsController();
+        $managecomponentsController->setAdminMode($this->adminMode);
         $translator = new ModuleTranslator("buysell");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         $design = new managecomponents_Design();
+        $design->setAdminMode($this->adminMode);
         if (isset($_GET['delete']))
         {
             try{
-                $Result=$managecomponentsController->DeleteItem($this->getID());
+                $Result=$managecomponentsController->DeleteItem($this->getID(),$this->getHttpGETparameter('groupid',1));
                 $design->setData($Result);
             }
             catch (ProductNotFoundException $ex)

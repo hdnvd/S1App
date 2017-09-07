@@ -20,16 +20,39 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponent_Code extends FormCode {
+    private $adminMode=true;
+    private $PhotoPage;
+    private $ItemPage;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+        if($this->adminMode)
+        {
+            $this->PhotoPage="managecomponentphoto";
+            $this->ItemPage="managecomponent";
+        }
+        else
+        {
+            $this->PhotoPage="manageusercomponentphoto";
+            $this->ItemPage="manageusercomponent";
+        }
+    }
 
     public function __construct($namespace=null)
     {
         parent::__construct($namespace);
         $this->setThemePage("admin.php");
         $this->setTitle("مدیریت قطعه");
+        $this->setAdminMode(true);
     }
 	public function load()
 	{
 		$managecomponentController=new managecomponentController();
+        $managecomponentController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try
@@ -55,6 +78,7 @@ class managecomponent_Code extends FormCode {
 	public function btnSave_Click()
     {
         $managecomponentController = new managecomponentController();
+        $managecomponentController->setAdminMode($this->adminMode);
         $translator = new ModuleTranslator("buysell");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         $design = new managecomponent_Design();
@@ -72,7 +96,7 @@ class managecomponent_Code extends FormCode {
 		$design->setData($Result);
             $cg=new CarGroups();
             $groupName=$cg->getGroupName($carGroup);
-        $Ar=new AppRooter($groupName,'managecomponentphoto');
+        $Ar=new AppRooter($groupName,$this->PhotoPage);
         $Ar->addParameter(new UrlParameter('id',$Result['id']));
 
 

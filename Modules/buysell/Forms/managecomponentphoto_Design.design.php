@@ -29,6 +29,15 @@ use Modules\common\PublicClasses\UrlParameter;
 */
 class managecomponentphoto_Design extends FormDesign {
 	private $Data;
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
 	/**
 	 * @param mixed $Data
 	 */
@@ -74,7 +83,11 @@ class managecomponentphoto_Design extends FormDesign {
         for ($i=0;$i<count($this->Data['photos']);$i++)
         {
             $lb=new Lable("حذف");
-            $ar=new AppRooter($groupName,'managecomponentphoto');
+            $PhotoPage="managecomponentphoto";
+            if(!$this->adminMode)
+                $PhotoPage="manageusercomponentphoto";
+
+            $ar=new AppRooter($groupName,$PhotoPage);
             $ar->addParameter(new UrlParameter('photoid',$this->Data['photos'][$i]['id']));
             $ar->addParameter(new UrlParameter('id',$this->Data['id']));
             $ar->addParameter(new UrlParameter('delete',null));

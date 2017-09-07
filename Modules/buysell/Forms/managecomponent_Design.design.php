@@ -136,15 +136,6 @@ class managecomponent_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
-//	    $cl=$this->Data['cols'];
-//	    for($i=0;$i<count($cl);$i++)
-//        {
-//            $c=$cl[$i];
-////            $c=new buysell_carcolor2Entity(null);
-//            echo $c->getID();
-//            echo $c->getLatintitle();
-//            echo $c->getTitle();
-//        }
 		$Page=new Div();
         for ($i=0;$i<count($this->Data['countries']);$i++)
             $this->cmbCountry->addOption($this->Data['countries'][$i]['id'],$this->Data['countries'][$i]['name']);

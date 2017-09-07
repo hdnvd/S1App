@@ -3,55 +3,78 @@ namespace Modules\buysell\Forms;
 use core\CoreClasses\services\FormCode;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use core\CoreClasses\Exception\DataNotFoundException;
 use Modules\buysell\Controllers\manageprofileController;
+use Modules\files\PublicClasses\uploadHelper;
+use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1395-11-21 - 2017-02-09 01:49
-*@lastUpdate 1395-11-21 - 2017-02-09 01:49
-*@SweetFrameworkHelperVersion 2.000
-*@SweetFrameworkVersion 1.017
+*@creationDate 1396-06-16 - 2017-09-07 01:34
+*@lastUpdate 1396-06-16 - 2017-09-07 01:34
+*@SweetFrameworkHelperVersion 2.002
+*@SweetFrameworkVersion 2.002
 */
 class manageprofile_Code extends FormCode {
-
-    public function __construct($namespace=null)
-    {
-        parent::__construct($namespace);
-        $this->setThemePage("admin.php");
-        $this->setTitle("مدیریت پروفایل کاربری");
-    }
 	public function load()
 	{
 		$manageprofileController=new manageprofileController();
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-		$Result=$manageprofileController->load();
-		$design=new manageprofile_Design();
-		$design->setData($Result);
+		try{
+			$Result=$manageprofileController->load($this->getID());
+			$design=new manageprofile_Design();
+			$design->setData($Result);
+			$design->setMessage("");
+		}
+		catch(DataNotFoundException $dnfex){
+			$design=new message_Design();
+			$design->setMessage("آیتم مورد نظر پیدا نشد");
+		}
+		catch(\Exception $uex){
+			$design=new message_Design();
+			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+		}
 		return $design->getBodyHTML();
+	}
+	public function getID()
+	{
+		$id=-1;
+		if(isset($_GET['id']))
+			$id=$_GET['id'];
+		return $id;
 	}
 	public function btnSave_Click()
 	{
 		$manageprofileController=new manageprofileController();
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
+		try{
 		$design=new manageprofile_Design();
-		$txtName=$design->getTxtName()->getValue();
-		$txtFamily=$design->getTxtFamily()->getValue();
-		$txtEmail=$design->getTxtEmail()->getValue();
-		$txtMobile=$design->getTxtMobile()->getValue();
-		$txtTel=$design->getTxtTel()->getValue();
-		$cmbIsmale_ID=$design->getCmbIsmale()->getSelectedID();
-		$cmbCity_ID=$design->getCmbCity()->getSelectedID();
-		$txtAddress=$design->getTxtAddress()->getValue();
-		$txtPostalCode=$design->getTxtPostalCode()->getValue();
-		$chkShowcontactInfo=$design->getChkShowcontactInfo()->getSelectedValues();
-		$txtCardNumber=$design->getTxtCardNumber()->getValue();
-		$txtCardOwner=$design->getTxtCardOwner()->getValue();
-		$cmbBank=$design->getCmbBank()->getValue();
-		$cmbCarMaker_ID=$design->getCmbCarMaker()->getSelectedID();
-		$cmbCarModel_ID=$design->getCmbCarModel()->getSelectedID();
-		$Result=$manageprofileController->BtnSave($txtName,$txtFamily,$txtEmail,$txtMobile,$txtTel,$cmbIsmale_ID,$cmbCity_ID,$txtAddress,$txtPostalCode,$chkShowcontactInfo,$txtCardNumber,$txtCardOwner,$cmbBank,$cmbCarMaker_ID,$cmbCarModel_ID);
+		$name=$design->getName()->getValue();
+		$email=$design->getEmail()->getValue();
+		$tel=$design->getTel()->getValue();
+		$mob=$design->getMob()->getValue();
+		$postalcode=$design->getPostalcode()->getValue();
+		$ismale=$design->getIsmale()->getSelectedID();
+		$common_city_fid_ID=$design->getCommon_city_fid()->getSelectedID();
+		$birthday=$design->getBirthday()->getValue();
+		$ispayed=$design->getIspayed()->getSelectedValues();
+		$signupdate=$design->getSignupdate()->getValue();
+		$photo=$design->getPhoto()->getValue();
+		$is_info_visible=$design->getIs_info_visible()->getSelectedValues();
+		$carmodel_fid_ID=$design->getCarmodel_fid()->getSelectedID();
+		$Result=$manageprofileController->BtnSave($name,$email,$tel,$mob,$postalcode,$ismale,$common_city_fid_ID,$birthday,$ispayed,$signupdate,$photo,$is_info_visible,$carmodel_fid_ID);
 		$design->setData($Result);
+		$design->setMessage("اطلاعات با موفقیت ذخیره شد!");
+		}
+		catch(DataNotFoundException $dnfex){
+			$design=new message_Design();
+			$design->setMessage("آیتم مورد نظر پیدا نشد");
+		}
+		catch(\Exception $uex){
+			$design=new message_Design();
+			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+		}
 		return $design->getBodyHTML();
 	}
 }

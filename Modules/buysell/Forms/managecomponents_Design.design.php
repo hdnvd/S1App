@@ -25,6 +25,27 @@ use Modules\common\PublicClasses\UrlParameter;
 */
 class managecomponents_Design extends FormDesign {
 	private $Data;
+    private $ListPage;
+    private $ItemPage;
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+        if($this->adminMode)
+        {
+            $this->ListPage="managecomponents";
+            $this->ItemPage="managecomponent";
+        }
+        else
+        {
+            $this->ListPage="manageusercomponents";
+            $this->ItemPage="manageusercomponent";
+        }
+    }
 	/**
 	 * @param mixed $Data
 	 */
@@ -50,7 +71,7 @@ class managecomponents_Design extends FormDesign {
 		$MessagePart->setClass("sweet_messagepart");
 		$MessagePart->addElement(new Lable($this->getMessage()));
 		$Page->addElement($MessagePart);
-		$addUrl=new AppRooter($groupName,'managecomponent');
+		$addUrl=new AppRooter($groupName,$this->ItemPage);
 		$LblAdd=new Lable("افزودن آگهی جدید");
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass("linkbutton");
@@ -65,9 +86,9 @@ class managecomponents_Design extends FormDesign {
 		$LTable1->addElement(new Lable('عملیات'));
         $LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
-			$url=new AppRooter($groupName,'managecomponent');
+			$url=new AppRooter($groupName,$this->ItemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]['id']));
-			$delurl=new AppRooter($groupName,'managecomponents');
+			$delurl=new AppRooter($groupName,$this->ListPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]['id']));
 			$delurl->addParameter(new UrlParameter('delete',1));
 			if($this->Data['data'][$i]['title']=="")

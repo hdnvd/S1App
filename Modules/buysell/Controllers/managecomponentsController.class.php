@@ -16,6 +16,15 @@ use Modules\users\PublicClasses\sessionuser;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentsController extends Controller {
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
 	public function load($ID,$GroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -23,18 +32,24 @@ class managecomponentsController extends Controller {
 		$result=array();
 		$componentEnt=new buysell_componentEntity($DBAccessor);
 		$su=new sessionuser();
-		$result['data']=$componentEnt->FullSelect(null,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,null,null,$GroupID,null,array(),array(),'0,1000');
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$su->getSystemUserID();
+		$result['data']=$componentEnt->FullSelect(null,null,null,null,null,$UserID,null,null,null,null,null,null,null,$GroupID,null,array(),array(),'0,1000');
 		$result['group']['id']=$GroupID;
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function DeleteItem($ID)
+	public function DeleteItem($ID,$GroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$componentEnt=new buysell_componentEntity($DBAccessor);
         $su=new sessionuser();
-        $comp=$componentEnt->Select($ID,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array(),array(),"0,1");
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$su->getSystemUserID();
+        $comp=$componentEnt->Select($ID,null,null,null,null,$UserID,null,null,null,null,null,array(),array(),"0,1");
         if($comp==null || count($comp)<=0)
             throw new ProductNotFoundException();
 
@@ -48,8 +63,8 @@ class managecomponentsController extends Controller {
             unlink(DEFAULT_PUBLICPATH . "content/files/buysell/managecomponent/" . $picname);
         }
 		$componentEnt->Delete($ID);
-		return $this->load(-1);
-		$DBAccessor->close_connection();
+        $DBAccessor->close_connection();
+		return $this->load(-1,$GroupID);
 	}
 }
 ?>

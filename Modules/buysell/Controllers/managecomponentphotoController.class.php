@@ -18,6 +18,15 @@ use Modules\users\PublicClasses\sessionuser;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentphotoController extends Controller {
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
 	public function load($ID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -26,9 +35,12 @@ class managecomponentphotoController extends Controller {
         $phEnt=new buysell_componentphotoEntity($DBAccessor);
         $CEnt=new buysell_componentEntity($DBAccessor);
         $su=new sessionuser();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$su->getSystemUserID();
 		if($ID!=-1){
             $result['photos']=$phEnt->Select(null,$ID,null,null,array('id'),array('false'),"0,". Constants::$MAXPHOTOCOUNT);
-            $result['component']=$CEnt->Select($ID,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array(),array(),"0,1");
+            $result['component']=$CEnt->Select($ID,null,null,null,null,$UserID,null,null,null,null,null,array(),array(),"0,1");
             if($result['component']==null || count($result['component'])<1)
                 throw new ProductNotFoundException();
 		}
@@ -43,7 +55,10 @@ class managecomponentphotoController extends Controller {
 		$result=array();
         $su=new sessionuser();
         $cEnt=new buysell_componentEntity($DBAccessor);
-        $comp=$cEnt->Select($ID,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array(),array(),"0,1");
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$su->getSystemUserID();
+        $comp=$cEnt->Select($ID,null,null,null,null,$UserID,null,null,null,null,null,array(),array(),"0,1");
         if($comp==null || count($comp)<=0)
             throw new ProductNotFoundException();
 
@@ -59,7 +74,10 @@ class managecomponentphotoController extends Controller {
         $result=array();
         $su=new sessionuser();
         $cEnt=new buysell_componentEntity($DBAccessor);
-        $comp=$cEnt->Select($ComponentID,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array(),array(),"0,1");
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$su->getSystemUserID();
+        $comp=$cEnt->Select($ComponentID,null,null,null,null,$UserID,null,null,null,null,null,array(),array(),"0,1");
         if($comp==null || count($comp)<=0)
             throw new ProductNotFoundException();
 

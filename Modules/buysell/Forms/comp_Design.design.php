@@ -78,15 +78,15 @@ class comp_Design extends FormDesign {
         $lblUseStatus->setId("compusestatus");
         $lblCountry=new Lable($comp['country']['name']);
         $lblCountry->setId("compcountry");
-        $lblUser=new Lable($comp['user']['name']);
+        $lblUser=new Lable($comp['user']->getName());
         $tels="";
         $user=$comp['user'];
-        if($user['tel']!="")
-            $tels=$user['tel'];
-        if($user['mob']!=""){
+        if($user->getTel()!="")
+            $tels=$user->getTel();
+        if($user->getMob()!=""){
             if($tels!="")
                 $tels.=" - ";
-            $tels.=$user['mob'];
+            $tels.=$user->getMob();
         }
         $lblTel=new Lable($tels);
         $LTable1=new ListTable(2);

@@ -45,7 +45,15 @@ class fastsignupController extends Controller {
         $id=$sysUserEnt->Add($txtMobile,$txtpassword);
         $roleEnt=new RoleSystemUserRoleEntity();
         $roleEnt->addUserRole($id,5);
-        $UserEnt->Insert($txtName,$txtEmail,"",$txtMobile,"",0,$cmbCity,"",0,"","",0,-1,-1,$id);
+        $UserEnt->setName($txtName);
+        $UserEnt->setEmail($txtEmail);
+        $UserEnt->setMob($txtMobile);
+        $UserEnt->setCommon_city_fid($cmbCity);
+        $UserEnt->setRole_systemuser_fid($id);
+        $UserEnt->setIsmale(-1);
+        $UserEnt->setCarmodel_fid(-1);
+        $UserEnt->setSignupdate(time());
+        $UserEnt->Save();
         $DBAccessor->commit();
 		$result['param1']="";
 		$DBAccessor->close_connection();

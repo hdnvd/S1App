@@ -19,16 +19,26 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentphoto_Code extends FormCode {
+    private $adminMode=true;
 
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
     public function __construct($namespace=null)
     {
         parent::__construct($namespace);
         $this->setThemePage("admin.php");
         $this->setTitle("مدیریت تصاویر قطعه");
+        $this->setAdminMode(true);
     }
 	public function load()
 	{
 		$managecomponentphotoController=new managecomponentphotoController();
+		$managecomponentphotoController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		if($this->getID()>=0)
@@ -40,6 +50,7 @@ class managecomponentphoto_Code extends FormCode {
                 $Result=$managecomponentphotoController->load($this->getID());
                 $Result['id']=$this->getID();
                 $design=new managecomponentphoto_Design();
+                $design->setAdminMode($this->adminMode);
                 $design->setData($Result);
                 $design->setMessage("");
                 return $design->getBodyHTML();
@@ -67,9 +78,11 @@ class managecomponentphoto_Code extends FormCode {
 	public function btnAddNew_Click()
 	{
 		$managecomponentphotoController=new managecomponentphotoController();
+        $managecomponentphotoController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		$design=new managecomponentphoto_Design();
+        $design->setAdminMode($this->adminMode);
 		$flPhotoPaths=$design->getFlPhoto()->getSelectedFilesTempPath();
 		$flPhotoNames=$design->getFlPhoto()->getSelectedFilesName();
         $flPhotoTypes=$design->getFlPhoto()->getSelectedFilesType();

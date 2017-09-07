@@ -23,18 +23,20 @@ use Modules\users\PublicClasses\sessionuser;
 *@SweetFrameworkVersion 1.018
 */
 class managecomponentController extends Controller {
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
 	public function load($ID,$GroupID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
         $result=array();
-//		$carcol=new buysell_carcolor2Entity($DBAccessor);
-//		$q=new QueryLogic();
-//		$q->addCondition(new FieldCondition(buysell_carcolorEntity::$ID,2,LogicalOperator::Bigger));
-//		$carcols=$carcol->FindAll($q);
-//
-//
-//		$result['cols']=$carcols;
         $carmakerEntityObject=new buysell_carmakerEntity($DBAccessor);
         $q=new QueryLogic();
         $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
@@ -49,7 +51,10 @@ class managecomponentController extends Controller {
 
 		if($ID!=-1){
 
-            $result['component']=$compEnt->Select($ID,null,null,null,null,$su->getSystemUserID(),null,null,null,null,null,array('id'),array(false),"0,1");
+		    $UserID=null;
+		    if(!$this->adminMode)
+		        $UserID=$su->getSystemUserID();
+            $result['component']=$compEnt->Select($ID,null,null,null,null,$UserID,null,null,null,null,null,array('id'),array(false),"0,1");
             if($result['component']==null || count($result['component'])<=0)
                 throw new ProductNotFoundException();
             $result['component'][0]['carmodels']=$CompCarModelEnt->Select(null,$result['component'][0]['id'],null,array(),array(),"0,10");
@@ -84,17 +89,19 @@ class managecomponentController extends Controller {
         $CarModelEnt=new buysell_componentcarmodelEntity($DBAccessor);
         $photoEnt=new buysell_componentphotoEntity($DBAccessor);
         $sysUser=new sessionuser();
-
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$sysUser->getSystemUserID();
 		if($ID==-1){
 			$compid=$compEnt->Insert($txtTitle,$txtprice,$cmbUseStatus,$sysUser->getSystemUserID(),$cmbCountry,$cmbComponentGroup,time(),$txtDetails,"-1");
             $CarModelEnt->Insert($compid,$cmbCarModel);
             $ID=$compid;
 		}
 		else{
-            $cmp=$compEnt->Select($ID,null,null,null,null,$sysUser->getSystemUserID(),null,null,null,null,null,array(),array(),"0,1");
+            $cmp=$compEnt->Select($ID,null,null,null,null,$UserID,null,null,null,null,null,array(),array(),"0,1");
             if($cmp==null || count($cmp)<=0)
                 throw new ProductNotFoundException();
-                $compEnt->Update($ID,$txtTitle,$txtprice,$cmbUseStatus,$sysUser->getSystemUserID(),$cmbCountry,$cmbComponentGroup,time(),$txtDetails,"-1");
+                $compEnt->Update($ID,$txtTitle,$txtprice,$cmbUseStatus,$UserID,$cmbCountry,$cmbComponentGroup,time(),$txtDetails,"-1");
 
                 $carmods=$CarModelEnt->Select(null,$ID,null,array(),array(),"0,10000");
                 for($i=0;$i<count($carmods);$i++)

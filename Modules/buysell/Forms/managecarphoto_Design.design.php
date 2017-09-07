@@ -30,6 +30,24 @@ use Modules\common\PublicClasses\UrlParameter;
 */
 class managecarphoto_Design extends FormDesign {
 	private $Data;
+    private $PhotoPage;
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+        if($this->adminMode)
+        {
+            $this->PhotoPage="managecarphoto";
+        }
+        else
+        {
+            $this->PhotoPage="manageusercarphoto";
+        }
+    }
 	/**
 	 * @param mixed $Data
 	 */
@@ -84,7 +102,7 @@ class managecarphoto_Design extends FormDesign {
         for ($i=0;$i<count($this->Data['photos']);$i++)
         {
             $lb=new Lable("حذف");
-            $ar=new AppRooter($groupName,'managecarphoto');
+            $ar=new AppRooter($groupName,$this->PhotoPage);
             $ar->addParameter(new UrlParameter('photoid',$this->Data['photos'][$i]->getId()));
             $ar->addParameter(new UrlParameter('id',$this->Data['id']));
             $ar->addParameter(new UrlParameter('delete',null));

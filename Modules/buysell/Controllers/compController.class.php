@@ -1,5 +1,8 @@
 <?php
 namespace Modules\buysell\Controllers;
+use core\CoreClasses\db\FieldCondition;
+use core\CoreClasses\db\LogicalOperator;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\buysell\Entity\buysell_carmodelEntity;
@@ -39,7 +42,9 @@ class compController extends Controller {
 //            $result['component']['carmodel']=$CountEnt->Select($result['component']['country_fid'],null,null,array(),array(),"0,1")[0];
             $carModelID=$CarModelComponentEnt->Select(null,$ID,null,array(),array(),"0,1");
             $result['component']['carmodels']=$CarModelEnt->Select($carModelID[0]['carmodel_fid'],null,null,null,null,array('title'),array(false),"0,100");
-            $result['component']['user']=$user->Select(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$result['component']['role_systemuser_fid'],array(),array(),"0,1")[0];
+            $q=new QueryLogic();
+            $q->addCondition(new FieldCondition(buysell_userEntity::$ROLE_SYSTEMUSER_FID,$result['component']['role_systemuser_fid'],LogicalOperator::Equal));
+            $result['component']['user']=$user->FindOne($q);
 //            $result['component']['componentgroups']=$CompGroupEnt->Select(null,null,null,null,null,array('title'),array(false),"0,1000");
 		}
 		$DBAccessor->close_connection();

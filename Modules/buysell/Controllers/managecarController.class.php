@@ -2,11 +2,13 @@
 namespace Modules\buysell\Controllers;
 use core\CoreClasses\db\DBField;
 use core\CoreClasses\db\FieldCondition;
+use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\SweetDate;
 use Modules\buysell\Entity\buysell_carmakerEntity;
+use Modules\buysell\Exceptions\ProductNotFoundException;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use Modules\buysell\Entity\buysell_carEntity;
@@ -27,12 +29,24 @@ use Modules\buysell\Entity\buysell_carentitytypeEntity;
 *@SweetFrameworkVersion 1.018
 */
 class managecarController extends Controller {
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
+
     public function load($ID,$GroupID)
     {
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor=new dbaccess();
         $su=new sessionuser();
-        $role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$su->getSystemUserID();
         $result=array();
         $carEntityObject=new buysell_carEntity($DBAccessor);
         $body_carcolorEntityObject=new buysell_carcolorEntity($DBAccessor);
@@ -62,6 +76,8 @@ class managecarController extends Controller {
         $result['year']=$year;
         if($ID!=-1){
             $carEntityObject->setId($ID);
+            if($UserID!=null && $carEntityObject->getRole_systemuser_fid()!=$UserID)
+                throw new DataNotFoundException();
             $result['car']=$carEntityObject;
             $cmd=$carEntityObject->getCarmodel_fid();
             $carmodelEntityObject=new buysell_carmodelEntity($DBAccessor);
@@ -84,6 +100,9 @@ class managecarController extends Controller {
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$role_systemuser_fid;
 		$result=array();
         $adddate=time();
         $carEntityObject=null;
@@ -115,6 +134,8 @@ class managecarController extends Controller {
 		else{
 			$carEntityObject=new buysell_carEntity($DBAccessor);
 			$carEntityObject->setId($ID);
+            if($UserID!=null && $carEntityObject->getRole_systemuser_fid()!=$UserID)
+                throw new DataNotFoundException();
 			$carEntityObject->setDetails($details);
 			$carEntityObject->setPrice($price);
 			$carEntityObject->setBody_carcolor_fid($body_carcolor_fid);
@@ -122,7 +143,7 @@ class managecarController extends Controller {
 			$carEntityObject->setPaytype_fid($paytype_fid);
 			$carEntityObject->setCartype_fid($cartype_fid);
 			$carEntityObject->setUsagecount($usagecount);
-			$carEntityObject->setRole_systemuser_fid($role_systemuser_fid);
+//			$carEntityObject->setRole_systemuser_fid($role_systemuser_fid);
 			$carEntityObject->setWheretodate($wheretodate);
 			$carEntityObject->setCarbodystatus_fid($carbodystatus_fid);
 			$carEntityObject->setMakedate($makedate);

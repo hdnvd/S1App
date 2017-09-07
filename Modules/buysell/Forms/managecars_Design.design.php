@@ -25,6 +25,27 @@ use Modules\common\PublicClasses\UrlParameter;
 */
 class managecars_Design extends FormDesign {
 	private $Data;
+    private $ListPage;
+    private $ItemPage;
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+        if($this->adminMode)
+        {
+            $this->ListPage="managecars";
+            $this->ItemPage="managecar";
+        }
+        else
+        {
+            $this->ListPage="sell";
+            $this->ItemPage="manageusercar";
+        }
+    }
 	/**
 	 * @param mixed $Data
 	 */
@@ -225,7 +246,7 @@ class managecars_Design extends FormDesign {
 		$MessagePart->setClass("sweet_messagepart");
 		$MessagePart->addElement(new Lable($this->getMessage()));
 		$Page->addElement($MessagePart);
-		$addUrl=new AppRooter($groupName,'managecar');
+		$addUrl=new AppRooter($groupName,$this->ItemPage);
 		$LblAdd=new Lable('افزودن آگهی جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton');
@@ -240,10 +261,10 @@ class managecars_Design extends FormDesign {
 		$LTable1->addElement(new Lable('عملیات'));
 		$LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
-			$url=new AppRooter($groupName,'managecar');
+			$url=new AppRooter($groupName,$this->ItemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 
-			$delurl=new AppRooter($groupName,'sell');
+			$delurl=new AppRooter($groupName,$this->ListPage);
 			$delurl->setFileFormat(".html");
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));

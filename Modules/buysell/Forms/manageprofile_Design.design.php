@@ -3,20 +3,24 @@ namespace Modules\buysell\Forms;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\Div;
+use core\CoreClasses\html\link;
 use core\CoreClasses\html\Lable;
 use core\CoreClasses\html\TextBox;
 use core\CoreClasses\html\DataComboBox;
 use core\CoreClasses\html\SweetButton;
 use core\CoreClasses\html\CheckBox;
+use core\CoreClasses\html\RadioBox;
 use core\CoreClasses\html\SweetFrom;
 use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
+use Modules\common\PublicClasses\AppRooter;
+use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1395-11-21 - 2017-02-09 01:49
-*@lastUpdate 1395-11-21 - 2017-02-09 01:49
-*@SweetFrameworkHelperVersion 2.000
-*@SweetFrameworkVersion 1.017
+*@creationDate 1396-06-16 - 2017-09-07 01:34
+*@lastUpdate 1396-06-16 - 2017-09-07 01:34
+*@SweetFrameworkHelperVersion 2.002
+*@SweetFrameworkVersion 2.002
 */
 class manageprofile_Design extends FormDesign {
 	private $Data;
@@ -28,207 +32,241 @@ class manageprofile_Design extends FormDesign {
 		$this->Data = $Data;
 	}
 	/** @var textbox */
-	private $txtName;
+	private $name;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtName()
+	public function getName()
 	{
-		return $this->txtName;
+		return $this->name;
 	}
 	/** @var textbox */
-	private $txtFamily;
+	private $email;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtFamily()
+	public function getEmail()
 	{
-		return $this->txtFamily;
+		return $this->email;
 	}
 	/** @var textbox */
-	private $txtEmail;
+	private $tel;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtEmail()
+	public function getTel()
 	{
-		return $this->txtEmail;
+		return $this->tel;
 	}
 	/** @var textbox */
-	private $txtMobile;
+	private $mob;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtMobile()
+	public function getMob()
 	{
-		return $this->txtMobile;
+		return $this->mob;
 	}
 	/** @var textbox */
-	private $txtTel;
+	private $postalcode;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtTel()
+	public function getPostalcode()
 	{
-		return $this->txtTel;
+		return $this->postalcode;
+	}
+	/** @var ComboBox */
+	private $ismale;
+	/**
+	 * @return ComboBox
+	 */
+	public function getIsmale()
+	{
+		return $this->ismale;
 	}
 	/** @var combobox */
-	private $cmbIsmale;
+	private $common_city_fid;
 	/**
 	 * @return combobox
 	 */
-	public function getCmbIsmale()
+	public function getCommon_city_fid()
 	{
-		return $this->cmbIsmale;
-	}
-	/** @var combobox */
-	private $cmbCity;
-	/**
-	 * @return combobox
-	 */
-	public function getCmbCity()
-	{
-		return $this->cmbCity;
+		return $this->common_city_fid;
 	}
 	/** @var textbox */
-	private $txtAddress;
+	private $birthday;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtAddress()
+	public function getBirthday()
 	{
-		return $this->txtAddress;
-	}
-	/** @var textbox */
-	private $txtPostalCode;
-	/**
-	 * @return textbox
-	 */
-	public function getTxtPostalCode()
-	{
-		return $this->txtPostalCode;
+		return $this->birthday;
 	}
 	/** @var CheckBox */
-	private $chkShowcontactInfo;
+	private $ispayed;
 	/**
 	 * @return CheckBox
 	 */
-	public function getChkShowcontactInfo()
+	public function getIspayed()
 	{
-		return $this->chkShowcontactInfo;
+		return $this->ispayed;
 	}
-	/** @var lable */
-	private $lblCardInfo;
 	/** @var textbox */
-	private $txtCardNumber;
+	private $signupdate;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtCardNumber()
+	public function getSignupdate()
 	{
-		return $this->txtCardNumber;
+		return $this->signupdate;
 	}
 	/** @var textbox */
-	private $txtCardOwner;
+	private $photo;
 	/**
 	 * @return textbox
 	 */
-	public function getTxtCardOwner()
+	public function getPhoto()
 	{
-		return $this->txtCardOwner;
+		return $this->photo;
 	}
-	/** @var textbox */
-	private $cmbBank;
+	/** @var CheckBox */
+	private $is_info_visible;
 	/**
-	 * @return textbox
+	 * @return CheckBox
 	 */
-	public function getCmbBank()
+	public function getIs_info_visible()
 	{
-		return $this->cmbBank;
+		return $this->is_info_visible;
 	}
-	/** @var lable */
-	private $lblCarInfo;
 	/** @var combobox */
-	private $cmbCarMaker;
+	private $carmodel_fid;
 	/**
 	 * @return combobox
 	 */
-	public function getCmbCarMaker()
+	public function getCarmodel_fid()
 	{
-		return $this->cmbCarMaker;
-	}
-	/** @var combobox */
-	private $cmbCarModel;
-	/**
-	 * @return combobox
-	 */
-	public function getCmbCarModel()
-	{
-		return $this->cmbCarModel;
+		return $this->carmodel_fid;
 	}
 	/** @var SweetButton */
 	private $btnSave;
 	public function __construct()
 	{
-		$this->txtName= new textbox("txtName");
-		$this->txtFamily= new textbox("txtFamily");
-		$this->txtEmail= new textbox("txtEmail");
-		$this->txtMobile= new textbox("txtMobile");
-		$this->txtTel= new textbox("txtTel");
-		$this->cmbIsmale= new combobox("cmbIsmale");
-		$this->cmbCity= new combobox("cmbCity");
-		$this->txtAddress= new textbox("txtAddress");
-		$this->txtPostalCode= new textbox("txtPostalCode");
-		$this->chkShowcontactInfo= new CheckBox("chkShowcontactInfo");
-		$this->lblCardInfo= new lable("اطلاعات حساب بانکی");
-		$this->txtCardNumber= new textbox("txtCardNumber");
-		$this->txtCardOwner= new textbox("txtCardOwner");
-		$this->cmbBank= new textbox("cmbBank");
-		$this->lblCarInfo= new lable("اطلاعات ماشین");
-		$this->cmbCarMaker= new combobox("cmbCarMaker");
-		$this->cmbCarModel= new combobox("cmbCarModel");
+		$this->name= new textbox("name");
+		$this->email= new textbox("email");
+		$this->tel= new textbox("tel");
+		$this->mob= new textbox("mob");
+		$this->postalcode= new textbox("postalcode");
+		$this->ismale= new ComboBox("ismale");
+		$this->common_city_fid= new combobox("common_city_fid");
+		$this->birthday= new textbox("birthday");
+		$this->ispayed= new CheckBox("ispayed");
+		$this->signupdate= new textbox("signupdate");
+		$this->photo= new textbox("photo");
+		$this->is_info_visible= new CheckBox("is_info_visible");
+		$this->carmodel_fid= new combobox("carmodel_fid");
 		$this->btnSave= new SweetButton(true,"ذخیره");
 		$this->btnSave->setAction("btnSave");
 	}
 	public function getBodyHTML($command=null)
 	{
+		if (key_exists("user", $this->Data))
+			$this->name->setValue($this->Data['user']->getName());
+		if (key_exists("user", $this->Data))
+			$this->email->setValue($this->Data['user']->getEmail());
+		if (key_exists("user", $this->Data))
+			$this->tel->setValue($this->Data['user']->getTel());
+		if (key_exists("user", $this->Data))
+			$this->mob->setValue($this->Data['user']->getMob());
+		if (key_exists("user", $this->Data))
+			$this->postalcode->setValue($this->Data['user']->getPostalcode());
+		$this->ismale->addOption("1","آقا");
+        $this->ismale->addOption("0","خانم");
+		if (key_exists("user", $this->Data))
+			$this->ismale->setSelectedValue($this->Data['user']->getIsmale());
+		foreach ($this->Data['common_city_fid'] as $item)
+			$this->common_city_fid->addOption($item->getID(), $item->getTitle());
+		if (key_exists("user", $this->Data))
+			$this->common_city_fid->setSelectedValue($this->Data['user']->getCommon_city_fid());
+		if (key_exists("user", $this->Data))
+			$this->birthday->setValue($this->Data['user']->getBirthday());
+		$this->ispayed->addOption("ispayed","1");
+		if (key_exists("user", $this->Data))
+			$this->ispayed->addSelectedValue($this->Data['user']->getIspayed());
+		if (key_exists("user", $this->Data))
+			$this->signupdate->setValue($this->Data['user']->getSignupdate());
+		if (key_exists("user", $this->Data))
+			$this->photo->setValue($this->Data['user']->getPhoto());
+		$this->is_info_visible->addOption("نمایش اطلاعات تماس شما","1");
+		if (key_exists("user", $this->Data))
+			$this->is_info_visible->addSelectedValue($this->Data['user']->getIs_info_visible());
+		foreach ($this->Data['carmodel_fid'] as $item)
+			$this->carmodel_fid->addOption($item->getID(), $item->getTitle());
+		if (key_exists("user", $this->Data))
+			$this->carmodel_fid->setSelectedValue($this->Data['user']->getCarmodel_fid());
 		$Page=new Div();
-		$Page->setId("buysell_manageprofile");
-		$Page->addElement(new Lable("ویرایش پروفایل"));
 		$Page->setClass("sweet_formtitle");
+		$Page->setId("buysell_manageprofile");
+		$PageTitlePart=new Div();
+		$PageTitlePart->setClass("sweet_pagetitlepart");
+		$PageTitlePart->addElement(new Lable("مدیریت پروفایل"));
+		$Page->addElement($PageTitlePart);
+		$MessagePart=new Div();
+		$MessagePart->setClass("sweet_messagepart");
+		$MessagePart->addElement(new Lable($this->getMessage()));
+		$Page->addElement($MessagePart);
 		$LTable1=new ListTable(2);
-		$LTable1->addElement(new Lable("نام"));
-		$LTable1->addElement($this->txtName);
-		$LTable1->addElement(new Lable("نام خانوادگی"));
-		$LTable1->addElement($this->txtFamily);
+		$LTable1->setClass("formtable");
+		$LTable1->addElement(new Lable("نام و نام خانوادگی"));
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->name);
+		$LTable1->setLastElementClass('form_item_field');
 		$LTable1->addElement(new Lable("ایمیل"));
-		$LTable1->addElement($this->txtEmail);
-		$LTable1->addElement(new Lable("موبایل"));
-		$LTable1->addElement($this->txtMobile);
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->email);
+		$LTable1->setLastElementClass('form_item_field');
 		$LTable1->addElement(new Lable("تلفن"));
-		$LTable1->addElement($this->txtTel);
-		$LTable1->addElement(new Lable("جنسیت"));
-		$LTable1->addElement($this->cmbIsmale);
-		$LTable1->addElement(new Lable("شهر"));
-		$LTable1->addElement($this->cmbCity);
-		$LTable1->addElement(new Lable("آدرس"));
-		$LTable1->addElement($this->txtAddress);
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->tel);
+		$LTable1->setLastElementClass('form_item_field');
+		$LTable1->addElement(new Lable("تلفن همراه"));
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->mob);
+		$LTable1->setLastElementClass('form_item_field');
 		$LTable1->addElement(new Lable("کد پستی"));
-		$LTable1->addElement($this->txtPostalCode);
-		$LTable1->addElement($this->chkShowcontactInfo,2);
-		$LTable1->addElement($this->lblCardInfo,2);
-		$LTable1->addElement(new Lable("شماره کارت"));
-		$LTable1->addElement($this->txtCardNumber);
-		$LTable1->addElement(new Lable("به نام "));
-		$LTable1->addElement($this->txtCardOwner);
-		$LTable1->addElement(new Lable("بانک"));
-		$LTable1->addElement($this->cmbBank);
-		$LTable1->addElement($this->lblCarInfo,2);
-		$LTable1->addElement(new Lable("سازنده"));
-		$LTable1->addElement($this->cmbCarMaker);
-		$LTable1->addElement(new Lable("مدل"));
-		$LTable1->addElement($this->cmbCarModel);
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->postalcode);
+		$LTable1->setLastElementClass('form_item_field');
+        $LTable1->addElement(new Lable("جنسیت"));
+        $LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->ismale);
+		$LTable1->setLastElementClass('form_item_field');
+		$LTable1->addElement(new Lable("شهر"));
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->common_city_fid);
+		$LTable1->setLastElementClass('form_item_field');
+//		$LTable1->addElement(new Lable("تاریخ تولد"));
+//		$LTable1->setLastElementClass('form_item_caption');
+//		$LTable1->addElement($this->birthday);
+//		$LTable1->setLastElementClass('form_item_field');
+//		$LTable1->addElement($this->ispayed,2);
+//		$LTable1->setLastElementClass('form_item_checkbox');
+//		$LTable1->addElement(new Lable("signupdate"));
+//		$LTable1->setLastElementClass('form_item_caption');
+//		$LTable1->addElement($this->signupdate);
+//		$LTable1->setLastElementClass('form_item_field');
+//		$LTable1->addElement(new Lable("تصویر"));
+//		$LTable1->setLastElementClass('form_item_caption');
+//		$LTable1->addElement($this->photo);
+//		$LTable1->setLastElementClass('form_item_field');
+//		$LTable1->addElement($this->is_info_visible,2);
+//		$LTable1->setLastElementClass('form_item_checkbox');
+//		$LTable1->addElement(new Lable("carmodel_fid"));
+//		$LTable1->setLastElementClass('form_item_caption');
+//		$LTable1->addElement($this->carmodel_fid);
+//		$LTable1->setLastElementClass('form_item_field');
 		$LTable1->addElement($this->btnSave,2);
+		$LTable1->setLastElementClass('form_item_sweetbutton');
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();

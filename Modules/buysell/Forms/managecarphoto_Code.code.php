@@ -18,16 +18,26 @@ use Modules\files\PublicClasses\uploadHelper;
 *@SweetFrameworkVersion 1.018
 */
 class managecarphoto_Code extends FormCode {
+    private $adminMode=true;
 
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
     public function __construct($namespace=null)
     {
         parent::__construct($namespace);
         $this->setThemePage("admin.php");
         $this->setTitle("مدیریت تصویر خودرو");
+        $this->setAdminMode(true);
     }
 	public function load()
 	{
 		$managecarphotoController=new managecarphotoController();
+        $managecarphotoController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		if($this->getID()>=0)
@@ -39,6 +49,7 @@ class managecarphoto_Code extends FormCode {
                 $Result=$managecarphotoController->load($this->getID());
                 $Result['id']=$this->getID();
                 $design=new managecarphoto_Design();
+                $design->setAdminMode($this->adminMode);
                 $design->setData($Result);
                 $design->setMessage("");
                 $design->setGroupID($this->getHttpGETparameter('groupid',1));
@@ -64,9 +75,11 @@ class managecarphoto_Code extends FormCode {
 	public function btnAddNew_Click()
 	{
 		$managecarphotoController=new managecarphotoController();
+        $managecarphotoController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		$design=new managecarphoto_Design();
+        $design->setAdminMode($this->adminMode);
 		$flPhotoPaths=$design->getFlPhoto()->getSelectedFilesTempPath();
 		$flPhotoNames=$design->getFlPhoto()->getSelectedFilesName();
         $flPhotoTypes=$design->getFlPhoto()->getSelectedFilesType();

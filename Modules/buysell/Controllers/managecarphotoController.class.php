@@ -21,6 +21,15 @@ use Modules\users\PublicClasses\sessionuser;
 *@SweetFrameworkVersion 1.018
 */
 class managecarphotoController extends Controller {
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
 
     public function load($ID)
 	{
@@ -30,6 +39,10 @@ class managecarphotoController extends Controller {
         $phEnt=new buysell_carphotoEntity($DBAccessor);
         $CEnt=new buysell_carEntity($DBAccessor);
         $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$role_systemuser_fid;
 		if($ID!=-1){
             $q=new QueryLogic();
             $q->addCondition(new FieldCondition(buysell_carphotoEntity::$CAR_FID,$ID));
@@ -37,7 +50,8 @@ class managecarphotoController extends Controller {
             $result['photos']=$phEnt->FindAll($q);
             $carQL=new QueryLogic();
             $carQL->addCondition(new FieldCondition(new DBField("buysell_car." . buysell_carEntity::$ID,true),$ID));
-            $carQL->addCondition(new FieldCondition(buysell_carEntity::$ROLE_SYSTEMUSER_FID, $su->getSystemUserID()));
+            if($UserID!=null)
+                $carQL->addCondition(new FieldCondition(buysell_carEntity::$ROLE_SYSTEMUSER_FID, $UserID));
             $result['component']=$CEnt->FindOne($carQL);
             if($result['component']==null )
                 throw new ProductNotFoundException();
@@ -49,10 +63,15 @@ class managecarphotoController extends Controller {
 	private function checkCarExistance($CarID,dbaccess $DBAccessor)
     {
         $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$role_systemuser_fid;
         $CEnt=new buysell_carEntity($DBAccessor);
         $carQL=new QueryLogic();
         $carQL->addCondition(new FieldCondition(new DBField("buysell_car." . buysell_carEntity::$ID,true),$CarID));
-        $carQL->addCondition(new FieldCondition(buysell_carEntity::$ROLE_SYSTEMUSER_FID, $su->getSystemUserID()));
+        if($UserID!=null)
+            $carQL->addCondition(new FieldCondition(buysell_carEntity::$ROLE_SYSTEMUSER_FID, $UserID));
         $result['component']=$CEnt->FindOne($carQL);
         if($result['component']==null )
             throw new ProductNotFoundException();

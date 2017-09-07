@@ -23,20 +23,40 @@ use Modules\files\PublicClasses\uploadHelper;
  */
 class managecar_Code extends FormCode
 {
+    private $adminMode=true;
+    private $PhotoPage;
 
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+        if($this->adminMode)
+        {
+            $this->PhotoPage="managecarphoto";
+        }
+        else
+        {
+            $this->PhotoPage="manageusercarphoto";
+        }
+    }
     public function __construct($namespace=null)
     {
         parent::__construct($namespace);
         $this->setThemePage("admin.php");
         $this->setTitle("مدیریت خودرو");
+        $this->setAdminMode(true);
     }
     public function load()
     {
         $managecarController = new managecarController();
+        $managecarController->setAdminMode($this->adminMode);
         $translator = new ModuleTranslator("buysell");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         $Result = $managecarController->load($this->getID(),$this->getHttpGETparameter('groupid',1));
         $design = new managecar_Design();
+        $design->setAdminMode($this->adminMode);
         $design->setData($Result);
         $design->setMessage("");
         return $design->getResponse();
@@ -53,10 +73,12 @@ class managecar_Code extends FormCode
     public function btnSave_Click()
     {
         $design = new managecar_Design();
+        $design->setAdminMode($this->adminMode);
         $recaptchaStatus = $design->getRecaptcha()->getValidationStatus();
         if ($recaptchaStatus == GRecaptchaValidationStatus::$VALID) {
             try {
                 $managecarController = new managecarController();
+                $managecarController->setAdminMode($this->adminMode);
                 $translator = new ModuleTranslator("buysell");
                 $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
                 $details = $design->getDetails()->getValue();
@@ -83,7 +105,7 @@ class managecar_Code extends FormCode
                 $cg=new CarGroups();
                 $groupName=$cg->getGroupName($carGroup);
                 if ($Result['id'] >= 0) {
-                    $Ar = new AppRooter($groupName, 'managecarphoto');
+                    $Ar = new AppRooter($groupName, $this->PhotoPage);
                     $Ar->addParameter(new UrlParameter('id', $Result['id']));
                     $design->setMessage(AppRooter::redirect($Ar->getAbsoluteURL()));
                 } else {

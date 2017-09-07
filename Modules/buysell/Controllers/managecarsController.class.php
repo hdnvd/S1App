@@ -2,6 +2,7 @@
 namespace Modules\buysell\Controllers;
 use core\CoreClasses\db\DBField;
 use core\CoreClasses\db\FieldCondition;
+use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\buysell\Entity\buysell_carmakerEntity;
@@ -18,6 +19,15 @@ use Modules\buysell\Entity\buysell_carEntity;
 *@SweetFrameworkVersion 2.001
 */
 class managecarsController extends Controller {
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
 	private $PAGESIZE=10;
 	public function load($PageNum,$GroupID)
 	{
@@ -25,12 +35,17 @@ class managecarsController extends Controller {
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$role_systemuser_fid;
 		$result=array();
 		if($PageNum<=0)
 			$PageNum=1;
 		$carEnt=new buysell_carEntity($DBAccessor);
 		$q=new QueryLogic();
         $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
+        if($UserID!=null)
+            $q->addCondition(new FieldCondition(buysell_carEntity::$ROLE_SYSTEMUSER_FID,$UserID));
 		$allcount=$carEnt->FindAllCount($q);
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
 		$q->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
@@ -54,11 +69,18 @@ class managecarsController extends Controller {
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
+        $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->adminMode)
+            $UserID=$role_systemuser_fid;
 		$carEnt=new buysell_carEntity($DBAccessor);
 		$carEnt->setId($ID);
+        if($UserID!=null && $carEnt->getRole_systemuser_fid()!=$UserID)
+            throw new DataNotFoundException();
 		$carEnt->Remove();
+        $DBAccessor->close_connection();
 		return $this->load(-1,$GroupID);
-		$DBAccessor->close_connection();
 	}
 }
 ?>

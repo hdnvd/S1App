@@ -14,15 +14,26 @@ use Modules\files\PublicClasses\uploadHelper;
 */
 class managecars_Code extends FormCode {
 
+    private $adminMode=true;
+
+    /**
+     * @param bool $adminMode
+     */
+    public function setAdminMode($adminMode)
+    {
+        $this->adminMode = $adminMode;
+    }
     public function __construct($namespace=null)
     {
         parent::__construct($namespace);
         $this->setThemePage("admin.php");
         $this->setTitle("مدیریت خودروها");
+        $this->setAdminMode(true);
     }
 	public function load()
 	{
 		$managecarsController=new managecarsController();
+        $managecarsController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("buysell");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		if(isset($_GET['delete']))
@@ -31,6 +42,7 @@ class managecars_Code extends FormCode {
 			$Result=$managecarsController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('groupid',1));
 		}
 		$design=new managecars_Design();
+        $design->setAdminMode($this->adminMode);
 		$design->setData($Result);
 		$design->setMessage("");
 		return $design->getBodyHTML();
