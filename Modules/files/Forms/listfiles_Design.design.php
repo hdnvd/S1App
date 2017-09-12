@@ -19,30 +19,32 @@ class listfiles_Design extends FormDesign {
 	public function getBodyHTML($command=null)
 	{
 		$Page=new ListTable(4);
-		
+
 		$lblIndex=new Lable($this->lblIndexTitle);
 		$Page->addElement($lblIndex);
-			
+
 		$lblfilename=new Lable($this->lblfilename);
 		$Page->addElement($lblfilename);
-			
+
 		$lblfiletitle=new Lable($this->lblfiletitle);
 		$Page->addElement($lblfiletitle);
-			
+
 		$lblviewlink=new Lable($this->lblviewlinks);
 		$Page->addElement($lblviewlink);
-		
+
 		for($i=0;$i<count($this->lblfilenames);$i++)
 		{
 			$lblIndex=new Lable($i+1);
 			$Page->addElement($lblIndex);
-			
+
 			$lblfilename=new Lable($this->lblfilenames[$i]);
+			$lblfilename->setClass("files_filename");
+			$lblfilename->SetAttribute("data-src",$this->viewlinks[$i]);
 			$Page->addElement($lblfilename);
-			
+
 			$lblfiletitle=new Lable($this->lblfiletitles[$i]);
 			$Page->addElement($lblfiletitle);
-			
+
 			$viewlink=new link($this->viewlinks[$i],$this->viewTitle);
 			$Page->addElement($viewlink);
 		}

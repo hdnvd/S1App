@@ -118,6 +118,7 @@ class carlistController extends Controller {
 	}
     public function Search($PageNum,$details,$pricemin,$pricemax,$adddate,$body_carcolor_fid,$inner_carcolor_fid,$paytype_fid,$cartype_fid,$usagecountmin,$usagecountmax,$wheretodate,$carbodystatus_fid,$makedatemin,$makedatemax,$carstatus_fid,$shasitype_fid,$isautogearbox,$carmodel_fid,$cartagtype_fid,$carentitytype_fid,$sortby,$isdesc,$GroupID,$carmaker_fid)
     {
+        $AllowedSortFields=["price"=>true,""=>true,"adddate"=>true,"usagecount"=>true,"makedate"=>true,"carmodel_fid"=>true];
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor=new dbaccess();
         $su=new sessionuser();
@@ -188,7 +189,8 @@ class carlistController extends Controller {
         if($carentitytype_fid!="")
             $q->addCondition(new FieldCondition("carentitytype_fid","$carentitytype_fid",LogicalOperator::Equal));
         $q->addCondition(new FieldCondition("cargroup_fid",$GroupID));
-        $q->addOrderBy($sortby,$isdesc);
+        if(key_exists($sortby,$AllowedSortFields))
+            $q->addOrderBy($sortby,$isdesc);
         $q->addResultField(new DBField("buysell_car.*",true));
 
         $allcount=$carEnt->FindAllCount($q);
