@@ -31,3 +31,33 @@
 *1-Added getCanonicalURL to both pages
 **/
 ?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.002
+*@SweetFrameworkVersion 1.021
+*@Date 1396-06-28 - 2017-09-19 17:32
+*@Module Name company
+*@ActionTitle Regenerate WholeFormFiles For orderhome
+*@ActionCode 1
+*/
+?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.002
+*@SweetFrameworkVersion 1.021
+*@Date 1396-06-28 - 2017-09-19 17:35
+*@Module Name company
+*@ActionTitle Regenerate WholeFormFiles For orderhome
+*@ActionCode 1
+*/
+?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.002
+*@SweetFrameworkVersion 1.021
+*@Date 1396-06-28 - 2017-09-19 17:36
+*@Module Name company
+*@ActionTitle Regenerate WholeFormFiles For orderhome
+*@ActionCode 1
+*/
+?>

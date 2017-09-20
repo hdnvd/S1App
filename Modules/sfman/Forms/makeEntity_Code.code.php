@@ -6,6 +6,7 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\sfman\Controllers\makeEntityController;
 use Modules\files\PublicClasses\uploadHelper;
 use Modules\sfman\Controllers\manageDBformController;
+use Modules\sfman\Controllers\manageDBUserFormController;
 use Modules\sfman\Controllers\manageformController;
 
 /**
@@ -40,25 +41,25 @@ class makeEntity_Code extends FormCode {
 		$translator=new ModuleTranslator("sfman");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		$design=new makeEntity_Design();
-		$txtModule=$design->getTxtModule()->getValue();
+		$cmbModule=$design->getCmbModule()->getSelectedID();
 		$txtEntity=$design->getTxtEntity()->getValue();
-		$Result=$makeEntityController->BtnGenerate($this->getID(),$txtModule,$txtEntity);
+		$Result=$makeEntityController->BtnGenerate($this->getID(),$cmbModule,$txtEntity);
 		$design->setData($Result);
-		$design->setMessage("btnGenerate is done!");
+		$design->setMessage("the Entity Class Made Successfully!");
 		return $design->getBodyHTML();
 	}
     public function btnGenerateForms_Click()
     {
-        $manageformController=new manageDBformController($this->getModuleName());
+        $manageformController=new manageDBUserFormController($this->getModuleName());
         $translator=new ModuleTranslator("sfman");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         $design=new makeEntity_Design();
-        $txtModule=$design->getTxtModule()->getValue();
+        $cmbModule=$design->getCmbModule()->getSelectedID();
         $txtEntity=$design->getTxtEntity()->getValue();
         $chkItemsToGenerate=$design->getChkItemsToGenerate();
-        $Result=$manageformController->generateManageForms($chkItemsToGenerate->getSelectedValues(),$txtModule,$txtEntity);
+        $Result=$manageformController->generateManageForms($chkItemsToGenerate->getSelectedValues(),$cmbModule,$txtEntity);
         $design->setData($Result);
-        $design->setMessage("btnGenerateForms is done!");
+        $design->setMessage("All Forms Generated Successfully!");
         return $design->getBodyHTML();
     }
 }

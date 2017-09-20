@@ -31,14 +31,14 @@ class makeEntity_Design extends FormDesign {
 	{
 		$this->Data = $Data;
 	}
-	/** @var textbox */
-	private $txtModule;
+	/** @var ComboBox */
+	private $cmbModule;
 	/**
-	 * @return textbox
+	 * @return ComboBox
 	 */
-	public function getTxtModule()
+	public function getCmbModule()
 	{
-		return $this->txtModule;
+		return $this->cmbModule;
 	}
 	/** @var textbox */
 	private $txtEntity;
@@ -65,7 +65,7 @@ class makeEntity_Design extends FormDesign {
     private $btnGenerateForms;
 	public function __construct()
 	{
-		$this->txtModule= new textbox("txtModule");
+		$this->cmbModule= new ComboBox("cmbModule");
 		$this->txtEntity= new textbox("txtEntity");
         $this->chkItemsToGenerate= new CheckBox("chkItemstoGenerate[]");
 
@@ -73,6 +73,8 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addSelectedValue("manage_list_controller");
         $this->chkItemsToGenerate->addOption("Manage List Code","manage_list_code");
         $this->chkItemsToGenerate->addSelectedValue("manage_list_code");
+        $this->chkItemsToGenerate->addOption("Manage User List Code","manage_userlist_code");
+        $this->chkItemsToGenerate->addSelectedValue("manage_userlist_code");
         $this->chkItemsToGenerate->addOption("Manage List Design","manage_list_design");
         $this->chkItemsToGenerate->addSelectedValue("manage_list_design");
 
@@ -80,6 +82,8 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addSelectedValue("manage_item_controller");
         $this->chkItemsToGenerate->addOption("Manage Item Code","manage_item_code");
         $this->chkItemsToGenerate->addSelectedValue("manage_item_code");
+        $this->chkItemsToGenerate->addOption("Manage User Item Code","manage_useritem_code");
+        $this->chkItemsToGenerate->addSelectedValue("manage_useritem_code");
         $this->chkItemsToGenerate->addOption("Manage Item Design","manage_item_design");
         $this->chkItemsToGenerate->addSelectedValue("manage_item_design");
 
@@ -106,6 +110,9 @@ class makeEntity_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+	    $ModuleCount=count($this->Data['modules']);
+	    for ($i=0;$i<$ModuleCount;$i++)
+            $this->cmbModule->addOption($this->Data['modules'][$i]->getID(),$this->Data['modules'][$i]->getCaption());
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("sfman_makeEntity");
@@ -119,7 +126,7 @@ class makeEntity_Design extends FormDesign {
 		$Page->addElement($MessagePart);
 		$LTable1=new ListTable(2);
 		$LTable1->addElement(new Lable("ماژول"));
-		$LTable1->addElement($this->txtModule);
+		$LTable1->addElement($this->cmbModule);
 		$LTable1->addElement(new Lable("عنوان کلاس"));
 		$LTable1->addElement($this->txtEntity);
         $LTable1->addElement(new Lable("فرم های تولیدی"));

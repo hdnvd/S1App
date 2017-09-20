@@ -20,20 +20,52 @@ use Modules\sfman\Entity\sfman_tableEntity;
  *@SweetFrameworkHelperVersion 1.112
 */
 
-class manageDBFormController extends baseFormCodeGenerator {
+abstract class manageDBFormController extends BaseManageDBFormController {
     private $TableName;
-    private $TableFields;
+
+    /**
+     * @param mixed $TableName
+     */
+    public function setTableName($TableName)
+    {
+        $this->TableName = $TableName;
+    }
+    private $CurrentTableFields;
+
+    /**
+     * @param mixed $CurrentTableFields
+     */
+    public function setCurrentTableFields($CurrentTableFields)
+    {
+        $this->CurrentTableFields = $CurrentTableFields;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentTableFields()
+    {
+        return $this->CurrentTableFields;
+    }
 
     private $IsManagerForm=false;
 
-	private function getTableFields($TableName)
+    /**
+     * @return mixed
+     */
+    public function getTableName()
+    {
+        return $this->TableName;
+    }
+
+	protected function getTableFields($TableName)
     {
         $tblEnt=new sfman_tableEntity(null,$TableName);
         return $tblEnt->GetCollumns();
     }
-    private function getFieldName($i)
+    protected function getFieldName($i)
     {
-        $fl = $this->TableFields[$i];
+        $fl = $this->CurrentTableFields[$i];
         $Last4Chars = substr($fl, strlen($fl) - 4);
         $EntityName=null;
         $FT=FieldType::getFieldType($fl);
@@ -46,139 +78,35 @@ class manageDBFormController extends baseFormCodeGenerator {
         }
         return $EntityName;
     }
-    private function getEntityObjectFieldSetCode($ObjectName,$EntityClassName)
+    protected function getEntityObjectFieldSetCode($ObjectName,$EntityClassName,$isInsert)
     {
         $InsertCode = "";
-        for($i=0;$i<count($this->TableFields);$i++)
+        for($i=0; $i<count($this->CurrentTableFields); $i++)
         {
-            if(FieldType::getFieldType($this->TableFields[$i])!=FieldType::$METAINF && FieldType::getFieldType($this->TableFields[$i])!=FieldType::$ID){
-                $UCField=$this->TableFields[$i];
+            if(FieldType::getFieldType($this->CurrentTableFields[$i])!=FieldType::$METAINF && FieldType::getFieldType($this->CurrentTableFields[$i])!=FieldType::$ID){
+                $UCField=$this->CurrentTableFields[$i];
 
-                $InsertCode .= "\n\t\t\t$ObjectName" . "->set" . ucwords($UCField) . "(\$$UCField";
-                if(FieldType::getFieldType($this->TableFields[$i])==FieldType::$FILE)
-                    $InsertCode .="[0]['url']";
-                $InsertCode .=");";
+                if($isInsert || trim(strtolower($UCField))!="role_systemuser_fid")
+                {
+                    $InsertCode .= "\n\t\t\t$ObjectName" . "->set" . ucwords($UCField) . "(\$$UCField";
+                    if(FieldType::getFieldType($this->CurrentTableFields[$i])==FieldType::$FILE)
+                        $InsertCode .="[0]['url']";
+                    $InsertCode .=");";
+                }
+
             }
 
         }
         return $InsertCode;
     }
-    private function getIsItemSelected($FormsToGenerate,$ItemName)
+    protected function getIsItemSelected($FormsToGenerate,$ItemName)
     {
         if($FormsToGenerate!=null && array_search($ItemName,$FormsToGenerate)!==false)
             return true;
         return false;
     }
-    public function generateManageForms($FormsToGenerate,$Module,$TableName)
-	{
-        $this->TableName=$TableName;
-        $this->setCodeModuleName($Module);
-        $fName=$TableName;
-        $fName="manage" . $fName;
-        $this->setFormName($fName);
-        $this->setFormCaption($fName);
-        $this->MakeModuleDirectories();
-        $this->TableFields=$this->getTableFields($Module . "_" . $this->TableName);
-        $formInfo['module']['name']=$Module;
-        $formInfo['form']['name']="manage".$TableName;
-        $formInfo['form']['caption']="manage ".$TableName;
-        $skippedCollumns=0;
-        for($i=0;$i<count($this->TableFields);$i++) {
-            $E=$this->TableFields[$i];
-            $FT=FieldType::getFieldType($E);
-            if($FT==FieldType::$METAINF || $FT==FieldType::$ID)
-                $skippedCollumns++;
-            else
-            {
-                $formInfo['elements'][$i-$skippedCollumns]['name']=$E;
-                $formInfo['elements'][$i-$skippedCollumns]['caption']=$E;
-                if($FT==FieldType::$FID)
-                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=3;
-                elseif($FT==FieldType::$FILE)
-                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=6;
-                elseif($FT==FieldType::$BOOLEAN)
-                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=5;
-                else
-                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=2;
-            }
-        }
-        $DBAccessor=new dbaccess();
-        $eTEnt=new sfman_formelementtypeEntity($DBAccessor);
-        $formInfo['elementtypes']=$eTEnt->Select(null,null,null,array('id'),array(false),"0,50");
-        $DBAccessor->close_connection();
 
-        $this->TableName=$TableName;
-        $formInfo2=$formInfo;
-        $formInfo2['elements'][$i-$skippedCollumns]['name']="btnSave";
-        $formInfo2['elements'][$i-$skippedCollumns]['caption']="ذخیره";
-        $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=7;
-        if($this->getIsItemSelected($FormsToGenerate,"manage_item_controller"))
-            $this->makeTableItemManageController($formInfo2);
-        if($this->getIsItemSelected($FormsToGenerate,"manage_item_code"))
-            $this->makeTableItemManageCode($formInfo2);
-        if($this->getIsItemSelected($FormsToGenerate,"manage_item_design"))
-            $this->makeTableItemManageDesign($formInfo2);
-
-        $formInfo['form']['name']="manage".$TableName . "s";
-        $formInfo['form']['caption']=$formInfo['form']['name'];
-        $this->setFormName($formInfo['form']['name']);
-        $this->setFormCaption($formInfo['form']['name']);
-        if($this->getIsItemSelected($FormsToGenerate,"manage_list_controller"))
-            $this->makeTableManageListController($formInfo);
-        if($this->getIsItemSelected($FormsToGenerate,"manage_list_code"))
-            $this->makeTableManageListCode($formInfo);
-        if($this->getIsItemSelected($FormsToGenerate,"manage_list_design"))
-            $this->makeTableManageListDesign($formInfo);
-
-
-        $formInfo['form']['name']=$TableName ;
-        $formInfo['form']['caption']=$formInfo['form']['name'];
-        $this->setFormName($formInfo['form']['name']);
-        $this->setFormCaption($formInfo['form']['name']);
-        if($this->getIsItemSelected($FormsToGenerate,"item_display_controller"))
-            $this->makeTableItemController($formInfo);
-        if($this->getIsItemSelected($FormsToGenerate,"item_display_code"))
-            $this->makeTableItemCode($formInfo);
-        if($this->getIsItemSelected($FormsToGenerate,"item_display_design"))
-            $this->makeTableItemDesign($formInfo);
-
-
-        $formInfo2['elements'][$i-$skippedCollumns]['name']="sortby";
-        $formInfo2['elements'][$i-$skippedCollumns]['caption']="مرتب سازی بر اساس";
-        $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=3;
-        $i++;
-        $formInfo2['elements'][$i-$skippedCollumns]['name']="isdesc";
-        $formInfo2['elements'][$i-$skippedCollumns]['caption']="نوع مرتب سازی";
-        $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=3;
-        $i++;
-        $formInfo2['elements'][$i-$skippedCollumns]['name']="search";
-        $formInfo2['elements'][$i-$skippedCollumns]['caption']="جستجو";
-        $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=7;
-        $skippedCollumns=0;
-        for($i=0;$i+$skippedCollumns<count($formInfo2['elements']);$i++) {
-            if($formInfo2['elements'][$i]['type_fid']==6) {
-                array_splice($formInfo2['elements'],$i + $skippedCollumns,1);
-                $skippedCollumns++;
-            }
-        }
-        $formInfo2['form']['name']=$TableName . "list";
-        $formInfo2['form']['caption']=$formInfo2['form']['name'];
-        $this->setFormName($formInfo2['form']['name']);
-        $this->setFormCaption($formInfo2['form']['name']);
-        if($this->getIsItemSelected($FormsToGenerate,"list_controller"))
-            $this->makeTableListController($formInfo2);
-        if($this->getIsItemSelected($FormsToGenerate,"list_code"))
-            $this->makeTableListCode($formInfo2);
-        if($this->getIsItemSelected($FormsToGenerate,"list_design"))
-            $this->makeTableListDesign($formInfo2);
-
-        if($this->getIsItemSelected($FormsToGenerate,"search_design"))
-            $this->makeTableSearchDesign($formInfo2);
-
-
-
-    }
-    private function getTableItemControllerTopCode($formInfo)
+    protected function getTableItemControllerTopCode($formInfo,$isManager)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$this->getCodeModuleName();
@@ -189,7 +117,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= $this->getControllerNamespaceDefiner();
         $C .= $this->getControllerUsage();
         $C .= "\nuse Modules\\$moduleName\\Entity\\$EntityClassName;";
-        for($i=0;$i<count($this->TableFields);$i++) {
+        for($i=0; $i<count($this->CurrentTableFields); $i++) {
             $fl1=$this->getFieldName($i);
             if($fl1!=null && array_search($fl1,$EntityNames)==null) {
                 $fl = $moduleName . "_" . $fl1 . "Entity";
@@ -199,40 +127,57 @@ class manageDBFormController extends baseFormCodeGenerator {
         }
         $C.=$this->getFileInfoComment();
         $C .= "\nclass $formName" . "Controller extends Controller {";
+        if($isManager)
+            $C.=<<<EOT
+    \nprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+EOT;
         $C .= "\n\tpublic function load(\$ID)";
         $C .= "\n\t{";
-        $C .= $this->getControllerActionInits();
+        $C .= $this->getControllerActionInits($isManager);
         $ObjectName="\$" . $this->TableName . "EntityObject";
         $C .= "\n\t\t$ObjectName=new $EntityClassName(\$DBAccessor);";
         return $C;
     }
-    private function getTableItemControllerLoadCode($formInfo)
+    protected function getTableItemControllerLoadCode($formInfo,$isManager)
     {
         $ObjectName="\$" . $this->TableName . "EntityObject";
         $C = "\n\t\tif(\$ID!=-1){";
         $C .= "\n\t\t\t$ObjectName" . "->setId(\$ID);";
         $C .= "\n\t\t\t" . "if($ObjectName" . "->getId()==-1)";
         $C .= "\n\t\t\t\tthrow new DataNotFoundException();";
+        if($isManager)
+        {
+            $C .="\n\t\t\tif(\$UserID!=null && $ObjectName" . "->getRole_systemuser_fid()!=\$UserID)";
+            $C .= "\n\t\t\t\tthrow new DataNotFoundException();";
+        }
         $C .= "\n\t\t\t\$result['".$this->TableName."']=$ObjectName;";
 
         return $C;
     }
-    private function makeTableItemController($formInfo)
+    protected function makeTableItemController($formInfo)
     {
         $moduleName=$this->getCodeModuleName();
-        $C =$this->getTableItemControllerTopCode($formInfo);
-        $C .= $this->getTableItemControllerLoadCode($formInfo);
-        for($i=0;$i<count($this->TableFields);$i++) {
+        $C =$this->getTableItemControllerTopCode($formInfo,false);
+        $C .= $this->getTableItemControllerLoadCode($formInfo,false);
+        for($i=0; $i<count($this->CurrentTableFields); $i++) {
             $fl1=$this->getFieldName($i);
-            if($fl1!=null && FieldType::getFieldType($this->TableFields[$i])==FieldType::$FID) {
+            if($fl1!=null && FieldType::getFieldType($this->CurrentTableFields[$i])==FieldType::$FID) {
                 $fl = $moduleName . "_" . $fl1 . "Entity";
-                $FiledName=substr($this->TableFields[$i],0,strlen($this->TableFields[$i])-4);
+                $FiledName=substr($this->CurrentTableFields[$i],0,strlen($this->CurrentTableFields[$i])-4);
                 $ObjectName2="\$" . $FiledName . "EntityObject";
                 $C .= "\n\t\t\t$ObjectName2=new " .  $fl . "(\$DBAccessor);";
-                $C .= "\n\t\t\t$ObjectName2" . "->SetId(\$result['".$this->TableName."']->get".ucwords($this->TableFields[$i])."());";
+                $C .= "\n\t\t\t$ObjectName2" . "->SetId(\$result['".$this->TableName."']->get".ucwords($this->CurrentTableFields[$i])."());";
                 $C .= "\n\t\t\tif($ObjectName2" . "->getId()==-1)";
                 $C .= "\n\t\t\t\tthrow new DataNotFoundException();";
-                $C .= "\n\t\t\t\$result['" . $this->TableFields[$i] . "']=$ObjectName2;";
+                $C .= "\n\t\t\t\$result['" . $this->CurrentTableFields[$i] . "']=$ObjectName2;";
             }
         }
         $C .="\n\t\t}";
@@ -249,21 +194,21 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getControllerFile(),0777);
 
     }
-    private function makeTableItemManageController($formInfo)
+    protected function makeTableItemManageController($formInfo)
     {
         $moduleName=$this->getCodeModuleName();
-        $C =$this->getTableItemControllerTopCode($formInfo);
-        for($i=0;$i<count($this->TableFields);$i++) {
+        $C =$this->getTableItemControllerTopCode($formInfo,true);
+        for($i=0; $i<count($this->CurrentTableFields); $i++) {
             $fl1=$this->getFieldName($i);
-            if($fl1!=null &&  FieldType::getFieldType($this->TableFields[$i])==FieldType::$FID) {
+            if($fl1!=null &&  FieldType::getFieldType($this->CurrentTableFields[$i])==FieldType::$FID) {
                 $fl = $moduleName . "_" . $fl1 . "Entity";
-                $FiledName=substr($this->TableFields[$i],0,strlen($this->TableFields[$i])-4);
+                $FiledName=substr($this->CurrentTableFields[$i],0,strlen($this->CurrentTableFields[$i])-4);
                 $ObjectName2="\$" . $FiledName . "EntityObject";
                 $C .= "\n\t\t\t$ObjectName2=new " .  $fl . "(\$DBAccessor);";
-                $C .= "\n\t\t\t\$result['" . $this->TableFields[$i] . "']=$ObjectName2" . "->FindAll(new QueryLogic());";
+                $C .= "\n\t\t\t\$result['" . $this->CurrentTableFields[$i] . "']=$ObjectName2" . "->FindAll(new QueryLogic());";
             }
         }
-        $C .= $this->getTableItemControllerLoadCode($formInfo);
+        $C .= $this->getTableItemControllerLoadCode($formInfo,true);
         $C .="\n\t\t}";
         $C .= "\n\t\t\$result['param1']=\"\";";
         $C .= "\n\t\t\$DBAccessor->close_connection();";
@@ -272,8 +217,7 @@ class manageDBFormController extends baseFormCodeGenerator {
 
         for($i=0;$i<count($formInfo['elements']);$i++)
             if($formInfo['elements'][$i]['type_fid']==7)
-                $C.=$this->getActionFormController($formInfo,$formInfo['elements'][$i]['name']);
-
+                $C.=$this->getActionFormController($formInfo,$formInfo['elements'][$i]['name'],true);
         $C .= "\n}";
         $C .= "\n?>";
         file_put_contents($this->getControllerFile(), $C);
@@ -281,7 +225,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getControllerFile(),0777);
 
     }
-    private function getTableItemDesignElementDefineCode($formInfo,$i)
+    protected function getTableItemDesignElementDefineCode($formInfo,$i)
     {
         $E = $formInfo['elements'][$i];
         $ind = $this->getTypeIndex($formInfo['elementtypes'], $E['type_fid']);
@@ -294,7 +238,7 @@ class manageDBFormController extends baseFormCodeGenerator {
             $C .= $this->getGetterCode($E['name'], $EType);
         return $C;
     }
-	private function getFieldFillCode($formInfo,$AddEmptyOption=false)
+	protected function getFieldFillCode($formInfo,$AddEmptyOption=false)
     {
         $TableName=$this->TableName;
         $FieldFillCode="";
@@ -325,7 +269,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         }
         return $FieldFillCode;
     }
-    private function makeTableItemManageDesign($formInfo)
+    protected function makeTableItemManageDesign($formInfo)
     {
         $FormName=$formInfo['form']['name'];
         $C = "<?php";
@@ -334,8 +278,18 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C.=$this->getFileInfoComment();
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
-
         $C.=$this->getSetterCode("Data","mixed");
+            $C.=<<<EOT
+    \nprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+EOT;
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
@@ -373,7 +327,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getDesignFile(),0777);
 
     }
-    private function makeTableItemDesign($formInfo)
+    protected function makeTableItemDesign($formInfo)
     {
         $TableName=$this->TableName;
         $FormName=$formInfo['form']['name'];
@@ -447,9 +401,11 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getDesignFile(),0777);
 
     }
-    private function getPaginationPartCode($forminfo)
+    protected function getPaginationPartCode($forminfo,$isManager)
     {
-        $FormName=$forminfo['form']['name'];
+        $FormName="\"" . $forminfo['form']['name'] . "\"";
+        if($isManager)
+            $FormName="\$this->listPage";
         $C = "\n\tprivate function getPaginationPart(\$PageCount)";
         $C .= "\n\t{";
         $C .= "\n\t\t\$div=new Div();";
@@ -457,10 +413,10 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= "\n\t\t{";
         $C .= "\n\t\t\t\$RTR=null;";
         $C .= "\n\t\t\tif(isset(\$_GET['action']) && \$_GET['action']==\"search_Click\")";
-        $C .= "\n\t\t\t\t\$RTR=new AppRooter(\"" . $this->getCodeModuleName() . "\",\"$FormName\");";
+        $C .= "\n\t\t\t\t\$RTR=new AppRooter(\"" . $this->getCodeModuleName() . "\",$FormName);";
         $C .= "\n\t\t\telse";
         $C .= "\n\t\t\t{";
-        $C .= "\n\t\t\t\t\$RTR=new AppRooter(\"" . $this->getCodeModuleName() . "\",\"$FormName\");";
+        $C .= "\n\t\t\t\t\$RTR=new AppRooter(\"" . $this->getCodeModuleName() . "\",$FormName);";
         $C .= "\n\t\t\t\t//\$RTR->addParameter(new UrlParameter(\"g\",\$this->Data['groupid']));";
         $C .= "\n\t\t\t}";
         $C .= "\n\t\t\t\$RTR->addParameter(new UrlParameter(\"pn\",\$i));";
@@ -473,7 +429,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= "\n\t}";
         return $C;
     }
-    private function makeTableManageListDesign($formInfo)
+    protected function makeTableManageListDesign($formInfo)
     {
         $TableName=$this->TableName;
         $ModuleName=$formInfo['module']['name'];
@@ -485,13 +441,37 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
+        $TableNameDotS=$TableName."s";
+            $C.=<<<EOT
+    \nprivate \$adminMode=true;
+    \nprivate \$listPage;
+    \nprivate \$itemPage;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+        if(\$adminMode==true)
+        {
+            \$this->itemPage = 'manage$TableName';
+            \$this->listPage = 'manage$TableNameDotS';
+        }
+        else
+        {
+            \$this->itemPage = 'manageuser$TableName';
+            \$this->listPage = 'manageuser$TableNameDotS';
+        }
+    }
+EOT;
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
         $C .="\n\t}";
         $C .="\n\tpublic function getBodyHTML(\$command=null)";
         $C .="\n\t{";
         $C .=$this->getDesignTopPartCode();
-        $C .="\n\t\t\$addUrl=new AppRooter('$ModuleName','manage$TableName');";
+        $C .="\n\t\t\$addUrl=new AppRooter('$ModuleName',\$this->itemPage);";
         $C .="\n\t\t\$LblAdd=new Lable('Add New Item');";
         $C .="\n\t\t\$lnkAdd=new link(\$addUrl->getAbsoluteURL(),\$LblAdd);";
         $C .="\n\t\t\$lnkAdd->setClass('linkbutton');";
@@ -506,13 +486,13 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .="\n\t\t\$LTable1->addElement(new Lable('عملیات'));";
         $C .="\n\t\t\$LTable1->setLastElementClass(\"listtitle\");";
         $C .="\n\t\tfor(\$i=0;\$i<count(\$this->Data['data']);\$i++){";
-        $C .="\n\t\t\t\$url=new AppRooter('$ModuleName','manage$TableName');";
+        $C .="\n\t\t\t\$url=new AppRooter('$ModuleName',\$this->itemPage);";
         $C .="\n\t\t\t\$url->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
-        $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName','manage" . $TableName . "s');";
+        $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage);";
         $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
         $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('delete',1));";
-        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".ucwords($this->TableFields[1])."();";
-        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".ucwords($this->TableFields[1])."()==\"\")";
+        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".ucwords($this->CurrentTableFields[1])."();";
+        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".ucwords($this->CurrentTableFields[1])."()==\"\")";
         $C .="\n\t\t\t\t\$Title='******************';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
@@ -530,7 +510,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
-        $C .=$this->getPaginationPartCode($formInfo);
+        $C .=$this->getPaginationPartCode($formInfo,true);
         $C .= "\n}";
 
         $C .= "\n?>";
@@ -539,7 +519,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getDesignFile(),0777);
 
     }
-    private function makeTableListDesign($formInfo)
+    protected function makeTableListDesign($formInfo)
     {
         $TableName=$this->TableName;
         $ModuleName=$formInfo['module']['name'];
@@ -607,8 +587,8 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .="\n\t\t\$innerDiv[\$i]->setClass(\"listitem\");";
         $C .="\n\t\t\t\$url=new AppRooter('$ModuleName','$TableName');";
         $C .="\n\t\t\t\$url->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
-        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".ucwords($this->TableFields[1])."();";
-        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".ucwords($this->TableFields[1])."()==\"\")";
+        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".ucwords($this->CurrentTableFields[1])."();";
+        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".ucwords($this->CurrentTableFields[1])."()==\"\")";
         $C .="\n\t\t\t\t\$Title='----------';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
@@ -621,7 +601,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
 
-        $C .=$this->getPaginationPartCode($formInfo);
+        $C .=$this->getPaginationPartCode($formInfo,false);
         $C .= "\n}";
 
         $C .= "\n?>";
@@ -631,7 +611,7 @@ class manageDBFormController extends baseFormCodeGenerator {
 
     }
 
-    private function makeTableSearchDesign($formInfo)
+    protected function makeTableSearchDesign($formInfo)
     {
         $TableName=$this->TableName;
         $ModuleName=$formInfo['module']['name'];
@@ -698,7 +678,7 @@ class manageDBFormController extends baseFormCodeGenerator {
 
     }
 
-    private function fillGETParamValueGetters($formInfo,&$Params,&$GetterCode)
+    protected function fillGETParamValueGetters($formInfo,&$Params,&$GetterCode)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -771,7 +751,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         }
         $GetterCode=$C;
     }
-    private function fillPostParamValueGetters($formInfo,&$Params,&$GetterCode)
+    protected function fillPostParamValueGetters($formInfo,&$Params,&$GetterCode)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -844,7 +824,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         }
         $GetterCode=$C;
     }
-    private function getActionFormCode($formInfo,$ActionName,$FirstParam="\$this->getID(),",$ParamMethodisPost=true)
+    protected function getActionFormCode($formInfo,$ActionName,$FirstParam="\$this->getID(),",$ParamMethodisPost=true)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -871,7 +851,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= "\n\t}";
         return $C;
     }
-    private function getActionUsingGetFormCode($formInfo,$ActionName,$FirstParam="\$this->getID(),")
+    protected function getActionUsingGetFormCode($formInfo,$ActionName,$FirstParam="\$this->getID(),")
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -958,7 +938,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         return $C;
     }
 
-    private function getTableItemCode($formInfo)
+    protected function getTableItemCode($formInfo,$isManager)
     {
         $formName=$formInfo['form']['name'];
 
@@ -968,12 +948,27 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C.=$this->getFileInfoComment();
 
         $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends FormCode {";
+        if($isManager)
+            $C.=<<<EOT
+    \nprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
-        $C .= $this->getFormCodeActionInits();
+        $C .= $this->getFormCodeActionInits($isManager);
         $C .= "\n\t\ttry{";
         $C .= "\n\t\t\t\$Result=\$$formName" . "Controller->load(\$this->getID());";
         $C .= "\n\t\t\t\$design=new $formName" . "_Design();";
+        if($isManager)
+            $C .= "\n\t\t\t\$design->setAdminMode(\$this->adminMode);";
+
         $C .= "\n\t\t\t\$design->setData(\$Result);";
         $C .= "\n\t\t\t\$design->setMessage(\"\");";
         $C .= "\n\t\t}";
@@ -990,10 +985,10 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= "\n\t}";
         return $C;
     }
-	private function makeTableItemManageCode($formInfo)
+	protected function makeTableItemManageCode($formInfo)
 	{
 		$formName=$formInfo['form']['name'];
-		$C=$this->getTableItemCode($formInfo);
+		$C=$this->getTableItemCode($formInfo,true);
 		for($i=0;$i<count($formInfo['elements']);$i++)
 			if($formInfo['elements'][$i]['type_fid']==7)
 				$C.=$this->getActionFormCode($formInfo,$formInfo['elements'][$i]['name']);
@@ -1004,9 +999,9 @@ class manageDBFormController extends baseFormCodeGenerator {
 		chmod($this->getCodeFile(),0777);
 
 	}
-    private function makeTableItemCode($formInfo)
+    protected function makeTableItemCode($formInfo)
     {
-        $C=$this->getTableItemCode($formInfo);
+        $C=$this->getTableItemCode($formInfo,false);
         $C .= "\n}";
         $C .= "\n?>";
         file_put_contents($this->getCodeFile(), $C);
@@ -1014,7 +1009,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getCodeFile(),0777);
 
     }
-    private function makeTableManageListCode($formInfo)
+    protected function makeTableManageListCode($formInfo)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -1025,16 +1020,28 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C.=$this->getFileInfoComment();
 
         $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends FormCode {";
+            $C.=<<<EOT
+    \nprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
         $C .= "\n\t\ttry{";
-        $C .= $this->getFormCodeActionInits();
+        $C .= $this->getFormCodeActionInits(true);
         $C .= "\n\t\t\tif(isset(\$_GET['delete']))";
         $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->DeleteItem(\$this->getID());";
         $C .= "\n\t\t\telse{";
         $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->load(\$this->getHttpGETparameter('pn',-1));";
         $C.="\n\t\t\t}";
         $C .= "\n\t\t\t\$design=new $formName" . "_Design();";
+        $C .= "\n\t\t\t\$design->setAdminMode(\$this->adminMode);";
         $C .= "\n\t\t\t\$design->setData(\$Result);";
         $C .= "\n\t\t\t\$design->setMessage(\"\");";
         $C .= "\n\t\t}";
@@ -1056,7 +1063,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getCodeFile(),0777);
 
     }
-    private function makeTableListCode($formInfo)
+    protected function makeTableListCode($formInfo)
     {
         $formName=$formInfo['form']['name'];
 
@@ -1099,18 +1106,29 @@ class manageDBFormController extends baseFormCodeGenerator {
         chmod($this->getCodeFile(),0777);
 
     }
-	private function makeTableManageListController($formInfo)
+	protected function makeTableManageListController($formInfo)
 	{
         $TableName=$this->TableName;
         $EntityClassName=$this->getCodeModuleName() . "_" . $TableName . "Entity";
-		$C = $this->getTableListControllerCode($formInfo,array("PageNum"));
+		$C = $this->getTableListControllerCode($formInfo,array("PageNum"),true);
 		$C .= "\n\tpublic function DeleteItem(\$ID)";
         $C .= "\n\t{";
         $C .= "\n\t\t\$Language_fid=CurrentLanguageManager::getCurrentLanguageID();";
         $C .= "\n\t\t\$DBAccessor=new dbaccess();";
+        $C.=<<<EOT
+\n\t\t\$su=new sessionuser();
+        \$role_systemuser_fid=\$su->getSystemUserID();
+        \$UserID=null;
+        if(!\$this->adminMode)
+            \$UserID=\$role_systemuser_fid;
+EOT;
+
         $C .= "\n\t\t\$$TableName" . "Ent=new $EntityClassName(\$DBAccessor);";
         $C .= "\n\t\t\$$TableName" . "Ent->setId(\$ID);";
         $C .= "\n\t\tif(\$$TableName" . "Ent->getId()==-1)";
+        $C .= "\n\t\t\tthrow new DataNotFoundException();";
+
+        $C .= "\n\t\tif(\$UserID!=null && \$$TableName" . "Ent->getRole_systemuser_fid()!=\$UserID)";
         $C .= "\n\t\t\tthrow new DataNotFoundException();";
         $C .= "\n\t\t\$$TableName" . "Ent->Remove();";
         $C .= "\n\t\treturn \$this->load(-1);";
@@ -1123,16 +1141,16 @@ class manageDBFormController extends baseFormCodeGenerator {
 		chmod($this->getControllerFile(),0777);
 
 	}
-    private function makeTableListController($formInfo)
+    protected function makeTableListController($formInfo)
     {
-        $C = $this->getTableListControllerCode($formInfo,array("PageNum"));
+        $C = $this->getTableListControllerCode($formInfo,array("PageNum"),false);
         $C .= "\n}";
         $C .= "\n?>";
         file_put_contents($this->getControllerFile(), $C);
         chmod($this->getControllerFile(),0777);
 
     }
-    private function getTableListControllerLoadCode($formInfo,$LoadParams,$MethodName,$EntityClassName,$QueryParams)
+    protected function getTableListControllerLoadCode($formInfo,$LoadParams,$MethodName,$EntityClassName,$QueryParams,$isManager)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -1145,15 +1163,15 @@ class manageDBFormController extends baseFormCodeGenerator {
         }
         $C .=")";
         $C .= "\n\t{";
-        $C .= $this->getControllerActionInits();
-        for($i=0;$i<count($this->TableFields);$i++) {
+        $C .= $this->getControllerActionInits($isManager);
+        for($i=0; $i<count($this->CurrentTableFields); $i++) {
             $fl1=$this->getFieldName($i);
-            if($fl1!=null &&  FieldType::getFieldType($this->TableFields[$i])==FieldType::$FID) {
+            if($fl1!=null &&  FieldType::getFieldType($this->CurrentTableFields[$i])==FieldType::$FID) {
                 $fl = $moduleName . "_" . $fl1 . "Entity";
-                $FiledName=substr($this->TableFields[$i],0,strlen($this->TableFields[$i])-4);
+                $FiledName=substr($this->CurrentTableFields[$i],0,strlen($this->CurrentTableFields[$i])-4);
                 $ObjectName2="\$" . $FiledName . "EntityObject";
                 $C .= "\n\t\t\t$ObjectName2=new " .  $fl . "(\$DBAccessor);";
-                $C .= "\n\t\t\t\$result['" . $this->TableFields[$i] . "']=$ObjectName2" . "->FindAll(new QueryLogic());";
+                $C .= "\n\t\t\t\$result['" . $this->CurrentTableFields[$i] . "']=$ObjectName2" . "->FindAll(new QueryLogic());";
             }
         }
         $C .= "\n\t\tif(\$PageNum<=0)";
@@ -1174,7 +1192,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= "\n\t}";
         return $C;
     }
-    private function getTableListControllerCode($formInfo,$LoadParams)
+    protected function getTableListControllerCode($formInfo,$LoadParams,$isManager)
     {
         $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
@@ -1186,7 +1204,7 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C .= $this->getControllerUsage();
         $EntityClassName=$moduleName . "_" . $TableName . "Entity";
         $C .= "\nuse Modules\\$moduleName\\Entity\\$EntityClassName;";
-        for($i=0;$i<count($this->TableFields);$i++) {
+        for($i=0; $i<count($this->CurrentTableFields); $i++) {
             $fl1=$this->getFieldName($i);
             if($fl1!=null && array_search($fl1,$EntityNames)==null) {
                 $fl = $moduleName . "_" . $fl1 . "Entity";
@@ -1198,7 +1216,29 @@ class manageDBFormController extends baseFormCodeGenerator {
         $C.=$this->getFileInfoComment();
         $C .= "\nclass $formName" . "Controller extends Controller {";
         $C .= "\n\tprivate \$PAGESIZE=10;";
-        $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams,"load",$EntityClassName,null);
+        $Qparams="";
+        if($isManager)
+        {
+
+            $C.=<<<EOT
+    \nprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+EOT;
+
+        $Qparams.=<<<EOT
+\n\t\t\t\tif(\$UserID!=null)
+            \$q->addCondition(new FieldCondition($EntityClassName::\$ROLE_SYSTEMUSER_FID,\$UserID));
+EOT;
+        }
+        $Qparams.="\t\t\n\$q->addOrderBy(\"id\",true);";
+        $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams,"load",$EntityClassName,$Qparams,$isManager);
         $Qparams="";
         $LoadParams2=$LoadParams;
         for($i=0;$i<count($formInfo['elements']);$i++) {
@@ -1216,23 +1256,28 @@ class manageDBFormController extends baseFormCodeGenerator {
             if($el['type_fid']!="7") {
             }
         }
-        $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams2,"Search",$EntityClassName,$Qparams);
+        $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams2,"Search",$EntityClassName,$Qparams,$isManager);
         return $C;
 
     }
-	private function getActionFormController($formInfo,$ActionName)
+	protected function getActionFormController($formInfo,$ActionName,$isManager)
 	{
 
         $EntityClassName=$this->getCodeModuleName() . "_" . $this->TableName . "Entity";;
         $ObjectName="\$" . $this->TableName . "EntityObject";
         $InsertCode = "\n\t\t\t$ObjectName=new $EntityClassName(\$DBAccessor);";
-        $InsertCode.=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName);
+        $InsertCode.=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName,true);
         $InsertCode .= "\n\t\t\t$ObjectName" . "->Save();";
         $UpdateCode = "\n\t\t\t$ObjectName=new $EntityClassName(\$DBAccessor);";
         $UpdateCode .= "\n\t\t\t$ObjectName" . "->setId(\$ID);";
         $UpdateCode .= "\n\t\t\tif($ObjectName" . "->getId()==-1)";
         $UpdateCode .= "\n\t\t\t\tthrow new DataNotFoundException();";
-        $UpdateCode.=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName);
+        if($isManager)
+        {
+            $UpdateCode .="\n\t\t\tif(\$UserID!=null && $ObjectName" . "->getRole_systemuser_fid()!=\$UserID)";
+            $UpdateCode .= "\n\t\t\t\tthrow new DataNotFoundException();";
+        }
+        $UpdateCode.=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName,false);
         $UpdateCode .= "\n\t\t\t$ObjectName" . "->Save();";
 
 		$Params="";
@@ -1254,6 +1299,14 @@ class manageDBFormController extends baseFormCodeGenerator {
 		$C .= "\n\t\t\$DBAccessor=new dbaccess();";
         $C .= "\n\t\t\$su=new sessionuser();";
         $C .= "\n\t\t\$role_systemuser_fid=\$su->getSystemUserID();";
+        if($isManager)
+        {
+            $C .=<<<EOT
+        \n\t\t\$UserID=null;
+        if(!\$this->adminMode)
+            \$UserID=\$role_systemuser_fid;
+EOT;
+        }
 		$C .= "\n\t\t\$result=array();";
 
         $C .= "\n\t\tif(\$ID==-1){";
@@ -1283,7 +1336,7 @@ class manageDBFormController extends baseFormCodeGenerator {
      * @param array $formInfo
      * @param string $changeLogFile
      */
-    private function makeChangeLog(array $formInfo, $changeLogFile,$TableName)
+    protected function makeChangeLog(array $formInfo, $changeLogFile,$TableName)
     {
         $C = "\n<?php";
         $C .= "\n/**";
@@ -1300,33 +1353,7 @@ class manageDBFormController extends baseFormCodeGenerator {
 
     }
 
+    protected abstract function makeUserManageCode($formName, $GeneralformInfo);
 }
 
-class FieldType{
-    public static $NORMAL=0;
-    public static $FID=1;
-    public static $BOOLEAN=2;
-    public static $METAINF=3;
-    public static $ID=4;
-    public static $FILE=5;
-
-    public static function getFieldType($FieldName)
-    {
-
-        $FieldName=strtolower($FieldName);
-        if($FieldName=="id")
-            return FieldType::$ID;
-        if($FieldName=="role_systemuser_fid" ||
-            $FieldName=="deletetime")
-            return FieldType::$METAINF;
-        if(substr($FieldName,strlen($FieldName)-4)=="_fid")
-            return FieldType::$FID;
-        if(substr($FieldName,strlen($FieldName)-4)=="_flu")
-            return FieldType::$FILE;
-        if(substr($FieldName,0,2)=="is")
-            return FieldType::$BOOLEAN;
-        return FieldType::$NORMAL;
-    }
-
-}
 ?>

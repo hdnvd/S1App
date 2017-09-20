@@ -325,7 +325,10 @@ class manageformController extends baseFormCodeGenerator {
 				$Params.=$ParamName;
 			}
 		}
-		$C .= "\n\t\t\$Result=\$$formName" . "Controller->" . ucwords($ActionName) . "(\$this->getID(),$Params);";
+		if($Params!="")
+			$C .= "\n\t\t\$Result=\$$formName" . "Controller->" . ucwords($ActionName) . "(\$this->getID(),$Params);";
+		else
+            $C .= "\n\t\t\$Result=\$$formName" . "Controller->" . ucwords($ActionName) . "(\$this->getID());";
 		$C .= "\n\t\t\$design->setData(\$Result);";
 		$C .= "\n\t\t\$design->setMessage(\"$ActionName is done!\");";
 		$C .= "\n\t\treturn \$design->getBodyHTML();";
@@ -347,7 +350,10 @@ class manageformController extends baseFormCodeGenerator {
 			}
 
 		}
-		$C  = "\n\tpublic function " . ucwords($ActionName) . "(\$ID,$Params)";
+		if($Params!="")
+		    $C  = "\n\tpublic function " . ucwords($ActionName) . "(\$ID,$Params)";
+		else
+            $C  = "\n\tpublic function " . ucwords($ActionName) . "(\$ID)";
 		$C .= "\n\t{";
 		$C .= $this->getControllerActionInits();
 

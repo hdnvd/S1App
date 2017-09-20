@@ -174,9 +174,11 @@ class baseFormCodeGenerator extends baseCodeGenerator {
         $C .= "\nuse Modules\\common\\Forms\\message_Design;";
         return $C;
 	}
-	protected function getFormCodeActionInits()
+	protected function getFormCodeActionInits($isManager=false)
 	{
         $C = "\n\t\t\$" . $this->getFormName() . "Controller=new " . $this->getFormName() . "Controller();";
+        if($isManager)
+            $C.= "\n\t\t\$" . $this->getFormName() . "Controller->setAdminMode(\$this->adminMode);";
         $C .= "\n\t\t\$translator=new ModuleTranslator(\"".$this->getCodeModuleName()."\");";
         $C .= "\n\t\t\$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());";
         return $C;
@@ -195,12 +197,20 @@ class baseFormCodeGenerator extends baseCodeGenerator {
 
         return $C;
 	}
-	protected function getControllerActionInits()
+	protected function getControllerActionInits($isManager=false)
 	{
         $C = "\n\t\t\$Language_fid=CurrentLanguageManager::getCurrentLanguageID();";
         $C .= "\n\t\t\$DBAccessor=new dbaccess();";
         $C .= "\n\t\t\$su=new sessionuser();";
         $C .= "\n\t\t\$role_systemuser_fid=\$su->getSystemUserID();";
+        if($isManager)
+        {
+            $C .=<<<EOT
+        \n\t\t\$UserID=null;
+        if(!\$this->adminMode)
+            \$UserID=\$role_systemuser_fid;
+EOT;
+        }
         $C .= "\n\t\t\$result=array();";
         return $C;
 	}

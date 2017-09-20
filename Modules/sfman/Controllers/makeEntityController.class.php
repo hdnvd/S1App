@@ -1,9 +1,11 @@
 <?php
 namespace Modules\sfman\Controllers;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\common\PublicClasses\AppDate;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\sfman\Entity\sfman_moduleEntity;
 use Modules\sfman\Entity\sfman_tableEntity;
 
 /**
@@ -24,6 +26,8 @@ class makeEntityController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$result=array();
+		$moduleEnt=new sfman_moduleEntity($DBAccessor);
+		$result['modules']=$moduleEnt->FindAll(new QueryLogic());
 		if($ID!=-1){
 			//Do Something...
 		}
@@ -31,26 +35,31 @@ class makeEntityController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnGenerate($ID,$txtModule,$txtEntity)
+	public function BtnGenerate($ID,$cmbModule,$txtEntity)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
+		$ModEnt=new sfman_moduleEntity($DBAccessor);
+		$ModEnt->setId($cmbModule);
+		$ModuleName=$ModEnt->getName();
 		$result=array();
 		$tbl=new sfman_tableEntity($DBAccessor);
-        $tbl->setTableName($txtModule. "_" . $txtEntity);
+        $tbl->setTableName($ModuleName. "_" . $txtEntity);
         $cols=$tbl->GetCollumns();
         $mDir=DEFAULT_APPPATH;
         $this->JDate=AppDate::today();
         $this->CDate=AppDate::cnow();
-        $this->ModuleDir=$mDir . "Modules/" .  $txtModule;
-        $this->makeEntityFile($txtModule,$txtEntity,$DBAccessor);
+        $this->ModuleDir=$mDir . "Modules/" .  $ModuleName;
+        $this->makeEntityFile($ModuleName,$txtEntity,$DBAccessor);
 		if($ID==-1){
 			//INSERT NEW DATA
 		}
 		else{
 			//UPDATE DATA
 		}
+
 		$result['param1']="";
+		$result=$this->load(-1);
 		$DBAccessor->close_connection();
 		return $result;
 	}
