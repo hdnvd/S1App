@@ -66,14 +66,14 @@ class postmanage_Design extends FormDesign {
 		$lblSummary=new Lable($this->lblSummary);
 		$Page->addElement($lblSummary);
 	
-		$txtSummary=new TextArea("txtSummary",$this->txtSummary);
+		$txtSummary=new TextArea("txtSummary",htmlentities($this->txtSummary));
 		$txtSummary->setClass("editablearea");
 		$Page->addElement($txtSummary);
 	
 		$lblContent=new Lable($this->lblContent);
 		$Page->addElement($lblContent);
 	
-		$txtContent=new TextArea("txtContent",$this->txtContent);
+		$txtContent=new TextArea("txtContent",htmlentities($this->txtContent));
 		$txtContent->setClass("editablearea");
 		$Page->addElement($txtContent);
 	
