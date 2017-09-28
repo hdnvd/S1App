@@ -9,6 +9,7 @@ use core\CoreClasses\html\TextBox;
 use core\CoreClasses\html\DataComboBox;
 use core\CoreClasses\html\SweetButton;
 use core\CoreClasses\html\SweetFrom;
+use core\CoreClasses\services\MessageType;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 
 
@@ -21,7 +22,6 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
 
 
 class message_Design extends FormDesign {
-	private $Message;
 	/**
 	 * @var TextBox
 	 */
@@ -41,16 +41,17 @@ class message_Design extends FormDesign {
 	{
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
-		$LTable1=new ListTable(1);
-		$LTable1->addElement(new Lable($this->Message));
-		$Page->addElement($LTable1);
+        if($this->getMessage()!=""){
+            $MessagePart=new Div();
+            if($this->getMessageType()==MessageType::$ERROR)
+                $MessagePart->setClass("sweet_messagepart alert alert-danger");
+            else
+                $MessagePart->setClass("sweet_messagepart alert alert-success");
+            $MessagePart->addElement(new Lable($this->getMessage()));
+            $Page->addElement($MessagePart);
+        }
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
-	}
-
-	public function setMessage($Message)
-	{
-	    $this->Message = $Message;
 	}
 }
 ?>
