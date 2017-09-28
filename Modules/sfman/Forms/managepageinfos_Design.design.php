@@ -1,6 +1,7 @@
 <?php
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormDesign;
+use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\UList;
 use core\CoreClasses\html\UListElement;
@@ -19,8 +20,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 19:01
-*@lastUpdate 1396-07-06 - 2017-09-28 19:01
+*@creationDate 1396-07-06 - 2017-09-28 19:21
+*@lastUpdate 1396-07-06 - 2017-09-28 19:21
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -66,12 +67,17 @@ private $itemPage;
 		$Page->setId("sfman_managepageinfos");
 		$PageTitlePart=new Div();
 		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("مدیریت اطلاعات صفحات"));
+		$PageTitlePart->addElement(new Lable("managepageinfos"));
 		$Page->addElement($PageTitlePart);
-		$MessagePart=new Div();
-		$MessagePart->setClass("sweet_messagepart");
-		$MessagePart->addElement(new Lable($this->getMessage()));
-		$Page->addElement($MessagePart);
+		if($this->getMessage()!=""){
+			$MessagePart=new Div();
+			if($this->getMessageType()==MessageType::$ERROR)
+				$MessagePart->setClass("sweet_messagepart alert alert-danger");
+			else
+				$MessagePart->setClass("sweet_messagepart alert alert-success");
+			$MessagePart->addElement(new Lable($this->getMessage()));
+			$Page->addElement($MessagePart);
+		}
 		$addUrl=new AppRooter('sfman',$this->itemPage);
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
@@ -93,9 +99,9 @@ private $itemPage;
 			$delurl=new AppRooter('sfman',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-				$Title=$this->Data['data'][$i]->getTitle();
-			if($this->Data['data'][$i]->getTitle()=="")
-				$Title='- بدون عنوان -';
+				$Title=$this->Data['data'][$i]->getDeletetime();
+			if($this->Data['data'][$i]->getDeletetime()=="")
+				$Title='******************';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$lbDel[$i]=new Lable('حذف');

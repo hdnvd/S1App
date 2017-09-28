@@ -1,6 +1,7 @@
 <?php
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormDesign;
+use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\UList;
 use core\CoreClasses\html\UListElement;
@@ -19,8 +20,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 19:01
-*@lastUpdate 1396-07-06 - 2017-09-28 19:01
+*@creationDate 1396-07-06 - 2017-09-28 19:21
+*@lastUpdate 1396-07-06 - 2017-09-28 19:21
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -184,12 +185,17 @@ private $adminMode=true;
 		$Page->setId("sfman_managepageinfo");
 		$PageTitlePart=new Div();
 		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("مدیریت اطلاعات صفحه"));
+		$PageTitlePart->addElement(new Lable("managepageinfo"));
 		$Page->addElement($PageTitlePart);
-		$MessagePart=new Div();
-		$MessagePart->setClass("sweet_messagepart");
-		$MessagePart->addElement(new Lable($this->getMessage()));
-		$Page->addElement($MessagePart);
+		if($this->getMessage()!=""){
+			$MessagePart=new Div();
+			if($this->getMessageType()==MessageType::$ERROR)
+				$MessagePart->setClass("sweet_messagepart alert alert-danger");
+			else
+				$MessagePart->setClass("sweet_messagepart alert alert-success");
+			$MessagePart->addElement(new Lable($this->getMessage()));
+			$Page->addElement($MessagePart);
+		}
 		$LTable1=new ListTable(2);
 		$LTable1->setClass("formtable");
 
@@ -212,35 +218,35 @@ private $adminMode=true;
 		$LTable1->addElement($lblKeywords);
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->keywords);
-		$LTable1->setLastElementClass('form_item_field ltr_field');
+		$LTable1->setLastElementClass('form_item_field');
 
 		/******** themepage ********/
 		$lblThemepage=new Lable("themepage");
 		$LTable1->addElement($lblThemepage);
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->themepage);
-		$LTable1->setLastElementClass('form_item_field ltr_field');
+		$LTable1->setLastElementClass('form_item_field');
 
 		/******** internalurl ********/
 		$lblInternalurl=new Lable("internalurl");
 		$LTable1->addElement($lblInternalurl);
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->internalurl);
-		$LTable1->setLastElementClass('form_item_field ltr_field');
+		$LTable1->setLastElementClass('form_item_field');
 
 		/******** canonicalurl ********/
 		$lblCanonicalurl=new Lable("canonicalurl");
 		$LTable1->addElement($lblCanonicalurl);
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->canonicalurl);
-		$LTable1->setLastElementClass('form_item_field ltr_field');
+		$LTable1->setLastElementClass('form_item_field');
 
 		/******** sentenceinurl ********/
 		$lblSentenceinurl=new Lable("sentenceinurl");
 		$LTable1->addElement($lblSentenceinurl);
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->sentenceinurl);
-		$LTable1->setLastElementClass('form_item_field ltr_field');
+		$LTable1->setLastElementClass('form_item_field');
 
 		/******** btnSave ********/
 		$LTable1->addElement($this->btnSave,2);

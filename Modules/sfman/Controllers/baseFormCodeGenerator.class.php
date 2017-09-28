@@ -17,6 +17,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
     {
         $C = "\n\t\tcatch(\\Exception \$uex){";
         $C .= "\n\t\t\t\$design=new message_Design();";
+        $C .= "\n\t\t\t\$design->setMessageType(MessageType::\$ERROR);";
         $C .= "\n\t\t\t\$design->setMessage(\"متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.\");";
         $C .= "\n\t\t}";
         return $C;
@@ -25,6 +26,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
     {
         $C = "\n\t\tcatch(DataNotFoundException \$dnfex){";
         $C .= "\n\t\t\t\$design=new message_Design();";
+        $C .= "\n\t\t\t\$design->setMessageType(MessageType::\$ERROR);";
         $C .= "\n\t\t\t\$design->setMessage(\"آیتم مورد نظر پیدا نشد\");";
         $C .= "\n\t\t}";
         return $C;
@@ -117,6 +119,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
     protected function getDesignUsings()
     {
         $C = "\nuse core\\CoreClasses\\services\\FormDesign;";
+        $C .= "\nuse core\\CoreClasses\\services\\MessageType;";
         $C .= "\nuse core\\CoreClasses\\html\\ListTable;";
         $C .= "\nuse core\\CoreClasses\\html\\UList;";
         $C .= "\nuse core\\CoreClasses\\html\\UListElement;";
@@ -144,10 +147,15 @@ class baseFormCodeGenerator extends baseCodeGenerator {
         $C .="\n\t\t\$PageTitlePart->setClass(\"sweet_pagetitlepart\");";
         $C .="\n\t\t\$PageTitlePart->addElement(new Lable(\"".$this->getFormCaption()."\"));";
         $C .="\n\t\t\$Page->addElement(\$PageTitlePart);";
-        $C .="\n\t\t\$MessagePart=new Div();";
-        $C .="\n\t\t\$MessagePart->setClass(\"sweet_messagepart\");";
-        $C .="\n\t\t\$MessagePart->addElement(new Lable(\$this->getMessage()));";
-        $C .="\n\t\t\$Page->addElement(\$MessagePart);";
+        $C .="\n\t\tif(\$this->getMessage()!=\"\"){";
+        $C .="\n\t\t\t\$MessagePart=new Div();";
+        $C .="\n\t\t\tif(\$this->getMessageType()==MessageType::\$ERROR)";
+        $C .="\n\t\t\t\t\$MessagePart->setClass(\"sweet_messagepart alert alert-danger\");";
+        $C .="\n\t\t\telse";
+        $C .="\n\t\t\t\t\$MessagePart->setClass(\"sweet_messagepart alert alert-success\");";
+        $C .="\n\t\t\t\$MessagePart->addElement(new Lable(\$this->getMessage()));";
+        $C .="\n\t\t\t\$Page->addElement(\$MessagePart);";
+        $C .="\n\t\t}";
         return $C;
 	}
 	public function setCodeModuleName($ModuleName)
@@ -168,6 +176,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
     protected function getFormCodeUsage()
 	{
         $C = "\nuse core\\CoreClasses\\services\\FormCode;";
+        $C .= "\nuse core\\CoreClasses\\services\\MessageType;";
         $C .= "\nuse Modules\\languages\\PublicClasses\\ModuleTranslator;";
         $C .= "\nuse Modules\\languages\\PublicClasses\\CurrentLanguageManager;";
         $C .= "\nuse core\\CoreClasses\\Exception\\DataNotFoundException;";

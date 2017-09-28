@@ -1,6 +1,7 @@
 <?php
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormCode;
+use core\CoreClasses\services\MessageType;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -9,8 +10,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 19:01
-*@lastUpdate 1396-07-06 - 2017-09-28 19:01
+*@creationDate 1396-07-06 - 2017-09-28 19:21
+*@lastUpdate 1396-07-06 - 2017-09-28 19:21
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -39,10 +40,12 @@ private $adminMode=true;
 		}
 		catch(DataNotFoundException $dnfex){
 			$design=new message_Design();
+			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
 		catch(\Exception $uex){
 			$design=new message_Design();
+			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
 		}
 		return $design->getBodyHTML();
@@ -74,10 +77,12 @@ private $adminMode=true;
 		}
 		catch(DataNotFoundException $dnfex){
 			$design=new message_Design();
+			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
 		catch(\Exception $uex){
 			$design=new message_Design();
+			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
 		}
 		return $design->getBodyHTML();
