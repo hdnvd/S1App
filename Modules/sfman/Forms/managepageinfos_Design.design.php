@@ -17,8 +17,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 01:28
-*@lastUpdate 1396-07-06 - 2017-09-28 01:28
+*@creationDate 1396-07-06 - 2017-09-28 01:57
+*@lastUpdate 1396-07-06 - 2017-09-28 01:57
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -71,7 +71,7 @@ private $itemPage;
 		$MessagePart->addElement(new Lable($this->getMessage()));
 		$Page->addElement($MessagePart);
 		$addUrl=new AppRooter('sfman',$this->itemPage);
-		$LblAdd=new Lable('Add New Item');
+		$LblAdd=new Lable('افزودن اطلاعات جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton');
 		$lnkAdd->setId('addpageinfolink');
@@ -90,7 +90,7 @@ private $itemPage;
 			$delurl=new AppRooter('sfman',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-				$Title=$this->Data['data'][$i]->getDeletetime();
+				$Title=$this->Data['data'][$i]->getTitle();
 			if($this->Data['data'][$i]->getDeletetime()=="")
 				$Title='******************';
 			$lbTit[$i]=new Lable($Title);

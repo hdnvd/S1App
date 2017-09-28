@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\sfman\Entity\sfman_pageinfoEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 01:28
-*@lastUpdate 1396-07-06 - 2017-09-28 01:28
+*@creationDate 1396-07-06 - 2017-09-28 01:57
+*@lastUpdate 1396-07-06 - 2017-09-28 01:57
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -49,7 +49,7 @@ private $adminMode=true;
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$title,$description,$keywords,$themepage,$internalurl)
+	public function BtnSave($ID,$title,$description,$keywords,$themepage,$internalurl,$canonicalurl)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -66,6 +66,7 @@ private $adminMode=true;
 			$pageinfoEntityObject->setKeywords($keywords);
 			$pageinfoEntityObject->setThemepage($themepage);
 			$pageinfoEntityObject->setInternalurl($internalurl);
+			$pageinfoEntityObject->setCanonicalurl($canonicalurl);
 			$pageinfoEntityObject->Save();
 		}
 		else{
@@ -80,6 +81,7 @@ private $adminMode=true;
 			$pageinfoEntityObject->setKeywords($keywords);
 			$pageinfoEntityObject->setThemepage($themepage);
 			$pageinfoEntityObject->setInternalurl($internalurl);
+			$pageinfoEntityObject->setCanonicalurl($canonicalurl);
 			$pageinfoEntityObject->Save();
 		}
 		$result=$this->load($ID);

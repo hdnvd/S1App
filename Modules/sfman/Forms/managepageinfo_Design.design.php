@@ -17,8 +17,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 01:28
-*@lastUpdate 1396-07-06 - 2017-09-28 01:28
+*@creationDate 1396-07-06 - 2017-09-28 01:57
+*@lastUpdate 1396-07-06 - 2017-09-28 01:57
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -85,6 +85,15 @@ private $adminMode=true;
 	{
 		return $this->internalurl;
 	}
+	/** @var textbox */
+	private $canonicalurl;
+	/**
+	 * @return textbox
+	 */
+	public function getCanonicalurl()
+	{
+		return $this->canonicalurl;
+	}
 	/** @var SweetButton */
 	private $btnSave;
 	public function __construct()
@@ -94,6 +103,7 @@ private $adminMode=true;
 		$this->keywords= new textbox("keywords");
 		$this->themepage= new textbox("themepage");
 		$this->internalurl= new textbox("internalurl");
+		$this->canonicalurl= new textbox("canonicalurl");
 		$this->btnSave= new SweetButton(true,"ذخیره");
 		$this->btnSave->setAction("btnSave");
 	}
@@ -109,12 +119,14 @@ private $adminMode=true;
 			$this->themepage->setValue($this->Data['pageinfo']->getThemepage());
 		if (key_exists("pageinfo", $this->Data))
 			$this->internalurl->setValue($this->Data['pageinfo']->getInternalurl());
+		if (key_exists("pageinfo", $this->Data))
+			$this->canonicalurl->setValue($this->Data['pageinfo']->getCanonicalurl());
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("sfman_managepageinfo");
 		$PageTitlePart=new Div();
 		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("managepageinfo"));
+		$PageTitlePart->addElement(new Lable("مدیریت اطلاعات صفحه"));
 		$Page->addElement($PageTitlePart);
 		$MessagePart=new Div();
 		$MessagePart->setClass("sweet_messagepart");
@@ -130,7 +142,7 @@ private $adminMode=true;
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->description);
 		$LTable1->setLastElementClass('form_item_field');
-		$LTable1->addElement(new Lable("کلمات کلیدی"));
+		$LTable1->addElement(new Lable("کلمات کلیدی(جداسازی با , )"));
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->keywords);
 		$LTable1->setLastElementClass('form_item_field');
@@ -138,9 +150,13 @@ private $adminMode=true;
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->themepage);
 		$LTable1->setLastElementClass('form_item_field');
-		$LTable1->addElement(new Lable("آدرس نسبی"));
+		$LTable1->addElement(new Lable("آدرس نسبی در صفحه"));
 		$LTable1->setLastElementClass('form_item_caption');
 		$LTable1->addElement($this->internalurl);
+		$LTable1->setLastElementClass('form_item_field');
+		$LTable1->addElement(new Lable("آدرس Canonical"));
+		$LTable1->setLastElementClass('form_item_caption');
+		$LTable1->addElement($this->canonicalurl);
 		$LTable1->setLastElementClass('form_item_field');
 		$LTable1->addElement($this->btnSave,2);
 		$LTable1->setLastElementClass('form_item_sweetbutton');
