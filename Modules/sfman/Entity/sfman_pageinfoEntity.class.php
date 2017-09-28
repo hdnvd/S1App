@@ -5,8 +5,8 @@ use core\CoreClasses\db\dbquery;
 use core\CoreClasses\db\dbaccess;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 01:40
-*@lastUpdate 1396-07-06 - 2017-09-28 01:40
+*@creationDate 1396-07-06 - 2017-09-28 03:52
+*@lastUpdate 1396-07-06 - 2017-09-28 03:52
 *@SweetFrameworkHelperVersion 2.001
 *@SweetFrameworkVersion 1.018
 */
@@ -93,6 +93,19 @@ class sfman_pageinfoEntity extends EntityClass {
 	 */
 	public function setCanonicalurl($Canonicalurl){
 		$this->setField(sfman_pageinfoEntity::$CANONICALURL,$Canonicalurl);
+	}
+	public static $SENTENCEINURL="sentenceinurl";
+	/**
+	 * @return mixed
+	 */
+	public function getSentenceinurl(){
+		return $this->getField(sfman_pageinfoEntity::$SENTENCEINURL);
+	}
+	/**
+	 * @param mixed $Sentenceinurl
+	 */
+	public function setSentenceinurl($Sentenceinurl){
+		$this->setField(sfman_pageinfoEntity::$SENTENCEINURL,$Sentenceinurl);
 	}
 }
 ?>

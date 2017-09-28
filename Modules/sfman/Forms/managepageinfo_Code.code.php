@@ -9,8 +9,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 01:57
-*@lastUpdate 1396-07-06 - 2017-09-28 01:57
+*@creationDate 1396-07-06 - 2017-09-28 03:52
+*@lastUpdate 1396-07-06 - 2017-09-28 03:52
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -67,7 +67,8 @@ private $adminMode=true;
 		$themepage=$design->getThemepage()->getValue();
 		$internalurl=$design->getInternalurl()->getValue();
 		$canonicalurl=$design->getCanonicalurl()->getValue();
-		$Result=$managepageinfoController->BtnSave($this->getID(),$title,$description,$keywords,$themepage,$internalurl,$canonicalurl);
+		$sentenceinurl=$design->getSentenceinurl()->getValue();
+		$Result=$managepageinfoController->BtnSave($this->getID(),$title,$description,$keywords,$themepage,$internalurl,$canonicalurl,$sentenceinurl);
 		$design->setData($Result);
 		$design->setMessage("btnSave is done!");
 		}

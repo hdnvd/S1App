@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\sfman\Entity\sfman_pageinfoEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 01:57
-*@lastUpdate 1396-07-06 - 2017-09-28 01:57
+*@creationDate 1396-07-06 - 2017-09-28 03:52
+*@lastUpdate 1396-07-06 - 2017-09-28 03:52
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -52,7 +52,7 @@ $q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function Search($PageNum,$title,$description,$keywords,$themepage,$internalurl,$canonicalurl)
+	public function Search($PageNum,$title,$description,$keywords,$themepage,$internalurl,$canonicalurl,$sentenceinurl)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -72,6 +72,7 @@ $q->addCondition(new FieldCondition("keywords","%$keywords%",LogicalOperator::LI
 $q->addCondition(new FieldCondition("themepage","%$themepage%",LogicalOperator::LIKE));		
 $q->addCondition(new FieldCondition("internalurl","%$internalurl%",LogicalOperator::LIKE));		
 $q->addCondition(new FieldCondition("canonicalurl","%$canonicalurl%",LogicalOperator::LIKE));		
+$q->addCondition(new FieldCondition("sentenceinurl","%$sentenceinurl%",LogicalOperator::LIKE));		
 $q->addOrderBy($sortby,$isdesc);
 		$allcount=$pageinfoEnt->FindAllCount($q);
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
