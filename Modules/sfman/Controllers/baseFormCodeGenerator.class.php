@@ -118,6 +118,8 @@ class baseFormCodeGenerator extends baseCodeGenerator {
     {
         $C = "\nuse core\\CoreClasses\\services\\FormDesign;";
         $C .= "\nuse core\\CoreClasses\\html\\ListTable;";
+        $C .= "\nuse core\\CoreClasses\\html\\UList;";
+        $C .= "\nuse core\\CoreClasses\\html\\UListElement;";
         $C .= "\nuse core\\CoreClasses\\html\\Div;";
         $C .= "\nuse core\\CoreClasses\\html\\link;";
         $C .= "\nuse core\\CoreClasses\\html\\Lable;";
@@ -219,29 +221,37 @@ EOT;
     {
         $E=$formInfo['elements'][$ElementIndex];
         $ElementTypeIndex=$this->getTypeIndex($formInfo['elementtypes'],$E['type_fid']);
+        $C ="\n\n\t\t/******** ".$E['name']." ********/";
 
         if($E['type_fid']==1)//Label
         {
-            $C ="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
+
+            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_fulllabel');";
         }
         else if($E['type_fid']==2)//TextBox
         {
-            $C ="\n\t\t\$LTable1->addElement(new Lable(\"". $E['caption'] . "\"));";
+            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
+//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
+            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
             $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
         }
         else if($E['type_fid']==3)//ComboBox
         {
-            $C ="\n\t\t\$LTable1->addElement(new Lable(\"". $E['caption'] . "\"));";
+            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
+//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
+            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
             $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
         }
         else if($E['type_fid']==4)//DataComboBox
         {
-            $C ="\n\t\t\$LTable1->addElement(new Lable(\"". $E['caption'] . "\"));";
+            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
+//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
+            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
             $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
@@ -249,25 +259,27 @@ EOT;
         else if($E['type_fid']==5)//CheckBox
         {
 
-            $C ="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
+            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_checkbox');";
         }
         else if($E['type_fid']==6)//FileUploadBox
         {
-            $C ="\n\t\t\$LTable1->addElement(new Lable(\"". $E['caption'] . "\"));";
+            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
+//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
+            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
             $C.="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
             $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
         }
         else if($E['type_fid']==7)//SweetButton
         {
-            $C ="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
+            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_sweetbutton');";
         }
         else if($E['type_fid']==8)//RadioButton
         {
 
-            $C ="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
+            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_radio');";
         }
         return $C;
@@ -277,40 +289,48 @@ EOT;
         $E=$formInfo['elements'][$ElementIndex];
         $ElementTypeIndex=$this->getTypeIndex($formInfo['elementtypes'],$E['type_fid']);
         $EType=$formInfo['elementtypes'][$ElementTypeIndex]['name'];
-        $C = "\n\t\t\$this->" . $E['name'] . "= new " . $EType . "(";
+        $C = "\n\n\t\t/******* " . $E['name'] ." *******/";
+        $C .= "\n\t\t\$this->" . $E['name'] . "= new " . $EType . "(";
         if($E['type_fid']==1)//Label
         {
             $C.="\"" . $E['caption'] . "\");";
         }
         else if($E['type_fid']==2)//TextBox
         {
-            $C.="\"" . $E['name'] . "\");";
+            $C .="\"" . $E['name'] . "\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         else if($E['type_fid']==3)//ComboBox
         {
             $C.="\"" . $E['name'] . "\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         else if($E['type_fid']==4)//DataComboBox
         {
             $C.="\$this->Data['" . $E['name'] . "'],\"" . $E['name'] . "\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         else if($E['type_fid']==5)//CheckBox
         {
             $C.="\"" . $E['name'] . "\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         else if($E['type_fid']==6)//FileUploadBox
         {
             $C.="\"" . $E['name'] . "\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         else if($E['type_fid']==7)//SweetButton
         {
             $C.="true,\"" . $E['caption'] . "\");";
             $C.="\n\t\t\$this->". $E['name']."->setAction(\"".$E['name']."\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"btn btn-primary\");";
         }
         else if($E['type_fid']==8)//RadioBox
         {
             $C.="\"" . $E['name'] . "\");";
             $C.="\n\t\t\$this->". $E['name']."->addOption(\"".$E['name']."\",$ElementIndex);";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         return $C;
     }

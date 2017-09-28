@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\sfman\Entity\sfman_pageinfoEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 03:52
-*@lastUpdate 1396-07-06 - 2017-09-28 03:52
+*@creationDate 1396-07-06 - 2017-09-28 19:01
+*@lastUpdate 1396-07-06 - 2017-09-28 19:01
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */

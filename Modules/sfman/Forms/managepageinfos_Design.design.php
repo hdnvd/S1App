@@ -2,6 +2,8 @@
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\ListTable;
+use core\CoreClasses\html\UList;
+use core\CoreClasses\html\UListElement;
 use core\CoreClasses\html\Div;
 use core\CoreClasses\html\link;
 use core\CoreClasses\html\Lable;
@@ -17,8 +19,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 03:52
-*@lastUpdate 1396-07-06 - 2017-09-28 03:52
+*@creationDate 1396-07-06 - 2017-09-28 19:01
+*@lastUpdate 1396-07-06 - 2017-09-28 19:01
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -64,20 +66,21 @@ private $itemPage;
 		$Page->setId("sfman_managepageinfos");
 		$PageTitlePart=new Div();
 		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("managepageinfos"));
+		$PageTitlePart->addElement(new Lable("مدیریت اطلاعات صفحات"));
 		$Page->addElement($PageTitlePart);
 		$MessagePart=new Div();
 		$MessagePart->setClass("sweet_messagepart");
 		$MessagePart->addElement(new Lable($this->getMessage()));
 		$Page->addElement($MessagePart);
 		$addUrl=new AppRooter('sfman',$this->itemPage);
-		$LblAdd=new Lable('Add New Item');
+		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
-		$lnkAdd->setClass('linkbutton');
+		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setId('addpageinfolink');
 		$Page->addElement($lnkAdd);
 		$LTable1=new ListTable(3);
-		$LTable1->setClass("managelist");
+		$LTable1->setHeaderRowCount(1);
+		$LTable1->setClass("table-striped managelist");
 		$LTable1->addElement(new Lable('#'));
 		$LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عنوان'));
@@ -92,7 +95,7 @@ private $itemPage;
 			$delurl->addParameter(new UrlParameter('delete',1));
 				$Title=$this->Data['data'][$i]->getTitle();
 			if($this->Data['data'][$i]->getTitle()=="")
-				$Title='******************';
+				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$lbDel[$i]=new Lable('حذف');
@@ -111,7 +114,8 @@ private $itemPage;
 	}
 	private function getPaginationPart($PageCount)
 	{
-		$div=new Div();
+		$Pagination=new UList();
+		$Pagination->setClass("pagination");
 		for($i=1;$i<=$PageCount;$i++)
 		{
 			$RTR=null;
@@ -126,9 +130,9 @@ private $itemPage;
 			$RTR->setAppendToCurrentParams(false);
 			$lbl=new Lable($i);
 			$lnk=new link($RTR->getAbsoluteURL(),$lbl);
-			$div->addElement($lnk);
+			$Pagination->addElement(new UListElement($lnk));
 		}
-		return $div;
+		return $Pagination;
 	}
 }
 ?>

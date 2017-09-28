@@ -245,6 +245,7 @@ EOT;
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $Ename=$formInfo['elements'][$i]['name'];
 
+            $FieldFillCode .= "\r\n\r\n\t\t\t/******** $Ename" . " ********/";
             $FT=FieldType::getFieldType($Ename);
             if($FT!=FieldType::$METAINF && $FT!=FieldType::$ID && $Ename!="sortby" && $Ename!="isdesc") {
                 if($formInfo['elements'][$i]['type_fid']==3) {
@@ -304,10 +305,13 @@ EOT;
         $C .="\n\t}";
 
 
-
-        $C .="\n\tpublic function getBodyHTML(\$command=null)";
+        $C .="\n\tpublic function FillItems()";
         $C .="\n\t{";
         $C.=$this->getFieldFillCode($formInfo);
+        $C .="\n\t}";
+        $C .="\n\tpublic function getBodyHTML(\$command=null)";
+        $C .="\n\t{";
+        $C.="\n\t\t\$this->FillItems();";
         $C .=$this->getDesignTopPartCode();
         $C .="\n\t\t\$LTable1=new ListTable(2);";
         $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
@@ -408,7 +412,8 @@ EOT;
             $FormName="\$this->listPage";
         $C = "\n\tprivate function getPaginationPart(\$PageCount)";
         $C .= "\n\t{";
-        $C .= "\n\t\t\$div=new Div();";
+        $C .= "\n\t\t\$Pagination=new UList();";
+        $C .= "\n\t\t\$Pagination->setClass(\"pagination\");";
         $C .= "\n\t\tfor(\$i=1;\$i<=\$PageCount;\$i++)";
         $C .= "\n\t\t{";
         $C .= "\n\t\t\t\$RTR=null;";
@@ -423,9 +428,9 @@ EOT;
         $C .= "\n\t\t\t\$RTR->setAppendToCurrentParams(false);";
         $C .= "\n\t\t\t\$lbl=new Lable(\$i);";
         $C .= "\n\t\t\t\$lnk=new link(\$RTR->getAbsoluteURL(),\$lbl);";
-        $C .= "\n\t\t\t\$div->addElement(\$lnk);";
+        $C .= "\n\t\t\t\$Pagination->addElement(new UListElement(\$lnk));";
         $C .= "\n\t\t}";
-        $C .= "\n\t\treturn \$div;";
+        $C .= "\n\t\treturn \$Pagination;";
         $C .= "\n\t}";
         return $C;
     }
@@ -472,13 +477,14 @@ EOT;
         $C .="\n\t{";
         $C .=$this->getDesignTopPartCode();
         $C .="\n\t\t\$addUrl=new AppRooter('$ModuleName',\$this->itemPage);";
-        $C .="\n\t\t\$LblAdd=new Lable('Add New Item');";
+        $C .="\n\t\t\$LblAdd=new Lable('افزودن آیتم جدید');";
         $C .="\n\t\t\$lnkAdd=new link(\$addUrl->getAbsoluteURL(),\$LblAdd);";
-        $C .="\n\t\t\$lnkAdd->setClass('linkbutton');";
+        $C .="\n\t\t\$lnkAdd->setClass('linkbutton btn btn-primary');";
         $C .="\n\t\t\$lnkAdd->setId('add" . $TableName . "link');";
         $C .="\n\t\t\$Page->addElement(\$lnkAdd);";
         $C .="\n\t\t\$LTable1=new ListTable(3);";
-        $C .="\n\t\t\$LTable1->setClass(\"managelist\");";
+        $C .="\n\t\t\$LTable1->setHeaderRowCount(1);";
+        $C .="\n\t\t\$LTable1->setClass(\"table-striped managelist\");";
         $C .="\n\t\t\$LTable1->addElement(new Lable('#'));";
         $C .="\n\t\t\$LTable1->setLastElementClass(\"listtitle\");";
         $C .="\n\t\t\$LTable1->addElement(new Lable('عنوان'));";
