@@ -22,8 +22,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 14:25
-*@lastUpdate 1396-07-07 - 2017-09-29 14:25
+*@creationDate 1396-07-07 - 2017-09-29 14:46
+*@lastUpdate 1396-07-07 - 2017-09-29 14:46
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -69,49 +69,49 @@ class managepageinfo_Design extends FormDesign {
 			/******** title ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->title->setValue($this->Data['pageinfo']->getTitle());
-			$this->FieldCaptions['title']=$this->Data['pageinfo']->getFieldInfo('title')->getTitle();
+			$this->setFieldCaption('title',$this->Data['pageinfo']->getFieldInfo('title')->getTitle());
 			$this->title->setFieldInfo($this->Data['pageinfo']->getFieldInfo('title'));
 		}
 
 			/******** description ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->description->setValue($this->Data['pageinfo']->getDescription());
-			$this->FieldCaptions['description']=$this->Data['pageinfo']->getFieldInfo('description')->getTitle();
+			$this->setFieldCaption('description',$this->Data['pageinfo']->getFieldInfo('description')->getTitle());
 			$this->description->setFieldInfo($this->Data['pageinfo']->getFieldInfo('description'));
 		}
 
 			/******** keywords ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->keywords->setValue($this->Data['pageinfo']->getKeywords());
-			$this->FieldCaptions['keywords']=$this->Data['pageinfo']->getFieldInfo('keywords')->getTitle();
+			$this->setFieldCaption('keywords',$this->Data['pageinfo']->getFieldInfo('keywords')->getTitle());
 			$this->keywords->setFieldInfo($this->Data['pageinfo']->getFieldInfo('keywords'));
 		}
 
 			/******** themepage ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->themepage->setValue($this->Data['pageinfo']->getThemepage());
-			$this->FieldCaptions['themepage']=$this->Data['pageinfo']->getFieldInfo('themepage')->getTitle();
+			$this->setFieldCaption('themepage',$this->Data['pageinfo']->getFieldInfo('themepage')->getTitle());
 			$this->themepage->setFieldInfo($this->Data['pageinfo']->getFieldInfo('themepage'));
 		}
 
 			/******** internalurl ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->internalurl->setValue($this->Data['pageinfo']->getInternalurl());
-			$this->FieldCaptions['internalurl']=$this->Data['pageinfo']->getFieldInfo('internalurl')->getTitle();
+			$this->setFieldCaption('internalurl',$this->Data['pageinfo']->getFieldInfo('internalurl')->getTitle());
 			$this->internalurl->setFieldInfo($this->Data['pageinfo']->getFieldInfo('internalurl'));
 		}
 
 			/******** canonicalurl ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->canonicalurl->setValue($this->Data['pageinfo']->getCanonicalurl());
-			$this->FieldCaptions['canonicalurl']=$this->Data['pageinfo']->getFieldInfo('canonicalurl')->getTitle();
+			$this->setFieldCaption('canonicalurl',$this->Data['pageinfo']->getFieldInfo('canonicalurl')->getTitle());
 			$this->canonicalurl->setFieldInfo($this->Data['pageinfo']->getFieldInfo('canonicalurl'));
 		}
 
 			/******** sentenceinurl ********/
 		if (key_exists("pageinfo", $this->Data)){
 			$this->sentenceinurl->setValue($this->Data['pageinfo']->getSentenceinurl());
-			$this->FieldCaptions['sentenceinurl']=$this->Data['pageinfo']->getFieldInfo('sentenceinurl')->getTitle();
+			$this->setFieldCaption('sentenceinurl',$this->Data['pageinfo']->getFieldInfo('sentenceinurl')->getTitle());
 			$this->sentenceinurl->setFieldInfo($this->Data['pageinfo']->getFieldInfo('sentenceinurl'));
 		}
 
@@ -119,7 +119,7 @@ class managepageinfo_Design extends FormDesign {
 	}
 	public function __construct()
 	{
-		$this->FieldCaptions=array();
+		parent::__construct();
 
 		/******* title *******/
 		$this->title= new textbox("title");
@@ -161,8 +161,7 @@ class managepageinfo_Design extends FormDesign {
 	public function setData($Data)
 	{
 		$this->Data = $Data;
-	}
-	private $FieldCaptions;    
+	}    
 private $adminMode=true;
 
     /**
@@ -236,49 +235,6 @@ private $adminMode=true;
 		return $this->sentenceinurl;
 	}
 	/** @var SweetButton */
-	private $btnSave;        
-
-
-        private function getFieldRowCode($Field,$Title,$PlaceHolder,$InvalidMessage=null)
-        {
-            if($PlaceHolder==null)
-                $PlaceHolder=$Title;
-        
-            $Group=new Div();
-            $Group->setClass('form-group');
-            $lblTitle=new FormLabel($Title);
-            $lblTitle->SetAttribute("for",$Field->getId());
-            $lblTitle->SetClass('control-label col-sm-2');
-            $Group->addElement($lblTitle);
-            $TitleField=new Div();
-            $TitleField->setClass('col-sm-10');
-            $Field->SetAttribute('placeholder',$PlaceHolder);
-            $TitleField->addElement($Field);
-            if($InvalidMessage!=null){
-                $InvalidFeedBackDiv=new Div();
-                $InvalidFeedBackDiv->setClass('invalid-feedback');
-                $InvalidFeedBackDiv->addElement(new Lable($InvalidMessage));
-                $TitleField->addElement($InvalidFeedBackDiv);
-            }
-            $Group->addElement($TitleField);
-            return $Group;
-        }
-        private function getSingleFieldRowCode($Field)
-        {
-            $Group=new Div();
-            $Group->setClass('form-group');
-            $FieldDiv=new Div();
-            $FieldDiv->setClass('col-sm-offset-2 col-sm-10');
-            $FieldDiv->addElement($Field);
-            $Group->addElement($FieldDiv);
-            return $Group;
-       }
-        private function getFieldCaption($FieldName)
-        {
-            if(key_exists($FieldName,$this->FieldCaptions))
-                return $this->FieldCaptions[$FieldName];
-            else
-                return $FieldName;
-       }
+	private $btnSave;
 }
 ?>
