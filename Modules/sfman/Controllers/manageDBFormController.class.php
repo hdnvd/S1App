@@ -149,7 +149,8 @@ EOT;
     protected function getTableItemControllerLoadCode($formInfo,$isManager)
     {
         $ObjectName="\$" . $this->TableName . "EntityObject";
-        $C = "\n\t\tif(\$ID!=-1){";
+        $C = "\n\t\t\$result['".$this->TableName."']=$ObjectName;";
+        $C .= "\n\t\tif(\$ID!=-1){";
         $C .= "\n\t\t\t$ObjectName" . "->setId(\$ID);";
         $C .= "\n\t\t\t" . "if($ObjectName" . "->getId()==-1)";
         $C .= "\n\t\t\t\tthrow new DataNotFoundException();";
@@ -253,12 +254,17 @@ EOT;
                         $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\"\", \"مهم نیست\");";
                     $FieldFillCode .= "\r\n\t\tforeach (\$this->Data['$Ename'] as \$item)";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitle());";
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data))";
+                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setSelectedValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
+                    $FieldFillCode .= "\r\n\t\t}";
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==2) {
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data))";
+                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
+                    $FieldFillCode .= "\r\n\t\t}";
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==5) {
 
@@ -278,9 +284,38 @@ EOT;
         $C.=$this->getDesignUsings();
         $C.=$this->getFileInfoComment();
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
+
+        $C .="\n\tpublic function getBodyHTML(\$command=null)";
+        $C .="\n\t{";
+        $C.="\n\t\t\$this->FillItems();";
+        $C .=$this->getDesignTopPartCode();
+        $C .="\n\t\t\$LTable1=new Div();";
+        $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
+        for($i=0;$i<count($formInfo['elements']);$i++) {
+            $C .=$this->getDesignAddCode($formInfo,$i);
+        }
+
+        $C .="\n\t\t\$Page->addElement(\$LTable1);";
+        $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
+        $C .="\n\t\t\$form->SetAttribute(\"novalidate\",\"novalidate\");";
+        $C .="\n\t\t\$form->setClass('form-horizontal');";
+        $C .="\n\t\treturn \$form->getHTML();";
+        $C .="\n\t}";
+        $C .="\n\tpublic function FillItems()";
+        $C .="\n\t{";
+        $C.=$this->getFieldFillCode($formInfo);
+        $C .="\n\t}";
+        $C .="\n\tpublic function __construct()";
+        $C .="\n\t{";
+        $C .="\n\t\t\$this->FieldCaptions=array();";
+        for($i=0;$i<count($formInfo['elements']);$i++) {
+            $C.=$this->getDesignInitialization($formInfo,$i);
+        }
+        $C .="\n\t}";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
-            $C.=<<<EOT
+        $C .= "\n\tprivate \$FieldCaptions;";
+        $C.=<<<EOT
     \nprivate \$adminMode=true;
 
     /**
@@ -294,35 +329,7 @@ EOT;
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
-
-
-
-        $C .="\n\tpublic function __construct()";
-        $C .="\n\t{";
-        for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C.=$this->getDesignInitialization($formInfo,$i);
-        }
-        $C .="\n\t}";
-
-
-        $C .="\n\tpublic function FillItems()";
-        $C .="\n\t{";
-        $C.=$this->getFieldFillCode($formInfo);
-        $C .="\n\t}";
-        $C .="\n\tpublic function getBodyHTML(\$command=null)";
-        $C .="\n\t{";
-        $C.="\n\t\t\$this->FillItems();";
-        $C .=$this->getDesignTopPartCode();
-        $C .="\n\t\t\$LTable1=new ListTable(2);";
-        $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
-        for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C .=$this->getDesignAddCode($formInfo,$i);
-        }
-
-        $C .="\n\t\t\$Page->addElement(\$LTable1);";
-        $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
-        $C .="\n\t\treturn \$form->getHTML();";
-        $C .="\n\t}";
+        $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
 
         $C .= "\n?>";
@@ -346,7 +353,7 @@ EOT;
         $C .= "\n\tprivate \$Data;";
 
         $C.=$this->getSetterCode("Data","mixed");
-
+        $C .= "\n\tprivate \$FieldCaptions;";
 
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $ft=FieldType::getFieldType($formInfo['elements'][$i]['name']);
@@ -372,13 +379,14 @@ EOT;
             if(FieldType::getFieldType($Ename)==FieldType::$NORMAL || FieldType::getFieldType($Ename)==FieldType::$FILE) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
                 $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
-                //$C .= "\r\n\t\t\t\$this->$Ename" . "=new Lable($Val);";
+                $C .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
                 $C .= "\r\n\t\t}";
             }
             elseif(FieldType::getFieldType($Ename)==FieldType::$FID) {
                 $Val="\$this->Data['$Ename']->getID()";
                 $C .= "\r\n\t\tif (key_exists(\"$Ename\", \$this->Data)){";
+                $C .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
                 $C .= "\r\n\t\t}";
             }
@@ -387,7 +395,7 @@ EOT;
         $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $E=$formInfo['elements'][$i];
-            $C.="\n\t\t\$LTable1->addElement(new Lable(\"" . $E['name'] .  "\"));";
+            $C.="\n\t\t\$LTable1->addElement(new Lable(\$this->getFieldCaption('".$E['name']."')));";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_titlelabel');";
             $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
             $C .="\n\t\t\$LTable1->setLastElementClass('form_item_datalabel');";
@@ -397,6 +405,8 @@ EOT;
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
+
+        $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
 
         $C .= "\n?>";
@@ -482,6 +492,8 @@ EOT;
         $C .="\n\t\t\$lnkAdd->setClass('linkbutton btn btn-primary');";
         $C .="\n\t\t\$lnkAdd->setId('add" . $TableName . "link');";
         $C .="\n\t\t\$Page->addElement(\$lnkAdd);";
+        $C .="\n\t\t\$TableDiv=new Div();";
+        $C .="\n\t\t\$TableDiv->setClass('table-responsive');";
         $C .="\n\t\t\$LTable1=new ListTable(3);";
         $C .="\n\t\t\$LTable1->setHeaderRowCount(1);";
         $C .="\n\t\t\$LTable1->setClass(\"table-striped managelist\");";
@@ -497,13 +509,17 @@ EOT;
         $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage);";
         $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
         $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('delete',1));";
-        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".ucwords($this->CurrentTableFields[1])."();";
-        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".ucwords($this->CurrentTableFields[1])."()==\"\")";
-        $C .="\n\t\t\t\t\$Title='******************';";
+        $TitleField=ucwords($this->CurrentTableFields[1]);
+        if(count($this->CurrentTableFields)>2)
+            $TitleField=ucwords($this->CurrentTableFields[2]);
+        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".$TitleField."();";
+        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".$TitleField."()==\"\")";
+        $C .="\n\t\t\t\t\$Title='- بدون عنوان -';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
         $C .="\n\t\t\t\$lbDel[\$i]=new Lable('حذف');";
         $C .="\n\t\t\t\$liDel[\$i]=new link(\$delurl->getAbsoluteURL(),\$lbDel[\$i]);";
+        $C .="\n\t\t\t\$liDel[\$i]->setClass('btn btn-danger');";
         $C .="\n\t\t\t\$LTable1->addElement(new Lable(\$i+1));";
         $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
         $C .="\n\t\t\t\$LTable1->addElement(\$liTit[\$i]);";
@@ -511,7 +527,8 @@ EOT;
         $C .="\n\t\t\t\$LTable1->addElement(\$liDel[\$i]);";
         $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
         $C .="\n\t\t}";
-        $C .="\n\t\t\$Page->addElement(\$LTable1);";
+        $C .="\n\t\t\$TableDiv->addElement(\$LTable1);";
+        $C .="\n\t\t\$Page->addElement(\$TableDiv);";
         $C .="\n\t\t\$Page->addElement(\$this->getPaginationPart(\$this->Data['pagecount']));";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
@@ -537,11 +554,13 @@ EOT;
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
+        $C .= "\n\tprivate \$FieldCaptions;";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
+        $C .="\n\t\t\$this->FieldCaptions=array();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
@@ -608,6 +627,8 @@ EOT;
         $C .="\n\t}";
 
         $C .=$this->getPaginationPartCode($formInfo,false);
+
+        $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
 
         $C .= "\n?>";
@@ -629,11 +650,13 @@ EOT;
         $C .= "\nclass " . $FormName . "search_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
+        $C .= "\n\tprivate \$FieldCaptions;";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
+        $C .="\n\t\t\$this->FieldCaptions=array();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
@@ -673,6 +696,8 @@ EOT;
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"GET\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
+
+        $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
 
         $C .= "\n?>";

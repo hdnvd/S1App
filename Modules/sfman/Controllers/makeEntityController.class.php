@@ -19,7 +19,7 @@ class makeEntityController extends Controller {
     private $ModuleDir;
     private $JDate;
     private $CDate;
-    private $SFHVERSION="2.001";
+    private $SFHVERSION="2.002";
     private $SFVERSION="1.018";
 	public function load($ID)
 	{
@@ -63,6 +63,16 @@ class makeEntityController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
+	private function getFieldInfoSetCode($FieldName,$EntityClassName)
+    {
+        $FieldNameInfoVar="\$" . ucfirst($FieldName) . "Info";
+        $FieldNameUPPERVar="\$" . strtoupper($FieldName);
+        $Info="\n\n\t\t/******** $FieldName ********/";
+        $Info.="\n\t\t$FieldNameInfoVar=new FieldInfo();";
+        $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldName\");";
+        $Info.="\n\t\t\$this->setFieldInfo($EntityClassName" . "::" . $FieldNameUPPERVar . ",$FieldNameInfoVar);";
+        return $Info;
+    }
     private function makeEntityFile($mod,$tbl,dbaccess $DBAccessor)
     {
         $ent=$mod."_".$tbl;
@@ -72,6 +82,7 @@ class makeEntityController extends Controller {
         $C = "<?php";
         $C .= "\nnamespace Modules\\$mod\\Entity;";
         $C .= "\nuse core\\CoreClasses\\services\\EntityClass;";
+        $C .= "\nuse core\\CoreClasses\\services\\FieldInfo;";
         $C .= "\nuse core\\CoreClasses\\db\\dbquery;";
         $C .= "\nuse core\\CoreClasses\\db\\dbaccess;";
         $C.=$this->getFileInfoComment();
@@ -81,6 +92,10 @@ class makeEntityController extends Controller {
         $C .= "\n\t{";
         $C .= "\n\t\t\$this->setDatabase(new dbquery(\$DBAccessor));";
         $C .= "\n\t\t\$this->setTableName(\"$ent\");";
+        for($i=0;$i<count($cols);$i++)
+            if($cols[$i]!="id" && $cols[$i]!="deletetime")
+                $C .= $this->getFieldInfoSetCode($cols[$i],$ent . "Entity");
+
         $C .= "\n\t}";
         for($i=0;$i<count($cols);$i++)
             if($cols[$i]!="id" && $cols[$i]!="deletetime")

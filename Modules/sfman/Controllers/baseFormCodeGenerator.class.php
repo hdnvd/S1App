@@ -120,8 +120,10 @@ class baseFormCodeGenerator extends baseCodeGenerator {
     {
         $C = "\nuse core\\CoreClasses\\services\\FormDesign;";
         $C .= "\nuse core\\CoreClasses\\services\\MessageType;";
+        $C .= "\nuse core\\CoreClasses\\services\\baseHTMLElement;";
         $C .= "\nuse core\\CoreClasses\\html\\ListTable;";
         $C .= "\nuse core\\CoreClasses\\html\\UList;";
+        $C .= "\nuse core\\CoreClasses\\html\\FormLabel;";
         $C .= "\nuse core\\CoreClasses\\html\\UListElement;";
         $C .= "\nuse core\\CoreClasses\\html\\Div;";
         $C .= "\nuse core\\CoreClasses\\html\\link;";
@@ -226,70 +228,96 @@ EOT;
         return $C;
 	}
 
+	protected function getDesignFormRowFunctionCode()
+    {
+        $result=<<<EOT
+        \n\n
+        private function getFieldRowCode(\$Field,\$Title,\$PlaceHolder,\$InvalidMessage=null)
+        {
+            if(\$PlaceHolder==null)
+                \$PlaceHolder=\$Title;
+        
+            \$Group=new Div();
+            \$Group->setClass('form-group');
+            \$lblTitle=new FormLabel(\$Title);
+            \$lblTitle->SetAttribute("for",\$Field->getId());
+            \$lblTitle->SetClass('control-label col-sm-2');
+            \$Group->addElement(\$lblTitle);
+            \$TitleField=new Div();
+            \$TitleField->setClass('col-sm-10');
+            \$Field->SetAttribute('placeholder',\$PlaceHolder);
+            \$TitleField->addElement(\$Field);
+            if(\$InvalidMessage!=null){
+                \$InvalidFeedBackDiv=new Div();
+                \$InvalidFeedBackDiv->setClass('invalid-feedback');
+                \$InvalidFeedBackDiv->addElement(new Lable(\$InvalidMessage));
+                \$TitleField->addElement(\$InvalidFeedBackDiv);
+            }
+            \$Group->addElement(\$TitleField);
+            return \$Group;
+        }
+        private function getSingleFieldRowCode(\$Field)
+        {
+            \$Group=new Div();
+            \$Group->setClass('form-group');
+            \$FieldDiv=new Div();
+            \$FieldDiv->setClass('col-sm-offset-2 col-sm-10');
+            \$FieldDiv->addElement(\$Field);
+            \$Group->addElement(\$FieldDiv);
+            return \$Group;
+       }
+        private function getFieldCaption(\$FieldName)
+        {
+            if(key_exists(\$FieldName,\$this->FieldCaptions))
+                return \$this->FieldCaptions[\$FieldName];
+            else
+                return \$FieldName;
+       }
+EOT;
+        return $result;
+
+    }
     protected function getDesignAddCode(array $formInfo,$ElementIndex)
     {
         $E=$formInfo['elements'][$ElementIndex];
-        $ElementTypeIndex=$this->getTypeIndex($formInfo['elementtypes'],$E['type_fid']);
-        $C ="\n\n\t\t/******** ".$E['name']." ********/";
+//        $C ="\n\n\t\t/******** ".$E['name']." ********/";
+
+        $C ="";
+
+        $DefaultItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getFieldRowCode(\$this->" . $E['name'] . ",\$this->getFieldCaption('" . $E['name'] . "'),null,''));";
+        $SingleItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getSingleFieldRowCode(\$this->" . $E['name'] . "));";
 
         if($E['type_fid']==1)//Label
         {
-
-            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_fulllabel');";
+            $C.=$SingleItemPart;
         }
         else if($E['type_fid']==2)//TextBox
         {
-            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
-//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
-            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
-            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
+            $C .=$DefaultItemPart;
         }
         else if($E['type_fid']==3)//ComboBox
         {
-            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
-//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
-            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
-            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
+            $C .=$DefaultItemPart;
         }
         else if($E['type_fid']==4)//DataComboBox
         {
-            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
-//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
-            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
-            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
+            $C .=$DefaultItemPart;
         }
         else if($E['type_fid']==5)//CheckBox
         {
-
-            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_checkbox');";
+            $C.=$SingleItemPart;
         }
         else if($E['type_fid']==6)//FileUploadBox
         {
-            $C .="\n\t\t\$lbl" . ucfirst($E['name']) . "=new Lable(\"". $E['caption'] . "\");";
-//            $C .="\n\t\t\$lblTitle->SetAttribute(\"for\",\$this->" .$E['name'] . "->getId());";
-            $C .="\n\t\t\$LTable1->addElement(\$lbl" . ucfirst($E['name']) . ");";
-            $C.="\n\t\t\$LTable1->setLastElementClass('form_item_caption');";
-            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_field');";
+            $C .=$DefaultItemPart;
         }
         else if($E['type_fid']==7)//SweetButton
         {
-            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_sweetbutton');";
+            $C.=$SingleItemPart;
         }
         else if($E['type_fid']==8)//RadioButton
         {
-
-            $C .="\n\t\t\$LTable1->addElement(\$this->".$E['name'].",2);";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_radio');";
+            $C.=$SingleItemPart;
         }
         return $C;
     }
@@ -308,6 +336,7 @@ EOT;
         {
             $C .="\"" . $E['name'] . "\");";
             $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
+//            $C .= "\n\t\t\$this->" . $E['name'] . "->setRequired(true);";
         }
         else if($E['type_fid']==3)//ComboBox
         {
@@ -322,12 +351,11 @@ EOT;
         else if($E['type_fid']==5)//CheckBox
         {
             $C.="\"" . $E['name'] . "\");";
-            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         else if($E['type_fid']==6)//FileUploadBox
         {
             $C.="\"" . $E['name'] . "\");";
-            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control-file\");";
         }
         else if($E['type_fid']==7)//SweetButton
         {
@@ -339,7 +367,6 @@ EOT;
         {
             $C.="\"" . $E['name'] . "\");";
             $C.="\n\t\t\$this->". $E['name']."->addOption(\"".$E['name']."\",$ElementIndex);";
-            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
         }
         return $C;
     }

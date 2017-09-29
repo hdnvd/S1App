@@ -135,8 +135,8 @@ class manageformController extends baseFormCodeGenerator {
         $C.=$this->getFileInfoComment();
         $C .= "\nclass " . $this->getFormName() . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
-
         $C.=$this->getSetterCode("Data","mixed");
+        $C .= "\n\tprivate \$FieldCaptions;";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $E=$formInfo['elements'][$i];
             $ind=$this->getTypeIndex($formInfo['elementtypes'],$E['type_fid']);
@@ -153,6 +153,7 @@ class manageformController extends baseFormCodeGenerator {
 
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
+        $C .="\n\t\t\$this->FieldCaptions=array();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
@@ -163,7 +164,7 @@ class manageformController extends baseFormCodeGenerator {
         $C .="\n\tpublic function getBodyHTML(\$command=null)";
         $C .="\n\t{";
         $C .=$this->getDesignTopPartCode();
-            $C .="\n\t\t\$LTable1=new ListTable(2);";
+            $C .="\n\t\t\$LTable1=new Div();";
             $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
             for($i=0;$i<count($formInfo['elements']);$i++) {
                 $C .=$this->getDesignAddCode($formInfo,$i);
@@ -171,8 +172,10 @@ class manageformController extends baseFormCodeGenerator {
 
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
+        $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
+        $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
 
         $C .= "\n?>";
