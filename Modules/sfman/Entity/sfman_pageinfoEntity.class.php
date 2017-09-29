@@ -4,11 +4,12 @@ use core\CoreClasses\services\EntityClass;
 use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
 use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\services\FieldType;
 
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 02:22
-*@lastUpdate 1396-07-07 - 2017-09-29 02:22
+*@creationDate 1396-07-07 - 2017-09-29 14:20
+*@lastUpdate 1396-07-07 - 2017-09-29 14:20
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 1.018
 */
@@ -17,12 +18,14 @@ class sfman_pageinfoEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("sfman_pageinfo");
+		$this->setTableTitle("اطلاعات صفحه");
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
 		$TitleInfo->setTitle("عنوان");
-		$TitleInfo->setRequired(true);
+        $TitleInfo->setRequired(true);
         $TitleInfo->setMinLength(5);
+        $TitleInfo->setMaxLength(50);
 		$this->setFieldInfo(sfman_pageinfoEntity::$TITLE,$TitleInfo);
 
 		/******** description ********/
@@ -39,10 +42,8 @@ class sfman_pageinfoEntity extends EntityClass {
 		$ThemepageInfo=new FieldInfo();
 		$ThemepageInfo->setTitle("صفحه قالب");
 		$ThemepageInfo->setRequired(true);
-        $ThemepageInfo->setMaxLength(20);
-        $ThemepageInfo->setMinLength(5);
+		$ThemepageInfo->setMinLength(5);
 		$this->setFieldInfo(sfman_pageinfoEntity::$THEMEPAGE,$ThemepageInfo);
-
 
 		/******** internalurl ********/
 		$InternalurlInfo=new FieldInfo();
