@@ -99,6 +99,39 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         }
         return $InsertCode;
     }
+
+    protected function getEntityObjectFieldValidateCode($ObjectName,$EntityClassName)
+    {
+        $ValidateCode = "\n\t\t\$this->ValidateFieldArray([";
+        $FieldsCode="";
+        $FieldIndex=0;
+        for($i=0; $i<count($this->CurrentTableFields); $i++)
+        {
+            if(FieldType::getFieldType($this->CurrentTableFields[$i])!=FieldType::$METAINF && FieldType::getFieldType($this->CurrentTableFields[$i])!=FieldType::$ID){
+                $UCField=$this->CurrentTableFields[$i];
+
+                if(trim(strtolower($UCField))!="role_systemuser_fid")
+                {
+                    if($FieldIndex>0)
+                    {
+                        $FieldsCode.=",";
+                        $ValidateCode.=",";
+                    }
+                    $ValidateCode .= "\$$UCField";
+                    $FieldsCode .= $ObjectName . "->getFieldInfo(";
+                    $FieldsCode .= "$EntityClassName" . "::\$" . strtoupper($UCField);
+                    if(FieldType::getFieldType($this->CurrentTableFields[$i])==FieldType::$FILE)
+                        $ValidateCode .="[0]['url']";
+                    $FieldsCode.=")";
+                    $FieldIndex++;
+                }
+
+            }
+
+        }
+        $ValidateCode.="],[" . $FieldsCode . "]);";
+        return $ValidateCode;
+    }
     protected function getIsItemSelected($FormsToGenerate,$ItemName)
     {
         if($FormsToGenerate!=null && array_search($ItemName,$FormsToGenerate)!==false)
@@ -1296,11 +1329,9 @@ EOT;
 
         $EntityClassName=$this->getCodeModuleName() . "_" . $this->TableName . "Entity";;
         $ObjectName="\$" . $this->TableName . "EntityObject";
-        $InsertCode = "\n\t\t\t$ObjectName=new $EntityClassName(\$DBAccessor);";
-        $InsertCode.=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName,true);
+        $InsertCode=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName,true);
         $InsertCode .= "\n\t\t\t$ObjectName" . "->Save();";
-        $UpdateCode = "\n\t\t\t$ObjectName=new $EntityClassName(\$DBAccessor);";
-        $UpdateCode .= "\n\t\t\t$ObjectName" . "->setId(\$ID);";
+        $UpdateCode = "\n\t\t\t$ObjectName" . "->setId(\$ID);";
         $UpdateCode .= "\n\t\t\tif($ObjectName" . "->getId()==-1)";
         $UpdateCode .= "\n\t\t\t\tthrow new DataNotFoundException();";
         if($isManager)
@@ -1339,7 +1370,12 @@ EOT;
 EOT;
         }
 		$C .= "\n\t\t\$result=array();";
+        if($InsertCode!==null)
+        {
 
+            $C .= "\n\t\t$ObjectName=new $EntityClassName(\$DBAccessor);";
+            $C .=$this->getEntityObjectFieldValidateCode($ObjectName,$EntityClassName);
+        }
         $C .= "\n\t\tif(\$ID==-1){";
         if($InsertCode===null)
             $C .= "\n\t\t\t//INSERT NEW DATA";
