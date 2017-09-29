@@ -22,8 +22,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 04:42
-*@lastUpdate 1396-07-07 - 2017-09-29 04:42
+*@creationDate 1396-07-07 - 2017-09-29 14:25
+*@lastUpdate 1396-07-07 - 2017-09-29 14:25
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -36,7 +36,7 @@ class managepageinfo_Design extends FormDesign {
 		$Page->setId("sfman_managepageinfo");
 		$PageTitlePart=new Div();
 		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("managepageinfo"));
+		$PageTitlePart->addElement(new Lable("مدیریت " . $this->Data['pageinfo']->getTableTitle() . ""));
 		$Page->addElement($PageTitlePart);
 		if($this->getMessage()!=""){
 			$MessagePart=new Div();
