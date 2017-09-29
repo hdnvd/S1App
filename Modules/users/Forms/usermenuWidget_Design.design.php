@@ -22,11 +22,11 @@ class usermenuWidget_Design extends WidgetDesign {
 	{
 		$page=new UList();
 		$page->setId("adminmenu");
-		$page->setClass("nav main-menu");
+		$page->setClass("nav main-menu nav-list");
 		for($i=0;$i<count($this->Links);$i++)
 		{
 			$l=new link($this->Links[$i], $this->Texts[$i]);
-            $l->setClass($l->getClass() . " btn-info");
+            $l->setClass($l->getClass() . " ");
 			$ll=new UListElement($l);
 			$page->addElement($ll);
 		}
