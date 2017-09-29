@@ -92,6 +92,8 @@ class makeEntityController extends Controller {
         $C .= "\n\t{";
         $C .= "\n\t\t\$this->setDatabase(new dbquery(\$DBAccessor));";
         $C .= "\n\t\t\$this->setTableName(\"$ent\");";
+        $C .= "\n\t\t\$this->setTableTitle(\"$ent\");";
+
         for($i=0;$i<count($cols);$i++)
             if($cols[$i]!="id" && $cols[$i]!="deletetime")
                 $C .= $this->getFieldInfoSetCode($cols[$i],$ent . "Entity");

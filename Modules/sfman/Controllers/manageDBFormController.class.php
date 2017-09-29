@@ -312,6 +312,8 @@ EOT;
     protected function makeTableItemManageDesign($formInfo)
     {
         $FormName=$formInfo['form']['name'];
+        $formInfo['form']['caption']="مدیریت " . "\" . \$this->Data['" . $this->TableName . "']->getTableTitle() . \"";
+        $this->setFormCaption($formInfo['form']['caption']);
         $C = "<?php";
         $C .= $this->getFormNamespaceDefiner();
         $C.=$this->getDesignUsings();
@@ -375,6 +377,9 @@ EOT;
     {
         $TableName=$this->TableName;
         $FormName=$formInfo['form']['name'];
+        $formInfo['form']['caption']="اطلاعات " . "\" . \$this->Data['" . $this->TableName . "']->getTableTitle() . \"";
+        $this->setFormCaption($formInfo['form']['caption']);
+
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $formInfo['elements'][$i]['type_fid'] = 1;//Label
         }

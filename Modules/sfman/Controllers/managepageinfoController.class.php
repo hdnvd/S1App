@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\sfman\Entity\sfman_pageinfoEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 04:42
-*@lastUpdate 1396-07-07 - 2017-09-29 04:42
+*@creationDate 1396-07-07 - 2017-09-29 14:25
+*@lastUpdate 1396-07-07 - 2017-09-29 14:25
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -60,8 +60,9 @@ private $adminMode=true;
         if(!$this->adminMode)
             $UserID=$role_systemuser_fid;
 		$result=array();
+		$pageinfoEntityObject=new sfman_pageinfoEntity($DBAccessor);
+		$this->ValidateFieldArray([$title,$description,$keywords,$themepage,$internalurl,$canonicalurl,$sentenceinurl],[$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$TITLE),$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$DESCRIPTION),$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$KEYWORDS),$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$THEMEPAGE),$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$INTERNALURL),$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$CANONICALURL),$pageinfoEntityObject->getFieldInfo(sfman_pageinfoEntity::$SENTENCEINURL)]);
 		if($ID==-1){
-			$pageinfoEntityObject=new sfman_pageinfoEntity($DBAccessor);
 			$pageinfoEntityObject->setTitle($title);
 			$pageinfoEntityObject->setDescription($description);
 			$pageinfoEntityObject->setKeywords($keywords);
@@ -72,7 +73,6 @@ private $adminMode=true;
 			$pageinfoEntityObject->Save();
 		}
 		else{
-			$pageinfoEntityObject=new sfman_pageinfoEntity($DBAccessor);
 			$pageinfoEntityObject->setId($ID);
 			if($pageinfoEntityObject->getId()==-1)
 				throw new DataNotFoundException();
