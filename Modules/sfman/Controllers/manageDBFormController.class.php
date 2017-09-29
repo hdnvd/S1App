@@ -289,13 +289,13 @@ EOT;
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitle());";
                     $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setSelectedValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
-                    $FieldFillCode .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                     $FieldFillCode .= "\r\n\t\t}";
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==2) {
                     $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
-                    $FieldFillCode .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
                     $FieldFillCode .= "\r\n\t\t}";
                 }
@@ -342,14 +342,13 @@ EOT;
         $C .="\n\t}";
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
-        $C .="\n\t\t\$this->FieldCaptions=array();";
+        $C .="\n\t\tparent::__construct();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
         $C .="\n\t}";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
-        $C .= "\n\tprivate \$FieldCaptions;";
         $C.=<<<EOT
     \nprivate \$adminMode=true;
 
@@ -391,7 +390,6 @@ EOT;
         $C .= "\n\tprivate \$Data;";
 
         $C.=$this->getSetterCode("Data","mixed");
-        $C .= "\n\tprivate \$FieldCaptions;";
 
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $ft=FieldType::getFieldType($formInfo['elements'][$i]['name']);
@@ -417,14 +415,14 @@ EOT;
             if(FieldType::getFieldType($Ename)==FieldType::$NORMAL || FieldType::getFieldType($Ename)==FieldType::$FILE) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
                 $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
-                $C .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
+                $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
                 $C .= "\r\n\t\t}";
             }
             elseif(FieldType::getFieldType($Ename)==FieldType::$FID) {
                 $Val="\$this->Data['$Ename']->getID()";
                 $C .= "\r\n\t\tif (key_exists(\"$Ename\", \$this->Data)){";
-                $C .= "\r\n\t\t\t\$this->FieldCaptions['$Ename']=\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle();";
+                $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
                 $C .= "\r\n\t\t}";
             }
@@ -592,13 +590,12 @@ EOT;
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
-        $C .= "\n\tprivate \$FieldCaptions;";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
-        $C .="\n\t\t\$this->FieldCaptions=array();";
+        $C .="\n\t\tparent::__construct();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
@@ -688,13 +685,12 @@ EOT;
         $C .= "\nclass " . $FormName . "search_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
-        $C .= "\n\tprivate \$FieldCaptions;";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
-        $C .="\n\t\t\$this->FieldCaptions=array();";
+        $C .="\n\t\tparent::__construct();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
         }

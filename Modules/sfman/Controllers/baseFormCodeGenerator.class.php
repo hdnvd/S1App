@@ -230,50 +230,7 @@ EOT;
 
 	protected function getDesignFormRowFunctionCode()
     {
-        $result=<<<EOT
-        \n\n
-        private function getFieldRowCode(\$Field,\$Title,\$PlaceHolder,\$InvalidMessage=null)
-        {
-            if(\$PlaceHolder==null)
-                \$PlaceHolder=\$Title;
-        
-            \$Group=new Div();
-            \$Group->setClass('form-group');
-            \$lblTitle=new FormLabel(\$Title);
-            \$lblTitle->SetAttribute("for",\$Field->getId());
-            \$lblTitle->SetClass('control-label col-sm-2');
-            \$Group->addElement(\$lblTitle);
-            \$TitleField=new Div();
-            \$TitleField->setClass('col-sm-10');
-            \$Field->SetAttribute('placeholder',\$PlaceHolder);
-            \$TitleField->addElement(\$Field);
-            if(\$InvalidMessage!=null){
-                \$InvalidFeedBackDiv=new Div();
-                \$InvalidFeedBackDiv->setClass('invalid-feedback');
-                \$InvalidFeedBackDiv->addElement(new Lable(\$InvalidMessage));
-                \$TitleField->addElement(\$InvalidFeedBackDiv);
-            }
-            \$Group->addElement(\$TitleField);
-            return \$Group;
-        }
-        private function getSingleFieldRowCode(\$Field)
-        {
-            \$Group=new Div();
-            \$Group->setClass('form-group');
-            \$FieldDiv=new Div();
-            \$FieldDiv->setClass('col-sm-offset-2 col-sm-10');
-            \$FieldDiv->addElement(\$Field);
-            \$Group->addElement(\$FieldDiv);
-            return \$Group;
-       }
-        private function getFieldCaption(\$FieldName)
-        {
-            if(key_exists(\$FieldName,\$this->FieldCaptions))
-                return \$this->FieldCaptions[\$FieldName];
-            else
-                return \$FieldName;
-       }
-EOT;
+        $result="";
         return $result;
 
     }
