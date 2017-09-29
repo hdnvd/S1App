@@ -2,8 +2,10 @@
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
+use core\CoreClasses\services\baseHTMLElement;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\UList;
+use core\CoreClasses\html\FormLabel;
 use core\CoreClasses\html\UListElement;
 use core\CoreClasses\html\Div;
 use core\CoreClasses\html\link;
@@ -20,8 +22,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 19:21
-*@lastUpdate 1396-07-06 - 2017-09-28 19:21
+*@creationDate 1396-07-07 - 2017-09-29 04:42
+*@lastUpdate 1396-07-07 - 2017-09-29 04:42
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -84,6 +86,8 @@ private $itemPage;
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setId('addpageinfolink');
 		$Page->addElement($lnkAdd);
+		$TableDiv=new Div();
+		$TableDiv->setClass('table-responsive');
 		$LTable1=new ListTable(3);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped managelist");
@@ -99,13 +103,14 @@ private $itemPage;
 			$delurl=new AppRooter('sfman',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-				$Title=$this->Data['data'][$i]->getDeletetime();
-			if($this->Data['data'][$i]->getDeletetime()=="")
-				$Title='******************';
+				$Title=$this->Data['data'][$i]->getTitle();
+			if($this->Data['data'][$i]->getTitle()=="")
+				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$lbDel[$i]=new Lable('حذف');
 			$liDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
+			$liDel[$i]->setClass('btn btn-danger');
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
@@ -113,7 +118,8 @@ private $itemPage;
 			$LTable1->addElement($liDel[$i]);
 			$LTable1->setLastElementClass("listcontent");
 		}
-		$Page->addElement($LTable1);
+		$TableDiv->addElement($LTable1);
+		$Page->addElement($TableDiv);
 		$Page->addElement($this->getPaginationPart($this->Data['pagecount']));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();

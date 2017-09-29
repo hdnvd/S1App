@@ -1,13 +1,15 @@
 <?php
 namespace Modules\sfman\Entity;
 use core\CoreClasses\services\EntityClass;
+use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
 use core\CoreClasses\db\dbaccess;
+
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-06 - 2017-09-28 17:53
-*@lastUpdate 1396-07-06 - 2017-09-28 17:53
-*@SweetFrameworkHelperVersion 2.001
+*@creationDate 1396-07-07 - 2017-09-29 02:22
+*@lastUpdate 1396-07-07 - 2017-09-29 02:22
+*@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 1.018
 */
 class sfman_pageinfoEntity extends EntityClass {
@@ -15,6 +17,47 @@ class sfman_pageinfoEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("sfman_pageinfo");
+
+		/******** title ********/
+		$TitleInfo=new FieldInfo();
+		$TitleInfo->setTitle("عنوان");
+		$TitleInfo->setRequired(true);
+        $TitleInfo->setMinLength(5);
+		$this->setFieldInfo(sfman_pageinfoEntity::$TITLE,$TitleInfo);
+
+		/******** description ********/
+		$DescriptionInfo=new FieldInfo();
+		$DescriptionInfo->setTitle("توضیحات");
+		$this->setFieldInfo(sfman_pageinfoEntity::$DESCRIPTION,$DescriptionInfo);
+
+		/******** keywords ********/
+		$KeywordsInfo=new FieldInfo();
+		$KeywordsInfo->setTitle("کلمات کلیدی");
+		$this->setFieldInfo(sfman_pageinfoEntity::$KEYWORDS,$KeywordsInfo);
+
+		/******** themepage ********/
+		$ThemepageInfo=new FieldInfo();
+		$ThemepageInfo->setTitle("صفحه قالب");
+		$ThemepageInfo->setRequired(true);
+        $ThemepageInfo->setMaxLength(20);
+        $ThemepageInfo->setMinLength(5);
+		$this->setFieldInfo(sfman_pageinfoEntity::$THEMEPAGE,$ThemepageInfo);
+
+
+		/******** internalurl ********/
+		$InternalurlInfo=new FieldInfo();
+		$InternalurlInfo->setTitle("آدرس نسبی");
+		$this->setFieldInfo(sfman_pageinfoEntity::$INTERNALURL,$InternalurlInfo);
+
+		/******** canonicalurl ********/
+		$CanonicalurlInfo=new FieldInfo();
+		$CanonicalurlInfo->setTitle("آدرس canonical");
+		$this->setFieldInfo(sfman_pageinfoEntity::$CANONICALURL,$CanonicalurlInfo);
+
+		/******** sentenceinurl ********/
+		$SentenceinurlInfo=new FieldInfo();
+		$SentenceinurlInfo->setTitle("عبارت در آدرس");
+		$this->setFieldInfo(sfman_pageinfoEntity::$SENTENCEINURL,$SentenceinurlInfo);
 	}
 	public static $TITLE="title";
 	/**
