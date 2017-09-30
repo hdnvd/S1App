@@ -2,6 +2,7 @@
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
+use Modules\common\PublicClasses\AppRooter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -10,8 +11,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 14:46
-*@lastUpdate 1396-07-07 - 2017-09-29 14:46
+*@creationDate 1396-07-08 - 2017-09-30 23:34
+*@lastUpdate 1396-07-08 - 2017-09-30 23:34
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -53,6 +54,11 @@ private $adminMode=true;
 			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
 		}
 		return $design->getBodyHTML();
+	}
+	public function __construct($namespace)
+	{
+		parent::__construct($namespace);
+		$this->setTitle("Manage Pageinfos");
 	}
 	public function getID()
 	{

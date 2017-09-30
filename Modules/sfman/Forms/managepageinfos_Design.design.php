@@ -22,8 +22,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 14:46
-*@lastUpdate 1396-07-07 - 2017-09-29 14:46
+*@creationDate 1396-07-08 - 2017-09-30 23:34
+*@lastUpdate 1396-07-08 - 2017-09-30 23:34
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -36,11 +36,9 @@ class managepageinfos_Design extends FormDesign {
 	{
 		$this->Data = $Data;
 	}    
-private $adminMode=true;
-    
-private $listPage;
-    
-private $itemPage;
+	private $adminMode=true;
+    private $listPage;
+    private $itemPage;
 
     /**
      * @param bool $adminMode
@@ -61,25 +59,16 @@ private $itemPage;
     }
 	public function __construct()
 	{
+		parent::__construct();
 	}
 	public function getBodyHTML($command=null)
 	{
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("sfman_managepageinfos");
-		$PageTitlePart=new Div();
-		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("managepageinfos"));
-		$Page->addElement($PageTitlePart);
-		if($this->getMessage()!=""){
-			$MessagePart=new Div();
-			if($this->getMessageType()==MessageType::$ERROR)
-				$MessagePart->setClass("sweet_messagepart alert alert-danger");
-			else
-				$MessagePart->setClass("sweet_messagepart alert alert-success");
-			$MessagePart->addElement(new Lable($this->getMessage()));
-			$Page->addElement($MessagePart);
-		}
+		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['pageinfo']->getTableTitle() . " ها"));
+		if($this->getMessage()!="")
+			$Page->addElement($this->getMessagePart());
 		$addUrl=new AppRooter('sfman',$this->itemPage);
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
@@ -103,8 +92,8 @@ private $itemPage;
 			$delurl=new AppRooter('sfman',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-				$Title=$this->Data['data'][$i]->getTitle();
-			if($this->Data['data'][$i]->getTitle()=="")
+				$Title=$this->Data['data'][$i]->gettitle();
+			if($this->Data['data'][$i]->gettitle()=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
@@ -120,31 +109,9 @@ private $itemPage;
 		}
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount']));
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"sfman",$this->listPage));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
-	}
-	private function getPaginationPart($PageCount)
-	{
-		$Pagination=new UList();
-		$Pagination->setClass("pagination");
-		for($i=1;$i<=$PageCount;$i++)
-		{
-			$RTR=null;
-			if(isset($_GET['action']) && $_GET['action']=="search_Click")
-				$RTR=new AppRooter("sfman",$this->listPage);
-			else
-			{
-				$RTR=new AppRooter("sfman",$this->listPage);
-				//$RTR->addParameter(new UrlParameter("g",$this->Data['groupid']));
-			}
-			$RTR->addParameter(new UrlParameter("pn",$i));
-			$RTR->setAppendToCurrentParams(false);
-			$lbl=new Lable($i);
-			$lnk=new link($RTR->getAbsoluteURL(),$lbl);
-			$Pagination->addElement(new UListElement($lnk));
-		}
-		return $Pagination;
 	}
 }
 ?>

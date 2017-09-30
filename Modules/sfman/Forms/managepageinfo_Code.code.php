@@ -2,6 +2,7 @@
 namespace Modules\sfman\Forms;
 use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
+use Modules\common\PublicClasses\AppRooter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -10,8 +11,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 14:46
-*@lastUpdate 1396-07-07 - 2017-09-29 14:46
+*@creationDate 1396-07-08 - 2017-09-30 23:34
+*@lastUpdate 1396-07-08 - 2017-09-30 23:34
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -50,6 +51,11 @@ private $adminMode=true;
 		}
 		return $design->getBodyHTML();
 	}
+	public function __construct($namespace)
+	{
+		parent::__construct($namespace);
+		$this->setTitle("Manage Pageinfo");
+	}
 	public function getID()
 	{
 		$id=-1;
@@ -60,6 +66,7 @@ private $adminMode=true;
 	public function btnSave_Click()
 	{
 		$managepageinfoController=new managepageinfoController();
+		$managepageinfoController->setAdminMode($this->adminMode);
 		$translator=new ModuleTranslator("sfman");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
@@ -73,7 +80,15 @@ private $adminMode=true;
 		$sentenceinurl=$design->getSentenceinurl()->getValue();
 		$Result=$managepageinfoController->BtnSave($this->getID(),$title,$description,$keywords,$themepage,$internalurl,$canonicalurl,$sentenceinurl);
 		$design->setData($Result);
-		$design->setMessage("btnSave is done!");
+		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
+		$design->setMessageType(MessageType::$SUCCESS);
+		if($this->adminMode){
+			$ManageListRooter=new AppRooter("sfman","managepageinfos");
+		}
+		else{
+			$ManageListRooter=new AppRooter("sfman","manageuserpageinfos");
+		}
+			AppRooter::redirect($ManageListRooter->getAbsoluteURL(),1000);
 		}
 		catch(DataNotFoundException $dnfex){
 			$design=new message_Design();

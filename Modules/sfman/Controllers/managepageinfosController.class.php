@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\sfman\Entity\sfman_pageinfoEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 14:46
-*@lastUpdate 1396-07-07 - 2017-09-29 14:46
+*@creationDate 1396-07-08 - 2017-09-30 23:34
+*@lastUpdate 1396-07-08 - 2017-09-30 23:34
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -40,6 +40,7 @@ private $adminMode=true;
 		if($PageNum<=0)
 			$PageNum=1;
 		$pageinfoEnt=new sfman_pageinfoEntity($DBAccessor);
+		$result['pageinfo']=$pageinfoEnt;
 		$q=new QueryLogic();
 				if($UserID!=null)
             $q->addCondition(new FieldCondition(sfman_pageinfoEntity::$ROLE_SYSTEMUSER_FID,$UserID));		
@@ -65,6 +66,7 @@ $q->addOrderBy("id",true);
 		if($PageNum<=0)
 			$PageNum=1;
 		$pageinfoEnt=new sfman_pageinfoEntity($DBAccessor);
+		$result['pageinfo']=$pageinfoEnt;
 		$q=new QueryLogic();		
 $q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));		
 $q->addCondition(new FieldCondition("description","%$description%",LogicalOperator::LIKE));		

@@ -22,8 +22,8 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-07 - 2017-09-29 14:46
-*@lastUpdate 1396-07-07 - 2017-09-29 14:46
+*@creationDate 1396-07-08 - 2017-09-30 23:34
+*@lastUpdate 1396-07-08 - 2017-09-30 23:34
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -34,19 +34,9 @@ class managepageinfo_Design extends FormDesign {
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("sfman_managepageinfo");
-		$PageTitlePart=new Div();
-		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("مدیریت " . $this->Data['pageinfo']->getTableTitle() . ""));
-		$Page->addElement($PageTitlePart);
-		if($this->getMessage()!=""){
-			$MessagePart=new Div();
-			if($this->getMessageType()==MessageType::$ERROR)
-				$MessagePart->setClass("sweet_messagepart alert alert-danger");
-			else
-				$MessagePart->setClass("sweet_messagepart alert alert-success");
-			$MessagePart->addElement(new Lable($this->getMessage()));
-			$Page->addElement($MessagePart);
-		}
+		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['pageinfo']->getTableTitle() . ""));
+		if($this->getMessage()!="")
+			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,''));
