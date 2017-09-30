@@ -59,7 +59,6 @@ abstract class BaseManageDBFormController extends baseFormCodeGenerator {
     protected abstract function getTableItemCode($formInfo,$isManager);
     protected abstract function getActionUsingGetFormCode($formInfo,$ActionName,$FirstParam="\$this->getID(),");
     protected abstract function getActionFormCode($formInfo,$ActionName,$FirstParam="\$this->getID(),",$ParamMethodisPost=true);
-    protected abstract function getPaginationPartCode($forminfo,$isManager);
     protected abstract function makeTableItemManageCode($formInfo);
     protected abstract function makeTableItemCode($formInfo);
     protected abstract function makeTableManageListCode($formInfo);
