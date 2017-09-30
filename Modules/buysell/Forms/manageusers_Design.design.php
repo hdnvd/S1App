@@ -82,7 +82,7 @@ class manageusers_Design extends FormDesign {
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
-	private function getPaginationPart($PageCount)
+	protected function getPaginationPart($PageCount)
 	{
 		$div=new Div();
 		for($i=1;$i<=$PageCount;$i++)

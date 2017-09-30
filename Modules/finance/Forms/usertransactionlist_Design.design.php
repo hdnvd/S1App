@@ -205,7 +205,7 @@ class usertransactionlist_Design extends FormDesign {
 		$form=new SweetFrom("", "GET", $Page);
 		return $form->getHTML();
 	}
-	private function getPaginationPart($PageCount)
+	protected function getPaginationPart($PageCount)
 	{
 		$div=new Div();
 		for($i=1;$i<=$PageCount;$i++)
