@@ -132,6 +132,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
         $C .= "\nuse core\\CoreClasses\\html\\DatePicker;";
         $C .= "\nuse core\\CoreClasses\\html\\DataComboBox;";
         $C .= "\nuse core\\CoreClasses\\html\\SweetButton;";
+        $C .= "\nuse core\\CoreClasses\\html\\Button;";
         $C .= "\nuse core\\CoreClasses\\html\\CheckBox;";
         $C .= "\nuse core\\CoreClasses\\html\\RadioBox;";
         $C .= "\nuse core\\CoreClasses\\html\\SweetFrom;";
@@ -324,6 +325,7 @@ EOT;
         {
             $C.="true,\"" . $E['caption'] . "\");";
             $C.="\n\t\t\$this->". $E['name']."->setAction(\"".$E['name']."\");";
+            $C.="\n\t\t\$this->". $E['name']."->setDisplayMode(Button::\$DISPLAYMODE_BUTTON);";
             $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"btn btn-primary\");";
         }
         else if($E['type_fid']==8)//RadioBox

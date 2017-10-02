@@ -15,7 +15,7 @@ use Modules\sfman\Entity\sfman_tableEntity;
  *@creationDate 1395/10/9 - 2016/12/29 19:36:38
  *@lastUpdate 1395/10/9 - 2016/12/29 19:36:38
  *@SweetFrameworkHelperVersion 1.112
-*/
+ */
 
 abstract class manageDBFormController extends BaseManageDBFormController {
     private $TableName;
@@ -55,7 +55,7 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         return $this->TableName;
     }
 
-	protected function getTableFields($TableName)
+    protected function getTableFields($TableName)
     {
         $tblEnt=new sfman_tableEntity(null,$TableName);
         return $tblEnt->GetCollumns();
@@ -164,12 +164,14 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         {
             if($this->getIsItemSelected($FormsToGenerate,"manage_useritem_code"))
                 $formInfo2['userform']['name']="manageuser".$TableName;
-            $this->saveFormInDB($ModuleID,$formInfo2['form']['name'],$formInfo2['form']['caption']);
             $this->makeTableItemManageCode($formInfo2);
             $formInfo2['userform']['name']=null;
         }
         if($this->getIsItemSelected($FormsToGenerate,"manage_item_design"))
+        {
             $this->makeTableItemManageDesign($formInfo2);
+            $this->saveFormInDB($ModuleID,$formInfo2['form']['name'],$formInfo2['form']['caption']);
+        }
 
         if($this->getIsItemSelected($FormsToGenerate,"manage_useritem_code"))
         {
@@ -189,15 +191,18 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         if($this->getIsItemSelected($FormsToGenerate,"manage_list_code"))
         {
             $this->makeTableManageListCode($formInfo);
-            $this->saveFormInDB($ModuleID,$formInfo['form']['name'],$formInfo['form']['name']);
         }
         if($this->getIsItemSelected($FormsToGenerate,"manage_list_design"))
+        {
+            $this->saveFormInDB($ModuleID,$formInfo['form']['name'],$formInfo['form']['name']);
             $this->makeTableManageListDesign($formInfo);
+        }
         if($this->getIsItemSelected($FormsToGenerate,"manage_userlist_code"))
         {
             $this->setFormName("manageuser".$TableName . "s");
             $this->makeUserManageCode("manageuser".$TableName . "s",$formInfo);
             $this->saveFormInDB($ModuleID,"manageuser".$TableName . "s","manageuser".$TableName . "s");
+
         }
 
         $formInfo['form']['name']=$TableName ;
@@ -209,10 +214,12 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         if($this->getIsItemSelected($FormsToGenerate,"item_display_code"))
         {
             $this->makeTableItemCode($formInfo);
-            $this->saveFormInDB($ModuleID,$formInfo['form']['name'],$formInfo['form']['name']);
         }
         if($this->getIsItemSelected($FormsToGenerate,"item_display_design"))
+        {
             $this->makeTableItemDesign($formInfo);
+            $this->saveFormInDB($ModuleID,$formInfo['form']['name'],$formInfo['form']['name']);
+        }
 
 
         $skippedCollumns=0;
@@ -261,11 +268,13 @@ abstract class manageDBFormController extends BaseManageDBFormController {
             $this->makeTableListController($formInfo2);
         if($this->getIsItemSelected($FormsToGenerate,"list_code"))
         {
-            $this->saveFormInDB($ModuleID,$formInfo2['form']['name'],$formInfo2['form']['caption']);
             $this->makeTableListCode($formInfo2);
         }
         if($this->getIsItemSelected($FormsToGenerate,"list_design"))
+        {
             $this->makeTableListDesign($formInfo2);
+            $this->saveFormInDB($ModuleID,$formInfo2['form']['name'],$formInfo2['form']['caption']);
+        }
         if($this->getIsItemSelected($FormsToGenerate,"search_design"))
         {
             $this->setFormCaption("جستجوی " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \"");

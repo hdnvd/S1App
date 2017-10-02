@@ -19,7 +19,7 @@ class makeEntityController extends Controller {
     private $ModuleDir;
     private $JDate;
     private $CDate;
-    private $SFHVERSION="2.002";
+    private $SFHVERSION="2.014";
     private $SFVERSION="1.018";
 	public function load($ID)
 	{
@@ -35,6 +35,24 @@ class makeEntityController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
+
+    private function getTitleFieldIndex($Fields)
+    {
+        $TitleInd=array_search("title",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("caption",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("family",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("name",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("mellicode",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("email",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("id",$Fields);
+        return $TitleInd;
+    }
 	public function BtnGenerate($ID,$cmbModule,$txtEntity)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -57,9 +75,9 @@ class makeEntityController extends Controller {
 		else{
 			//UPDATE DATA
 		}
-
-		$result['param1']="";
 		$result=$this->load(-1);
+        $result['module']=$cmbModule;
+        $result['entity']=$txtEntity;
 		$DBAccessor->close_connection();
 		return $result;
 	}
@@ -90,11 +108,11 @@ class makeEntityController extends Controller {
         $C .= "\nclass $ent" . "Entity extends EntityClass {";
         $C .= "\n\tpublic function __construct(dbaccess \$DBAccessor)";
         $C .= "\n\t{";
-//        $C .= "\n\t\tparent::__construct(\$DBAccessor);";
         $C .= "\n\t\t\$this->setDatabase(new dbquery(\$DBAccessor));";
         $C .= "\n\t\t\$this->setTableName(\"$ent\");";
         $C .= "\n\t\t\$this->setTableTitle(\"$ent\");";
-
+        $titleField=$cols[$this->getTitleFieldIndex($cols)];
+        $C .= "\n\t\t\$this->setTitleFieldName(\"$titleField\");";
         for($i=0;$i<count($cols);$i++)
             if($cols[$i]!="id" && $cols[$i]!="deletetime")
                 $C .= $this->getFieldInfoSetCode($cols[$i],$ent . "Entity");

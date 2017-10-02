@@ -69,7 +69,7 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
                     else
                     {
                         $FieldFillCode .= "\r\n\t\tforeach (\$this->Data['$Ename'] as \$item)";
-                        $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitle());";
+                        $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitleField());";
                     }
                     $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setSelectedValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
@@ -307,7 +307,7 @@ EOT;
         $C .="\n\t}";
         $C .="\n\tpublic function getBodyHTML(\$command=null)";
         $C .="\n\t{";
-        $C .=$this->getDesignTopPartCode();
+        $C .=$this->getDesignTopPartCode(false);
         $C .="\n\t\t\$addUrl=new AppRooter('$ModuleName',\$this->itemPage);";
         $C .="\n\t\t\$LblAdd=new Lable('افزودن آیتم جدید');";
         $C .="\n\t\t\$lnkAdd=new link(\$addUrl->getAbsoluteURL(),\$LblAdd);";
@@ -324,6 +324,7 @@ EOT;
         $C .="\n\t\t\$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');";
         $C .="\n\t\t\$lnkSearch->setId('search" . $TableName . "link');";
         $C .="\n\t\t\$Page->addElement(\$lnkSearch);";
+        $C .=$this->getDesignMessageAdding();
         $C .="\n\t\t\$TableDiv=new Div();";
         $C .="\n\t\t\$TableDiv->setClass('table-responsive');";
         $C .="\n\t\t\$LTable1=new ListTable(3);";
@@ -341,13 +342,13 @@ EOT;
         $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage);";
         $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
         $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('delete',1));";
-        $TitleInd=$this->getTitleFieldIndex();
-        if($TitleInd!=-1)
-            $TitleField=$this->getCurrentTableFields()[$TitleInd];
-        else
-            $TitleField=$this->getCurrentTableFields()[1];
-        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".$TitleField."();";
-        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".$TitleField."()==\"\")";
+//        $TitleInd=$this->getTitleFieldIndex();
+//        if($TitleInd!=-1)
+//            $TitleField=$this->getCurrentTableFields()[$TitleInd];
+//        else
+//            $TitleField=$this->getCurrentTableFields()[1];
+        $C .="\n\t\t\t\$Title=\$this->Data['data'][\$i]->getTitleField();";
+        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->getTitleField()==\"\")";
         $C .="\n\t\t\t\t\$Title='- بدون عنوان -';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
@@ -427,13 +428,13 @@ EOT;
         $C .="\n\t\t\t\$url=new AppRooter('$ModuleName','$TableName');";
         $C .="\n\t\t\t\$url->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
 
-        $TitleInd=$this->getTitleFieldIndex();
-        if($TitleInd!=-1)
-            $TitleField=$this->getCurrentTableFields()[$TitleInd];
-        else
-            $TitleField=$this->getCurrentTableFields()[1];
-        $C .="\n\t\t\t\t\$Title=\$this->Data['data'][\$i]->get".ucwords($TitleField)."();";
-        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->get".ucwords($TitleField)."()==\"\")";
+//        $TitleInd=$this->getTitleFieldIndex();
+//        if($TitleInd!=-1)
+//            $TitleField=$this->getCurrentTableFields()[$TitleInd];
+//        else
+//            $TitleField=$this->getCurrentTableFields()[1];
+        $C .="\n\t\t\t\$Title=\$this->Data['data'][\$i]->getTitleField();";
+        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->getTitleField()==\"\")";
         $C .="\n\t\t\t\t\$Title='-- بدون عنوان --';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
@@ -558,7 +559,9 @@ EOT;
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $E=$formInfo['elements'][$i];
             $C .= "\n\n\t\t/******** ".$E['name']." ********/";
-            $C .= "\n\t\t\$this->sortby->addOption('".$E['name']."',\$this->getFieldCaption('".$E['name']."'));";
+            if($E['type_fid']==2 || $E['type_fid']==3 || $E['type_fid']==4 || $E['type_fid']==9)
+                if(strtolower($E['name'])!="sortby" && strtolower($E['name'])!="isdesc")
+                    $C .= "\n\t\t\$this->sortby->addOption('".$E['name']."',\$this->getFieldCaption('".$E['name']."'));";
             if($E['type_fid']==2) {
 
                 $C .= "\n\t\tif(isset(\$_GET['". $E['name'] . "']))";
@@ -584,7 +587,7 @@ EOT;
         $DesignFile=$this->getFormDir() . "/" .  $FormName ."search_Design.design.php";
         file_put_contents($DesignFile, $C);
 
-        chmod($this->getDesignFile(),0777);
+        chmod($DesignFile,0777);
 
     }
 }

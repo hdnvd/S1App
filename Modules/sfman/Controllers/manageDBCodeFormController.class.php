@@ -222,7 +222,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
                     $C .= "\n\t\t\t\$ManageListRooter=new AppRooter(\"$moduleName\",\"" . $formInfo['userform']['name'] . "s\");";
                     $C .= "\n\t\t}";
                 }
-                $C .= "\n\t\t\tAppRooter::redirect(\$ManageListRooter->getAbsoluteURL(),1000);";
+                $C .= "\n\t\t\tAppRooter::redirect(\$ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);";
             }
         }
         if($ActionType==manageDBCodeFormController::$ACTIONTYPE_SEARCH){
