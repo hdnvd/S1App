@@ -14,7 +14,7 @@ class role_viewsystemrolemenuitemEntity extends EntityClass {
 	}
 	public function Select(array $Fields,$ID,$LatinTitle,$Module,$Page,$Parameters)
 	{
-		$Query=$this->Database->Select($Fields)->From($this->TableName)->Where()->Equal("isdeleted", 0);
+		$Query=$this->Database->Select($Fields)->From($this->TableName)->Where()->Smaller("deletetime", 1);
 		if(!is_null($ID))
 		{
 			$Query=$Query->AndLogic();
