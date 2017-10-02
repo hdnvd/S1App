@@ -31,7 +31,7 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C .= " @var $EType";
         $C .= " */";
         $C .= "\n\tprivate \$" . $E['name'] . ";";
-        if ($E['type_fid'] == 2 || $E['type_fid'] == 3 || $E['type_fid'] == 4 || $E['type_fid'] == 5 || $E['type_fid'] == 6 || $E['type_fid'] == 8)
+        if ($E['type_fid'] == 2 || $E['type_fid'] == 3 || $E['type_fid'] == 4 || $E['type_fid'] == 5 || $E['type_fid'] == 6 || $E['type_fid'] == 8 || $E['type_fid'] == 9)
             $C .= $this->getGetterCode($E['name'], $EType);
         return $C;
     }
@@ -48,19 +48,57 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
                 if($formInfo['elements'][$i]['type_fid']==3) {
                     if($AddEmptyOption)
                         $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\"\", \"مهم نیست\");";
-                    $FieldFillCode .= "\r\n\t\tforeach (\$this->Data['$Ename'] as \$item)";
-                    $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitle());";
+                    if($FT==FieldType::$BOOLEAN)
+                    {
+                        if(strtolower($Ename)=="ismale")
+                        {
+                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'مرد');";
+                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'زن');";
+                        }
+                        elseif(strtolower($Ename)=="ismarried")
+                        {
+                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'متاهل');";
+                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'مجرد');";
+                        }
+                        else
+                        {
+                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'بله');";
+                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'خیر');";
+                        }
+                    }
+                    else
+                    {
+                        $FieldFillCode .= "\r\n\t\tforeach (\$this->Data['$Ename'] as \$item)";
+                        $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitle());";
+                    }
                     $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setSelectedValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                     $FieldFillCode .= "\r\n\t\t}";
                 }
-                elseif($formInfo['elements'][$i]['type_fid']==2) {
+                elseif($formInfo['elements'][$i]['type_fid']==2) //TextBox
+                {
                     $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                     if($IsManagement)
                         $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
+                    $FieldFillCode .= "\r\n\t\t}";
+                }
+
+                elseif($formInfo['elements'][$i]['type_fid']==9) //DatePicker
+                {
+                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setTime(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
+
+                    $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
+                    if($IsManagement)
+                        $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
+                    $FieldFillCode .= "\r\n\t\t}";
+                }
+                elseif($formInfo['elements'][$i]['type_fid']==6) {
+                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
+                    $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                     $FieldFillCode .= "\r\n\t\t}";
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==5) {
@@ -153,14 +191,14 @@ EOT;
 
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $ft=FieldType::getFieldType($formInfo['elements'][$i]['name']);
-            if($ft==FieldType::$NORMAL || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID|| $ft==FieldType::$FILE)
+            if($ft==FieldType::$NORMAL || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID|| $ft==FieldType::$FILE || $ft==FieldType::$AUTOTIME || $ft==FieldType::$DATE)
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $ft=FieldType::getFieldType($formInfo['elements'][$i]['name']);
-            if($ft==FieldType::$NORMAL || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID || $ft==FieldType::$FILE)
+            if($ft==FieldType::$NORMAL || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID || $ft==FieldType::$FILE || $ft==FieldType::$AUTOTIME || $ft==FieldType::$DATE)
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
         $C .="\n\t}";
@@ -186,17 +224,28 @@ EOT;
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
                 $C .= "\r\n\t\t}";
             }
+            elseif(FieldType::getFieldType($Ename)==FieldType::$DATE || FieldType::getFieldType($Ename)==FieldType::$AUTOTIME ) {
+                $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
+                $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
+                $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
+                $C .= "\r\n\t\t\t\$". $Ename . "_SD=new SweetDate();";
+                $C .= "\r\n\t\t\t\$". $Ename . "_Text=\$". $Ename . "_SD->date(\"l d F Y\",$Val);";
+                $C .= "\r\n\t\t\t\$this->$Ename" . "->setText(\$". $Ename . "_Text);";
+                $C .= "\r\n\t\t}";
+            }
         }
-        $C .="\n\t\t\$LTable1=new ListTable(2);";
+        $C .="\n\t\t\$LTable1=new Div();";
         $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
+//        for($i=0;$i<count($formInfo['elements']);$i++) {
+//            $E=$formInfo['elements'][$i];
+//            $C.="\n\t\t\$LTable1->addElement(new Lable(\$this->getFieldCaption('".$E['name']."')));";
+////            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_titlelabel');";
+//            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
+////            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_datalabel');";
+//        }
         for($i=0;$i<count($formInfo['elements']);$i++) {
-            $E=$formInfo['elements'][$i];
-            $C.="\n\t\t\$LTable1->addElement(new Lable(\$this->getFieldCaption('".$E['name']."')));";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_titlelabel');";
-            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
-            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_datalabel');";
+            $C .=$this->getDesignAddCode($formInfo,$i,false);
         }
-
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
@@ -247,6 +296,10 @@ EOT;
             \$this->listPage = 'manageuser$TableNameDotS';
         }
     }
+    public function getAdminMode()
+    {
+        return \$this->adminMode;
+    }
 EOT;
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
@@ -259,8 +312,18 @@ EOT;
         $C .="\n\t\t\$LblAdd=new Lable('افزودن آیتم جدید');";
         $C .="\n\t\t\$lnkAdd=new link(\$addUrl->getAbsoluteURL(),\$LblAdd);";
         $C .="\n\t\t\$lnkAdd->setClass('linkbutton btn btn-primary');";
+        $C .="\n\t\t\$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');";
         $C .="\n\t\t\$lnkAdd->setId('add" . $TableName . "link');";
         $C .="\n\t\t\$Page->addElement(\$lnkAdd);";
+
+        $C .="\n\t\t\$SearchUrl=new AppRooter('$ModuleName',\$this->listPage);";
+        $C .="\n\t\t\$SearchUrl->addParameter(new URLParameter('search',null));";
+        $C .="\n\t\t\$LblSearch=new Lable('جستجو');";
+        $C .="\n\t\t\$lnkSearch=new link(\$SearchUrl->getAbsoluteURL(),\$LblSearch);";
+        $C .="\n\t\t\$lnkSearch->setClass('linkbutton btn btn-primary');";
+        $C .="\n\t\t\$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');";
+        $C .="\n\t\t\$lnkSearch->setId('search" . $TableName . "link');";
+        $C .="\n\t\t\$Page->addElement(\$lnkSearch);";
         $C .="\n\t\t\$TableDiv=new Div();";
         $C .="\n\t\t\$TableDiv->setClass('table-responsive');";
         $C .="\n\t\t\$LTable1=new ListTable(3);";
@@ -290,6 +353,7 @@ EOT;
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
         $C .="\n\t\t\t\$lbDel[\$i]=new Lable('حذف');";
         $C .="\n\t\t\t\$liDel[\$i]=new link(\$delurl->getAbsoluteURL(),\$lbDel[\$i]);";
+        $C .="\n\t\t\t\$liDel[\$i]->setGlyphiconClass('glyphicon glyphicon-remove');";
         $C .="\n\t\t\t\$liDel[\$i]->setClass('btn btn-danger');";
         $C .="\n\t\t\t\$LTable1->addElement(new Lable(\$i+1));";
         $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
@@ -324,6 +388,21 @@ EOT;
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
+        $C.=<<<EOT
+    \n\tprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+    public function getAdminMode()
+    {
+        return \$this->adminMode;
+    }
+EOT;
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
@@ -363,7 +442,8 @@ EOT;
         $C .="\n\t\t}";
         $C .="\n\t\t\$Page->addElement(\$Div1);";
         $C .="\n\t\t\$Page->addElement(\$this->getPaginationPart(\$this->Data['pagecount'],\"".$this->getCodeModuleName()."\",\"$FormName\"));";
-        $C .="\n\t\t\$form=new SweetFrom(\"\", \"GET\", \$Page);";
+        $C.="\n\t\t\$PageLink=new AppRooter('".$this->getCodeModuleName()."','$FormName');";
+        $C .="\n\t\t\$form=new SweetFrom(\$PageLink->getAbsoluteURL(), \"GET\", \$Page);";
         $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
@@ -414,17 +494,20 @@ EOT;
     }
     protected function getTitleFieldIndex()
     {
-        $TitleInd=array_search("title",$this->getCurrentTableFields());
-        if($TitleInd==-1)
-            $TitleInd=array_search("caption",$this->getCurrentTableFields());
-        if($TitleInd==-1)
-            $TitleInd=array_search("name",$this->getCurrentTableFields());
-        if($TitleInd==-1)
-            $TitleInd=array_search("mellicode",$this->getCurrentTableFields());
-        if($TitleInd==-1)
-            $TitleInd=array_search("email",$this->getCurrentTableFields());
-        if($TitleInd==-1)
-            $TitleInd=array_search("id",$this->getCurrentTableFields());
+        $Fields=$this->getCurrentTableFields();
+        $TitleInd=array_search("title",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("caption",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("family",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("name",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("mellicode",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("email",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("id",$Fields);
         return $TitleInd;
     }
     protected function makeTableSearchDesign($formInfo)

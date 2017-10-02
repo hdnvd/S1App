@@ -137,7 +137,11 @@ abstract class manageDBFormController extends BaseManageDBFormController {
                 elseif($FT==FieldType::$FILE)
                     $formInfo['elements'][$i-$skippedCollumns]['type_fid']=6;
                 elseif($FT==FieldType::$BOOLEAN)
-                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=5;
+                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=3;
+                elseif($FT==FieldType::$DATE)
+                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=9;
+                elseif($FT==FieldType::$AUTOTIME)
+                    $formInfo['elements'][$i-$skippedCollumns]['type_fid']=9;
                 else
                     $formInfo['elements'][$i-$skippedCollumns]['type_fid']=2;
             }
@@ -152,6 +156,7 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         $formInfo2['elements'][$i-$skippedCollumns]['name']="btnSave";
         $formInfo2['elements'][$i-$skippedCollumns]['caption']="ذخیره";
         $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=7;
+        $i++;
         $this->setFormCaption("مدیریت " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \"");
         if($this->getIsItemSelected($FormsToGenerate,"manage_item_controller"))
             $this->makeTableItemManageController($formInfo2);
@@ -176,6 +181,7 @@ abstract class manageDBFormController extends BaseManageDBFormController {
 
         $formInfo['form']['name']="manage".$TableName . "s";
         $formInfo['form']['caption']="Manage ".ucfirst($TableName) . "s";
+        $formInfo['form']['listname']=$TableName . "list";
         $this->setFormName($formInfo['form']['name']);
         $this->setFormCaption("مدیریت " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \" ها");
         if($this->getIsItemSelected($FormsToGenerate,"manage_list_controller"))
@@ -209,6 +215,15 @@ abstract class manageDBFormController extends BaseManageDBFormController {
             $this->makeTableItemDesign($formInfo);
 
 
+        $skippedCollumns=0;
+        for($i=0;$i-$skippedCollumns<count($formInfo2['elements']);$i++) {
+            $item=$formInfo2['elements'][$i - $skippedCollumns]['type_fid'];
+            if($item==6 || $item==7) {
+                array_splice($formInfo2['elements'],$i - $skippedCollumns,1);
+                $skippedCollumns++;
+            }
+        }
+
         $formInfo2['elements'][$i-$skippedCollumns]['name']="sortby";
         $formInfo2['elements'][$i-$skippedCollumns]['caption']="مرتب سازی بر اساس";
         $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=3;
@@ -220,11 +235,22 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         $formInfo2['elements'][$i-$skippedCollumns]['name']="search";
         $formInfo2['elements'][$i-$skippedCollumns]['caption']="جستجو";
         $formInfo2['elements'][$i-$skippedCollumns]['type_fid']=7;
-        $skippedCollumns=0;
-        for($i=0;$i+$skippedCollumns<count($formInfo2['elements']);$i++) {
-            if($formInfo2['elements'][$i]['type_fid']==6) {
-                array_splice($formInfo2['elements'],$i + $skippedCollumns,1);
-                $skippedCollumns++;
+
+        $ElementCount=count($formInfo2['elements']);
+        $addedElements=0;
+        for($i2=0;$i2<$ElementCount;$i2++) {
+            $item=$formInfo2['elements'][$i2+$addedElements];
+            $itemType=$item['type_fid'];
+            if(FieldType::getFieldType($item['name'])==FieldType::$AUTOTIME || FieldType::getFieldType($item['name'])==FieldType::$DATE) {
+                $NewItem[0]['name']=$item['name']. "_to";
+                $NewItem[0]['caption']=$item['caption'];
+                $NewItem[0]['type_fid']=$item['type_fid'];
+                $formInfo2['elements'][$i2+$addedElements]['name']=$item['name']. "_from";
+                $partOne=array_slice($formInfo2['elements'], 0, $i2+$addedElements+1);
+                $partTwo=array_slice($formInfo2['elements'], $i2+$addedElements+1);
+                $formInfo2['elements']=array_merge($partOne, $NewItem, $partTwo);
+                $addedElements++;
+                $i++;
             }
         }
         $formInfo2['form']['name']=$TableName . "list";
@@ -248,6 +274,7 @@ abstract class manageDBFormController extends BaseManageDBFormController {
 
         $DBAccessor->close_connection();
     }
+
     protected function saveFormInDB($ModuleID,$FormName,$FormCaption)
     {
         $DBAccessor=new dbaccess();

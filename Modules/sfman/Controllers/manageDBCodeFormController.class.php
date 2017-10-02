@@ -49,6 +49,14 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
                     $Params.=",";
                 $Params.=$ParamName;
             }
+            elseif($E['type_fid']==9)//DatePicker
+            {
+                $ParamName="\$" . $E['name'];
+                $C.="\n\t\t$ParamName=DatePicker::getTimeFromText(\$_GET['" . $E['name'] . "']);";
+                if($Params!="")
+                    $Params.=",";
+                $Params.=$ParamName;
+            }
             else if($E['type_fid']==3)//ComboBox
             {
                 $ParamName="\$" . $E['name'] . "_ID";
@@ -103,6 +111,14 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
                     $Params.=",";
                 $Params.=$ParamName;
             }
+            elseif($E['type_fid']==9)//DatePicker
+            {
+                $ParamName="\$" . $E['name'];
+                $C.="\n\t\t$ParamName=\$design->get" . ucwords($E['name']) . "()->getTime();";
+                if($Params!="")
+                    $Params.=",";
+                $Params.=$ParamName;
+            }
             else if($E['type_fid']==3)//ComboBox
             {
                 $ParamName="\$" . $E['name'] . "_ID";
@@ -136,7 +152,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
                 $C.="\n\t\t$ParamName1=\$design->get" . ucwords($E['name']) . "()->getSelectedFilesTempPath();";
                 $C.="\n\t\t$ParamName2=\$design->get" . ucwords($E['name']) . "()->getSelectedFilesName();";
                 $C.="\n\t\t$ParamName3=array();";
-                $C.="\n\t\tfor(\$fileIndex=0;\$fileIndex<count($ParamName1);\$fileIndex++){";
+                $C.="\n\t\tfor(\$fileIndex=0;\$fileIndex<count($ParamName1) && $ParamName1" . "[\$fileIndex]!=null;\$fileIndex++){";
                 $C.="\n\t\t\t$ParamName3" . "[\$fileIndex]=uploadHelper::UploadFile($ParamName1"."[\$fileIndex], $ParamName2"."[\$fileIndex], \"content/files/$moduleName/$formName/\");";
                 $C.="\n\t\t}";
 
@@ -174,7 +190,13 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         $C .= "\n\t{";
         $C .= $this->getFormCodeActionInits($isManager);
         $C .= "\n\t\ttry{";
-        $C .= "\n\t\t\$design=new $formName" . "_Design();";
+        if($ActionType==manageDBCodeFormController::$ACTIONTYPE_SEARCH){
+            $C .= "\n\t\t\$design=\$this->searchForm;";
+            $C .= "\n\t\t\$design->setAdminMode(\$this->getAdminMode());";
+            $C .= "\n\t\t\$$formName" . "Controller->setAdminMode(\$this->getAdminMode());";
+        }
+        else
+            $C .= "\n\t\t\$design=new $formName" . "_Design();";
         $GetterCode="";
         $Params="";
         if($ParamMethodisPost)
@@ -182,7 +204,6 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         else
         $this->fillGETParamValueGetters($formInfo,$Params,$GetterCode);
         $C.=$GetterCode;
-
         $C .= "\n\t\t\$Result=\$$formName" . "Controller->" . ucwords($ActionName) . "($FirstParam" . "$Params);";
         $C .= "\n\t\t\$design->setData(\$Result);";
         if($ActionType==null)
@@ -192,7 +213,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             $C .= "\n\t\t\$design->setMessageType(MessageType::\$SUCCESS);";
             if($isManager)
             {
-                $C .= "\n\t\tif(\$this->adminMode){";
+                $C .= "\n\t\tif(\$this->getAdminMode()){";
                 $C .= "\n\t\t\t\$ManageListRooter=new AppRooter(\"$moduleName\",\"$formName" . "s\");";
                 $C .= "\n\t\t}";
                 if(key_exists('userform',$formInfo) && $formInfo['userform']['name']!=null)
@@ -329,6 +350,10 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
     {
         \$this->adminMode = \$adminMode;
     }
+    public function getAdminMode()
+    {
+        return \$this->adminMode;
+    }
 EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
@@ -393,36 +418,29 @@ EOT;
     protected function makeTableManageListCode($formInfo)
     {
         $formName=$formInfo['form']['name'];
-        $moduleName=$formInfo['module']['name'];
-
+        $ListName=$formInfo['form']['listname'];
         $C = "<?php";
         $C .=$this->getFormNamespaceDefiner();
         $C .= $this->getFormCodeUsage();
         $C.=$this->getFileInfoComment();
 
-        $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends FormCode {";
-            $C.=<<<EOT
-    \nprivate \$adminMode=true;
-
-    /**
-     * @param bool \$adminMode
-     */
-    public function setAdminMode(\$adminMode)
-    {
-        \$this->adminMode = \$adminMode;
-    }
-EOT;
+        $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends $ListName" . "_Code {";
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
         $C .= "\n\t\ttry{";
         $C .= $this->getFormCodeActionInits(true);
-        $C .= "\n\t\t\tif(isset(\$_GET['delete']))";
-        $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->DeleteItem(\$this->getID());";
-        $C .= "\n\t\t\telse{";
-        $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->load(\$this->getHttpGETparameter('pn',-1));";
-        $C.="\n\t\t\t}";
         $C .= "\n\t\t\t\$design=new $formName" . "_Design();";
-        $C .= "\n\t\t\t\$design->setAdminMode(\$this->adminMode);";
+        $C .= "\n\t\t\t\$design->setAdminMode(\$this->getAdminMode());";
+        $C .= "\n\t\t\tif(isset(\$_GET['delete'])){";
+        $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->DeleteItem(\$this->getID());";
+        $C .= "\n\t\t\t}elseif(isset(\$_GET['action']) && \$_GET['action']==\"search_Click\"){";
+        $C .= "\n\t\t\t\t\$this->setSearchForm(\$design);";
+        $C .= "\n\t\t\t\treturn \$this->search_Click();";
+        $C .= "\n\t\t\t}else{";
+        $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->load(\$this->getHttpGETparameter('pn',-1));";
+        $C .= "\n\t\t\t\tif(isset(\$_GET['search']))";
+        $C .= "\n\t\t\t\t\t\$design=new $ListName" . "search_Design();";
+        $C.="\n\t\t\t}";
         $C .= "\n\t\t\t\$design->setData(\$Result);";
         $C .= "\n\t\t\t\$design->setMessage(\"\");";
         $C .= "\n\t\t}";
@@ -456,18 +474,37 @@ EOT;
         $C.=$this->getFileInfoComment();
 
         $C .= "\nclass " . $formName . "_Code extends FormCode {";
+        $C .= "\n\tprivate \$searchForm='$formName';";
+        $C .= "\n\tprotected function setSearchForm(\$searchForm){";
+        $C .= "\n\t\t\$this->searchForm=\$searchForm;";
+        $C .= "\n\t}";
+        $C.=<<<EOT
+    \n\tprivate \$adminMode=true;
+
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+    public function getAdminMode()
+    {
+        return \$this->adminMode;
+    }
+EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
         $C .= $this->getFormCodeActionInits();
         $C .= "\n\t\ttry{";
-
+        $C .= "\n\t\t\t\$design=new $formName" . "_Design();";
+        $C .= "\n\t\t\t\$this->setSearchForm(\$design);";
         $C .= "\n\t\t\tif(isset(\$_GET['action']) && \$_GET['action']==\"search_Click\"){";
         $C .= "\n\t\t\t\treturn \$this->search_Click();";
         $C .= "\n\t\t\t}";
         $C .= "\n\t\t\telse";
         $C .= "\n\t\t\t{";
         $C .= "\n\t\t\t\t\$Result=\$$formName" . "Controller->load(\$this->getHttpGETparameter('pn',-1));";
-        $C .= "\n\t\t\t\t\$design=new $formName" . "_Design();";
         $C .= "\n\t\t\tif(isset(\$_GET['search']))";
         $C .= "\n\t\t\t\t\t\$design=new $formName" . "search_Design();";
         $C .= "\n\t\t\t\t\$design->setData(\$Result);";

@@ -129,6 +129,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
         $C .= "\nuse core\\CoreClasses\\html\\link;";
         $C .= "\nuse core\\CoreClasses\\html\\Lable;";
         $C .= "\nuse core\\CoreClasses\\html\\TextBox;";
+        $C .= "\nuse core\\CoreClasses\\html\\DatePicker;";
         $C .= "\nuse core\\CoreClasses\\html\\DataComboBox;";
         $C .= "\nuse core\\CoreClasses\\html\\SweetButton;";
         $C .= "\nuse core\\CoreClasses\\html\\CheckBox;";
@@ -138,6 +139,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
         $C .= "\nuse core\\CoreClasses\\html\\FileUploadBox;";
         $C .= "\nuse Modules\\common\\PublicClasses\\AppRooter;";
         $C .= "\nuse Modules\\common\\PublicClasses\\UrlParameter;";
+        $C .= "\nuse core\\CoreClasses\\SweetDate;";
         return $C;
     }
 	protected function getDesignTopPartCode($AddMessagePart=true)
@@ -175,6 +177,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
 	{
         $C = "\nuse core\\CoreClasses\\services\\FormCode;";
         $C .= "\nuse core\\CoreClasses\\services\\MessageType;";
+        $C .= "\nuse core\\CoreClasses\\html\\DatePicker;";
         $C .= "\nuse Modules\\common\\PublicClasses\\AppRooter;";
         $C .= "\nuse Modules\\languages\\PublicClasses\\ModuleTranslator;";
         $C .= "\nuse Modules\\languages\\PublicClasses\\CurrentLanguageManager;";
@@ -188,7 +191,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
 	{
         $C = "\n\t\t\$" . $this->getFormName() . "Controller=new " . $this->getFormName() . "Controller();";
         if($isManager)
-            $C.= "\n\t\t\$" . $this->getFormName() . "Controller->setAdminMode(\$this->adminMode);";
+            $C.= "\n\t\t\$" . $this->getFormName() . "Controller->setAdminMode(\$this->getAdminMode());";
         $C .= "\n\t\t\$translator=new ModuleTranslator(\"".$this->getCodeModuleName()."\");";
         $C .= "\n\t\t\$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());";
         return $C;
@@ -217,7 +220,7 @@ class baseFormCodeGenerator extends baseCodeGenerator {
         {
             $C .=<<<EOT
         \n\t\t\$UserID=null;
-        if(!\$this->adminMode)
+        if(!\$this->getAdminMode())
             \$UserID=\$role_systemuser_fid;
 EOT;
         }
@@ -231,7 +234,7 @@ EOT;
         return $result;
 
     }
-    protected function getDesignAddCode(array $formInfo,$ElementIndex)
+    protected function getDesignAddCode(array $formInfo,$ElementIndex,$IsManager=true)
     {
         $E=$formInfo['elements'][$ElementIndex];
 //        $C ="\n\n\t\t/******** ".$E['name']." ********/";
@@ -240,6 +243,8 @@ EOT;
 
         $DefaultItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getFieldRowCode(\$this->" . $E['name'] . ",\$this->getFieldCaption('" . $E['name'] . "'),null,''));";
         $SingleItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getSingleFieldRowCode(\$this->" . $E['name'] . "));";
+        if(!$IsManager)
+            return "\n\t\t\$LTable1" ."->addElement(\$this->getInfoRowCode(\$this->" . $E['name'] . ",\$this->getFieldCaption('" . $E['name'] . "')));";
 
         if($E['type_fid']==1)//Label
         {
@@ -273,6 +278,10 @@ EOT;
         {
             $C.=$SingleItemPart;
         }
+        else if($E['type_fid']==9)//DatePicker
+        {
+            $C.=$DefaultItemPart;
+        }
         return $C;
     }
     protected function getDesignInitialization(array $formInfo,$ElementIndex)
@@ -286,7 +295,7 @@ EOT;
         {
             $C.="\"" . $E['caption'] . "\");";
         }
-        else if($E['type_fid']==2)//TextBox
+        else if($E['type_fid']==2 || $E['type_fid']==9)//TextBox Or DatePicker
         {
             $C .="\"" . $E['name'] . "\");";
             $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";

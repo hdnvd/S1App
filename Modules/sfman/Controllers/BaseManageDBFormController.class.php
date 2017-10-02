@@ -95,6 +95,8 @@ class FieldType{
     public static $METAINF=3;
     public static $ID=4;
     public static $FILE=5;
+    public static $DATE=6;
+    public static $AUTOTIME=7;
 
     public static function getFieldType($FieldName)
     {
@@ -109,6 +111,10 @@ class FieldType{
             return FieldType::$FID;
         if(substr($FieldName,strlen($FieldName)-4)=="_flu")
             return FieldType::$FILE;
+        if(substr($FieldName,strlen($FieldName)-5)=="_date")
+            return FieldType::$DATE;
+        if(substr($FieldName,strlen($FieldName)-5)=="_time")
+            return FieldType::$AUTOTIME;
         if(substr($FieldName,0,2)=="is")
             return FieldType::$BOOLEAN;
         return FieldType::$NORMAL;

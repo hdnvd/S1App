@@ -90,7 +90,7 @@ class makeEntityController extends Controller {
         $C .= "\nclass $ent" . "Entity extends EntityClass {";
         $C .= "\n\tpublic function __construct(dbaccess \$DBAccessor)";
         $C .= "\n\t{";
-        $C .= "\n\t\tparent::__construct(\$DBAccessor);";
+//        $C .= "\n\t\tparent::__construct(\$DBAccessor);";
         $C .= "\n\t\t\$this->setDatabase(new dbquery(\$DBAccessor));";
         $C .= "\n\t\t\$this->setTableName(\"$ent\");";
         $C .= "\n\t\t\$this->setTableTitle(\"$ent\");";
