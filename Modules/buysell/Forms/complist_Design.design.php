@@ -99,7 +99,7 @@ class complist_Design extends FormDesign {
         $form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
-	protected function getPaginationPart($PageCount)
+	protected function getPaginationPart($PageCount,$a=null,$b=null,$c=null)
     {
         $cg=new CarGroups();
         $groupName=$cg->getGroupName($this->Data['group']['id']);
