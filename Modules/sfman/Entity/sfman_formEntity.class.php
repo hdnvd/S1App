@@ -78,8 +78,8 @@ class sfman_formEntity extends EntityClass {
 	{
 		$this->UpdateQuery=$this->getDatabase()->Update($this->getTableName())
 		->Set("deletetime", time())
-		->Where()->Smaller("deletetime", "0")->AndLogic()->Equal("id",$ID);
-		//echo $this->UpdateQuery->getQueryString();
+		->Where()->Smaller("deletetime", "1")->AndLogic()->Equal("id",$ID);
+//		echo $this->UpdateQuery->getQueryString();
 		//die();
 		$this->UpdateQuery->Execute();
 	}

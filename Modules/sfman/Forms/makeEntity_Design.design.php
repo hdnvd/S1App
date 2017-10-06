@@ -63,6 +63,8 @@ class makeEntity_Design extends FormDesign {
 	private $btnGenerate;
     /** @var SweetButton */
     private $btnGenerateForms;
+    /** @var SweetButton */
+    private $btnRemoveForms;
 	public function __construct()
 	{
 		$this->cmbModule= new ComboBox("cmbModule");
@@ -74,7 +76,7 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("Manage List Code","manage_list_code");
         $this->chkItemsToGenerate->addSelectedValue("manage_list_code");
         $this->chkItemsToGenerate->addOption("Manage User List Code","manage_userlist_code");
-        $this->chkItemsToGenerate->addSelectedValue("manage_userlist_code");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_userlist_code");
         $this->chkItemsToGenerate->addOption("Manage List Design","manage_list_design");
         $this->chkItemsToGenerate->addSelectedValue("manage_list_design");
 
@@ -83,7 +85,7 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("Manage Item Code","manage_item_code");
         $this->chkItemsToGenerate->addSelectedValue("manage_item_code");
         $this->chkItemsToGenerate->addOption("Manage User Item Code","manage_useritem_code");
-        $this->chkItemsToGenerate->addSelectedValue("manage_useritem_code");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_useritem_code");
         $this->chkItemsToGenerate->addOption("Manage Item Design","manage_item_design");
         $this->chkItemsToGenerate->addSelectedValue("manage_item_design");
 
@@ -92,14 +94,14 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("List Code","list_code");
         $this->chkItemsToGenerate->addSelectedValue("list_code");
         $this->chkItemsToGenerate->addOption("List Design","list_design");
-        $this->chkItemsToGenerate->addSelectedValue("list_design");
+//        $this->chkItemsToGenerate->addSelectedValue("list_design");
 
         $this->chkItemsToGenerate->addOption("Item Display Controller","item_display_controller");
-        $this->chkItemsToGenerate->addSelectedValue("item_display_controller");
+//        $this->chkItemsToGenerate->addSelectedValue("item_display_controller");
         $this->chkItemsToGenerate->addOption("Item Display Code","item_display_code");
-        $this->chkItemsToGenerate->addSelectedValue("item_display_code");
+//        $this->chkItemsToGenerate->addSelectedValue("item_display_code");
         $this->chkItemsToGenerate->addOption("Item Display Design","item_display_design");
-        $this->chkItemsToGenerate->addSelectedValue("item_display_design");
+//        $this->chkItemsToGenerate->addSelectedValue("item_display_design");
         $this->chkItemsToGenerate->addOption("Item Search Design","search_design");
         $this->chkItemsToGenerate->addSelectedValue("search_design");
 
@@ -107,34 +109,38 @@ class makeEntity_Design extends FormDesign {
 		$this->btnGenerate->setAction("btnGenerate");
         $this->btnGenerateForms= new SweetButton(true,"ذخیره و تولید کد فرم ها");
         $this->btnGenerateForms->setAction("btnGenerateForms");
+        $this->btnRemoveForms= new SweetButton(true,"حذف فرم های انتخاب شده");
+        $this->btnRemoveForms->setAction("btnRemoveForms");
+        $this->btnRemoveForms->setClass("btn btn-danger");
 	}
 	public function getBodyHTML($command=null)
 	{
 	    $ModuleCount=count($this->Data['modules']);
 	    for ($i=0;$i<$ModuleCount;$i++)
             $this->cmbModule->addOption($this->Data['modules'][$i]->getID(),$this->Data['modules'][$i]->getCaption());
+	    if(key_exists('entity',$this->Data))
+            $this->txtEntity->setValue($this->Data['entity']);
+        if(key_exists('module',$this->Data))
+            $this->cmbModule->setSelectedValue($this->Data['module']);
+
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("sfman_makeEntity");
-		$PageTitlePart=new Div();
-		$PageTitlePart->setClass("sweet_pagetitlepart");
-		$PageTitlePart->addElement(new Lable("ساخت کلاس Entity"));
-		$Page->addElement($PageTitlePart);
-		$MessagePart=new Div();
-		$MessagePart->setClass("sweet_messagepart");
-		$MessagePart->addElement(new Lable($this->getMessage()));
-		$Page->addElement($MessagePart);
-		$LTable1=new ListTable(2);
-		$LTable1->addElement(new Lable("ماژول"));
-		$LTable1->addElement($this->cmbModule);
-		$LTable1->addElement(new Lable("عنوان کلاس"));
-		$LTable1->addElement($this->txtEntity);
-        $LTable1->addElement(new Lable("فرم های تولیدی"));
-        $LTable1->addElement($this->chkItemsToGenerate);
-		$LTable1->addElement($this->btnGenerate,2);
-        $LTable1->addElement($this->btnGenerateForms,2);
+        $Page->addElement($this->getPageTitlePart("ساخت کلاس Entity"));
+        if($this->getMessage()!="")
+            $Page->addElement($this->getMessagePart());
+        $LTable1=new Div();
+        $LTable1->setClass("formtable");
+        $LTable1->addElement($this->getFieldRowCode($this->cmbModule,"ماژول",null,''));
+        $LTable1->addElement($this->getFieldRowCode($this->txtEntity,"عنوان کلاس",null,''));
+        $LTable1->addElement($this->getFieldRowCode($this->chkItemsToGenerate,"فرم های تولیدی",null,''));
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnGenerate));
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnGenerateForms));
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnRemoveForms));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
+        $form->SetAttribute("novalidate","novalidate");
+        $form->setClass('form-horizontal');
 		return $form->getHTML();
 	}
 }

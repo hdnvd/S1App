@@ -167,7 +167,7 @@ class manageformController extends baseFormCodeGenerator {
             $C .="\n\t\t\$LTable1=new Div();";
             $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
             for($i=0;$i<count($formInfo['elements']);$i++) {
-                $C .=$this->getDesignAddCode($formInfo,$i);
+                $C .=$this->getDesignAddCode($formInfo,$i,true,false);
             }
 
         $C .="\n\t\t\$Page->addElement(\$LTable1);";

@@ -17,7 +17,14 @@ use Modules\sfman\Controllers\manageformController;
 *@SweetFrameworkVersion 1.018
 */
 class makeEntity_Code extends FormCode {
-	public function load()
+    public function __construct($namespace)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage('admin.php');
+        $this->setTitle('Make Entity Class And Forms');
+    }
+
+    public function load()
 	{
 		$makeEntityController=new makeEntityController();
 		$translator=new ModuleTranslator("sfman");
@@ -43,9 +50,15 @@ class makeEntity_Code extends FormCode {
 		$design=new makeEntity_Design();
 		$cmbModule=$design->getCmbModule()->getSelectedID();
 		$txtEntity=$design->getTxtEntity()->getValue();
-		$Result=$makeEntityController->BtnGenerate($this->getID(),$cmbModule,$txtEntity);
-		$design->setData($Result);
-		$design->setMessage("the Entity Class Made Successfully!");
+        $Entities=$this->getArrayFromString($txtEntity);
+        for ($i=0;$i<count($Entities);$i++)
+		    $makeEntityController->BtnGenerate($this->getID(),$cmbModule,$Entities[$i]);
+        $makeEntityController=new makeEntityController();
+        $Result=$makeEntityController->load($this->getID());
+        $Result['module']=$cmbModule;
+        $Result['entity']=$txtEntity;
+        $design->setData($Result);
+		$design->setMessage("کلاس های Entity با موفقیت ساخته شدند.");
 		return $design->getBodyHTML();
 	}
     public function btnGenerateForms_Click()
@@ -56,10 +69,42 @@ class makeEntity_Code extends FormCode {
         $design=new makeEntity_Design();
         $cmbModule=$design->getCmbModule()->getSelectedID();
         $txtEntity=$design->getTxtEntity()->getValue();
+        $Entities=$this->getArrayFromString($txtEntity);
         $chkItemsToGenerate=$design->getChkItemsToGenerate();
-        $Result=$manageformController->generateManageForms($chkItemsToGenerate->getSelectedValues(),$cmbModule,$txtEntity);
+        for ($i=0;$i<count($Entities);$i++)
+            $manageformController->generateManageForms($chkItemsToGenerate->getSelectedValues(),$cmbModule,$Entities[$i]);
+        $makeEntityController=new makeEntityController();
+        $Result=$makeEntityController->load($this->getID());
+        $Result['module']=$cmbModule;
+        $Result['entity']=$txtEntity;
         $design->setData($Result);
-        $design->setMessage("All Forms Generated Successfully!");
+        $design->setMessage("فرمها با موفقیت ساخته شدند");
+        return $design->getBodyHTML();
+    }
+    private function getArrayFromString($String)
+    {
+        $Array=explode(',',$String);
+        return $Array;
+    }
+    public function btnRemoveForms_Click()
+    {
+        $manageformController=new manageDBUserFormController($this->getModuleName());
+        $translator=new ModuleTranslator("sfman");
+        $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
+        $design=new makeEntity_Design();
+        $cmbModule=$design->getCmbModule()->getSelectedID();
+        $txtEntity=$design->getTxtEntity()->getValue();
+        $Entities=$this->getArrayFromString($txtEntity);
+        $chkItemsToGenerate=$design->getChkItemsToGenerate();
+        for ($i=0;$i<count($Entities);$i++)
+            $manageformController->DeleteManageCodes($chkItemsToGenerate->getSelectedValues(),$cmbModule,$Entities[$i]);
+
+        $makeEntityController=new makeEntityController();
+        $Result=$makeEntityController->load($this->getID());
+        $Result['module']=$cmbModule;
+        $Result['entity']=$txtEntity;
+        $design->setData($Result);
+        $design->setMessage("فرمها با موفقیت حذف شدند");
         return $design->getBodyHTML();
     }
 }

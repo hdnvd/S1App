@@ -32,10 +32,13 @@ abstract class manageDBControllerFormController extends manageDBFormController {
 
                 if($isInsert || trim(strtolower($UCField))!="role_systemuser_fid")
                 {
-                    $InsertCode .= "\n\t\t\t$ObjectName" . "->set" . ucwords($UCField) . "(\$$UCField";
+                    $FieldValueVariable=$UCField;
                     if(FieldType::getFieldType($this->getCurrentTableFields()[$i])==FieldType::$FILE)
-                        $InsertCode .="URL";
-                    $InsertCode .=");";
+                    {
+                        $FieldValueVariable .="URL";
+                        $InsertCode .= "\n\t\t\tif(\$$FieldValueVariable!='')";
+                    }
+                    $InsertCode .= "\n\t\t\t$ObjectName" . "->set" . ucwords($UCField) . "(\$$FieldValueVariable);";
                 }
             }
         }
@@ -107,21 +110,7 @@ abstract class manageDBControllerFormController extends manageDBFormController {
         $C.=$this->getFileInfoComment();
         $C .= "\nclass $formName" . "Controller extends Controller {";
         if($isManager)
-            $C.=<<<EOT
-    \nprivate \$adminMode=true;
-
-    /**
-     * @param bool \$adminMode
-     */
-    public function setAdminMode(\$adminMode)
-    {
-        \$this->adminMode = \$adminMode;
-    }
-    public function getAdminMode()
-    {
-        return \$this->adminMode;
-    }
-EOT;
+            $C.=$this->getIsAdminModeDefine(true);
         $C .= "\n\tpublic function load(\$ID)";
         $C .= "\n\t{";
         $C .= $this->getControllerActionInits($isManager);
@@ -173,9 +162,7 @@ EOT;
         $C .= "\n\t}";
         $C .= "\n}";
         $C .= "\n?>";
-        file_put_contents($this->getControllerFile(), $C);
-
-        chmod($this->getControllerFile(),0777);
+        $this->SaveFile($this->getControllerFile(), $C);
 
     }
     protected function makeTableItemManageController($formInfo)
@@ -204,9 +191,7 @@ EOT;
                 $C.=$this->getActionFormController($formInfo,$formInfo['elements'][$i]['name'],true);
         $C .= "\n}";
         $C .= "\n?>";
-        file_put_contents($this->getControllerFile(), $C);
-
-        chmod($this->getControllerFile(),0777);
+        $this->SaveFile($this->getControllerFile(), $C);
 
     }
 	protected function makeTableManageListController($formInfo)
@@ -244,9 +229,7 @@ EOT;
         $C .="\n\t}";
 		$C .= "\n}";
 		$C .= "\n?>";
-		file_put_contents($this->getControllerFile(), $C);
-
-		chmod($this->getControllerFile(),0777);
+        $this->SaveFile($this->getControllerFile(), $C);
 
 	}
     protected function makeTableListController($formInfo)
@@ -254,22 +237,15 @@ EOT;
         $C = $this->getTableListControllerCode($formInfo,array("PageNum"),false);
         $C .= "\n}";
         $C .= "\n?>";
-        file_put_contents($this->getControllerFile(), $C);
-        chmod($this->getControllerFile(),0777);
+        $this->SaveFile($this->getControllerFile(), $C);
 
     }
-    protected function getTableListControllerLoadCode($formInfo,$LoadParams,$MethodName,$EntityClassName,$QueryParams,$isManager)
+
+    protected function getTableListControllerGetDataCode($formInfo,$EntityClassName,$isManager)
     {
-        $formName=$formInfo['form']['name'];
         $moduleName=$formInfo['module']['name'];
         $TableName=$this->getTableName();
-        $C = "\n\tpublic function $MethodName(";
-        for ($i=0;$i<count($LoadParams);$i++) {
-            if($i>0)
-                $C.=",";
-            $C.="\$" . $LoadParams[$i];
-        }
-        $C .=")";
+        $C = "\n\tpublic function getData(\$PageNum,QueryLogic \$QueryLogic)";
         $C .= "\n\t{";
         $C .= $this->getControllerActionInits($isManager);
         for($i=0; $i<count($this->getCurrentTableFields()); $i++) {
@@ -284,114 +260,50 @@ EOT;
         }
         $C .= "\n\t\tif(\$PageNum<=0)";
         $C .= "\n\t\t\t\$PageNum=1;";
+        $C .=<<<EOT
+        \n\t\t\$UserID=null;
+        if(!\$this->getAdminMode())
+            \$UserID=\$role_systemuser_fid;
+EOT;
+        $C.=<<<EOT
+\n\t\tif(\$UserID!=null)
+            \$QueryLogic->addCondition(new FieldCondition($EntityClassName::\$ROLE_SYSTEMUSER_FID,\$UserID));
+EOT;
         $C .= "\n\t\t\$$TableName" . "Ent=new $EntityClassName(\$DBAccessor);";
         $ObjectName="\$$TableName" . "Ent";
         $C .= "\n\t\t\$result['".$this->getTableName()."']=$ObjectName;";
-        $C .= "\n\t\t\$q=new QueryLogic();";
-        if($QueryParams!=null)
-            $C.=$QueryParams;
-        $C .= "\n\t\t\$allcount=\$$TableName" . "Ent" . "->FindAllCount(\$q);";
+        $C .= "\n\t\t\$allcount=\$$TableName" . "Ent" . "->FindAllCount(\$QueryLogic);";
         $C .= "\n\t\t\$result['pagecount']=\$this->getPageCount(\$allcount,\$this->PAGESIZE);";
-        $C .= "\n\t\t\$q->setLimit(\$this->getPageRowsLimit(\$PageNum,\$this->PAGESIZE));";
-        $C .= "\n\t\t\$result['data']=\$$TableName" . "Ent" . "->FindAll(\$q);";
-
-
-        $C .= "\n\t\t\$result['param1']=\"\";";
+        $C .= "\n\t\t\$QueryLogic->setLimit(\$this->getPageRowsLimit(\$PageNum,\$this->PAGESIZE));";
+        $C .= "\n\t\t\$result['data']=\$$TableName" . "Ent" . "->FindAll(\$QueryLogic);";
         $C .= "\n\t\t\$DBAccessor->close_connection();";
         $C .= "\n\t\treturn \$result;";
         $C .= "\n\t}";
         return $C;
     }
+    protected function getTableListControllerLoadCode($formInfo,$LoadParams,$MethodName,$EntityClassName,$QueryParams,$isManager)
+    {
+        $TableName=$this->getTableName();
+        $C = "\n\tpublic function $MethodName(";
+        for ($i=0;$i<count($LoadParams);$i++) {
+            if($i>0)
+                $C.=",";
+            $C.="\$" . $LoadParams[$i];
+        }
+        $C .=")";
+        $C .= "\n\t{";
 
-//    protected function getTableListControllerCode($formInfo,$LoadParams,$isManager)
-//    {
-//        $formName=$formInfo['form']['name'];
-//        $moduleName=$formInfo['module']['name'];
-//        $TableName=$this->getTableName();
-//        $EntityClassName=null;
-//        $EntityNames=array();
-//        $C = "<?php";
-//        $C .= $this->getControllerNamespaceDefiner();
-//        $C .= $this->getControllerUsage();
-//        $EntityClassName=$moduleName . "_" . $TableName . "Entity";
-//        $C .= "\nuse Modules\\$moduleName\\Entity\\$EntityClassName;";
-//        for($i=0; $i<count($this->getCurrentTableFields()); $i++) {
-//            $fl1=$this->getFieldName($i);
-//            if($fl1!=null && array_search($fl1,$EntityNames)==null) {
-//                $fl = $moduleName . "_" . $fl1 . "Entity";
-//                $C .= "\nuse Modules\\$moduleName\\Entity\\$fl;";
-//            }
-//            $EntityNames[$i]=$fl1;
-//        }
-//
-//        $C.=$this->getFileInfoComment();
-//        $C .= "\nclass $formName" . "Controller extends Controller {";
-//        $C .= "\n\tprivate \$PAGESIZE=10;";
-//        $Qparams="";
-//        if($isManager)
-//        {
-//
-//            $C.=<<<EOT
-//    \nprivate \$adminMode=true;
-//
-//    /**
-//     * @param bool \$adminMode
-//     */
-//    public function setAdminMode(\$adminMode)
-//    {
-//        \$this->adminMode = \$adminMode;
-//    }
-//EOT;
-//
-//            $Qparams.=<<<EOT
-//\n\t\t\t\tif(\$UserID!=null)
-//            \$q->addCondition(new FieldCondition($EntityClassName::\$ROLE_SYSTEMUSER_FID,\$UserID));
-//EOT;
-//        }
-//        $Qparams.="\t\t\n\$q->addOrderBy(\"id\",true);";
-//        $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams,"load",$EntityClassName,$Qparams,$isManager);
-//        $Qparams="";
-//        $LoadParams2=$LoadParams;
-//        for($i=0;$i<count($formInfo['elements']);$i++) {
-//            $el=$formInfo['elements'][$i];
-//            if($el['type_fid']!="7" ) {
-//                if($el['name']!="sortby" && $el['name']!="isdesc")
-//                {
-//
-//                    $Operator="LIKE";
-//                    $elName=$el['name'];
-//                    if(substr($el['name'],strlen($el['name'])-3,3)=="_to")
-//                    {
-//                        $elName=substr($el['name'],0,strlen($el['name'])-3);
-//                        $Operator="Smaller";
-//                    }
-//                    elseif(substr($el['name'],strlen($el['name'])-5,5)=="_from")
-//                    {
-//
-//                        $elName=substr($el['name'],0,strlen($el['name'])-5);
-//                        $Operator="Bigger";
-//                    }
-//
-//                    if($Operator=="LIKE")
-//                        $Qparams.="\t\t\n\$q->addCondition(new FieldCondition(\"".$elName."\",\"%\$" . $el['name'] . "%\",LogicalOperator::$Operator));";
-//                    else
-//                        $Qparams.="\t\t\n\$q->addCondition(new FieldCondition(\"".$elName."\",\$" . $el['name'] . ",LogicalOperator::$Operator));";
-//                }
-//
-//                array_push($LoadParams2,$el['name']);
-//            }
-//        }
-//        $Qparams.="\t\t\n\$q->addOrderBy(\$sortby,\$isdesc);";
-//
-//        for($i=0;$i<count($formInfo['elements']);$i++) {
-//            $el=$formInfo['elements'][$i];
-//            if($el['type_fid']!="7") {
-//            }
-//        }
-//        $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams2,"Search",$EntityClassName,$Qparams,$isManager);
-//        return $C;
-//
-//    }
+        $C .= "\n\t\t\$DBAccessor=new dbaccess();";
+        $C .= "\n\t\t\$$TableName" . "Ent=new $EntityClassName(\$DBAccessor);";
+        $C .= "\n\t\t\$q=new QueryLogic();";
+        if($QueryParams!=null)
+            $C.=$QueryParams;
+        $C .= "\n\t\t\$DBAccessor->close_connection();";
+        $C .= "";
+        $C .= "\n\t\treturn \$this->getData(\$PageNum,\$q);";
+        $C .= "\n\t}";
+        return $C;
+    }
 protected function getTableListControllerTopCode($formInfo)
 {
     $moduleName=$formInfo['module']['name'];
@@ -425,38 +337,16 @@ protected function getTableListControllerTopCode($formInfo)
         $EntityClassName=$moduleName . "_" . $TableName . "Entity";
         $C .= "\nclass $formName" . "Controller extends Controller {";
         $C .= "\n\tprivate \$PAGESIZE=10;";
+        $C .=$this->getTableListControllerGetDataCode($formInfo,$EntityClassName,$isManager);
         $Qparams="";
-            $C.=<<<EOT
-    \n\tprivate \$adminMode=true;
+            $C.=$this->getIsAdminModeDefine(true);
 
-    /**
-     * @param bool \$adminMode
-     */
-    public function setAdminMode(\$adminMode)
-    {
-        \$this->adminMode = \$adminMode;
-    }
-    /**
-     * @return bool \$adminMode
-     */
-    public function getAdminMode()
-    {
-        return \$this->adminMode;
-    }
-EOT;
-
-        $Qparams.=<<<EOT
-\n\t\tif(\$UserID!=null)
-            \$q->addCondition(new FieldCondition($EntityClassName::\$ROLE_SYSTEMUSER_FID,\$UserID));
-EOT;
 
         $Qparams.="\n\t\t\$q->addOrderBy(\"id\",true);";
         $C .= $this->getTableListControllerLoadCode($formInfo,$LoadParams,"load",$EntityClassName,$Qparams,true);
-        $Qparams=<<<EOT
-\n\t\tif(\$UserID!=null)
-            \$q->addCondition(new FieldCondition($EntityClassName::\$ROLE_SYSTEMUSER_FID,\$UserID));
-EOT;
+
         $LoadParams2=$LoadParams;
+
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $el=$formInfo['elements'][$i];
             if($el['type_fid']!="7" ) {
@@ -486,8 +376,11 @@ EOT;
                 array_push($LoadParams2,$el['name']);
             }
         }
-        $Qparams.="\n\t\t\$q->addOrderBy(\$sortby,\$isdesc);";
 
+        $ObjectName="\$$TableName" . "Ent";
+        $Qparams.="\n\t\t\$sortByField=$ObjectName" . "->getTableField(\$sortby);";
+        $Qparams.="\n\t\tif(\$sortByField!=null)";
+        $Qparams.="\n\t\t\t\$q->addOrderBy(\$sortByField,\$isdesc);";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $el=$formInfo['elements'][$i];
             if($el['type_fid']!="7") {

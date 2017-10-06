@@ -90,8 +90,16 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
                 {
                     $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setTime(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
-
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
+
+                        $Last3=substr($Ename,strlen($Ename)-3,3);
+                        if($Last3=="_to")
+                        {
+                            $Remaining=substr($Ename,0,strlen($Ename)-3);
+                            $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Remaining',\$this->Data['$TableName']->getFieldInfo('$Remaining')->getTitle());";
+
+                        }
+
                     if($IsManagement)
                         $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
                     $FieldFillCode .= "\r\n\t\t}";
@@ -119,7 +127,6 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C.=$this->getDesignUsings();
         $C.=$this->getFileInfoComment();
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
-
         $C .="\n\tpublic function getBodyHTML(\$command=null)";
         $C .="\n\t{";
         $C.="\n\t\t\$this->FillItems();";
@@ -127,12 +134,12 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C .="\n\t\t\$LTable1=new Div();";
         $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C .=$this->getDesignAddCode($formInfo,$i);
+            $C .=$this->getDesignAddCode($formInfo,$i,true,false);
         }
-
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\t\$form->SetAttribute(\"novalidate\",\"novalidate\");";
+        $C .="\n\t\t\$form->SetAttribute(\"data-toggle\",\"validator\");";
         $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
@@ -140,26 +147,11 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C .="\n\t{";
         $C.=$this->getFieldFillCode($formInfo);
         $C .="\n\t}";
-        $C .="\n\tpublic function __construct()";
-        $C .="\n\t{";
-        $C .="\n\t\tparent::__construct();";
-        for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C.=$this->getDesignInitialization($formInfo,$i);
-        }
-        $C .="\n\t}";
+        $C .=$this->getHasFieldFormDesignConstructor($formInfo);
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
-        $C.=<<<EOT
-    \nprivate \$adminMode=true;
 
-    /**
-     * @param bool \$adminMode
-     */
-    public function setAdminMode(\$adminMode)
-    {
-        \$this->adminMode = \$adminMode;
-    }
-EOT;
+        $C.=$this->getIsAdminModeDefine(true);
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
@@ -167,10 +159,20 @@ EOT;
         $C .= "\n}";
 
         $C .= "\n?>";
-        file_put_contents($this->getDesignFile(), $C);
 
-        chmod($this->getDesignFile(),0777);
+        $this->SaveFile($this->getDesignFile(),$C);
 
+    }
+    private function getHasFieldFormDesignConstructor($formInfo)
+    {
+        $C ="\n\tpublic function __construct()";
+        $C .="\n\t{";
+        $C .="\n\t\tparent::__construct();";
+        for($i=0;$i<count($formInfo['elements']);$i++) {
+            $C.=$this->getDesignInitialization($formInfo,$i);
+        }
+        $C .="\n\t}";
+        return $C;
     }
     protected function makeTableItemDesign($formInfo)
     {
@@ -210,11 +212,22 @@ EOT;
         $C .=$this->getDesignTopPartCode();
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $Ename=$formInfo['elements'][$i]['name'];
-            if(FieldType::getFieldType($Ename)==FieldType::$NORMAL || FieldType::getFieldType($Ename)==FieldType::$FILE) {
+            if(FieldType::getFieldType($Ename)==FieldType::$NORMAL || FieldType::getFieldType($Ename)==FieldType::$FILE ) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
                 $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
+                $C .= "\r\n\t\t}";
+            }
+            elseif(FieldType::getFieldType($Ename)==FieldType::$BOOLEAN ) {
+                $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
+                $TitleField="\$$Ename" . "Title";
+                $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
+                $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
+                $C .= "\r\n\t\t\t$TitleField='No';";
+                $C .= "\r\n\t\t\tif($Val==1)";
+                $C .= "\r\n\t\t\t\t$TitleField='Yes';";
+                $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($TitleField);";
                 $C .= "\r\n\t\t}";
             }
             elseif(FieldType::getFieldType($Ename)==FieldType::$FID) {
@@ -228,7 +241,7 @@ EOT;
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
                 $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
-                $C .= "\r\n\t\t\t\$". $Ename . "_SD=new SweetDate();";
+                $C .= "\r\n\t\t\t\$". $Ename . "_SD=new SweetDate(true, true, 'Asia/Tehran');";
                 $C .= "\r\n\t\t\t\$". $Ename . "_Text=\$". $Ename . "_SD->date(\"l d F Y\",$Val);";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText(\$". $Ename . "_Text);";
                 $C .= "\r\n\t\t}";
@@ -236,28 +249,17 @@ EOT;
         }
         $C .="\n\t\t\$LTable1=new Div();";
         $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
-//        for($i=0;$i<count($formInfo['elements']);$i++) {
-//            $E=$formInfo['elements'][$i];
-//            $C.="\n\t\t\$LTable1->addElement(new Lable(\$this->getFieldCaption('".$E['name']."')));";
-////            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_titlelabel');";
-//            $C.="\n\t\t\$LTable1->addElement(\$this->".$E['name'].");";
-////            $C .="\n\t\t\$LTable1->setLastElementClass('form_item_datalabel');";
-//        }
         for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C .=$this->getDesignAddCode($formInfo,$i,false);
+            $C .=$this->getDesignAddCode($formInfo,$i,false,true);
         }
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
-
         $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
-
         $C .= "\n?>";
-        file_put_contents($this->getDesignFile(), $C);
-
-        chmod($this->getDesignFile(),0777);
+        $this->SaveFile($this->getDesignFile(),$C);
 
     }
 
@@ -274,17 +276,18 @@ EOT;
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
         $TableNameDotS=$TableName."s";
+        $C.=$this->getIsAdminModeDefine(false);
             $C.=<<<EOT
-    \n\tprivate \$adminMode=true;
     private \$listPage;
     private \$itemPage;
-
+    private \$itemViewPage;
     /**
      * @param bool \$adminMode
      */
     public function setAdminMode(\$adminMode)
     {
         \$this->adminMode = \$adminMode;
+        \$this->itemViewPage = '$TableName';
         if(\$adminMode==true)
         {
             \$this->itemPage = 'manage$TableName';
@@ -295,10 +298,6 @@ EOT;
             \$this->itemPage = 'manageuser$TableName';
             \$this->listPage = 'manageuser$TableNameDotS';
         }
-    }
-    public function getAdminMode()
-    {
-        return \$this->adminMode;
     }
 EOT;
         $C .="\n\tpublic function __construct()";
@@ -329,7 +328,7 @@ EOT;
         $C .="\n\t\t\$TableDiv->setClass('table-responsive');";
         $C .="\n\t\t\$LTable1=new ListTable(3);";
         $C .="\n\t\t\$LTable1->setHeaderRowCount(1);";
-        $C .="\n\t\t\$LTable1->setClass(\"table-striped managelist\");";
+        $C .="\n\t\t\$LTable1->setClass(\"table-striped table-hover managelist\");";
         $C .="\n\t\t\$LTable1->addElement(new Lable('#'));";
         $C .="\n\t\t\$LTable1->setLastElementClass(\"listtitle\");";
         $C .="\n\t\t\$LTable1->addElement(new Lable('عنوان'));";
@@ -339,28 +338,37 @@ EOT;
         $C .="\n\t\tfor(\$i=0;\$i<count(\$this->Data['data']);\$i++){";
         $C .="\n\t\t\t\$url=new AppRooter('$ModuleName',\$this->itemPage);";
         $C .="\n\t\t\t\$url->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
-        $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage);";
-        $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
-        $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('delete',1));";
-//        $TitleInd=$this->getTitleFieldIndex();
-//        if($TitleInd!=-1)
-//            $TitleField=$this->getCurrentTableFields()[$TitleInd];
-//        else
-//            $TitleField=$this->getCurrentTableFields()[1];
         $C .="\n\t\t\t\$Title=\$this->Data['data'][\$i]->getTitleField();";
-        $C .="\n\t\t\tif(\$this->Data['data'][\$i]->getTitleField()==\"\")";
+        $C .="\n\t\t\tif(\$Title==\"\")";
         $C .="\n\t\t\t\t\$Title='- بدون عنوان -';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
         $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
+
+        $C .="\n\t\t\t\$ViewURL=new AppRooter('$ModuleName',\$this->itemViewPage);";
+        $C .="\n\t\t\t\$ViewURL->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
+        $C .="\n\t\t\t\$lbView[\$i]=new Lable('مشاهده');";
+        $C .="\n\t\t\t\$lnkView[\$i]=new link(\$ViewURL->getAbsoluteURL(),\$lbView[\$i]);";
+        $C .="\n\t\t\t\$lnkView[\$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');";
+        $C .="\n\t\t\t\$lnkView[\$i]->setClass('btn btn-primary');";
+
+        $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage);";
+        $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
+        $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('delete',1));";
         $C .="\n\t\t\t\$lbDel[\$i]=new Lable('حذف');";
-        $C .="\n\t\t\t\$liDel[\$i]=new link(\$delurl->getAbsoluteURL(),\$lbDel[\$i]);";
-        $C .="\n\t\t\t\$liDel[\$i]->setGlyphiconClass('glyphicon glyphicon-remove');";
-        $C .="\n\t\t\t\$liDel[\$i]->setClass('btn btn-danger');";
+        $C .="\n\t\t\t\$lnkDel[\$i]=new link(\$delurl->getAbsoluteURL(),\$lbDel[\$i]);";
+        $C .="\n\t\t\t\$lnkDel[\$i]->setGlyphiconClass('glyphicon glyphicon-remove');";
+        $C .="\n\t\t\t\$lnkDel[\$i]->setClass('btn btn-danger');";
+
+        $C .="\n\t\t\t\$operationDiv[\$i]=new Div();";
+        $C .="\n\t\t\t\$operationDiv[\$i]->setClass('operationspart');";
+        $C .="\n\t\t\t\$operationDiv[\$i]->addElement(\$lnkView[\$i]);";
+        $C .="\n\t\t\t\$operationDiv[\$i]->addElement(\$lnkDel[\$i]);";
+
         $C .="\n\t\t\t\$LTable1->addElement(new Lable(\$i+1));";
         $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
         $C .="\n\t\t\t\$LTable1->addElement(\$liTit[\$i]);";
         $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
-        $C .="\n\t\t\t\$LTable1->addElement(\$liDel[\$i]);";
+        $C .="\n\t\t\t\$LTable1->addElement(\$operationDiv[\$i]);";
         $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
         $C .="\n\t\t}";
         $C .="\n\t\t\$TableDiv->addElement(\$LTable1);";
@@ -370,13 +378,11 @@ EOT;
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
         $C .= "\n}";
-
         $C .= "\n?>";
-        file_put_contents($this->getDesignFile(), $C);
-
-        chmod($this->getDesignFile(),0777);
+        $this->SaveFile($this->getDesignFile(),$C);
 
     }
+
     protected function makeTableListDesign($formInfo)
     {
         $TableName=$this->getTableName();
@@ -389,21 +395,7 @@ EOT;
         $C .= "\nclass " . $FormName . "_Design extends FormDesign {";
         $C .= "\n\tprivate \$Data;";
         $C.=$this->getSetterCode("Data","mixed");
-        $C.=<<<EOT
-    \n\tprivate \$adminMode=true;
-
-    /**
-     * @param bool \$adminMode
-     */
-    public function setAdminMode(\$adminMode)
-    {
-        \$this->adminMode = \$adminMode;
-    }
-    public function getAdminMode()
-    {
-        return \$this->adminMode;
-    }
-EOT;
+        $C.=$this->getIsAdminModeDefine(true);
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
@@ -415,7 +407,7 @@ EOT;
         $C .="\n\t\t\$LTable1=new Div();";
         $C .="\n\t\t\$LTable1->setClass(\"searchtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C .=$this->getDesignAddCode($formInfo,$i);
+            $C .=$this->getDesignAddCode($formInfo,$i,false);
         }
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C.=$this->getDesignMessageAdding();
@@ -427,12 +419,6 @@ EOT;
         $C .="\n\t\t\$innerDiv[\$i]->setClass(\"listitem\");";
         $C .="\n\t\t\t\$url=new AppRooter('$ModuleName','$TableName');";
         $C .="\n\t\t\t\$url->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
-
-//        $TitleInd=$this->getTitleFieldIndex();
-//        if($TitleInd!=-1)
-//            $TitleField=$this->getCurrentTableFields()[$TitleInd];
-//        else
-//            $TitleField=$this->getCurrentTableFields()[1];
         $C .="\n\t\t\t\$Title=\$this->Data['data'][\$i]->getTitleField();";
         $C .="\n\t\t\tif(\$this->Data['data'][\$i]->getTitleField()==\"\")";
         $C .="\n\t\t\t\t\$Title='-- بدون عنوان --';";
@@ -448,17 +434,25 @@ EOT;
         $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
+        $C.=$this->getSearchPartFieldSetCode($formInfo);
+        $C .=$this->getHasFieldFormDesignConstructor($formInfo);
+        $C.=$this->getDesignFormRowFunctionCode();
+        $C .= "\n}";
+        $C .= "\n?>";
+        $this->SaveFile($this->getDesignFile(),$C);
 
-        $C .="\n\tpublic function FillItems()";
+    }
+    private function getSearchPartFieldSetCode($formInfo)
+    {
+        $C ="\n\tpublic function FillItems()";
         $C .="\n\t{";
         $C.=$this->getFieldFillCode($formInfo,true,false);
-
         $C .= "\n\t\t\t\$this->isdesc->addOption('0','صعودی');";
         $C .= "\n\t\t\t\$this->isdesc->addOption('1','نزولی');";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $E=$formInfo['elements'][$i];
             $C .= "\n\n\t\t/******** ".$E['name']." ********/";
-            $C .= "\n\t\t\$this->sortby->addOption('".$E['name']."',\$this->getFieldCaption('".$E['name']."'));";
+            $C .= $this->getAddToSortByListCode($E);
             if($E['type_fid']==2) {
 
                 $C .= "\n\t\tif(isset(\$_GET['". $E['name'] . "']))";
@@ -475,23 +469,31 @@ EOT;
                 $C .= "\n\t\t\t\$this->" . $E['name'] . "->addSelectedValue(\$_GET['" . $E['name'] . "']);";
             }
         }
+
         $C .="\n\t}";
-        $C .="\n\tpublic function __construct()";
-        $C .="\n\t{";
-        $C .="\n\t\tparent::__construct();";
-        for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C.=$this->getDesignInitialization($formInfo,$i);
+        return $C;
+    }
+    protected function getAddToSortByListCode($Element)
+    {
+        $ElementName=$Element['name'];
+        $ElementType=$Element['type_fid'];
+        $C="";
+        if(strtolower($ElementName)!="isdesc" && strtolower($ElementName)!="sortby")
+        {
+            if($ElementType==9)
+            {
+                $Last3=substr($ElementName,strlen($ElementName)-3,3);
+                if($Last3=="_to")
+                {
+                    $Remaining=substr($ElementName,0,strlen($ElementName)-3);
+                    $C = "\n\t\t\$this->sortby->addOption(\$this->Data['".$this->getTableName() . "']->getTableFieldID('" . $Remaining."'),\$this->getFieldCaption('".$Remaining."'));";
+                }
+            }
+
+            if($ElementType==2 || $ElementType==3 || $ElementType==4)
+                $C = "\n\t\t\$this->sortby->addOption(\$this->Data['".$this->getTableName() . "']->getTableFieldID('" . $ElementName."'),\$this->getFieldCaption('".$ElementName."'));";
         }
-        $C .="\n\t}";
-
-        $C.=$this->getDesignFormRowFunctionCode();
-        $C .= "\n}";
-
-        $C .= "\n?>";
-        file_put_contents($this->getDesignFile(), $C);
-
-        chmod($this->getDesignFile(),0777);
-
+        return $C;
     }
     protected function getTitleFieldIndex()
     {
@@ -513,8 +515,6 @@ EOT;
     }
     protected function makeTableSearchDesign($formInfo)
     {
-        $TableName=$this->getTableName();
-        $ModuleName=$formInfo['module']['name'];
         $FormName=$formInfo['form']['name'];
         $C = "<?php";
         $C .= $this->getFormNamespaceDefiner();
@@ -526,69 +526,27 @@ EOT;
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
-        $C .="\n\tpublic function __construct()";
-        $C .="\n\t{";
-        $C .="\n\t\tparent::__construct();";
-        for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C.=$this->getDesignInitialization($formInfo,$i);
-        }
-        $C .="\n\t}";
+        $C .=$this->getHasFieldFormDesignConstructor($formInfo);
         $C .="\n\tpublic function getBodyHTML(\$command=null)";
         $C .="\n\t{";
-
         $C.="\n\t\t\$this->FillItems();";
         $C .=$this->getDesignTopPartCode();
         $C .="\n\t\t\$LTable1=new Div();";
         $C .="\n\t\t\$LTable1->setClass(\"searchtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
-            $C .=$this->getDesignAddCode($formInfo,$i);
+            $C .=$this->getDesignAddCode($formInfo,$i,false,false);
         }
-
-
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"GET\", \$Page);";
         $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
-
-        $C .="\n\tpublic function FillItems()";
-        $C .="\n\t{";
-        $C.=$this->getFieldFillCode($formInfo,true,false);
-        $C .= "\n\t\t\t\$this->isdesc->addOption('0','صعودی');";
-        $C .= "\n\t\t\t\$this->isdesc->addOption('1','نزولی');";
-        for($i=0;$i<count($formInfo['elements']);$i++) {
-            $E=$formInfo['elements'][$i];
-            $C .= "\n\n\t\t/******** ".$E['name']." ********/";
-            if($E['type_fid']==2 || $E['type_fid']==3 || $E['type_fid']==4 || $E['type_fid']==9)
-                if(strtolower($E['name'])!="sortby" && strtolower($E['name'])!="isdesc")
-                    $C .= "\n\t\t\$this->sortby->addOption('".$E['name']."',\$this->getFieldCaption('".$E['name']."'));";
-            if($E['type_fid']==2) {
-
-                $C .= "\n\t\tif(isset(\$_GET['". $E['name'] . "']))";
-                $C .= "\n\t\t\t\$this->" . $E['name'] . "->setValue(\$_GET['" . $E['name'] . "']);";
-            }
-            if($E['type_fid']==3 || $E['type_fid']==4 || $E['type_fid']==8) {
-
-                $C .= "\n\t\tif(isset(\$_GET['". $E['name'] . "']))";
-                $C .= "\n\t\t\t\$this->" . $E['name'] . "->setSelectedValue(\$_GET['" . $E['name'] . "']);";
-            }
-            if($E['type_fid']==5) {
-
-                $C .= "\n\t\tif(isset(\$_GET['". $E['name'] . "']))";
-                $C .= "\n\t\t\t\$this->" . $E['name'] . "->addSelectedValue(\$_GET['" . $E['name'] . "']);";
-            }
-        }
-        $C .="\n\t}";
+        $C.=$this->getSearchPartFieldSetCode($formInfo);
         $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
-
         $C .= "\n?>";
-
         $DesignFile=$this->getFormDir() . "/" .  $FormName ."search_Design.design.php";
-        file_put_contents($DesignFile, $C);
-
-        chmod($DesignFile,0777);
-
+        $this->SaveFile($DesignFile,$C);
     }
 }
 

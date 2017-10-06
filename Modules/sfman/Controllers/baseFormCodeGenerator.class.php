@@ -13,10 +13,14 @@ namespace Modules\sfman\Controllers;
 
 class baseFormCodeGenerator extends baseCodeGenerator {
 	private $FormName,$FormCaption,$FormDir,$ControllerDir;
-    protected function getUnknownCatchPart()
+    protected function getUnknownCatchPart($IsManagerButtonAction=false)
     {
         $C = "\n\t\tcatch(\\Exception \$uex){";
-        $C .= "\n\t\t\t\$design=new message_Design();";
+        if($IsManagerButtonAction)
+            $C .= "\n\t\t\t\$design=\$this->getLoadDesign();";
+        else
+            $C .= "\n\t\t\t\$design=new message_Design();";
+
         $C .= "\n\t\t\t\$design->setMessageType(MessageType::\$ERROR);";
         $C .= "\n\t\t\t\$design->setMessage(\"متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.\");";
         $C .= "\n\t\t}";
@@ -235,16 +239,18 @@ EOT;
         return $result;
 
     }
-    protected function getDesignAddCode(array $formInfo,$ElementIndex,$IsManager=true)
+    protected function getDesignAddCode(array $formInfo,$ElementIndex,$IsManager=true,$IsInfoForm=false)
     {
         $E=$formInfo['elements'][$ElementIndex];
 //        $C ="\n\n\t\t/******** ".$E['name']." ********/";
 
         $C ="";
-
-        $DefaultItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getFieldRowCode(\$this->" . $E['name'] . ",\$this->getFieldCaption('" . $E['name'] . "'),null,''));";
+        $InvalidMessage='';
+        if($IsManager)
+            $InvalidMessage='لطفا این فیلد را به طور صحیح وارد کنید';
+        $DefaultItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getFieldRowCode(\$this->" . $E['name'] . ",\$this->getFieldCaption('" . $E['name'] . "'),null,'$InvalidMessage',null));";
         $SingleItemPart="\n\t\t\$LTable1" ."->addElement(\$this->getSingleFieldRowCode(\$this->" . $E['name'] . "));";
-        if(!$IsManager)
+        if($IsInfoForm)
             return "\n\t\t\$LTable1" ."->addElement(\$this->getInfoRowCode(\$this->" . $E['name'] . ",\$this->getFieldCaption('" . $E['name'] . "')));";
 
         if($E['type_fid']==1)//Label

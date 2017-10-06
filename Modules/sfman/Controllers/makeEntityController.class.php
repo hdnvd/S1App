@@ -81,7 +81,7 @@ class makeEntityController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	private function getFieldInfoSetCode($FieldName,$EntityClassName)
+	private function getFieldInfoSetCode($FieldName,$EntityClassName,$ID)
     {
         $FieldNameInfoVar="\$" . ucfirst($FieldName) . "Info";
         $FieldNameUPPERVar="\$" . strtoupper($FieldName);
@@ -89,21 +89,24 @@ class makeEntityController extends Controller {
         $Info.="\n\t\t$FieldNameInfoVar=new FieldInfo();";
         $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldName\");";
         $Info.="\n\t\t\$this->setFieldInfo($EntityClassName" . "::" . $FieldNameUPPERVar . ",$FieldNameInfoVar);";
+        $Info.="\n\t\t\$this->addTableField('$ID',$EntityClassName" . "::" . $FieldNameUPPERVar . ");";
         return $Info;
     }
     private function makeEntityFile($mod,$tbl,dbaccess $DBAccessor)
     {
-        $ent=$mod."_".$tbl;
-        $tbl=new sfman_tableEntity($DBAccessor);
+        $ent = $mod . "_" . $tbl;
+        $tbl = new sfman_tableEntity($DBAccessor);
         $tbl->setTableName($ent);
-        $cols=$tbl->GetCollumns();
+        $cols = $tbl->GetCollumns();
         $C = "<?php";
         $C .= "\nnamespace Modules\\$mod\\Entity;";
         $C .= "\nuse core\\CoreClasses\\services\\EntityClass;";
         $C .= "\nuse core\\CoreClasses\\services\\FieldInfo;";
         $C .= "\nuse core\\CoreClasses\\db\\dbquery;";
         $C .= "\nuse core\\CoreClasses\\db\\dbaccess;";
-        $C.=$this->getFileInfoComment();
+        $C .= "\nuse core\\CoreClasses\\services\\FieldType;";
+
+        $C .= $this->getFileInfoComment();
 
         $C .= "\nclass $ent" . "Entity extends EntityClass {";
         $C .= "\n\tpublic function __construct(dbaccess \$DBAccessor)";
@@ -111,11 +114,17 @@ class makeEntityController extends Controller {
         $C .= "\n\t\t\$this->setDatabase(new dbquery(\$DBAccessor));";
         $C .= "\n\t\t\$this->setTableName(\"$ent\");";
         $C .= "\n\t\t\$this->setTableTitle(\"$ent\");";
-        $titleField=$cols[$this->getTitleFieldIndex($cols)];
+        $titleField = $cols[$this->getTitleFieldIndex($cols)];
         $C .= "\n\t\t\$this->setTitleFieldName(\"$titleField\");";
-        for($i=0;$i<count($cols);$i++)
+        $FieldIndex=1;
+        for ($i = 0; $i < count($cols); $i++)
+        {
             if($cols[$i]!="id" && $cols[$i]!="deletetime")
-                $C .= $this->getFieldInfoSetCode($cols[$i],$ent . "Entity");
+            {
+                $C .= $this->getFieldInfoSetCode($cols[$i],$ent . "Entity",$FieldIndex);
+                $FieldIndex++;
+            }
+        }
 
         $C .= "\n\t}";
         for($i=0;$i<count($cols);$i++)

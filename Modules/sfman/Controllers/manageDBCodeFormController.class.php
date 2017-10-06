@@ -32,6 +32,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             return true;
         return false;
     }
+
     protected function fillGETParamValueGetters($formInfo,&$Params,&$GetterCode)
     {
         $formName=$formInfo['form']['name'];
@@ -44,7 +45,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             if($E['type_fid']==2)//TextBox
             {
                 $ParamName="\$" . $E['name'];
-                $C.="\n\t\t$ParamName=\$_GET['" . $E['name'] . "'];";
+                $C.="\n\t\t$ParamName=\$this->getHttpGETparameter('" . $E['name'] ."','');";
                 if($Params!="")
                     $Params.=",";
                 $Params.=$ParamName;
@@ -52,7 +53,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             elseif($E['type_fid']==9)//DatePicker
             {
                 $ParamName="\$" . $E['name'];
-                $C.="\n\t\t$ParamName=DatePicker::getTimeFromText(\$_GET['" . $E['name'] . "']);";
+                $C.="\n\t\t$ParamName=DatePicker::getTimeFromText(\$this->getHttpGETparameter('" . $E['name'] ."',''));";
                 if($Params!="")
                     $Params.=",";
                 $Params.=$ParamName;
@@ -60,7 +61,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             else if($E['type_fid']==3)//ComboBox
             {
                 $ParamName="\$" . $E['name'] . "_ID";
-                $C.="\n\t\t$ParamName=\$_GET['" . $E['name'] . "'];";
+                $C.="\n\t\t$ParamName=\$this->getHttpGETparameter('" . $E['name'] ."','');";
                 if($Params!="")
                     $Params.=",";
                 $Params.=$ParamName;
@@ -69,7 +70,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             else if($E['type_fid']==4)//DataComboBox
             {
                 $ParamName="\$" . $E['name'] . "_ID";
-                $C.="\n\t\t$ParamName=\$_GET['" . $E['name'] . "'];";
+                $C.="\n\t\t$ParamName=\$this->getHttpGETparameter('" . $E['name'] ."','');";
                 if($Params!="")
                     $Params.=",";
                 $Params.=$ParamName;
@@ -77,7 +78,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             else if($E['type_fid']==5)//CheckBox
             {
                 $ParamName="\$" . $E['name'] ;
-                $C.="\n\t\t$ParamName=\$_GET['" . $E['name'] . "'];";
+                $C.="\n\t\t$ParamName=\$this->getHttpGETparameter('" . $E['name'] ."','');";
                 if($Params!="")
                     $Params.=",";
                 $Params.=$ParamName;
@@ -86,7 +87,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
             else if($E['type_fid']==8)//RadioBox
             {
                 $ParamName="\$" . $E['name'] ;
-                $C.="\n\t\t$ParamName=\$_GET['" . $E['name'] . "'];";
+                $C.="\n\t\t$ParamName=\$this->getHttpGETparameter('" . $E['name'] ."','');";
                 if($Params!="")
                     $Params.=",";
                 $Params.=$ParamName;
@@ -237,8 +238,11 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         }
         $C .= "\n\t\t}";
         $C .= $this->getNotFoundCatchPart();
-        $C .= $this->getUnknownCatchPart();
-        $C .= "\n\t\treturn \$design->getBodyHTML();";
+        $C .= $this->getUnknownCatchPart($isManager);
+        if($ActionType==manageDBCodeFormController::$ACTIONTYPE_SEARCH)
+            $C .= "\n\t\treturn \$design;";
+        else
+            $C .= "\n\t\treturn \$design->getBodyHTML();";
         $C .= "\n\t}";
         return $C;
     }
@@ -341,7 +345,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends FormCode {";
         if($isManager)
             $C.=<<<EOT
-    \nprivate \$adminMode=true;
+    \n\tprivate \$adminMode=true;
 
     /**
      * @param bool \$adminMode
@@ -357,6 +361,10 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
 EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
+        $C .= "\n\t\treturn \$this->getLoadDesign()->getBodyHTML();";
+        $C .= "\n\t}";
+        $C .= "\n\tpublic function getLoadDesign()";
+        $C .= "\n\t{";
         $C .= $this->getFormCodeActionInits($isManager);
         $C .= "\n\t\ttry{";
         $C .= "\n\t\t\t\$Result=\$$formName" . "Controller->load(\$this->getID());";
@@ -369,16 +377,13 @@ EOT;
         $C .= "\n\t\t}";
         $C .= $this->getNotFoundCatchPart();
         $C .= $this->getUnknownCatchPart();
-        $C .= "\n\t\treturn \$design->getBodyHTML();";
+        $C .= "\n\t\treturn \$design;";
         $C .= "\n\t}";
 
         $C.=$this->getFormCodeConstructor($formInfo);
         $C .= "\n\tpublic function getID()";
         $C .= "\n\t{";
-        $C .= "\n\t\t\$id=-1;";
-        $C .= "\n\t\tif(isset(\$_GET['id']))";
-        $C .= "\n\t\t\t\$id=\$_GET['id'];";
-        $C .= "\n\t\treturn \$id;";
+        $C .= "\n\t\treturn \$this->getHttpGETparameter('id',-1);";
         $C .= "\n\t}";
         return $C;
     }
@@ -400,9 +405,7 @@ EOT;
 				$C.=$this->getActionFormCode($formInfo,$formInfo['elements'][$i]['name'],null,true,true);
 		$C .= "\n}";
 		$C .= "\n?>";
-		file_put_contents($this->getCodeFile(), $C);
-
-		chmod($this->getCodeFile(),0777);
+		$this->SaveFile($this->getCodeFile(), $C);
 
 	}
     protected function makeTableItemCode($formInfo)
@@ -410,9 +413,7 @@ EOT;
         $C=$this->getTableItemCode($formInfo,false);
         $C .= "\n}";
         $C .= "\n?>";
-        file_put_contents($this->getCodeFile(), $C);
-
-        chmod($this->getCodeFile(),0777);
+        $this->SaveFile($this->getCodeFile(), $C);
 
     }
     protected function makeTableManageListCode($formInfo)
@@ -426,6 +427,10 @@ EOT;
 
         $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends $ListName" . "_Code {";
         $C .= "\n\tpublic function load()";
+        $C .= "\n\t{";
+        $C .= "\n\t\treturn \$this->getLoadDesign()->getBodyHTML();";
+        $C .= "\n\t}";
+        $C .= "\n\tpublic function getLoadDesign()";
         $C .= "\n\t{";
         $C .= "\n\t\ttry{";
         $C .= $this->getFormCodeActionInits(true);
@@ -446,22 +451,18 @@ EOT;
         $C .= "\n\t\t}";
         $C .= $this->getNotFoundCatchPart();
         $C .= $this->getUnknownCatchPart();
-        $C .= "\n\t\treturn \$design->getBodyHTML();";
+        $C .= "\n\t\treturn \$design;";
         $C .= "\n\t}";
 
         $C.=$this->getFormCodeConstructor($formInfo);
         $C .= "\n\tpublic function getID()";
         $C .= "\n\t{";
-        $C .= "\n\t\t\$id=-1;";
-        $C .= "\n\t\tif(isset(\$_GET['id']))";
-        $C .= "\n\t\t\t\$id=\$_GET['id'];";
-        $C .= "\n\t\treturn \$id;";
+        $C .= "\n\t\treturn \$this->getHttpGETparameter('id',-1);";
         $C .= "\n\t}";
         $C .= "\n}";
         $C .= "\n?>";
-        file_put_contents($this->getCodeFile(), $C);
 
-        chmod($this->getCodeFile(),0777);
+        $this->SaveFile($this->getCodeFile(), $C);
 
     }
     protected function makeTableListCode($formInfo)
@@ -495,6 +496,11 @@ EOT;
 EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
+        $C .= "\n\t\treturn \$this->getLoadDesign()->getBodyHTML();";
+        $C .= "\n\t}";
+
+        $C .= "\n\tpublic function getLoadDesign()";
+        $C .= "\n\t{";
         $C .= $this->getFormCodeActionInits();
         $C .= "\n\t\ttry{";
         $C .= "\n\t\t\t\$design=new $formName" . "_Design();";
@@ -513,7 +519,7 @@ EOT;
         $C .= "\n\t\t}";
         $C .= $this->getNotFoundCatchPart();
         $C .= $this->getUnknownCatchPart();
-        $C .= "\n\t\treturn \$design->getBodyHTML();";
+        $C .= "\n\t\treturn \$design;";
         $C .= "\n\t}";
 
         $C.=$this->getFormCodeConstructor($formInfo);
@@ -523,9 +529,8 @@ EOT;
         $C .= "\n}";
 
         $C .= "\n?>";
-        file_put_contents($this->getCodeFile(), $C);
 
-        chmod($this->getCodeFile(),0777);
+        $this->SaveFile($this->getCodeFile(), $C);
 
     }
 }

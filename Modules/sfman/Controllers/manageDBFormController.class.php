@@ -305,6 +305,159 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         }
         $DBAccessor->close_connection();
     }
+
+    protected function deletFormFromDB($ModuleID,$FormName)
+    {
+        $DBAccessor=new dbaccess();
+        $Fent=new sfman_formEntity($DBAccessor);
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition("name",$FormName));
+        $q->addCondition(new FieldCondition("module_fid",$ModuleID));
+        $Fent=$Fent->FindOne($q);
+        if($Fent!=null)
+        {
+            $Fent->Delete($Fent->getId());
+        }
+        $DBAccessor->close_connection();
+    }
+    private function DeleteManageCodeFile($FilePath)
+    {
+        if(file_exists($FilePath))
+            unlink($FilePath);
+
+    }
+    public function DeleteManageCodes($FormsToDelete,$ModuleID,$TableName)
+    {
+        $ModEnt=new sfman_moduleEntity(new dbaccess());
+        $ModEnt->setId($ModuleID);
+        $Module=$ModEnt->getName();
+        $this->setCodeModuleName($Module);
+        $this->setFormName("manage".$TableName);
+        if($this->getIsItemSelected($FormsToDelete,"manage_item_controller"))
+        {
+            $file=$this->getControllerFile();
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"manage_item_code"))
+        {
+            $file=$this->getCodeFile();
+            $this->DeleteManageCodeFile($file);
+            $this->deletFormFromDB($ModuleID,$this->getFormName());
+        }
+        if($this->getIsItemSelected($FormsToDelete,"manage_item_design"))
+        {
+            $file=$this->getDesignFile();
+            $this->DeleteManageCodeFile($file);
+        }
+
+        if($this->getIsItemSelected($FormsToDelete,"manage_useritem_code"))
+        {
+            $this->setFormName("manageuser".$TableName);
+            $file=$this->getCodeFile();
+            $this->DeleteManageCodeFile($file);
+            $this->deletFormFromDB($ModuleID,$this->getFormName());
+        }
+
+        $this->setFormName("manage".$TableName . "s");
+        if($this->getIsItemSelected($FormsToDelete,"manage_list_controller"))
+        {
+            $file=$this->getControllerFile();
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"manage_list_code"))
+        {
+            $file=$this->getCodeFile();
+            $this->DeleteManageCodeFile($file);
+            $this->deletFormFromDB($ModuleID,$this->getFormName());
+        }
+        if($this->getIsItemSelected($FormsToDelete,"manage_list_design"))
+        {
+            $file=$this->getDesignFile();
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"manage_userlist_code"))
+        {
+            $this->setFormName("manageuser".$TableName . "s");$file=$this->getCodeFile();
+            $file=$this->getCodeFile();
+            $this->DeleteManageCodeFile($file);
+            $this->deletFormFromDB($ModuleID,$this->getFormName());
+
+        }
+
+        $this->setFormName($TableName);
+        if($this->getIsItemSelected($FormsToDelete,"item_display_controller"))
+        {
+            $file=$this->getControllerFile();
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"item_display_code"))
+        {
+            $file=$this->getCodeFile();
+
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"item_display_design"))
+        {
+            $file=$this->getDesignFile();
+            $this->DeleteManageCodeFile($file);
+            $this->deletFormFromDB($ModuleID,$this->getFormName());
+
+        }
+
+
+        $this->setFormName($TableName . "list");
+        if($this->getIsItemSelected($FormsToDelete,"list_controller"))
+        {
+            $file=$this->getControllerFile();
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"list_code"))
+        {
+            $file=$this->getCodeFile();
+            $this->DeleteManageCodeFile($file);
+        }
+        if($this->getIsItemSelected($FormsToDelete,"list_design"))
+        {
+            $file=$this->getDesignFile();
+            $this->DeleteManageCodeFile($file);
+            $this->deletFormFromDB($ModuleID,$this->getFormName());
+
+        }
+        if($this->getIsItemSelected($FormsToDelete,"search_design"))
+         {
+             $this->setFormName($TableName . "listsearch");
+                $file=$this->getDesignFile();
+                $this->DeleteManageCodeFile($file);
+
+         }
+    }
+    protected function getIsAdminModeDefine($ShowSetter)
+    {
+        $C=<<<EOT
+\n\tprivate \$adminMode=true;
+    public function getAdminMode()
+    {
+        return \$this->adminMode;
+    }
+    
+EOT;
+        if($ShowSetter)
+            $C.=<<<EOT
+    /**
+     * @param bool \$adminMode
+     */
+    public function setAdminMode(\$adminMode)
+    {
+        \$this->adminMode = \$adminMode;
+    }
+EOT;
+        return $C;
+    }
+    protected function SaveFile($File,$Content)
+    {
+        file_put_contents($File, $Content);
+        chmod($File,0777);
+    }
     protected abstract function makeUserManageCode($formName, $GeneralformInfo);
 }
 
