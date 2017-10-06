@@ -47,7 +47,9 @@ class AppRooter extends RooterLink {
 			{
 				if($i>0)
 					$link.="&";
-				$link.=$Parameters[$i]->getField() . "=" . $Parameters[$i]->getValue();
+                $link.=$Parameters[$i]->getField() ;
+				if($Parameters[$i]->getValue()!=null)
+                    $link.= "=" . $Parameters[$i]->getValue();
 			}
 		}
 		if($IsAbsolute)
