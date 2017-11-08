@@ -32,6 +32,19 @@ class Payment
             return 0;
         return $res->getBalance();
     }
+    public function getTransactionStatus($TransactionID)
+    {
+
+        $DBAccessor=new dbaccess();
+        $trans=new finance_transactionEntity($DBAccessor);
+        $trans->setId($TransactionID);
+        $DBAccessor->close_connection();
+        if($trans==null || $trans->getId()<=0)
+            return -1;
+        if($trans->getIssuccessful())
+            return 1;
+        return 0;
+    }
     public function startTransaction($amount,$name,$family,$phonenumber,$portal_fid,$description,$ChapterID,$PayByPortal,$RedirectURL)
     {
         $DBAccessor=new dbaccess();

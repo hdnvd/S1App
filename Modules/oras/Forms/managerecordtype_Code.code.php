@@ -1,5 +1,6 @@
 <?php
 namespace Modules\oras\Forms;
+use core\CoreClasses\Exception\InvalidParameterException;
 use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
@@ -94,6 +95,11 @@ class managerecordtype_Code extends FormCode {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
+        catch(InvalidParameterException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage(".امتیازات کسورات باید عدد منفی(یا صفر) و امتیازات تشویقات باید عدد مثبت(یا صفر) باشد");
+        }
 		catch(\Exception $uex){
 			$design=$this->getLoadDesign();
 			$design->setMessageType(MessageType::$ERROR);

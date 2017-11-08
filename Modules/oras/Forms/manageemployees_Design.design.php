@@ -176,12 +176,19 @@ class manageemployees_Design extends FormDesign {
             $liRole[$i]->setGlyphiconClass('glyphicon glyphicon-briefcase');
             $liRole[$i]->setClass('btn btn-primary');
 
-            $Recordurl=new AppRooter('oras','managerecords');
+            $Recordurl=new AppRooter('oras','manageuserrecords');
             $Recordurl->addParameter(new UrlParameter('employeeid',$this->Data['data'][$i]->getID()));
             $lbRecord[$i]=new Lable('گزارش ها');
             $liRecord[$i]=new link($Recordurl->getAbsoluteURL(),$lbRecord[$i]);
             $liRecord[$i]->setGlyphiconClass('glyphicon glyphicon-duplicate');
             $liRecord[$i]->setClass('btn btn-primary');
+
+            $AdminRecordurl=new AppRooter('oras','managerecords');
+            $AdminRecordurl->addParameter(new UrlParameter('employeeid',$this->Data['data'][$i]->getID()));
+            $lbAdminRecord[$i]=new Lable('گزارش مدیر');
+            $liAdminRecord[$i]=new link($AdminRecordurl->getAbsoluteURL(),$lbAdminRecord[$i]);
+            $liAdminRecord[$i]->setGlyphiconClass('glyphicon glyphicon-king');
+            $liAdminRecord[$i]->setClass('btn btn-primary');
 
             $ViewURL=new AppRooter('oras','employee');
             $ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
@@ -194,6 +201,7 @@ class manageemployees_Design extends FormDesign {
 			$operationDiv[$i]->setClass('operationspart');
             $operationDiv[$i]->addElement($liRole[$i]);
             $operationDiv[$i]->addElement($liRecord[$i]);
+            $operationDiv[$i]->addElement($liAdminRecord[$i]);
             $operationDiv[$i]->addElement($liView[$i]);
 			$operationDiv[$i]->addElement($liDel[$i]);
 

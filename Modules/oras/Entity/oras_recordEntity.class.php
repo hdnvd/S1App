@@ -25,6 +25,7 @@ class oras_recordEntity extends EntityClass {
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
 		$TitleInfo->setTitle("عنوان");
+		$TitleInfo->setRequired(true);
 		$this->setFieldInfo(oras_recordEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',oras_recordEntity::$TITLE);
 
@@ -48,7 +49,7 @@ class oras_recordEntity extends EntityClass {
 
 		/******** recordtype_fid ********/
 		$Recordtype_fidInfo=new FieldInfo();
-		$Recordtype_fidInfo->setTitle("نوع گزارش");
+		$Recordtype_fidInfo->setTitle("سرفصل گزارش");
 		$this->setFieldInfo(oras_recordEntity::$RECORDTYPE_FID,$Recordtype_fidInfo);
 		$this->addTableField('5',oras_recordEntity::$RECORDTYPE_FID);
 

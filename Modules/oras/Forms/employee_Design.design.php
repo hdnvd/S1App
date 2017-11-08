@@ -153,10 +153,11 @@ class employee_Design extends FormDesign {
 		}
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getInfoRowCode($this->mellicode,$this->getFieldCaption('mellicode')));
+        $LTable1->addElement($this->getInfoRowCode($this->photo_flu,$this->getFieldCaption('photo_flu')));
 		$LTable1->addElement($this->getInfoRowCode($this->name,$this->getFieldCaption('name')));
 		$LTable1->addElement($this->getInfoRowCode($this->family,$this->getFieldCaption('family')));
 		$LTable1->addElement($this->getInfoRowCode($this->ismale,$this->getFieldCaption('ismale')));
+        $LTable1->addElement($this->getInfoRowCode($this->mellicode,$this->getFieldCaption('mellicode')));
 		$LTable1->addElement($this->getInfoRowCode($this->phonenumber,$this->getFieldCaption('phonenumber')));
         $LTable1->addElement($this->getInfoRowCode($this->points,$this->getFieldCaption('points')));
         $LTable1->addElement($this->getInfoRowCode($this->NegativePoints,$this->getFieldCaption('NegativePoints')));
@@ -164,7 +165,6 @@ class employee_Design extends FormDesign {
         $LTable1->addElement($this->getInfoRowCode($this->PostiveRecords,$this->getFieldCaption('PostiveRecords')));
         $LTable1->addElement($this->getInfoRowCode($this->NegativeRecords,$this->getFieldCaption('NegativeRecords')));
         $LTable1->addElement($this->getInfoRowCode($this->AllRecords,$this->getFieldCaption('AllRecords')));
-		$LTable1->addElement($this->getInfoRowCode($this->photo_flu,$this->getFieldCaption('photo_flu')));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();

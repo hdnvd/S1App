@@ -23,6 +23,8 @@ class oras_placeEntity extends EntityClass {
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
 		$TitleInfo->setTitle("عنوان");
+        $TitleInfo->setRequired(true);
+        $TitleInfo->setMinLength(2);
 		$this->setFieldInfo(oras_placeEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',oras_placeEntity::$TITLE);
 	}

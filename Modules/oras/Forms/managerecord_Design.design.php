@@ -109,12 +109,15 @@ class managerecord_Design extends FormDesign
         }
 
         /******** employee_fid ********/
+        $this->setFieldCaption('employee_fid', $this->Data['record']->getFieldInfo('employee_fid')->getTitle());
+
         if (key_exists('employee_fid', $this->Data))
             $this->employee_fid->setValue($this->Data['employee_fid']->getName() . " " . $this->Data['employee_fid']->getFamily() . "-(" . $this->Data['employee_fid']->getMellicode() . ")");
         else
             $this->employee_fid->setVisible(false);
 
         /******** place_fid ********/
+        $this->setFieldCaption('place_fid', $this->Data['record']->getFieldInfo('place_fid')->getTitle());
         if (key_exists('place_fid', $this->Data))
             $this->place_fid->setValue($this->Data['place_fid']->getTitle());
         else

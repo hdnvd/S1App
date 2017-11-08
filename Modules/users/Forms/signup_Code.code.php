@@ -93,9 +93,14 @@ class signup_Code extends FormCode
 		$mail=$_POST['useremail'];
 		$ismale=$_POST['ismale'];
 		$profilepicture=$_FILES['profilepicture']['name'];
-		$profilepictureURL=$this->UploadPhoto($_FILES['profilepicture']['tmp_name'], $_FILES['profilepicture']['name']);
-		$profilepictureURL['url']=DEFAULT_PUBLICURL . $profilepictureURL['url'];
-		
+		if($profilepicture!="")
+        {
+
+            $profilepictureURL=$this->UploadPhoto($_FILES['profilepicture']['tmp_name'], $_FILES['profilepicture']['name']);
+            $profilepictureURL['url']=DEFAULT_PUBLICURL . $profilepictureURL['url'];
+        }
+		else
+            $profilepictureURL['url']="";
 		if($this->ShowRoles)
 		  $Role=$_POST['roleid'];
 		else 

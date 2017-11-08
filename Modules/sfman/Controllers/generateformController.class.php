@@ -6,6 +6,7 @@ use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\sfman\Entity\sfman_formEntity;
 use Modules\sfman\Entity\sfman_moduleEntity;
+use Modules\users\Entity\role_menuitemEntity;
 
 
 /**
@@ -34,6 +35,14 @@ class generateformController extends Controller {
 		$result=array();
 		$Fent=new sfman_formEntity($DBAccessor);
 		$Fent->Insert($Name,$Title,$ModuleID,true);
+        $Ment=new sfman_moduleEntity($DBAccessor);
+       $Module=$Ment->Select($ModuleID,null,null,null,array('id'),array(true),"0,1");
+		$MenuEnt=new role_menuitemEntity($DBAccessor);
+        $MenuEnt->setLatintitle($Title);
+        $MenuEnt->setModule($Module[0]['name']);
+        $MenuEnt->setPage($Name);
+        $MenuEnt->setParameters("");
+        $MenuEnt->Save();
 		$DBAccessor->close_connection();
 		return $result;
 	}

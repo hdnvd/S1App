@@ -19,6 +19,7 @@ use Modules\finance\Exceptions\TransactionWithErrorException;
 use Modules\finance\Exceptions\URLmisMatchException;
 use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\parameters\PublicClasses\ParameterManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -66,7 +67,8 @@ class epaymentController extends Controller {
                 $Tent=new finance_transactionEntity($DBAccessor);
                 $Tent->setId($Pent->getTransaction_fid());
                 $payir = new \payir();
-                $payir->setApiKey("f512812c02020dada05b67e957ae57d0");
+                $param=ParameterManager::getParameter('payirapicode');
+                $payir->setApiKey($param);
                 $tp = new AppRooter("finance", "epayment");
                 $res = $payir->send($Tent->getAmount(), $tp->getAbsoluteURL(), $Pent->getFactorserial());
                 $res = json_decode($res);
@@ -104,7 +106,8 @@ class epaymentController extends Controller {
         if($Status==1)
         {
             $pay=new \payir();
-            $pay->setApiKey("f512812c02020dada05b67e957ae57d0");
+            $param=ParameterManager::getParameter('payirapicode');
+            $pay->setApiKey($param);
             $VerifyResult=$pay->verify($BankTransactioID);
             $VerifyResult = json_decode($VerifyResult);
             if($VerifyResult->status==1)

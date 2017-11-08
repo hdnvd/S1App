@@ -1,5 +1,6 @@
 <?php
 namespace Modules\oras\Controllers;
+use core\CoreClasses\Exception\InvalidParameterException;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
@@ -55,6 +56,10 @@ class managerecordtypeController extends Controller {
 	}
 	public function BtnSave($ID,$title,$points,$isbad)
 	{
+	    if(($isbad==1 && $points>0) ||($isbad==0 && $points<0) )
+        {
+            throw new InvalidParameterException();
+        }
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();

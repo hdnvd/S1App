@@ -1,5 +1,7 @@
 <?php
 namespace Modules\oras\Forms;
+use core\CoreClasses\Exception\InvalidFieldException;
+use core\CoreClasses\Exception\InvalidParameterException;
 use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
@@ -102,6 +104,11 @@ class manageemployee_Code extends FormCode {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
+        catch(InvalidFieldException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("شماره ملی وارد شده صحیح نمی باشد");
+        }
 		catch(\Exception $uex){
 			$design=$this->getLoadDesign();
 			$design->setMessageType(MessageType::$ERROR);

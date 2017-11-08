@@ -120,6 +120,17 @@ class recordlistsearch_Design extends FormDesign {
 	{
 		return $this->place_fid;
 	}
+
+    /** @var combobox */
+    private $ResultType;
+    /**
+     * @return combobox
+     */
+    public function getResultType()
+    {
+        return $this->ResultType;
+    }
+
 	/** @var DatePicker */
 	private $registration_time_from;
 	/**
@@ -181,6 +192,10 @@ class recordlistsearch_Design extends FormDesign {
 		/******* shifttype_fid *******/
 		$this->shifttype_fid= new combobox("shifttype_fid");
 		$this->shifttype_fid->setClass("form-control");
+
+        /******* ResultType *******/
+        $this->ResultType= new ComboBox("resulttype");
+        $this->ResultType->setClass("form-control");
 
 		/******* recordtype_fid *******/
 		$this->recordtype_fid= new combobox("recordtype_fid");
@@ -244,7 +259,8 @@ class recordlistsearch_Design extends FormDesign {
             $LTable1->addElement($this->getFieldRowCode($this->place_fid,$this->getFieldCaption('place_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->registration_time_from,$this->getFieldCaption('registration_time_from'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->registration_time_to,$this->getFieldCaption('registration_time_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
+        $LTable1->addElement($this->getFieldRowCode($this->ResultType,$this->getFieldCaption('resulttype'),null,'',null));
+        $LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
 		$Page->addElement($LTable1);
@@ -254,6 +270,15 @@ class recordlistsearch_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
+
+        /******** ResultType ********/
+            $this->ResultType->addOption("0","همه");
+        $this->ResultType->addOption("1","گزارشات مربوط به فرد");
+        $this->ResultType->addOption("2","گزارشات مربوط به بخش");
+        $this->ResultType->setSelectedValue("0");
+            $this->setFieldCaption('resulttype',"نتایج");
+        if(isset($_GET['employeemellicode']))
+            $this->ResultType->SetAttribute("disabled","disabled");
 
 			/******** title ********/
 		if (key_exists("record", $this->Data)){
@@ -293,7 +318,7 @@ class recordlistsearch_Design extends FormDesign {
         $this->recordtypeisbad->addOption(-1, "مهم نیست");
         $this->recordtypeisbad->addOption(2, "کسور");
         $this->recordtypeisbad->addOption(1, "تشویقی");
-        $this->setFieldCaption('recordtypeisbad',"وضعیت گزارش");
+        $this->setFieldCaption('recordtypeisbad',"نوع گزارش");
 
 			/******** recordtype_fid ********/
 			$this->recordtype_fid->addOption(0, "مهم نیست");
@@ -302,13 +327,15 @@ class recordlistsearch_Design extends FormDesign {
 		$this->recordtype_fid->setDefaultOption("مهم نیست");
         $this->recordtype_fid->setMotherComboboxName($this->recordtypeisbad->getName());
         $this->recordtype_fid->setMotherComboboxAutoLoadMode(ComboBox::$AUTOLOADMODE_ONPAGE);
+        $this->setFieldCaption('recordtype_fid',$this->Data['record']->getFieldInfo('recordtype_fid')->getTitle());
 
 
 
-			/******** employeemellicode ********/
+
+        /******** employeemellicode ********/
+        $this->setFieldCaption('employeemellicode',"کد ملی کارمند");
 		if (isset($_GET['employeemellicode'])){
 			$this->employeemellicode->setValue($_GET['employeemellicode']);
-			$this->setFieldCaption('employeemellicode',"کد ملی کارمند");
 		}
 
 			/******** place_fid ********/

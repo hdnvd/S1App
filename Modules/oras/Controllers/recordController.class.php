@@ -17,6 +17,8 @@ use Modules\oras\Entity\oras_file1Entity;
 use Modules\oras\Entity\oras_file2Entity;
 use Modules\oras\Entity\oras_file3Entity;
 use Modules\oras\Entity\oras_file4Entity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-07-12 - 2017-10-04 03:03
@@ -55,6 +57,11 @@ class recordController extends Controller {
 			$placeEntityObject=new oras_placeEntity($DBAccessor);
 			$placeEntityObject->SetId($result['record']->getPlace_fid());
 			$result['place_fid']=$placeEntityObject;
+			$result['user']['sysid']=$result['record']->getRole_systemuser_fid();
+			$us=new User($result['user']['sysid']);
+            $result['user']['name']=$us->getUserInfo('name');
+            $result['user']['family']=$us->getUserInfo('family');
+
 		}
 		$result['param1']="";
 		$DBAccessor->close_connection();

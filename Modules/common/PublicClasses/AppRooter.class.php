@@ -126,6 +126,11 @@ class AppRooter extends RooterLink {
 		
 		array_push($this->Parameters,$Parameter);
 	}
+    public function addParameterArray(array $Parameters)
+    {
+		for($i=0;$i<count($Parameters);$i++)
+        	array_push($this->Parameters,$Parameters[$i]);
+    }
 	public function setParameters(array $Parameters)
 	{
 	    $this->Parameters = $Parameters;

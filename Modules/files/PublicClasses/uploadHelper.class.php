@@ -4,8 +4,6 @@ namespace Modules\files\PublicClasses;
 
 use core\CoreClasses\Exception\FileExistsError;
 use core\CoreClasses\File\Uploader;
-use core\CoreClasses\Exception\FileTypeError;
-use core\CoreClasses\Exception\FileSizeError;
 /**
  *
  * @author nahavandi
@@ -25,28 +23,37 @@ class uploadHelper {
 		$i=1;
 		$Uploaded=false;
 		$pinf=pathinfo($fileName);
-		$ext=$pinf['extension'];
-        $fname=$pinf['filename'];
-        $url=null;
-		do
-		{
-			try{
+		if($pinf!=null)
+        {
+            $ext="";
+            $fname="";
+            if(key_exists('extension',$pinf))
+                $ext=$pinf['extension'];
 
-                $address=DEFAULT_PUBLICPATH. $uploadPlace . $newName;
-                $uploader->uploadFile($tmpfile, $address,$Override,$fileTypes,$maxSize,$fileType);
-                $url['url']=$uploadPlace . rawurlencode($newName);
-                $url['path']=DEFAULT_PUBLICPATH . $uploadPlace . $newName;
-                $url['name']=$newName;
-                $Uploaded=true;
-                return $url;
-            }
-            catch (FileExistsError $ex)
+            if(key_exists('filename',$pinf))
+                $fname=$pinf['filename'];
+            $url=null;
+            do
             {
-                $newName=$fname . "-" .$i. ".".$ext;
-                $i++;
-                $Uploaded=false;
-            }
-		}while ($i<1000000);
+                try{
+
+                    $address=DEFAULT_PUBLICPATH. $uploadPlace . $newName;
+                    $uploader->uploadFile($tmpfile, $address,$Override,$fileTypes,$maxSize,$fileType);
+                    $url['url']=$uploadPlace . rawurlencode($newName);
+                    $url['path']=DEFAULT_PUBLICPATH . $uploadPlace . $newName;
+                    $url['name']=$newName;
+                    $Uploaded=true;
+                    return $url;
+                }
+                catch (FileExistsError $ex)
+                {
+                    $newName=$fname . "-" .$i. ".".$ext;
+                    $i++;
+                    $Uploaded=false;
+                }
+            }while ($i<1000000);
+        }
+
 		return null;
 	}
 	public static function UploadPrivateFile($tmpfile,$fileName,$uploadPlace,$Override=false,array $fileTypes=null,$maxSize=2000,$fileType=null)

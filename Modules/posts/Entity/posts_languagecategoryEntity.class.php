@@ -11,7 +11,6 @@ class posts_languagecategoryEntity extends EntityClass {
 	{
 		$this->Database=new dbquery();
 		$this->TableName="posts_languagecategory";
-		parent::__construct($this->Database,$this->TableName);
 	}
 	public function Insert($LanguageID,$Title,$Latintitle,$MotherID)
 	{

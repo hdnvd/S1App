@@ -32,7 +32,7 @@ class managerecords_Code extends recordlist_Code {
 			$design=new managerecords_Design();
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
-				$Result=$managerecordsController->DeleteItem($this->getID());
+				$Result=$managerecordsController->DeleteItem($this->getID(),$this->getHttpGETparameter('employeeid',-1),$this->getHttpGETparameter('placeid',-1));
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();

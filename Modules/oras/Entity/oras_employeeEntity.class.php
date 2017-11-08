@@ -23,6 +23,8 @@ class oras_employeeEntity extends EntityClass {
 		/******** mellicode ********/
 		$MellicodeInfo=new FieldInfo();
 		$MellicodeInfo->setTitle("شماره ملی");
+        $MellicodeInfo->setRequired(true);
+        $MellicodeInfo->setType(FieldType::$MELLICODE);
 		$this->setFieldInfo(oras_employeeEntity::$MELLICODE,$MellicodeInfo);
 		$this->addTableField('1',oras_employeeEntity::$MELLICODE);
 
@@ -47,6 +49,7 @@ class oras_employeeEntity extends EntityClass {
 		/******** phonenumber ********/
 		$PhonenumberInfo=new FieldInfo();
 		$PhonenumberInfo->setTitle("شماره موبایل");
+        $PhonenumberInfo->setType(FieldType::$MOBILE);
 		$this->setFieldInfo(oras_employeeEntity::$PHONENUMBER,$PhonenumberInfo);
 		$this->addTableField('5',oras_employeeEntity::$PHONENUMBER);
 

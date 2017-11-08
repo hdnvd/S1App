@@ -76,7 +76,7 @@ class epayment_Code extends FormCode
             $design->setMessage("خطا: مبلغ تراکنش کمتر از حداقل مجاز است");
         } catch (TransactionWithErrorException $dnfex) {
             $design = new message_Design();
-            $design->setMessage("تراکنش به صورت ناموفق انجام شد،در صورتی که مبلغی از حساب شما کسر شده باشد تا ۷۲ ساعت آینده به حساب شما بازخواهد گشت");
+            $design->setMessage("تراکنش به صورت ناموفق انجام شد");
         } catch (URLmisMatchException $dnfex) {
             $design = new message_Design();
             $design->setMessage("خطا: آدرس وب سایت با آدرس درگاه یکی نیست");
@@ -89,10 +89,11 @@ class epayment_Code extends FormCode
         } catch (PaymentCanceledException $dnfex) {
             $design = new message_Design();
             $design->setMessage("پرداخت لغو شد.");
-        } catch (\Exception $uex) {
-            $design = new message_Design();
-            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
         }
+//        } catch (\Exception $uex) {
+//            $design = new message_Design();
+//            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//        }
         return $design->getBodyHTML();
     }
 

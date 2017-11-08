@@ -117,16 +117,25 @@ class manageplaces_Design extends FormDesign {
 			$liDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$liDel[$i]->setClass('btn btn-danger');
 
-            $Recordurl=new AppRooter('oras','managerecords');
+            $Recordurl=new AppRooter('oras','manageuserrecords');
             $Recordurl->addParameter(new UrlParameter('placeid',$this->Data['data'][$i]->getID()));
             $lbRecord[$i]=new Lable('گزارش ها');
             $liRecord[$i]=new link($Recordurl->getAbsoluteURL(),$lbRecord[$i]);
             $liRecord[$i]->setGlyphiconClass('glyphicon glyphicon-duplicate');
             $liRecord[$i]->setClass('btn btn-primary');
 
+            $AdminRecordurl=new AppRooter('oras','managerecords');
+            $AdminRecordurl->addParameter(new UrlParameter('placeid',$this->Data['data'][$i]->getID()));
+            $lbAdminRecord[$i]=new Lable('گزارش مدیر');
+            $liAdminRecord[$i]=new link($AdminRecordurl->getAbsoluteURL(),$lbAdminRecord[$i]);
+            $liAdminRecord[$i]->setGlyphiconClass('glyphicon glyphicon-king');
+            $liAdminRecord[$i]->setClass('btn btn-primary');
+
+
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
             $operationDiv[$i]->addElement($liRecord[$i]);
+            $operationDiv[$i]->addElement($liAdminRecord[$i]);
 			$operationDiv[$i]->addElement($liDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");

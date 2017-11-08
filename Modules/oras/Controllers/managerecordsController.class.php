@@ -26,7 +26,7 @@ use Modules\oras\Entity\oras_file4Entity;
 */
 class managerecordsController extends recordlistController {
 	private $PAGESIZE=10;
-	public function DeleteItem($ID)
+	public function DeleteItem($ID,$EmployeeID,$PlaceID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -43,7 +43,7 @@ class managerecordsController extends recordlistController {
 			throw new DataNotFoundException();
 		$recordEnt->Remove();
 		$DBAccessor->close_connection();
-		return $this->load(-1);
+		return $this->load(-1,$EmployeeID,$PlaceID);
 	}
 }
 ?>

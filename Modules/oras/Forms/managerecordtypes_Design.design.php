@@ -118,7 +118,7 @@ class managerecordtypes_Design extends FormDesign {
 			$liDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($liDel[$i]);
+//			$operationDiv[$i]->addElement($liDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);

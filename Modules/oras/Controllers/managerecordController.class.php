@@ -149,6 +149,7 @@ class managerecordController extends Controller
             $recordEntityObject->setFile2_flu($file2_fluURL);
             $recordEntityObject->setFile3_flu($file3_fluURL);
             $recordEntityObject->setFile4_flu($file4_fluURL);
+            $recordEntityObject->setRole_systemuser_fid($role_systemuser_fid);
             $recordEntityObject->Save();
         } else {
             $recordEntityObject->setId($ID);

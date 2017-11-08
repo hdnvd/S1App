@@ -21,7 +21,7 @@ use Modules\oras\Entity\oras_photoEntity;
 *@SweetFrameworkVersion 2.002
 */
 class employeelistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=25;
 	public function getData($PageNum,QueryLogic $QueryLogic)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

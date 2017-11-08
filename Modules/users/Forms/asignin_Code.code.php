@@ -58,7 +58,7 @@ class asignin_Code extends FormCode
         $password = $_POST['password'];
         $design = new asignin_Design();
         $recaptchaStatus=$design->getRecaptcha()->getValidationStatus();
-        if ($recaptchaStatus == GRecaptchaValidationStatus::$VALID) {
+        if ($recaptchaStatus == GRecaptchaValidationStatus::$VALID ) {
             $signinController = new signinController();
             $UserID = $signinController->getUserID($username, $password);
             if (!is_null($UserID))//If Username And Password  Is Valid

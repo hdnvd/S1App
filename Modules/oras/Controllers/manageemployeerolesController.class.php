@@ -22,7 +22,7 @@ use Modules\oras\Entity\oras_placeEntity;
 */
 class manageemployeerolesController extends employeerolelistController {
 	private $PAGESIZE=10;
-	public function DeleteItem($ID)
+	public function DeleteItem($ID,$EmployeeID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -39,7 +39,7 @@ class manageemployeerolesController extends employeerolelistController {
 			throw new DataNotFoundException();
 		$employeeroleEnt->Remove();
 		$DBAccessor->close_connection();
-		return $this->load(-1);
+		return $this->load(-1,$EmployeeID);
 	}
 }
 ?>

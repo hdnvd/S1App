@@ -56,6 +56,8 @@ class record_Design extends FormDesign {
 	private $place_fid;
 	/** @var lable */
 	private $registration_time;
+    /** @var lable */
+    private $User;
 	private $Files;
 	/** @var lable */
 	private $file1_flu;
@@ -88,6 +90,10 @@ class record_Design extends FormDesign {
 
 		/******* place_fid *******/
 		$this->place_fid= new lable("place_fid");
+
+        /******* place_fid *******/
+        $this->User= new lable("user");
+
 
 		/******* registration_time *******/
 		$this->registration_time= new lable("registration_time");
@@ -122,6 +128,10 @@ class record_Design extends FormDesign {
 			$occurance_date_Text=$occurance_date_SD->date("l d F Y",$this->Data['record']->getOccurance_date());
 			$this->occurance_date->setText($occurance_date_Text);
 		}
+        if (key_exists("record", $this->Data)){
+            $this->setFieldCaption('user','کاربر ثبت کننده');
+            $this->User->setText($this->Data['user']['name'] . " " . $this->Data['user']['family']);
+        }
 		if (key_exists("record", $this->Data)){
 			$this->setFieldCaption('description',$this->Data['record']->getFieldInfo('description')->getTitle());
 			$this->description->setText($this->Data['record']->getDescription());
@@ -184,7 +194,8 @@ class record_Design extends FormDesign {
 		$LTable1->addElement($this->getInfoRowCode($this->employee_fid,$this->getFieldCaption('employee_fid')));
 		$LTable1->addElement($this->getInfoRowCode($this->place_fid,$this->getFieldCaption('place_fid')));
 		$LTable1->addElement($this->getInfoRowCode($this->registration_time,$this->getFieldCaption('registration_time')));
-		$FilesDiv=new Div();
+        $LTable1->addElement($this->getInfoRowCode($this->User,$this->getFieldCaption('user')));
+        $FilesDiv=new Div();
 		$FilesDiv->setId('filespart');
         for ($i = 0; $i < count($this->Files); $i++) {
             $img[$i]=new Image(DEFAULT_PUBLICURL."content/files/oras/file.png");

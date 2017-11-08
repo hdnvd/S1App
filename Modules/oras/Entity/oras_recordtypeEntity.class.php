@@ -17,18 +17,22 @@ class oras_recordtypeEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("oras_recordtype");
-		$this->setTableTitle("نوع گزارش");
+		$this->setTableTitle("سرفصل گزارش");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
 		$TitleInfo->setTitle("عنوان");
+        $TitleInfo->setRequired(true);
+        $TitleInfo->setMinLength(2);
 		$this->setFieldInfo(oras_recordtypeEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',oras_recordtypeEntity::$TITLE);
 
 		/******** points ********/
 		$PointsInfo=new FieldInfo();
 		$PointsInfo->setTitle("امتیاز");
+        $PointsInfo->setRequired(true);
+        $PointsInfo->setType(FieldType::$INTEGER);
 		$this->setFieldInfo(oras_recordtypeEntity::$POINTS,$PointsInfo);
 		$this->addTableField('2',oras_recordtypeEntity::$POINTS);
 

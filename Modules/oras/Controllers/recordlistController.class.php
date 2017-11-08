@@ -25,7 +25,7 @@ use Modules\oras\Entity\oras_file4Entity;
 *@SweetFrameworkVersion 2.002
 */
 class recordlistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=25;
 	public function getData($PageNum,QueryLogic $QueryLogic,$EmployeeID,$PlaceID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -150,7 +150,7 @@ class recordlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q,$EmployeeID,$PlaceID);
 	}
-	public function Search($PageNum,$title,$occurance_date_from,$occurance_date_to,$description,$shifttype_fid,$recordtype_fid,$employeeMelliCode,$place_fid,$registration_time_from,$registration_time_to,$sortby,$isdesc,$recordtypeisbad)
+	public function Search($PageNum,$title,$occurance_date_from,$occurance_date_to,$description,$shifttype_fid,$recordtype_fid,$employeeMelliCode,$place_fid,$registration_time_from,$registration_time_to,$sortby,$isdesc,$recordtypeisbad,$ResultType)
 	{
 		$DBAccessor=new dbaccess();
 		$recordEnt=new oras_recordEntity($DBAccessor);
@@ -161,6 +161,9 @@ class recordlistController extends Controller {
         $employee_fid="";
 		if($Empent!=null)
             $employee_fid=$Empent->getId();
+
+
+
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));
@@ -184,7 +187,12 @@ class recordlistController extends Controller {
         }
 		$q->addCondition(new FieldCondition("recordtype_fid","%$recordtype_fid%",LogicalOperator::LIKE));
 
-		$q->addCondition(new FieldCondition("employee_fid","%$employee_fid%",LogicalOperator::LIKE));
+
+        if($ResultType==2)//Only Place Records
+            $employee_fid=-1;
+        if($ResultType==1)//Only Person Records
+            $q->addCondition(new FieldCondition("employee_fid","0",LogicalOperator::Bigger));
+        $q->addCondition(new FieldCondition("employee_fid","%$employee_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("place_fid","%$place_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("registration_time",$registration_time_from,LogicalOperator::Bigger));
 		$q->addCondition(new FieldCondition("registration_time",$registration_time_to,LogicalOperator::Smaller));

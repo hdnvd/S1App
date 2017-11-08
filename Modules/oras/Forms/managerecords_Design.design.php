@@ -171,7 +171,11 @@ class managerecords_Design extends FormDesign {
 		for($i=0;$i<count($this->Data['data']);$i++){
             $delurl=new AppRooter('oras',$this->listPage);
             $delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-            $delurl->addParameter(new UrlParameter('delete',1));
+            if(isset($_GET['employeeid']))
+                $delurl->addParameter(new UrlParameter('employeeid',$_GET['employeeid']));
+            if(isset($_GET['placeid']))
+                $delurl->addParameter(new UrlParameter('placeid',$_GET['placeid']));
+            $delurl->addParameter(new UrlParameter('delete',null));
             $lbDel[$i]=new Lable('حذف');
             $liDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
             $liDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');

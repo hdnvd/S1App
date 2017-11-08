@@ -108,7 +108,11 @@ class manageemployeeroles_Design extends FormDesign {
 
 			$delurl=new AppRooter('oras',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$delurl->addParameter(new UrlParameter('delete',1));
+            if(isset($_GET['employeeid']))
+                $delurl->addParameter(new UrlParameter('employeeid',$_GET['employeeid']));
+			$delurl->addParameter(new UrlParameter('delete',null));
+
+
 
 			$Role=$this->Data['role_fids'][$i]->getTitleField();
 			if($Role=="")
@@ -125,7 +129,7 @@ class manageemployeeroles_Design extends FormDesign {
 
             $place=$this->Data['place_fids'][$i]->getTitleField();
             if($place=="")
-                $place='- بدون نوع استخدام -';
+                $place='- بدون بخش -';
             $places[$i]=new Lable($place);
 
 

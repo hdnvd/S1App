@@ -32,7 +32,7 @@ class manageemployeeroles_Code extends employeerolelist_Code {
 			$design=new manageemployeeroles_Design();
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
-				$Result=$manageemployeerolesController->DeleteItem($this->getID());
+				$Result=$manageemployeerolesController->DeleteItem($this->getID(),$this->getHttpGETparameter('employeeid',-1));
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();

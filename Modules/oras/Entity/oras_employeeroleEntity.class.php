@@ -34,7 +34,7 @@ class oras_employeeroleEntity extends EntityClass {
 
 		/******** recruitmenttype_fid ********/
 		$Recruitmenttype_fidInfo=new FieldInfo();
-		$Recruitmenttype_fidInfo->setTitle("recruitmenttype_fid");
+		$Recruitmenttype_fidInfo->setTitle("نوع استخدام");
 		$this->setFieldInfo(oras_employeeroleEntity::$RECRUITMENTTYPE_FID,$Recruitmenttype_fidInfo);
 		$this->addTableField('3',oras_employeeroleEntity::$RECRUITMENTTYPE_FID);
 

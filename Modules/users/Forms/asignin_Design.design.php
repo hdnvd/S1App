@@ -1,5 +1,6 @@
 <?php
 namespace Modules\users\Forms;
+use core\CoreClasses\html\FormLabel;
 use core\CoreClasses\html\GRecaptcha;
 use core\CoreClasses\html\TextBox;
 use core\CoreClasses\services\FormDesign;
@@ -50,30 +51,62 @@ class asignin_Design extends FormDesign
 		{
 
 			$usernameField=new TextBox("username");
-            $usernameField->setClass("form-control usernamefield");
+            $usernameField->setClass("form-control usernamefield input");
 			$passwordField=new PasswordBox("password");
-            $passwordField->setClass("form-control passwordfield");
-			$lbl1=new Lable($this->lbl1);
-			$lbl2=new Lable($this->lbl2);
+            $passwordField->setClass("form-control passwordfield input");
+			$lbl1=new FormLabel($this->lbl1);
+            $lbl1->setClass('label');
+			$lbl1->SetAttribute("for",$usernameField);
+			$lbl2=new FormLabel($this->lbl2);
+			$lbl2->setClass('label');
+            $lbl2->SetAttribute("for",$passwordField);
+            $UserRow=new Div();
+            $UserRow->setClass('group');
+            $UserRow->addElement($lbl1);
+            $UserRow->addElement($usernameField);
+
+            $PassRow=new Div();
+            $PassRow->setClass('group');
+            $PassRow->addElement($lbl2);
+            $PassRow->addElement($passwordField);
+
+
+            $RecaptchaRow=new Div();
+            $RecaptchaRow->setClass('group');
+            $RecaptchaRow->addElement($this->Recaptcha);
+
+
 			$table=new ListTable(2);
 			$table->setClass("logintable");
-			$table->addElement($lbl1);
-			$table->addElement($usernameField);
-			$table->addElement($lbl2);
-			$table->addElement($passwordField);
-            $table->addElement($this->Recaptcha,2);
+			$table->addElement($UserRow,2);
+            $table->addElement($PassRow,2);
+            $table->addElement($RecaptchaRow,2);
 			$btn=new SweetButton(true,$this->btn);
+			$btn->setClass('button');
 			$btn->setAction("login");
+
+            $ButtonRow=new Div();
+            $ButtonRow->setClass('group');
+            $ButtonRow->addElement($btn);
+
+
+
 			$div=new Div();
-		    	$div->addElement($btn);
+		    $div->addElement($ButtonRow);
 			if($this->showSignupLink)
 			{
 			    $LinkTitle=new link($this->SignupLink, "عضویت");
-			    $LinkTitle->setClass("users_signuplink");
-			    $div->addElement($LinkTitle);
+                $regDiv=new Div();
+                $regDiv->setClass('users_signuplink');
+                $regDiv->addElement($LinkTitle);
+
+                $RegisterRow=new Div();
+                $RegisterRow->setClass('group');
+                $RegisterRow->addElement($regDiv);
+                $div->addElement($RegisterRow);
 			}
 			    $table->addElement($div,2);
-			$form=new SweetFrom("", "POST", $table);
+			$form=new SweetFrom(DEFAULT_PUBLICURL . "fa/users/asignin.jsp", "POST", $table);
 			return $form;
 		}
 		

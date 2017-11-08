@@ -60,9 +60,10 @@ class manageemployeerole_Design extends FormDesign {
 
 			/******** employee_fid ********/
 			$this->employee_fid->setValue($this->Data['employee_fid']->getName() . " " . $this->Data['employee_fid']->getFamily(). "-(" . $this->Data['employee_fid']->getMellicode() . ")");
+        $this->setFieldCaption('employee_fid',$this->Data['employeerole']->getFieldInfo('employee_fid')->getTitle());
 
 
-			/******** role_fid ********/
+        /******** role_fid ********/
 		foreach ($this->Data['role_fid'] as $item)
 			$this->role_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("employeerole", $this->Data)){
