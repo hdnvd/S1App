@@ -22,9 +22,18 @@ use Modules\sfman\Entity\sfman_tableEntity;
 
 
 class baseCodeGenerator extends Controller {
-    public static $SFHVERSION="2.002";
+    public static $SFHVERSION="2.004";
     public static $SFVERSION="1.021";
 	private $CodeModuleDir;
+    private $AndroidCodeModuleDir;
+
+    /**
+     * @return mixed
+     */
+    public function getAndroidCodeModuleDir()
+    {
+        return $this->AndroidCodeModuleDir;
+    }
 
     /**
      * @param null $CodeModuleName
@@ -34,6 +43,7 @@ class baseCodeGenerator extends Controller {
         $this->CodeModuleName = $CodeModuleName;
         $mDir=DEFAULT_APPPATH;
         $this->CodeModuleDir=$mDir . "Modules/" .  $CodeModuleName;
+        $this->AndroidCodeModuleDir=$mDir . "Android/Modules/" .  $CodeModuleName;
         $this->changeLogFile=$this->CodeModuleDir . "/changelog.php";
     }
 
@@ -85,6 +95,7 @@ class baseCodeGenerator extends Controller {
 	protected function MakeModuleDirectories()
     {
         $this->makeModuleDir("");
+        $this->makeAndroidModuleDir("");
         $this->makeModuleDir("Forms");
         $this->makeModuleDir("Controllers");
         $this->makeModuleDir("Entity");
@@ -138,6 +149,15 @@ class baseCodeGenerator extends Controller {
 			chmod($Dir . "/index.html",0644);
 		}
 	}
+    private function makeAndroidModuleDir($Dir)
+    {
+        $Dir=$this->AndroidCodeModuleDir . "/" .$Dir;
+        //echo $Dir . "<br>";
+        if(!file_exists($Dir)) {
+            mkdir($Dir);
+            chmod($Dir,0755);
+        }
+    }
     /**
      * @return string
      */

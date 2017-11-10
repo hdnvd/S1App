@@ -455,3 +455,13 @@
 *@ActionCode 1
 */
 ?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.002
+*@SweetFrameworkVersion 1.021
+*@Date 1396-08-17 - 2017-11-08 14:23
+*@Module Name sfman
+*@ActionTitle Regenerate WholeFormFiles For managetable
+*@ActionCode 1
+*/
+?>

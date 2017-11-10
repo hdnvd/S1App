@@ -242,7 +242,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         if($ActionType==manageDBCodeFormController::$ACTIONTYPE_SEARCH)
             $C .= "\n\t\treturn \$design;";
         else
-            $C .= "\n\t\treturn \$design->getBodyHTML();";
+            $C .= "\n\t\treturn \$design->getResponse();";
         $C .= "\n\t}";
         return $C;
     }
@@ -328,7 +328,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         $C .= "\n\t\t}";
         $C .= $this->getNotFoundCatchPart();
         $C .= $this->getUnknownCatchPart();
-        $C .= "\n\t\treturn \$design->getBodyHTML();";
+        $C .= "\n\t\treturn \$design->getResponse();";
         $C .= "\n\t}";
         return $C;
     }
@@ -361,7 +361,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
 EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
-        $C .= "\n\t\treturn \$this->getLoadDesign()->getBodyHTML();";
+        $C .= "\n\t\treturn \$this->getLoadDesign()->getResponse();";
         $C .= "\n\t}";
         $C .= "\n\tpublic function getLoadDesign()";
         $C .= "\n\t{";
@@ -428,7 +428,7 @@ EOT;
         $C .= "\nclass " . $formInfo['form']['name'] . "_Code extends $ListName" . "_Code {";
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
-        $C .= "\n\t\treturn \$this->getLoadDesign()->getBodyHTML();";
+        $C .= "\n\t\treturn \$this->getLoadDesign()->getResponse();";
         $C .= "\n\t}";
         $C .= "\n\tpublic function getLoadDesign()";
         $C .= "\n\t{";
@@ -496,7 +496,7 @@ EOT;
 EOT;
         $C .= "\n\tpublic function load()";
         $C .= "\n\t{";
-        $C .= "\n\t\treturn \$this->getLoadDesign()->getBodyHTML();";
+        $C .= "\n\t\treturn \$this->getLoadDesign()->getResponse();";
         $C .= "\n\t}";
 
         $C .= "\n\tpublic function getLoadDesign()";

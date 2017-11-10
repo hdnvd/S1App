@@ -157,6 +157,14 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         }
         $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
+        $C .=<<<EOT
+public function getJSON()
+    {
+       parent::getJSON();
+       \$Result=['message'=>\$this->getMessage(),'messagetype'=>\$this->getMessageType()];
+       return json_encode(\$Result);
+    }
+EOT;
 
         $C .= "\n?>";
 
@@ -255,6 +263,16 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
+        $C .="\n\t}";
+
+        $C .="\n\tpublic function getJSON()";
+        $C .="\n\t{";
+        $C .="\n\t\tparent::getJSON();";
+        $C .="\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
+        $C .="\n\t\t\t\$Result=\$this->Data['$TableName']->GetArray();";
+        $C .="\n\t\t\treturn json_encode(\$Result);";
+        $C .="\n\t\t}";
+        $C .="\n\t\treturn json_encode(array());";
         $C .="\n\t}";
         $C.=$this->getDesignFormRowFunctionCode();
         $C .= "\n}";
@@ -377,6 +395,14 @@ EOT;
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
+        $C .=<<<EOT
+public function getJSON()
+    {
+       parent::getJSON();
+       \$Result=['message'=>\$this->getMessage(),'messagetype'=>\$this->getMessageType()];
+       return json_encode(\$Result);
+    }
+EOT;
         $C .= "\n}";
         $C .= "\n?>";
         $this->SaveFile($this->getDesignFile(),$C);
@@ -433,6 +459,19 @@ EOT;
         $C .="\n\t\t\$form=new SweetFrom(\$PageLink->getAbsoluteURL(), \"GET\", \$Page);";
         $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
+        $C .="\n\t}";
+        $C .="\n\tpublic function getJSON()";
+        $C .="\n\t{";
+        $C .="\n\t\tparent::getJSON();";
+        $C .="\n\t\tif (key_exists(\"data\", \$this->Data)){";
+        $C .="\n\t\t\t\$AllCount1 = count(\$this->Data['data']);";
+        $C .="\n\t\t\t\$Result=array();";
+        $C .="\n\t\t\tfor(\$i=0;\$i<\$AllCount1;\$i++){";
+        $C .="\n\t\t\t\t\$Result[\$i]=\$this->Data['data'][\$i]->GetArray();";
+        $C .="\n\t\t\t}";
+        $C .="\n\t\t\treturn json_encode(\$Result);";
+        $C .="\n\t\t}";
+        $C .="\n\t\treturn json_encode(array());";
         $C .="\n\t}";
         $C.=$this->getSearchPartFieldSetCode($formInfo);
         $C .=$this->getHasFieldFormDesignConstructor($formInfo);

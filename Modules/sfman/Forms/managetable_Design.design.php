@@ -1,5 +1,6 @@
 <?php
 namespace Modules\sfman\Forms;
+use core\CoreClasses\html\TextArea;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -25,8 +26,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-08-17 - 2017-11-08 14:11
-*@lastUpdate 1396-08-17 - 2017-11-08 14:11
+*@creationDate 1396-08-17 - 2017-11-08 14:23
+*@lastUpdate 1396-08-17 - 2017-11-08 14:23
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -41,15 +42,6 @@ class managetable_Design extends FormDesign {
 	}
 	private $FieldCaptions;
 	/** @var textbox */
-	private $txtFields;
-	/**
-	 * @return textbox
-	 */
-	public function getTxtFields()
-	{
-		return $this->txtFields;
-	}
-	/** @var textbox */
 	private $txtTableName;
 	/**
 	 * @return textbox
@@ -58,19 +50,28 @@ class managetable_Design extends FormDesign {
 	{
 		return $this->txtTableName;
 	}
+	/** @var textbox */
+	private $txtFields;
+	/**
+	 * @return textbox
+	 */
+	public function getTxtFields()
+	{
+		return $this->txtFields;
+	}
 	/** @var SweetButton */
 	private $btnGenerateSQL;
 	public function __construct()
 	{
 		$this->FieldCaptions=array();
 
-		/******* txtFields *******/
-		$this->txtFields= new textbox("txtFields");
-		$this->txtFields->setClass("form-control");
-
 		/******* txtTableName *******/
 		$this->txtTableName= new textbox("txtTableName");
 		$this->txtTableName->setClass("form-control");
+
+		/******* txtFields *******/
+		$this->txtFields= new textbox("txtFields");
+		$this->txtFields->setClass("form-control");
 
 		/******* btnGenerateSQL *******/
 		$this->btnGenerateSQL= new SweetButton(true,"ساخت کد SQL");
@@ -88,8 +89,9 @@ class managetable_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->txtFields,$this->getFieldCaption('txtFields'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->txtTableName,$this->getFieldCaption('txtTableName'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->txtTableName,"نام جدول",null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->txtFields,"فیلدها(جداسازی با ,)",null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode(new TextArea('Code',$this->Data['sql']),'کد SQL',null,null,null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnGenerateSQL));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);

@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-08-17 - 2017-11-08 14:11
-*@lastUpdate 1396-08-17 - 2017-11-08 14:11
+*@creationDate 1396-08-17 - 2017-11-08 14:23
+*@lastUpdate 1396-08-17 - 2017-11-08 14:23
 *@SweetFrameworkHelperVersion 2.002
 *@SweetFrameworkVersion 2.002
 */
@@ -39,7 +39,7 @@ class managetable_Code extends FormCode {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
 		}
-		return $design->getBodyHTML();
+		return $design->getResponse();
 	}
 	public function getID()
 	{
@@ -54,9 +54,9 @@ class managetable_Code extends FormCode {
 		$translator=new ModuleTranslator("sfman");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		$design=new managetable_Design();
-		$txtFields=$design->getTxtFields()->getValue();
 		$txtTableName=$design->getTxtTableName()->getValue();
-		$Result=$managetableController->BtnGenerateSQL($this->getID(),$txtFields,$txtTableName);
+		$txtFields=$design->getTxtFields()->getValue();
+		$Result=$managetableController->BtnGenerateSQL($this->getID(),$txtTableName,$txtFields);
 		$design->setData($Result);
 		$design->setMessage("btnGenerateSQL is done!");
 		return $design->getBodyHTML();

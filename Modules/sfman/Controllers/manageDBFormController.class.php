@@ -281,6 +281,22 @@ abstract class manageDBFormController extends BaseManageDBFormController {
             $this->makeTableSearchDesign($formInfo2);
         }
 
+        $formInfo['form']['name']=$TableName;
+        $formInfo['form']['caption']=$TableName;
+        $formInfo['form']['listname']=$TableName;
+        $this->setFormName($formInfo['form']['name']);
+        if($this->getIsItemSelected($FormsToGenerate,"android_class"))
+        {
+
+            $this->makeAndroidClass($formInfo);
+            $this->makeAndroid_List_FragmentRecycler($formInfo);
+            $this->makeAndroid_List_Fragment($formInfo);
+            $this->makeAndroid_List_FragmentLayout($formInfo);
+            $this->makeAndroid_List_ItemFragmentLayout($formInfo);
+            $this->makeAndroid_Item_Fragment($formInfo);
+            $this->makeAndroid_Item_FragmentLayout($formInfo);
+        }
+
         $DBAccessor->close_connection();
     }
 

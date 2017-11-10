@@ -105,6 +105,9 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("Item Search Design","search_design");
         $this->chkItemsToGenerate->addSelectedValue("search_design");
 
+
+        $this->chkItemsToGenerate->addOption("Android Class","android_class");
+
 		$this->btnGenerate= new SweetButton(true,"ذخیره و تولید کد");
 		$this->btnGenerate->setAction("btnGenerate");
         $this->btnGenerateForms= new SweetButton(true,"ذخیره و تولید کد فرم ها");

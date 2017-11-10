@@ -43,6 +43,17 @@ abstract class BaseManageDBFormController extends baseFormCodeGenerator {
     protected abstract function makeTableSearchDesign($formInfo);
 
 
+    protected abstract function makeAndroidClass($formInfo);
+    protected abstract function makeAndroid_List_FragmentRecycler($formInfo);
+    protected abstract function makeAndroid_List_Fragment($formInfo);
+    protected abstract function makeAndroid_List_FragmentLayout($formInfo);
+    protected abstract function makeAndroid_List_ItemFragmentLayout($formInfo);
+    protected abstract function makeAndroid_Item_Fragment($formInfo);
+    protected abstract function makeAndroid_Item_FragmentLayout($formInfo);
+
+
+
+
 
 
     protected abstract function getTableItemControllerTopCode($formInfo,$isManager);
