@@ -19,7 +19,23 @@ use Modules\sfman\Entity\sfman_tableEntity;
 
 abstract class manageDBFormController extends BaseManageDBFormController {
     private $TableName;
+    private $SecondaryTables;
 
+    /**
+     * @return mixed
+     */
+    public function getSecondaryTables()
+    {
+        return $this->SecondaryTables;
+    }
+
+    /**
+     * @param mixed $SecondaryTables
+     */
+    public function setSecondaryTables($SecondaryTables)
+    {
+        $this->SecondaryTables = $SecondaryTables;
+    }
     /**
      * @param mixed $TableName
      */
@@ -108,7 +124,10 @@ abstract class manageDBFormController extends BaseManageDBFormController {
         $ModEnt=new sfman_moduleEntity($DBAccessor);
         $ModEnt->setId($ModuleID);
         $Module=$ModEnt->getName();
-
+        $Tables=explode('+',$TableName);
+        $TableName=$Tables[0];
+        $Tables=array_splice($Tables,1);
+        $this->setSecondaryTables($Tables);
         $this->setTableName($TableName);
         $this->setCodeModuleName($Module);
         $fName=$TableName;

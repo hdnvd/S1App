@@ -46,7 +46,7 @@ class managevideo_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->hold_date,$this->getFieldCaption('hold_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->course_fid,$this->getFieldCaption('course_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->hdvideo_flu,$this->getFieldCaption('hdvideo_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sdvideo_flu,$this->getFieldCaption('sdvideo_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->sdvideo_flu,$this->getFieldCaption('sdvideo_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->voice_flu,$this->getFieldCaption('voice_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
@@ -87,9 +87,9 @@ class managevideo_Design extends FormDesign {
 		}
 
 			/******** sdvideo_flu ********/
-		if (key_exists("video", $this->Data)){
-			$this->setFieldCaption('sdvideo_flu',$this->Data['video']->getFieldInfo('sdvideo_flu')->getTitle());
-		}
+//		if (key_exists("video", $this->Data)){
+//			$this->setFieldCaption('sdvideo_flu',$this->Data['video']->getFieldInfo('sdvideo_flu')->getTitle());
+//		}
 
 			/******** voice_flu ********/
 		if (key_exists("video", $this->Data)){
@@ -118,9 +118,9 @@ class managevideo_Design extends FormDesign {
 		$this->hdvideo_flu= new FileUploadBox("hdvideo_flu");
 		$this->hdvideo_flu->setClass("form-control-file");
 
-		/******* sdvideo_flu *******/
-		$this->sdvideo_flu= new FileUploadBox("sdvideo_flu");
-		$this->sdvideo_flu->setClass("form-control-file");
+//		/******* sdvideo_flu *******/
+//		$this->sdvideo_flu= new FileUploadBox("sdvideo_flu");
+//		$this->sdvideo_flu->setClass("form-control-file");
 
 		/******* voice_flu *******/
 		$this->voice_flu= new FileUploadBox("voice_flu");
@@ -189,14 +189,14 @@ class managevideo_Design extends FormDesign {
 		return $this->hdvideo_flu;
 	}
 	/** @var FileUploadBox */
-	private $sdvideo_flu;
-	/**
-	 * @return FileUploadBox
-	 */
-	public function getSdvideo_flu()
-	{
-		return $this->sdvideo_flu;
-	}
+//	private $sdvideo_flu;
+//	/**
+//	 * @return FileUploadBox
+//	 */
+//	public function getSdvideo_flu()
+//	{
+//		return $this->sdvideo_flu;
+//	}
 	/** @var FileUploadBox */
 	private $voice_flu;
 	/**

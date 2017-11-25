@@ -20,7 +20,7 @@ use Modules\common\Forms\message_Design;
 class manageusers_Code extends userlist_Code {
 	public function load()
 	{
-		return $this->getLoadDesign()->getBodyHTML();
+		return $this->getLoadDesign()->getResponse();
 	}
 	public function getLoadDesign()
 	{

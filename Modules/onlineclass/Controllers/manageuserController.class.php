@@ -4,6 +4,9 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\users\Entity\roleSystemUserEntity;
+use Modules\users\Entity\RoleSystemUserRoleEntity;
+use Modules\users\Exceptions\UsernameExistsException;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -53,7 +56,7 @@ class manageuserController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$fullname,$ismale,$email,$mobile,$registration_time,$devicecode)
+	public function BtnSave($ID,$fullname,$ismale,$email,$mobile,$registration_time,$devicecode,$username,$password)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -63,16 +66,28 @@ class manageuserController extends Controller {
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
 		$result=array();
+
 		$userEntityObject=new onlineclass_userEntity($DBAccessor);
 		$this->ValidateFieldArray([$fullname,$ismale,$email,$mobile,$registration_time,$devicecode],[$userEntityObject->getFieldInfo(onlineclass_userEntity::$FULLNAME),$userEntityObject->getFieldInfo(onlineclass_userEntity::$ISMALE),$userEntityObject->getFieldInfo(onlineclass_userEntity::$EMAIL),$userEntityObject->getFieldInfo(onlineclass_userEntity::$MOBILE),$userEntityObject->getFieldInfo(onlineclass_userEntity::$REGISTRATION_TIME),$userEntityObject->getFieldInfo(onlineclass_userEntity::$DEVICECODE)]);
 		if($ID==-1){
+
+            $sysUserEnt=new roleSystemUserEntity($DBAccessor);
+            $DBAccessor->beginTransaction();
+            $found=$sysUserEnt->Select(array("username"),array($username));
+            if($found!=null)
+                throw new UsernameExistsException();
+            $NewUserID=$sysUserEnt->Add($username,$password);
+            $roleEnt=new RoleSystemUserRoleEntity();
+            $roleEnt->addUserRole($NewUserID,5);
 			$userEntityObject->setFullname($fullname);
 			$userEntityObject->setIsmale($ismale);
 			$userEntityObject->setEmail($email);
 			$userEntityObject->setMobile($mobile);
 			$userEntityObject->setRegistration_time($registration_time);
 			$userEntityObject->setDevicecode($devicecode);
+			$userEntityObject->setRole_systemuser_fid($NewUserID);
 			$userEntityObject->Save();
+			$DBAccessor->commit();
 		}
 		else{
 			$userEntityObject->setId($ID);

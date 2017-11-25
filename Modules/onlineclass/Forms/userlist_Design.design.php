@@ -334,21 +334,29 @@ class userlist_Design extends FormDesign {
         }
         elseif($this->Data['service']=="getusercourses")
         {
-            $courses=$this->Data['courses'];
-            $coursetutors=$this->Data['coursetutors'];
-            $result=array();
-            $AllCount1 = count($courses);
-            for ($i = 0; $i < $AllCount1; $i++) {
-                $crs=$courses[$i];
-                $result[$i]['title']=$crs->getTitle();
-                $result[$i]['price']=$crs->getPrice();
-                $startdate=new SweetDate();
-                $startdate=$startdate->date("y/n/d",$crs->getStart_date());
-                $result[$i]['startdate']=$startdate;
-                $result[$i]['description']=$crs->getDescription();
-                $result[$i]['tutor']=$coursetutors[$i]->getName() . " " . $coursetutors[$i]->getFamily();
-                $result[$i]['id']=$crs->getID();
+            if(key_exists('courses',$this->Data))
+            {
+                $courses=$this->Data['courses'];
+                $coursetutors=$this->Data['coursetutors'];
+                $result=array();
+                $AllCount1 = count($courses);
+                for ($i = 0; $i < $AllCount1; $i++) {
+                    $crs=$courses[$i];
+                    $result[$i]['title']=$crs->getTitle();
+                    $result[$i]['price']=$crs->getPrice();
+                    $startdate=new SweetDate();
+                    $startdate=$startdate->date("y/n/d",$crs->getStart_date());
+                    $result[$i]['startdate']=$startdate;
+                    $result[$i]['description']=$crs->getDescription();
+                    $result[$i]['tutor']=$coursetutors[$i]->getName() . " " . $coursetutors[$i]->getFamily();
+                    $result[$i]['id']=$crs->getID();
+                }
             }
+            else
+            {
+                $result=array();
+            }
+
             return json_encode($result);
         }
         elseif($this->Data['service']=="getnotbuyedcourses")

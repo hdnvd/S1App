@@ -86,19 +86,19 @@ class managevideo_Code extends FormCode {
 		for($fileIndex=0;$fileIndex<count($hdvideo_fluPaths) && $hdvideo_fluPaths[$fileIndex]!=null;$fileIndex++){
 			$hdvideo_fluURLs[$fileIndex]=uploadHelper::UploadFile($hdvideo_fluPaths[$fileIndex], $hdvideo_fluNames[$fileIndex], "content/files/onlineclass/managevideo/",null,1024000);
 		}
-		$sdvideo_fluPaths=$design->getSdvideo_flu()->getSelectedFilesTempPath();
-		$sdvideo_fluNames=$design->getSdvideo_flu()->getSelectedFilesName();
-		$sdvideo_fluURLs=array();
-		for($fileIndex=0;$fileIndex<count($sdvideo_fluPaths) && $sdvideo_fluPaths[$fileIndex]!=null;$fileIndex++){
-			$sdvideo_fluURLs[$fileIndex]=uploadHelper::UploadFile($sdvideo_fluPaths[$fileIndex], $sdvideo_fluNames[$fileIndex], "content/files/onlineclass/managevideo/",null,1024000);
-		}
+//		$sdvideo_fluPaths=$design->getSdvideo_flu()->getSelectedFilesTempPath();
+//		$sdvideo_fluNames=$design->getSdvideo_flu()->getSelectedFilesName();
+//		$sdvideo_fluURLs=array();
+//		for($fileIndex=0;$fileIndex<count($sdvideo_fluPaths) && $sdvideo_fluPaths[$fileIndex]!=null;$fileIndex++){
+//			$sdvideo_fluURLs[$fileIndex]=uploadHelper::UploadFile($sdvideo_fluPaths[$fileIndex], $sdvideo_fluNames[$fileIndex], "content/files/onlineclass/managevideo/",null,1024000);
+//		}
 		$voice_fluPaths=$design->getVoice_flu()->getSelectedFilesTempPath();
 		$voice_fluNames=$design->getVoice_flu()->getSelectedFilesName();
 		$voice_fluURLs=array();
 		for($fileIndex=0;$fileIndex<count($voice_fluPaths) && $voice_fluPaths[$fileIndex]!=null;$fileIndex++){
 			$voice_fluURLs[$fileIndex]=uploadHelper::UploadFile($voice_fluPaths[$fileIndex], $voice_fluNames[$fileIndex], "content/files/onlineclass/managevideo/",null,1024000);
 		}
-		$Result=$managevideoController->BtnSave($this->getID(),$title,$hold_date,$course_fid_ID,$hdvideo_fluURLs,$sdvideo_fluURLs,$voice_fluURLs);
+		$Result=$managevideoController->BtnSave($this->getID(),$title,$hold_date,$course_fid_ID,$hdvideo_fluURLs,"",$voice_fluURLs);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

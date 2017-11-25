@@ -1,5 +1,6 @@
 <?php
 namespace Modules\onlineclass\Controllers;
+use core\CoreClasses\Exception\SweetException;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
@@ -90,12 +91,15 @@ class userlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function getUserCourses($Mobile)
+	public function getUserCourses($UserName,$Password)
     {
         $DBAccessor=new dbaccess();
         $userEnt=new onlineclass_userEntity($DBAccessor);
+        $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
+        if($SysUserID<=0)
+            throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition("mobile","$Mobile",LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $userEnt=$userEnt->FindOne($q);
 
         $UserCourseEnt=new onlineclass_usercourseEntity($DBAccessor);
@@ -126,12 +130,24 @@ class userlistController extends Controller {
         return $result;
     }
 
-    public function getUserNotBuyedCourses($Mobile)
+    private function getSysUserID(dbaccess $DBAccessor,$Username,$Password)
+    {
+        $sysu=new roleSystemUserEntity($DBAccessor);
+        $res=$sysu->Select(array('username','password'),array(strtolower($Username),$Password));
+        $id=-1;
+        if($res!=null && count($res)>0)
+            $id=$res[0]['id'];
+        return $id;
+    }
+    public function getUserNotBuyedCourses($UserName,$Password)
     {
         $DBAccessor=new dbaccess();
         $userEnt=new onlineclass_userEntity($DBAccessor);
+        $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
+        if($SysUserID<=0)
+            throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition("mobile","$Mobile",LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $userEnt=$userEnt->FindOne($q);
 
         $UserCourseEnt=new onlineclass_usercourseEntity($DBAccessor);
@@ -171,12 +187,15 @@ class userlistController extends Controller {
         $DBAccessor->close_connection();
         return $result;
     }
-    public function getCourseVideos($Mobile,$CourseID)
+    public function getCourseVideos($UserName,$Password,$CourseID)
     {
         $DBAccessor=new dbaccess();
         $userEnt=new onlineclass_userEntity($DBAccessor);
+        $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
+        if($SysUserID<=0)
+            throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition("mobile","$Mobile",LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $userEnt=$userEnt->FindOne($q);
 
         $videoEnt=new onlineclass_videoEntity($DBAccessor);
@@ -189,13 +208,16 @@ class userlistController extends Controller {
         $DBAccessor->close_connection();
         return $result;
     }
-    public function FindUserByMobileAndDevice($Mobile,$Device)
+    public function FindUserByUserInfoAndDevice($UserName, $Password, $Device)
     {
-        $Mobile=trim($Mobile);
         $Device=trim($Device);
+        $DBAccessor=new dbaccess();
+        $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
+        if($SysUserID<=0)
+            return ['status'=>404];//Not Found
         $q=new QueryLogic();
         $q->addOrderBy("id",true);
-        $q->addCondition(new FieldCondition("mobile","$Mobile",LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $dt=$this->getData(1,$q);
         if($dt['data']!=null && count($dt['data'])>0)
         {
@@ -216,16 +238,15 @@ class userlistController extends Controller {
                 return ['status'=>3];//Invalid Device Code
             }
         }
-        $DBAccessor=new dbaccess();
-        $DBAccessor->beginTransaction();
-        $userEnt=new onlineclass_userEntity($DBAccessor);
-        $us=new roleSystemUserEntity();
-        $sysUserID=$us->Add($Mobile,$Device);
-        $userEnt->setMobile($Mobile);
-        $userEnt->setDevicecode($Device);
-        $userEnt->setRole_systemuser_fid($sysUserID);
-        $userEnt->Save();
-        $DBAccessor->commit();
+//        $DBAccessor->beginTransaction();
+//        $userEnt=new onlineclass_userEntity($DBAccessor);
+//        $us=new roleSystemUserEntity();
+//        $sysUserID=$us->Add($Mobile,$Device);
+//        $userEnt->setMobile($Mobile);
+//        $userEnt->setDevicecode($Device);
+//        $userEnt->setRole_systemuser_fid($sysUserID);
+//        $userEnt->Save();
+//        $DBAccessor->commit();
         $DBAccessor->close_connection();
         return ['status'=>404];//Not Found
     }

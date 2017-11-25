@@ -1,5 +1,6 @@
 <?php
 namespace Modules\onlineclass\Forms;
+use core\CoreClasses\Exception\SweetException;
 use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
@@ -51,27 +52,27 @@ class userlist_Code extends FormCode {
 				return $this->search_Click();
 			}
 			elseif(isset($_GET['service']) && $_GET['service']=="getuserstatus"){
-                $Result=$userlistController->FindUserByMobileAndDevice($this->getHttpGETparameter('mobile',-1),$this->getHttpGETparameter('deviceid',-1));
+                $Result=$userlistController->FindUserByUserInfoAndDevice($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1),$this->getHttpGETparameter('deviceid',-1));
                 $Result['service']="getuserstatus";
                 $design->setData($Result);
                 $design->setMessage("");
 			}
 
             elseif(isset($_GET['service']) && $_GET['service']=="getusercourses"){
-                $Result=$userlistController->getUserCourses($this->getHttpGETparameter('mobile',-1));
+                $Result=$userlistController->getUserCourses($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
                 $Result['service']="getusercourses";
                 $design->setData($Result);
                 $design->setMessage("");
             }
 
             elseif(isset($_GET['service']) && $_GET['service']=="getnotbuyedcourses"){
-                $Result=$userlistController->getUserNotBuyedCourses($this->getHttpGETparameter('mobile',-1));
+                $Result=$userlistController->getUserNotBuyedCourses($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
                 $Result['service']="getnotbuyedcourses";
                 $design->setData($Result);
                 $design->setMessage("");
             }
             elseif(isset($_GET['service']) && $_GET['service']=="getcoursevideos"){
-                $Result=$userlistController->getCourseVideos($this->getHttpGETparameter('mobile',-1),$this->getHttpGETparameter('courseid',-1));
+                $Result=$userlistController->getCourseVideos($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1),$this->getHttpGETparameter('courseid',-1));
                 $Result['service']="getcoursevideos";
                 $design->setData($Result);
                 $design->setMessage("");

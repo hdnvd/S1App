@@ -204,6 +204,18 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         $this->fillPostParamValueGetters($formInfo,$Params,$GetterCode);
         else
         $this->fillGETParamValueGetters($formInfo,$Params,$GetterCode);
+        $SecondaryTables=$this->getSecondaryTables();
+        $AllCount1 = count($SecondaryTables);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            $theUCTable=ucwords($theTable);
+            if($theTable!=null) {
+                $C.="\n\t\t\$$theUCTable" . "s=\$design->get$theUCTable"."s()->getSelectedValues();";
+                $Params.=",\$" . $theUCTable . "s";
+            }
+        }
+
+
         $C.=$GetterCode;
         $C .= "\n\t\t\$Result=\$$formName" . "Controller->" . ucwords($ActionName) . "($FirstParam" . "$Params);";
         $C .= "\n\t\t\$design->setData(\$Result);";

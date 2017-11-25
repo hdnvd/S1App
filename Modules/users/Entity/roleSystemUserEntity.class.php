@@ -36,6 +36,7 @@ class roleSystemUserEntity extends EntityClass
 
         if(strlen($Password)<roleSystemUserEntity::$MIN_PASSWORD_LENGTH)
             throw new TooSmallPasswordException();
+        $Username=strtolower(trim($Username));
 		$Database=new dbquery();
 		$Query=$Database->InsertInto("role_systemuser")
 		->Set("username", $Username)

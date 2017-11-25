@@ -1,6 +1,7 @@
 <?php
 
 namespace Modules\sfman\Controllers;
+use core\CoreClasses\html\CheckBox;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\SweetDate;
@@ -39,6 +40,8 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
     {
         $TableName=$this->getTableName();
         $FieldFillCode="";
+        $FieldBeforeIFFillCode="";
+        $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $Ename=$formInfo['elements'][$i]['name'];
 
@@ -47,48 +50,44 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
             if($FT!=FieldType::$METAINF && $FT!=FieldType::$ID && $Ename!="sortby" && $Ename!="isdesc") {
                 if($formInfo['elements'][$i]['type_fid']==3) {
                     if($AddEmptyOption)
-                        $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\"\", \"مهم نیست\");";
+                        $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\"\", \"مهم نیست\");";
                     if($FT==FieldType::$BOOLEAN)
                     {
                         if(strtolower($Ename)=="ismale")
                         {
-                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'مرد');";
-                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'زن');";
+                            $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'مرد');";
+                            $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'زن');";
                         }
                         elseif(strtolower($Ename)=="ismarried")
                         {
-                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'متاهل');";
-                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'مجرد');";
+                            $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'متاهل');";
+                            $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'مجرد');";
                         }
                         else
                         {
-                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'بله');";
-                            $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'خیر');";
+                            $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(1,'بله');";
+                            $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(0,'خیر');";
                         }
                     }
                     else
                     {
-                        $FieldFillCode .= "\r\n\t\tforeach (\$this->Data['$Ename'] as \$item)";
-                        $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitleField());";
+                        $FieldBeforeIFFillCode .= "\r\n\t\tforeach (\$this->Data['$Ename'] as \$item)";
+                        $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\$item->getID(), \$item->getTitleField());";
                     }
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setSelectedValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
-                    $FieldFillCode .= "\r\n\t\t}";
+
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==2) //TextBox
                 {
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                     if($IsManagement)
                         $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
-                    $FieldFillCode .= "\r\n\t\t}";
                 }
 
                 elseif($formInfo['elements'][$i]['type_fid']==9) //DatePicker
                 {
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setTime(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
 
@@ -102,22 +101,19 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
 
                     if($IsManagement)
                         $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->setFieldInfo(\$this->Data['$TableName']->getFieldInfo('$Ename'));";
-                    $FieldFillCode .= "\r\n\t\t}";
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==6) {
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                     $FieldFillCode .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
-                    $FieldFillCode .= "\r\n\t\t}";
                 }
                 elseif($formInfo['elements'][$i]['type_fid']==5) {
 
-                    $FieldFillCode .= "\r\n\t\t\$this->$Ename" . "->addOption(\"$Ename\",\"1\");";
-                    $FieldFillCode .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data))";
+                    $FieldBeforeIFFillCode .= "\r\n\t\t\$this->$Ename" . "->addOption(\"$Ename\",\"1\");";
                     $FieldFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addSelectedValue(\$this->Data['$TableName']->get" . ucwords($Ename) . "());";
                 }
             }
         }
-        return $FieldFillCode;
+        $FieldFillCode .= "\r\n\t\t}";
+        return $FieldBeforeIFFillCode . $FieldFillCode;
     }
     protected function makeTableItemManageDesign($formInfo)
     {
@@ -136,6 +132,15 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C .=$this->getDesignAddCode($formInfo,$i,true,false);
         }
+        $SecondaryTables=$this->getSecondaryTables();
+        $AllCount1 = count($SecondaryTables);
+         for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            $theUCTable=ucwords($theTable);
+            if($theTable!=null) {
+                $C .="\n\t\t\$LTable1" ."->addElement(\$this->getFieldRowCode(\$this->" . $theUCTable . "s,\$this->getFieldCaption('" . $theUCTable . "s'),null,'',null));";
+            }
+        }
         $C .="\n\t\t\$Page->addElement(\$LTable1);";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\t\$form->SetAttribute(\"novalidate\",\"novalidate\");";
@@ -146,6 +151,25 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C .="\n\tpublic function FillItems()";
         $C .="\n\t{";
         $C.=$this->getFieldFillCode($formInfo);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            $theUCTable=ucwords($theTable);
+            if($theTable!=null) {
+                $C .="\n\t\tif (key_exists(\"$theTable" . "s\", \$this->Data)) {";
+                $C .="\n\t\t\$All".$theUCTable."Count = count(\$this->Data['" .$theTable. "s']);";
+                $C .="\n\t\tfor (\$i = 0; \$i < \$All".$theUCTable."Count; \$i++) {";
+                $C .="\n\t\t\t\$this->$theUCTable" . "s->addOption(\$this->Data['" .$theTable. "s'][\$i]->getTitleField(), \$this->Data['" .$theTable. "s'][\$i]->getId());";
+                $C .="\n\t\t}";
+                $C .="\n\t}";
+
+                $C .="\n\t\tif (key_exists(\"" .$this->getTableName(). "$theTable" . "s\", \$this->Data)) {";
+                $C .="\n\t\t\$All".$theUCTable."Count = count(\$this->Data['" .$this->getTableName(). $theTable. "s']);";
+                $C .="\n\t\tfor (\$i = 0; \$i < \$All".$theUCTable."Count; \$i++) {";
+                $C .="\n\t\t\t\$this->$theUCTable" . "s->addSelectedValue(\$this->Data['" .$this->getTableName(). $theTable. "s'][\$i]->get".$theUCTable."_fid());";
+                $C .="\n\t\t}";
+                $C .="\n\t}";
+                }
+        }
         $C .="\n\t}";
         $C .=$this->getHasFieldFormDesignConstructor($formInfo);
         $C .= "\n\tprivate \$Data;";
@@ -155,16 +179,29 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            $theUCTable=ucwords($theTable);
+            if($theTable!=null) {
+                $C .= "\n\t/**";
+                $C .= " @var CheckBox";
+                $C .= " */";
+                $C .= "\n\tprivate \$" . $theUCTable . "s;";
+                $C .= $this->getGetterCode($theUCTable . "s", 'CheckBox');
+            }
+        }
         $C.=$this->getDesignFormRowFunctionCode();
-        $C .= "\n}";
         $C .=<<<EOT
-public function getJSON()
+
+    public function getJSON()
     {
        parent::getJSON();
        \$Result=['message'=>\$this->getMessage(),'messagetype'=>\$this->getMessageType()];
        return json_encode(\$Result);
     }
 EOT;
+        $C .= "\n}";
+
 
         $C .= "\n?>";
 
@@ -178,6 +215,17 @@ EOT;
         $C .="\n\t\tparent::__construct();";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C.=$this->getDesignInitialization($formInfo,$i);
+        }
+        $SecondaryTables=$this->getSecondaryTables();
+        $AllCount1 = count($SecondaryTables);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            $theUCTable=ucwords($theTable);
+            if($theTable!=null) {
+                $C .= "\n\n\t\t/******* " . $theUCTable ." *******/";
+                $C .= "\n\t\t\$this->" . $theUCTable . "s= new  CheckBox('$theTable" . "[]');";
+//                $C .= "\n\t\t\$this->" . $theUCTable . "s->setClass(\"form-control\");";
+            }
         }
         $C .="\n\t}";
         return $C;
@@ -218,43 +266,39 @@ EOT;
         $C .="\n\tpublic function getBodyHTML(\$command=null)";
         $C .="\n\t{";
         $C .=$this->getDesignTopPartCode();
+
+        $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $Ename=$formInfo['elements'][$i]['name'];
             if(FieldType::getFieldType($Ename)==FieldType::$NORMAL || FieldType::getFieldType($Ename)==FieldType::$FILE ) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
-                $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
-                $C .= "\r\n\t\t}";
             }
             elseif(FieldType::getFieldType($Ename)==FieldType::$BOOLEAN ) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
                 $TitleField="\$$Ename" . "Title";
-                $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t$TitleField='No';";
                 $C .= "\r\n\t\t\tif($Val==1)";
                 $C .= "\r\n\t\t\t\t$TitleField='Yes';";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($TitleField);";
-                $C .= "\r\n\t\t}";
             }
             elseif(FieldType::getFieldType($Ename)==FieldType::$FID) {
                 $Val="\$this->Data['$Ename']->getID()";
-                $C .= "\r\n\t\tif (key_exists(\"$Ename\", \$this->Data)){";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";
-                $C .= "\r\n\t\t}";
             }
             elseif(FieldType::getFieldType($Ename)==FieldType::$DATE || FieldType::getFieldType($Ename)==FieldType::$AUTOTIME ) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
-                $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$". $Ename . "_SD=new SweetDate(true, true, 'Asia/Tehran');";
                 $C .= "\r\n\t\t\t\$". $Ename . "_Text=\$". $Ename . "_SD->date(\"l d F Y\",$Val);";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText(\$". $Ename . "_Text);";
-                $C .= "\r\n\t\t}";
             }
+
         }
+        $C .= "\r\n\t\t}";
         $C .="\n\t\t\$LTable1=new Div();";
         $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
@@ -396,7 +440,8 @@ EOT;
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
         $C .=<<<EOT
-public function getJSON()
+    
+    public function getJSON()
     {
        parent::getJSON();
        \$Result=['message'=>\$this->getMessage(),'messagetype'=>\$this->getMessageType()];

@@ -9,6 +9,7 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\onlineclass\Entity\onlineclass_courseEntity;
 use Modules\onlineclass\Entity\onlineclass_usercourseEntity;
 use Modules\onlineclass\Entity\onlineclass_userEntity;
+use Modules\users\Entity\roleSystemUserEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -22,7 +23,7 @@ use core\CoreClasses\db\LogicalOperator;
 */
 class purchaseController extends Controller {
 	private $PAGESIZE=10;
-	public function load($ID,$CourseID,$MobileNumber,$DeviceCode)
+	public function load($ID,$CourseID,$MobileNumber,$DeviceCode,$UserName)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -42,8 +43,11 @@ class purchaseController extends Controller {
         $Payment->setId($PaymentID);
         $Transaction=$Payment->getTransaction_fid();
         $user=new onlineclass_userEntity($DBAccessor);
+        $SysUserID=$this->getSysUserID($DBAccessor,$UserName);
+        if($SysUserID<=0)
+            throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition(onlineclass_userEntity::$MOBILE,$MobileNumber));
+        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
 
 
         $user=$user->FindOne($q);
@@ -58,5 +62,14 @@ class purchaseController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
+    private function getSysUserID(dbaccess $DBAccessor,$Username)
+    {
+        $sysu=new roleSystemUserEntity($DBAccessor);
+        $res=$sysu->Select(array('username'),array(strtolower($Username)));
+        $id=-1;
+        if($res!=null && count($res)>0)
+            $id=$res[0]['id'];
+        return $id;
+    }
 }
 ?>

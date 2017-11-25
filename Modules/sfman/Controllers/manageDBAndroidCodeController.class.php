@@ -201,7 +201,7 @@ EOT;
             }
 EOT;
 
-        $C.="\r\n\t\t\tMainAdapter=new $UCFormName" . "RecyclerViewAdapter(Products, mListener);";
+        $C.="\r\n\t\t\tMainAdapter=new $UCFormName" . "RecyclerViewAdapter($UCFormName" . "s, mListener);";
         $C.="\r\n\t\t\tMainAdapter.theActivity=(MainActivity)getActivity();";
         $C.="\r\n\t\t\trecyclerView.setAdapter(MainAdapter);";
         $C.="\r\n\t\t}";
@@ -210,7 +210,8 @@ EOT;
         $C.="\r\n\t\tpublic void run() {";
         $C.="\r\n\t\tnew $UCFormName(getActivity()).getAll($ListName);";
         $C.=<<<EOT
-getActivity().runOnUiThread(new Runnable() {
+        
+            getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
         MainAdapter.notifyDataSetChanged();
@@ -362,6 +363,7 @@ EOT;
         $C .= "\r\nimport java.net.URL;";
         $C .= "\r\nimport common.SweetDeviceManager;";
         $C .= "\r\nimport common.RemoteClass;";
+        $C .= "\r\nimport common.Message;";
         $C .= "\r\nimport java.util.ArrayList;";
         $C .= "\r\nimport java.util.List;";
         $C .= "\r\nimport android.app.Activity;";
@@ -381,7 +383,7 @@ EOT;
         $C .= "\n\t\t\tString DeviceID= SweetDeviceManager.getDeviceID(this.getActivity().getApplicationContext());";
         $C .= "\n\t\t\tString URL=Constants.SITEURL + \"json/fa/" . $this->getCodeModuleName() . "/" . $this->getTableName() . "list.jsp\";";
         $C .= "\n\t\t\tURL+=\"?deviceid=\"+DeviceID;";
-        $C .= "\n\t\t\tJsonReader reader=getReader(URL);";
+        $C .= "\n\t\t\tJsonReader reader=getReader(URL,false,null);";
         $C .= "\n\t\t\tif(reader.hasNext()) {";
         $C .= "\n\t\t\treader.beginArray(); ";
         $C .= "\n\t\t\twhile (reader.hasNext())";
@@ -401,7 +403,7 @@ EOT;
         $C .= "\n\t\t\tString DeviceID = SweetDeviceManager.getDeviceID(this.getActivity().getApplicationContext());";
         $C .= "\n\t\t\tString URL=Constants.SITEURL + \"json/fa/" . $this->getCodeModuleName() . "/" . $this->getTableName() . ".jsp\";";
         $C .= "\n\t\t\tURL+=\"?deviceid=\"+DeviceID+\"&id=\"+String.valueOf(Id);";
-        $C .= "\n\t\t\tJsonReader reader=getReader(URL);";
+        $C .= "\n\t\t\tJsonReader reader=getReader(URL,false,null);";
         $C .= "\n\t\t\treturn getObject(reader);";
         $C .= "\n\t\t}catch (IOException e) {";
         $C .= "\n\t\te.printStackTrace();";
@@ -424,7 +426,37 @@ EOT;
         $C .= "\n\t\t\treader.endObject();";
         $C .= "\n\t\t\t\treturn the" . $UCFormName . ";";
         $C .= "\n\t}";
+        $C .= "\n\tpublic Message Save()";
+        $C .= "\n\t{";
+        $C .= "\n\ttry {";
+            $C .= "\n\t\t\tString PageURL=Constants.SITEURL + \"json/fa/" . $this->getCodeModuleName() . "/manage" . $this->getTableName() . ".jsp\";";
+        $C .= "\n\t\t\tString Data = \"action=btnSave_Click\";";
 
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $fl = $fields[$i];
+            if ($fl != 'deletetime')
+                $C .= "\n\t\t\t\t\tData+=\"&$fl=\" + String.valueOf(" . $fl .");";
+        }
+
+        $C .= "\n\t\t\tJsonReader reader=getReader(PageURL,true,Data);";
+        $C .= <<<EOT
+        
+       reader.beginObject();
+			Message theMessage =new Message();
+			while (reader.hasNext()) {
+				String key = reader.nextName();
+				if (key.equals("message")) {theMessage.setMessageText(reader.nextString());}
+				else if (key.equals("messagetype")) {theMessage.setMessageType(reader.nextInt());}
+			}
+			reader.endObject();
+			return theMessage;
+		}catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+EOT;
         $C .= "\n}";
         $DesignFile = $this->getAndroidCodeModuleDir() . "/" . ucwords($FormName) . ".java";
         $this->SaveFile($DesignFile, $C);
@@ -612,6 +644,7 @@ EOT;
         $HolderFile = $this->getAndroidCodeModuleDir() . "/fragment_" . $FormName . "_item.xml";
         $this->SaveFile($HolderFile, $C);
     }
+
 }
 
 ?>

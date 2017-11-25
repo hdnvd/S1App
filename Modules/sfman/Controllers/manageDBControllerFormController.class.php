@@ -42,6 +42,7 @@ abstract class manageDBControllerFormController extends manageDBFormController {
                 }
             }
         }
+
         return $InsertCode;
     }
 
@@ -120,6 +121,8 @@ abstract class manageDBControllerFormController extends manageDBFormController {
     }
     protected function getTableItemControllerLoadCode($formInfo,$isManager)
     {
+
+        $moduleName=$this->getCodeModuleName();
         $ObjectName="\$" . $this->getTableName() . "EntityObject";
         $C = "\n\t\t\$result['".$this->getTableName()."']=$ObjectName;";
         $C .= "\n\t\tif(\$ID!=-1){";
@@ -130,6 +133,17 @@ abstract class manageDBControllerFormController extends manageDBFormController {
         {
             $C .="\n\t\t\tif(\$UserID!=null && $ObjectName" . "->getRole_systemuser_fid()!=\$UserID)";
             $C .= "\n\t\t\t\tthrow new DataNotFoundException();";
+        }
+        $SecondaryTables=$this->getSecondaryTables();
+        $AllCount1 = count($SecondaryTables);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            if($theTable!=null) {
+                $RelationEntityClassName = $moduleName . "_".$this->getTableName() . $theTable . "Entity";
+                $RelationObjectName="\$" . $RelationEntityClassName . "EntityObject";
+                $C .= "\n\t\t\t$RelationObjectName=new " .  $RelationEntityClassName . "(\$DBAccessor);";
+                $C .= "\n\t\t\t\$result['" . $this->getTableName() . $theTable . "s']=$RelationObjectName" . "->FindAll(\$RelationLogic);";
+            }
         }
         $C .= "\n\t\t\t\$result['".$this->getTableName()."']=$ObjectName;";
 
@@ -169,6 +183,7 @@ abstract class manageDBControllerFormController extends manageDBFormController {
     {
         $moduleName=$this->getCodeModuleName();
         $C =$this->getTableItemControllerTopCode($formInfo,true);
+
         for($i=0; $i<count($this->getCurrentTableFields()); $i++) {
             $fl1=$this->getFieldName($i);
             if($fl1!=null &&  FieldType::getFieldType($this->getCurrentTableFields()[$i])==FieldType::$FID) {
@@ -177,6 +192,21 @@ abstract class manageDBControllerFormController extends manageDBFormController {
                 $ObjectName2="\$" . $FiledName . "EntityObject";
                 $C .= "\n\t\t\t$ObjectName2=new " .  $fl . "(\$DBAccessor);";
                 $C .= "\n\t\t\t\$result['" . $this->getCurrentTableFields()[$i] . "']=$ObjectName2" . "->FindAll(new QueryLogic());";
+            }
+        }
+
+        $SecondaryTables=$this->getSecondaryTables();
+        $AllCount1 = count($SecondaryTables);
+        $C .= "\n\t\t\$RelationLogic=new QueryLogic();";
+        $C .= "\n\t\t\$RelationLogic->addCondition(new FieldCondition('".$this->getTableName()."_fid',\$ID));";
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            $theUCTable=ucwords($theTable);
+            if($theTable!=null) {
+                $EntityClassName = $moduleName . "_" . $theTable . "Entity";
+                $ObjectName2="\$" . $theUCTable . "ListEntityObject";
+                $C .= "\n\t\t$ObjectName2=new " .  $EntityClassName . "(\$DBAccessor);";
+                $C .= "\n\t\t\$result['" . $theTable . "s']=$ObjectName2" . "->FindAll(new QueryLogic());";
             }
         }
         $C .= $this->getTableItemControllerLoadCode($formInfo,true);
@@ -392,7 +422,7 @@ protected function getTableListControllerTopCode($formInfo)
     }
 	protected function getActionFormController($formInfo,$ActionName,$isManager)
 	{
-
+        $ModuleName=$this->getCodeModuleName();
         $EntityClassName=$this->getCodeModuleName() . "_" . $this->getTableName() . "Entity";;
         $ObjectName="\$" . $this->getTableName() . "EntityObject";
         $InsertCode=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName,true);
@@ -407,6 +437,7 @@ protected function getTableListControllerTopCode($formInfo)
         }
         $UpdateCode.=$this->getEntityObjectFieldSetCode($ObjectName,$EntityClassName,false);
         $UpdateCode .= "\n\t\t\t$ObjectName" . "->Save();";
+        $UpdateCode .= "\n\t\t\t\$ID=$ObjectName" . "->getId();";
 
 		$Params="";
 		for($i=0;$i<count($formInfo['elements']);$i++)
@@ -421,6 +452,16 @@ protected function getTableListControllerTopCode($formInfo)
 			}
 
 		}
+        $SecondaryTables=$this->getSecondaryTables();
+        $AllCount1 = count($SecondaryTables);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            if($theTable!=null) {
+                $ParamName="\$" . ucwords($theTable) . "s";
+                    $Params.=",";
+                $Params.=$ParamName;
+            }
+        }
 		$C  = "\n\tpublic function " . ucwords($ActionName) . "(\$ID,$Params)";
 		$C .= "\n\t{";
 		$C .= "\n\t\t\$Language_fid=CurrentLanguageManager::getCurrentLanguageID();";
@@ -455,7 +496,38 @@ EOT;
         else
             $C .=$UpdateCode;
         $C .= "\n\t\t}";
+        $C .= "\n\t\t\$RelationLogic=new QueryLogic();";
+        $C .= "\n\t\t\$RelationLogic->addCondition(new FieldCondition('".$this->getTableName()."_fid',\$ID));";
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $theTable=$SecondaryTables[$i];
+            if($theTable!=null) {
+                $theUCTable=ucwords($theTable);
+                $theUCTables=$theUCTable . "s";
+                $theUCTablesCount=$theUCTables . "Count";
+                $EntityClassName=$ModuleName."_" . $this->getTableName() . $theTable . "Entity";
+                $EntityObjectName=$EntityClassName. "Object";
+                $C .= "\n\t\t\$".$EntityObjectName."=new ".$EntityClassName."(\$DBAccessor);";
+                $C .= "\n\t\t\$Current" . $theUCTables . "=\$".$EntityObjectName. "->FindAll(\$RelationLogic);";
+                $C .= "\n\t\t\$Current" . $theUCTables . "Count = count(\$Current" . $theUCTables . ");";
+                $C .= "\n\t\tfor (\$i = 0; \$i < \$Current" . $theUCTables . "Count; \$i++) {";
+                $C .= "\n\t\t\tif(array_search(\$Current" . $theUCTables . "[\$i]->getId(),\$Current" . $theUCTables . ")===FALSE)";
+                $C .= "\n\t\t\t\t\$Current" . $theUCTables . "[\$i]->Remove();";
+                $C .= "\n\t\t\telse";
+                $C .= "\n\t\t\t{";
+                $C .= "\n\t\t\t\tunset(\$Current" . $theUCTables . "[\$i]);";
+                $C .= "\n\t\t\t\t\$Current" . $theUCTables . "=array_values(\$Current" . $theUCTables . ");";
+                $C .= "\n\t\t\t}";
+                $C .= "\n\t\t}";
 
+                $C .= "\n\t\t\$$theUCTablesCount = count(\$$theUCTables);";
+                $C .= "\n\t\tfor (\$i = 0; \$i < \$$theUCTablesCount; \$i++) {";
+                $C .= "\n\t\t\t\$$EntityObjectName=new $EntityClassName(\$DBAccessor);";
+                $C .= "\n\t\t\t\$$EntityObjectName->" . "set" . ucwords($this->getTableName()) . "_fid(\$ID);";
+                $C .= "\n\t\t\t\$$EntityObjectName->" . "set" . $theUCTable . "_fid(\$$theUCTables" . "[\$i]);";
+                $C .= "\n\t\t\t\$$EntityObjectName->" . "Save();";
+                $C .= "\n\t\t}";
+            }
+        }
         $C .= "\n\t\t\$result=\$this->load(\$ID);";
 		$C .= "\n\t\t\$result['param1']=\"\";";
 		$C .= "\n\t\t\$DBAccessor->close_connection();";

@@ -1,5 +1,6 @@
 <?php
 namespace Modules\onlineclass\Forms;
+use core\CoreClasses\html\PasswordBox;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -48,7 +49,9 @@ class manageuser_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->mobile,$this->getFieldCaption('mobile'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->registration_time,$this->getFieldCaption('registration_time'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->devicecode,$this->getFieldCaption('devicecode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
+        $LTable1->addElement($this->getFieldRowCode($this->UserName,$this->getFieldCaption('username'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->Password,$this->getFieldCaption('password'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->SetAttribute("novalidate","novalidate");
@@ -132,12 +135,25 @@ class manageuser_Design extends FormDesign {
 		$this->devicecode= new textbox("devicecode");
 		$this->devicecode->setClass("form-control");
 
+        /******* devicecode *******/
+        $this->UserName= new textbox("username");
+        $this->UserName->setClass("form-control");
+        /******* devicecode *******/
+        $this->Password= new PasswordBox("password");
+        $this->Password->setClass("form-control");
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
 		$this->btnSave->setAction("btnSave");
 		$this->btnSave->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
 		$this->btnSave->setClass("btn btn-primary");
 	}
+
+    public function getJSON()
+    {
+        parent::getJSON();
+        $Result=['message'=>$this->getMessage(),'messagetype'=>$this->getMessageType()];
+        return json_encode($Result);
+    }
 	private $Data;
 	/**
 	 * @param mixed $Data
@@ -212,6 +228,28 @@ class manageuser_Design extends FormDesign {
 	{
 		return $this->devicecode;
 	}
+
+
+    /** @var textbox */
+    private $UserName;
+    /**
+     * @return textbox
+     */
+    public function getUserName()
+    {
+        return $this->UserName;
+    }
+
+    /** @var PasswordBox */
+    private $Password;
+    /**
+     * @return PasswordBox
+     */
+    public function getPassword()
+    {
+        return $this->Password;
+    }
+
 	/** @var SweetButton */
 	private $btnSave;
 }

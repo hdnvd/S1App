@@ -24,7 +24,7 @@ class purchase_Code extends FormCode {
 		$translator=new ModuleTranslator("onlineclass");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		//try{
-		$Result=$purchaseController->load($this->getID(),$this->getHttpGETparameter('courseid',-1),$this->getHttpGETparameter('mobile',-1),$this->getHttpGETparameter('deviceid',-1));
+		$Result=$purchaseController->load($this->getID(),$this->getHttpGETparameter('courseid',-1),$this->getHttpGETparameter('mobile',-1),$this->getHttpGETparameter('deviceid',-1),$this->getHttpGETparameter('username',-1));
 		AppRooter::redirect(DEFAULT_PUBLICURL."fa/finance/epayment.jsp?id=".$Result['transaction']['id']);
 		$design=new purchase_Design();
 		$design->setData($Result);
