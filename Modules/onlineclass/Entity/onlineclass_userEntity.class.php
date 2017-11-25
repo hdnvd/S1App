@@ -17,48 +17,48 @@ class onlineclass_userEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("onlineclass_user");
-		$this->setTableTitle("onlineclass_user");
+		$this->setTableTitle("کاربر");
 		$this->setTitleFieldName("email");
 
 		/******** fullname ********/
 		$FullnameInfo=new FieldInfo();
-		$FullnameInfo->setTitle("fullname");
+		$FullnameInfo->setTitle("نام");
 		$this->setFieldInfo(onlineclass_userEntity::$FULLNAME,$FullnameInfo);
 		$this->addTableField('1',onlineclass_userEntity::$FULLNAME);
 
 		/******** ismale ********/
 		$IsmaleInfo=new FieldInfo();
-		$IsmaleInfo->setTitle("ismale");
+		$IsmaleInfo->setTitle("جنسیت");
 		$this->setFieldInfo(onlineclass_userEntity::$ISMALE,$IsmaleInfo);
 		$this->addTableField('2',onlineclass_userEntity::$ISMALE);
 
 		/******** email ********/
 		$EmailInfo=new FieldInfo();
-		$EmailInfo->setTitle("email");
+		$EmailInfo->setTitle("ایمیل");
 		$this->setFieldInfo(onlineclass_userEntity::$EMAIL,$EmailInfo);
 		$this->addTableField('3',onlineclass_userEntity::$EMAIL);
 
 		/******** mobile ********/
 		$MobileInfo=new FieldInfo();
-		$MobileInfo->setTitle("mobile");
+		$MobileInfo->setTitle("موبایل");
 		$this->setFieldInfo(onlineclass_userEntity::$MOBILE,$MobileInfo);
 		$this->addTableField('4',onlineclass_userEntity::$MOBILE);
 
 		/******** role_systemuser_fid ********/
 		$Role_systemuser_fidInfo=new FieldInfo();
-		$Role_systemuser_fidInfo->setTitle("role_systemuser_fid");
+		$Role_systemuser_fidInfo->setTitle("کاربر");
 		$this->setFieldInfo(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
 		$this->addTableField('5',onlineclass_userEntity::$ROLE_SYSTEMUSER_FID);
 
 		/******** registration_time ********/
 		$Registration_timeInfo=new FieldInfo();
-		$Registration_timeInfo->setTitle("registration_time");
+		$Registration_timeInfo->setTitle("تاریخ ثبت نام");
 		$this->setFieldInfo(onlineclass_userEntity::$REGISTRATION_TIME,$Registration_timeInfo);
 		$this->addTableField('6',onlineclass_userEntity::$REGISTRATION_TIME);
 
 		/******** devicecode ********/
 		$DevicecodeInfo=new FieldInfo();
-		$DevicecodeInfo->setTitle("devicecode");
+		$DevicecodeInfo->setTitle("کد دستگاه");
 		$this->setFieldInfo(onlineclass_userEntity::$DEVICECODE,$DevicecodeInfo);
 		$this->addTableField('7',onlineclass_userEntity::$DEVICECODE);
 	}

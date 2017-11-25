@@ -17,30 +17,30 @@ class onlineclass_videoEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("onlineclass_video");
-		$this->setTableTitle("onlineclass_video");
+		$this->setTableTitle("فیلم");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(onlineclass_videoEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',onlineclass_videoEntity::$TITLE);
 
 		/******** hold_date ********/
 		$Hold_dateInfo=new FieldInfo();
-		$Hold_dateInfo->setTitle("hold_date");
+		$Hold_dateInfo->setTitle("تاریخ برگزاری");
 		$this->setFieldInfo(onlineclass_videoEntity::$HOLD_DATE,$Hold_dateInfo);
 		$this->addTableField('2',onlineclass_videoEntity::$HOLD_DATE);
 
 		/******** course_fid ********/
 		$Course_fidInfo=new FieldInfo();
-		$Course_fidInfo->setTitle("course_fid");
+		$Course_fidInfo->setTitle("دوره");
 		$this->setFieldInfo(onlineclass_videoEntity::$COURSE_FID,$Course_fidInfo);
 		$this->addTableField('3',onlineclass_videoEntity::$COURSE_FID);
 
 		/******** hdvideo_flu ********/
 		$Hdvideo_fluInfo=new FieldInfo();
-		$Hdvideo_fluInfo->setTitle("hdvideo_flu");
+		$Hdvideo_fluInfo->setTitle("فایل فیلم");
 		$this->setFieldInfo(onlineclass_videoEntity::$HDVIDEO_FLU,$Hdvideo_fluInfo);
 		$this->addTableField('4',onlineclass_videoEntity::$HDVIDEO_FLU);
 
@@ -52,7 +52,7 @@ class onlineclass_videoEntity extends EntityClass {
 
 		/******** voice_flu ********/
 		$Voice_fluInfo=new FieldInfo();
-		$Voice_fluInfo->setTitle("voice_flu");
+		$Voice_fluInfo->setTitle("فایل صوتی");
 		$this->setFieldInfo(onlineclass_videoEntity::$VOICE_FLU,$Voice_fluInfo);
 		$this->addTableField('6',onlineclass_videoEntity::$VOICE_FLU);
 	}

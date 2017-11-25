@@ -17,18 +17,18 @@ class onlineclass_tutorEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("onlineclass_tutor");
-		$this->setTableTitle("onlineclass_tutor");
+		$this->setTableTitle("مدرس");
 		$this->setTitleFieldName("family");
 
 		/******** name ********/
 		$NameInfo=new FieldInfo();
-		$NameInfo->setTitle("name");
+		$NameInfo->setTitle("نام");
 		$this->setFieldInfo(onlineclass_tutorEntity::$NAME,$NameInfo);
 		$this->addTableField('1',onlineclass_tutorEntity::$NAME);
 
 		/******** family ********/
 		$FamilyInfo=new FieldInfo();
-		$FamilyInfo->setTitle("family");
+		$FamilyInfo->setTitle("نام خانوادگی");
 		$this->setFieldInfo(onlineclass_tutorEntity::$FAMILY,$FamilyInfo);
 		$this->addTableField('2',onlineclass_tutorEntity::$FAMILY);
 	}

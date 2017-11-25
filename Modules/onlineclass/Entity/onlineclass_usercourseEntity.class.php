@@ -17,18 +17,18 @@ class onlineclass_usercourseEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("onlineclass_usercourse");
-		$this->setTableTitle("onlineclass_usercourse");
+		$this->setTableTitle("دوره کاربر");
 		$this->setTitleFieldName("id");
 
 		/******** user_fid ********/
 		$User_fidInfo=new FieldInfo();
-		$User_fidInfo->setTitle("user_fid");
+		$User_fidInfo->setTitle("کاربر");
 		$this->setFieldInfo(onlineclass_usercourseEntity::$USER_FID,$User_fidInfo);
 		$this->addTableField('1',onlineclass_usercourseEntity::$USER_FID);
 
 		/******** course_fid ********/
 		$Course_fidInfo=new FieldInfo();
-		$Course_fidInfo->setTitle("course_fid");
+		$Course_fidInfo->setTitle("دوره");
 		$this->setFieldInfo(onlineclass_usercourseEntity::$COURSE_FID,$Course_fidInfo);
 		$this->addTableField('2',onlineclass_usercourseEntity::$COURSE_FID);
 

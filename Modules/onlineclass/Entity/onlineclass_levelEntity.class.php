@@ -17,18 +17,18 @@ class onlineclass_levelEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("onlineclass_level");
-		$this->setTableTitle("onlineclass_level");
+		$this->setTableTitle("سطح");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(onlineclass_levelEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',onlineclass_levelEntity::$TITLE);
 
 		/******** priority ********/
 		$PriorityInfo=new FieldInfo();
-		$PriorityInfo->setTitle("priority");
+		$PriorityInfo->setTitle("کد");
 		$this->setFieldInfo(onlineclass_levelEntity::$PRIORITY,$PriorityInfo);
 		$this->addTableField('2',onlineclass_levelEntity::$PRIORITY);
 	}

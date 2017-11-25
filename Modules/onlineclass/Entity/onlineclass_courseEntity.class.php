@@ -17,48 +17,48 @@ class onlineclass_courseEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("onlineclass_course");
-		$this->setTableTitle("onlineclass_course");
+		$this->setTableTitle("دوره");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(onlineclass_courseEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',onlineclass_courseEntity::$TITLE);
 
 		/******** start_date ********/
 		$Start_dateInfo=new FieldInfo();
-		$Start_dateInfo->setTitle("start_date");
+		$Start_dateInfo->setTitle("تاریخ شروع کلاس ها");
 		$this->setFieldInfo(onlineclass_courseEntity::$START_DATE,$Start_dateInfo);
 		$this->addTableField('2',onlineclass_courseEntity::$START_DATE);
 
 		/******** end_date ********/
 		$End_dateInfo=new FieldInfo();
-		$End_dateInfo->setTitle("end_date");
+		$End_dateInfo->setTitle("تاریخ اتمام");
 		$this->setFieldInfo(onlineclass_courseEntity::$END_DATE,$End_dateInfo);
 		$this->addTableField('3',onlineclass_courseEntity::$END_DATE);
 
 		/******** tutor_fid ********/
 		$Tutor_fidInfo=new FieldInfo();
-		$Tutor_fidInfo->setTitle("tutor_fid");
+		$Tutor_fidInfo->setTitle("مدرس");
 		$this->setFieldInfo(onlineclass_courseEntity::$TUTOR_FID,$Tutor_fidInfo);
 		$this->addTableField('4',onlineclass_courseEntity::$TUTOR_FID);
 
 		/******** price ********/
 		$PriceInfo=new FieldInfo();
-		$PriceInfo->setTitle("price");
+		$PriceInfo->setTitle("مبلغ به ریال");
 		$this->setFieldInfo(onlineclass_courseEntity::$PRICE,$PriceInfo);
 		$this->addTableField('5',onlineclass_courseEntity::$PRICE);
 
 		/******** description ********/
 		$DescriptionInfo=new FieldInfo();
-		$DescriptionInfo->setTitle("description");
+		$DescriptionInfo->setTitle("توضیحات");
 		$this->setFieldInfo(onlineclass_courseEntity::$DESCRIPTION,$DescriptionInfo);
 		$this->addTableField('6',onlineclass_courseEntity::$DESCRIPTION);
 
 		/******** level_fid ********/
 		$Level_fidInfo=new FieldInfo();
-		$Level_fidInfo->setTitle("level_fid");
+		$Level_fidInfo->setTitle("سطح");
 		$this->setFieldInfo(onlineclass_courseEntity::$LEVEL_FID,$Level_fidInfo);
 		$this->addTableField('7',onlineclass_courseEntity::$LEVEL_FID);
 	}
