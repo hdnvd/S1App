@@ -207,7 +207,7 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         $SecondaryTables=$this->getSecondaryTables();
         $AllCount1 = count($SecondaryTables);
         for ($i = 0; $i < $AllCount1; $i++) {
-            $theTable=$SecondaryTables[$i];
+            $theTable=$this->getTableFieldPart($SecondaryTables[$i],-1);
             $theUCTable=ucwords($theTable);
             if($theTable!=null) {
                 $C.="\n\t\t\$$theUCTable" . "s=\$design->get$theUCTable"."s()->getSelectedValues();";

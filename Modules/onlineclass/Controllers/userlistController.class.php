@@ -44,7 +44,9 @@ class userlistController extends Controller {
             $QueryLogic->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$UserID));
 		$userEnt=new onlineclass_userEntity($DBAccessor);
 		$result['user']=$userEnt;
+//        echo "1";
 		$allcount=$userEnt->FindAllCount($QueryLogic);
+//        echo "1";
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
 		$QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
 		$result['data']=$userEnt->FindAll($QueryLogic);
@@ -213,12 +215,15 @@ class userlistController extends Controller {
         $Device=trim($Device);
         $DBAccessor=new dbaccess();
         $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
+//        echo "1";
         if($SysUserID<=0)
             return ['status'=>404];//Not Found
         $q=new QueryLogic();
         $q->addOrderBy("id",true);
+//        echo "1";
         $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $dt=$this->getData(1,$q);
+//        echo "1";
         if($dt['data']!=null && count($dt['data'])>0)
         {
             if(trim($dt['data'][0]->getDevicecode())==$Device)

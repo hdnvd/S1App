@@ -135,7 +135,7 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $SecondaryTables=$this->getSecondaryTables();
         $AllCount1 = count($SecondaryTables);
          for ($i = 0; $i < $AllCount1; $i++) {
-            $theTable=$SecondaryTables[$i];
+             $theTable=$this->getTableFieldPart($SecondaryTables[$i],-1);
             $theUCTable=ucwords($theTable);
             if($theTable!=null) {
                 $C .="\n\t\t\$LTable1" ."->addElement(\$this->getFieldRowCode(\$this->" . $theUCTable . "s,\$this->getFieldCaption('" . $theUCTable . "s'),null,'',null));";
@@ -152,7 +152,8 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
         $C .="\n\t{";
         $C.=$this->getFieldFillCode($formInfo);
         for ($i = 0; $i < $AllCount1; $i++) {
-            $theTable=$SecondaryTables[$i];
+            $theTable=$this->getTableFieldPart($SecondaryTables[$i],-1);
+            $theTablePrefix=$this->getTableFieldPart($SecondaryTables[$i],-2);
             $theUCTable=ucwords($theTable);
             if($theTable!=null) {
                 $C .="\n\t\tif (key_exists(\"$theTable" . "s\", \$this->Data)) {";
@@ -165,7 +166,10 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
                 $C .="\n\t\tif (key_exists(\"" .$this->getTableName(). "$theTable" . "s\", \$this->Data)) {";
                 $C .="\n\t\t\$All".$theUCTable."Count = count(\$this->Data['" .$this->getTableName(). $theTable. "s']);";
                 $C .="\n\t\tfor (\$i = 0; \$i < \$All".$theUCTable."Count; \$i++) {";
-                $C .="\n\t\t\t\$this->$theUCTable" . "s->addSelectedValue(\$this->Data['" .$this->getTableName(). $theTable. "s'][\$i]->get".$theUCTable."_fid());";
+                $fidName=$theUCTable;
+                if($theTablePrefix!=$theTable)
+                    $fidName=ucwords($SecondaryTables[$i]);
+                $C .="\n\t\t\t\$this->$theUCTable" . "s->addSelectedValue(\$this->Data['" .$this->getTableName(). $theTable. "s'][\$i]->get".$fidName."_fid());";
                 $C .="\n\t\t}";
                 $C .="\n\t}";
                 }
@@ -180,7 +184,7 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         for ($i = 0; $i < $AllCount1; $i++) {
-            $theTable=$SecondaryTables[$i];
+            $theTable=$this->getTableFieldPart($SecondaryTables[$i],-1);
             $theUCTable=ucwords($theTable);
             if($theTable!=null) {
                 $C .= "\n\t/**";
@@ -219,7 +223,7 @@ EOT;
         $SecondaryTables=$this->getSecondaryTables();
         $AllCount1 = count($SecondaryTables);
         for ($i = 0; $i < $AllCount1; $i++) {
-            $theTable=$SecondaryTables[$i];
+            $theTable=$this->getTableFieldPart($SecondaryTables[$i],-1);
             $theUCTable=ucwords($theTable);
             if($theTable!=null) {
                 $C .= "\n\n\t\t/******* " . $theUCTable ." *******/";

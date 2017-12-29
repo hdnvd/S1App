@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    android:layout_marginTop="65dp">
+<TextView
+android:id="@+id/lbl_file_fid_caption"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_alignParentTop="true"
+android:text="File_fid:"
+android:textColor="#333"
+android:layout_alignParentRight="true"
+/>
+<TextView
+android:id="@+id/lbl_file_fid_content"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_alignParentTop="true"
+android:text="File_fid"
+android:textColor="#333"
+android:layout_centerHorizontal="true"
+android:layout_toLeftOf="@id/lbl_file_fid_caption"
+/>
+<TextView
+android:id="@+id/lbl_finance_bankpaymentinfo_fid_caption"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_below="@id/lbl_file_fid_caption"
+android:text="Finance_bankpaymentinfo_fid:"
+android:textColor="#333"
+android:layout_alignParentRight="true"
+/>
+<TextView
+android:id="@+id/lbl_finance_bankpaymentinfo_fid_content"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_below="@id/lbl_file_fid_content"
+android:text="Finance_bankpaymentinfo_fid"
+android:textColor="#333"
+android:layout_centerHorizontal="true"
+android:layout_toLeftOf="@id/lbl_finance_bankpaymentinfo_fid_caption"
+/>        
+</RelativeLayout>

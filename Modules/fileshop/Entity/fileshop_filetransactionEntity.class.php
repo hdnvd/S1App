@@ -1,0 +1,62 @@
+<?php
+namespace Modules\fileshop\Entity;
+use core\CoreClasses\services\EntityClass;
+use core\CoreClasses\services\FieldInfo;
+use core\CoreClasses\db\dbquery;
+use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\services\FieldType;
+/**
+*@author Hadi AmirNahavandi
+*@creationDate 1396-09-07 - 2017-11-28 18:02
+*@lastUpdate 1396-09-07 - 2017-11-28 18:02
+*@SweetFrameworkHelperVersion 2.014
+*@SweetFrameworkVersion 1.018
+*/
+class fileshop_filetransactionEntity extends EntityClass {
+	public function __construct(dbaccess $DBAccessor)
+	{
+		$this->setDatabase(new dbquery($DBAccessor));
+		$this->setTableName("fileshop_filetransaction");
+		$this->setTableTitle("fileshop_filetransaction");
+		$this->setTitleFieldName("id");
+
+		/******** file_fid ********/
+		$File_fidInfo=new FieldInfo();
+		$File_fidInfo->setTitle("file_fid");
+		$this->setFieldInfo(fileshop_filetransactionEntity::$FILE_FID,$File_fidInfo);
+		$this->addTableField('1',fileshop_filetransactionEntity::$FILE_FID);
+
+		/******** finance_bankpaymentinfo_fid ********/
+		$Finance_bankpaymentinfo_fidInfo=new FieldInfo();
+		$Finance_bankpaymentinfo_fidInfo->setTitle("finance_bankpaymentinfo_fid");
+		$this->setFieldInfo(fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID,$Finance_bankpaymentinfo_fidInfo);
+		$this->addTableField('2',fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID);
+	}
+	public static $FILE_FID="file_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getFile_fid(){
+		return $this->getField(fileshop_filetransactionEntity::$FILE_FID);
+	}
+	/**
+	 * @param mixed $File_fid
+	 */
+	public function setFile_fid($File_fid){
+		$this->setField(fileshop_filetransactionEntity::$FILE_FID,$File_fid);
+	}
+	public static $FINANCE_BANKPAYMENTINFO_FID="finance_bankpaymentinfo_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getFinance_bankpaymentinfo_fid(){
+		return $this->getField(fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID);
+	}
+	/**
+	 * @param mixed $Finance_bankpaymentinfo_fid
+	 */
+	public function setFinance_bankpaymentinfo_fid($Finance_bankpaymentinfo_fid){
+		$this->setField(fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID,$Finance_bankpaymentinfo_fid);
+	}
+}
+?>

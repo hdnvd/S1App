@@ -42,6 +42,7 @@ class userlist_Code extends FormCode {
 	}
 	public function getLoadDesign()
 	{
+//	    echo "1";
 		$userlistController=new userlistController();
 		$translator=new ModuleTranslator("onlineclass");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
@@ -52,6 +53,7 @@ class userlist_Code extends FormCode {
 				return $this->search_Click();
 			}
 			elseif(isset($_GET['service']) && $_GET['service']=="getuserstatus"){
+//                echo "1";
                 $Result=$userlistController->FindUserByUserInfoAndDevice($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1),$this->getHttpGETparameter('deviceid',-1));
                 $Result['service']="getuserstatus";
                 $design->setData($Result);

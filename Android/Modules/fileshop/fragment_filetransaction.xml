@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    card_view:cardCornerRadius="4dp">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+<TextView
+android:id="@+id/file_fidlabel"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_alignParentTop="true"
+android:text="File_fid:"
+android:textColor="#333"
+android:layout_alignParentRight="true"
+/>
+<TextView
+android:id="@+id/file_fid"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_alignParentTop="true"
+android:text="File_fid"
+android:textColor="#333"
+android:layout_centerHorizontal="true"
+android:layout_toLeftOf="@id/file_fidlabel"
+/>
+<TextView
+android:id="@+id/finance_bankpaymentinfo_fidlabel"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_below="@id/file_fidlabel"
+android:text="Finance_bankpaymentinfo_fid:"
+android:textColor="#333"
+android:layout_alignParentRight="true"
+/>
+<TextView
+android:id="@+id/finance_bankpaymentinfo_fid"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_margin="@dimen/text_margin"
+android:textAppearance="?attr/textAppearanceListItem"
+android:layout_below="@id/file_fidlabel"
+android:text="Finance_bankpaymentinfo_fid"
+android:textColor="#333"
+android:layout_centerHorizontal="true"
+android:layout_toLeftOf="@id/finance_bankpaymentinfo_fidlabel"
+/>        
+</RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -324,6 +324,7 @@ class userlist_Design extends FormDesign {
 	public function getJSON()
     {
         parent::getJSON();
+//        echo "Status";
         if($this->Data['service']=="getuserstatus")
         {
             $status=$this->Data['status'];
