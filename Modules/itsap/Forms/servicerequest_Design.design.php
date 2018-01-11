@@ -53,8 +53,32 @@ class servicerequest_Design extends FormDesign {
     private $request_date;
     /** @var ComboBox */
     private $CmbState;
+    /** @var ComboBox */
+    private $CMBTopUnits;
+
+    /**
+     * @return ComboBox
+     */
+    public function getCMBTopUnits()
+    {
+        return $this->CMBTopUnits;
+    }
+
+    /**
+     * @return ComboBox
+     */
+    public function getCMBUnitEmployees()
+    {
+        return $this->CMBUnitEmployees;
+    }
+    /** @var ComboBox */
+    private $CMBUnitEmployees;
     /** @var SweetButton */
     private $btnChangeState;
+    /** @var SweetButton */
+    private $btnRefer;
+    /** @var SweetButton */
+    private $btnAssign;
 	public function __construct()
 	{
 
@@ -79,6 +103,14 @@ class servicerequest_Design extends FormDesign {
 		$this->CmbState=new ComboBox("cmbstate");
 		$this->btnChangeState=new SweetButton(true,"تغییر وضعیت");
 		$this->btnChangeState->setAction("btnChangeState");
+
+        $this->CMBTopUnits=new ComboBox("cmbtopunits");
+        $this->btnRefer=new SweetButton(true,"ارجاع");
+        $this->btnRefer->setAction("btnRefer");
+
+        $this->CMBUnitEmployees=new ComboBox("CMBUnitEmployees");
+        $this->btnAssign=new SweetButton(true,"تخصیص");
+        $this->btnAssign->setAction("btnAssign");
 
 	}
 
@@ -123,6 +155,22 @@ class servicerequest_Design extends FormDesign {
                     $curStatus=$item;
                 }
             }
+
+            $topunits=$this->Data['topunits'];
+            $AllCount2 = count($topunits);
+            for ($i = 0; $i < $AllCount2; $i++) {
+                $item=$topunits[$i];
+                $this->CMBTopUnits->addOption($item->getID(),$item->getTitle());
+            }
+
+
+            $unitEmps=$this->Data['unitemployees'];
+            $AllCount3 = count($unitEmps);
+            for ($i = 0; $i < $AllCount3; $i++) {
+                $item=$unitEmps[$i];
+                $this->CMBUnitEmployees->addOption($item->getID(),$item->getName() . " " . $item->getFamily());
+
+            }
 		}
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
@@ -138,6 +186,10 @@ class servicerequest_Design extends FormDesign {
 
         $ChangeStatus->addElement($this->CmbState);
         $ChangeStatus->addElement($this->btnChangeState);
+        $ChangeStatus->addElement($this->CMBTopUnits);
+        $ChangeStatus->addElement($this->btnRefer);
+        $ChangeStatus->addElement($this->CMBUnitEmployees);
+        $ChangeStatus->addElement($this->btnAssign);
         $Page->addElement($ChangeStatus);
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();

@@ -3,9 +3,13 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\itsap\Entity\itsap_employeeEntity;
+use Modules\itsap\Entity\itsap_referenceEntity;
 use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
 use Modules\itsap\Entity\itsap_servicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
+use Modules\itsap\Entity\itsap_topunitEntity;
+use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -29,6 +33,24 @@ class servicerequestController extends Controller {
 		$result=array();
 		$servicerequestEntityObject=new itsap_servicerequestEntity($DBAccessor);
 		$result['servicerequest']=$servicerequestEntityObject;
+        $itsap_topunitEntityObject=new itsap_topunitEntity($DBAccessor);
+        $result['topunits']=$itsap_topunitEntityObject->FindAll(new QueryLogic());
+
+        $currentEmployee=new itsap_employeeEntity($DBAccessor);
+        $empQL=new QueryLogic();
+        $empQL->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
+        $currentEmployee=$currentEmployee->FindOne($empQL);
+        if($currentEmployee->getId()<=0)
+            throw new DataNotFoundException();
+        $currentUnitID=$currentEmployee->getUnit_fid();
+        $currentUnit=new itsap_unitEntity($DBAccessor);
+        $currentUnit->setId($currentUnitID);
+        if($currentUnit->getId()<=0)
+            throw new DataNotFoundException();
+
+        $UnitEmpsQL=new QueryLogic();
+        $UnitEmpsQL->addCondition(new FieldCondition(itsap_employeeEntity::$UNIT_FID,$currentUnitID));
+        $result['unitemployees']=$currentEmployee->FindAll($UnitEmpsQL);
 		if($ID!=-1){
 			$servicerequestEntityObject->setId($ID);
 			if($servicerequestEntityObject->getId()==-1)
@@ -91,6 +113,52 @@ class servicerequestController extends Controller {
         $result['param1']="";
         $DBAccessor->close_connection();
         return $this->load($ID);
+    }
+    private function addReference($ID,$ITunitID,$EmployeeID,$Message)
+    {
+        $DBAccessor=new dbaccess();
+        $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $result=array();
+        $servicerequestEntityObject=new itsap_servicerequestEntity($DBAccessor);
+        $result['servicerequest']=$servicerequestEntityObject;
+        if($ID!=-1){
+            $servicerequestEntityObject->setId($ID);
+            if($servicerequestEntityObject->getId()==-1)
+                throw new DataNotFoundException();
+
+            $ReferenceEnt=new itsap_referenceEntity($DBAccessor);
+            $ReferenceEnt->setReference_time(time());
+            $ReferenceEnt->setServicerequest_fid($ID);
+            $ReferenceEnt->setMessage($Message);
+            $ReferenceEnt->setSystemuser_fid($role_systemuser_fid);
+            $ReferenceEnt->setEmployee_fid($EmployeeID);
+            $ReferenceEnt->setUnit_fid($ITunitID);
+            $ReferenceEnt->Save();
+
+        }
+        $result['param1']="";
+        $DBAccessor->close_connection();
+        return $this->load($ID);
+    }
+    public function Refer($ID,$TopUnitID,$Message)
+    {
+        $DBAccessor=new dbaccess();
+        $unitEnt=new itsap_unitEntity($DBAccessor);
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition(itsap_unitEntity::$TOPUNIT_FID,$TopUnitID));
+        $q->addCondition(new FieldCondition(itsap_unitEntity::$ISFAVA,1));
+        $unitEnt=$unitEnt->FindOne($q);
+        if($unitEnt==null || $unitEnt->getId()<=0)
+            throw new DataNotFoundException();
+        $ITunitID=$unitEnt->getId();
+        $DBAccessor->close_connection();
+        return $this->addReference($ID,$ITunitID,-1,$Message);
+    }
+
+    public function Assign($ID,$EmployeeID,$Message)
+    {
+        return $this->addReference($ID,-1,$EmployeeID,$Message);
     }
 }
 ?>

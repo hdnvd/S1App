@@ -76,5 +76,50 @@ class servicerequest_Code extends FormCode {
         }
         return $design->getBodyHTML();
     }
+    public function btnRefer_Click()
+    {
+        $design=new servicerequest_Design();
+        $TopUnit=$design->getCMBTopUnits();
+        $servicerequestController=new servicerequestController();
+        try{
+            $Result=$servicerequestController->Refer($this->getID(),$TopUnit->getSelectedID(),"Not Implemented Yet!");
+            $design->setData($Result);
+            $design->setMessage("درخواست مورد نظر با موفقیت ارجاع داده شد.");
+        }
+        catch(DataNotFoundException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("آیتم مورد نظر پیدا نشد");
+        }
+        catch(\Exception $uex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
+        return $design->getBodyHTML();
+    }
+
+    public function btnAssign_Click()
+    {
+        $design=new servicerequest_Design();
+        $Employee=$design->getCMBUnitEmployees();
+        $servicerequestController=new servicerequestController();
+        try{
+            $Result=$servicerequestController->Assign($this->getID(),$Employee->getSelectedID(),"Not Implemented Yet!");
+            $design->setData($Result);
+            $design->setMessage("درخواست مورد نظر با موفقیت تخصیص داده شد.");
+        }
+        catch(DataNotFoundException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("آیتم مورد نظر پیدا نشد");
+        }
+        catch(\Exception $uex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
+        return $design->getBodyHTML();
+    }
 }
 ?>

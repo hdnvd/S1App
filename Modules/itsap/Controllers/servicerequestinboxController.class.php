@@ -65,7 +65,7 @@ class servicerequestinboxController extends Controller {
 
         $servicerequestEnt=new itsap_viewservicerequesthandlerEntity($DBAccessor);
 //        $q3=new QueryLogic();
-        $QueryLogic->addCondition(new FieldCondition(itsap_viewservicerequesthandlerEntity::$HANDLERUID,$unit->getTopunit_fid()));
+        $QueryLogic->addCondition(new FieldCondition(itsap_viewservicerequesthandlerEntity::$HANDLERUID,$unit->getId()));
 
 //        $result['data']=$servicerequestEnt->FindAll($q3);
 		$result['servicerequest']=$servicerequestEnt;
