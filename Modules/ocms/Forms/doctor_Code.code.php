@@ -4,6 +4,8 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\finance\Exceptions\LowBalanceException;
+use Modules\finance\Forms\lowbalance_Design;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -45,6 +47,37 @@ class doctor_Code extends FormCode {
 		}
 		return $design;
 	}
+    public function btnReserve_Click()
+    {
+        $doctorController=new doctorController();
+        $translator=new ModuleTranslator("ocms");
+        $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
+
+        try{
+            $Result=$doctorController->reserve($_POST['txtplanid'],$this->getHttpGETparameter('presencetype',-1));
+
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$SUCCESS);
+            $design->setMessage("رزرو وقت با موفقیت انجام شد");
+        }
+        catch(DataNotFoundException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("آیتم مورد نظر پیدا نشد");
+        }
+        catch (LowBalanceException $Lbex)
+        {
+            $design=new lowbalance_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("موجودی کافی نیست.لطفا پس از افزایش اعتبار مجددا تلاش نمایید");
+        }
+        catch(\Exception $uex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
+        return $design->getResponse();
+    }
 	public function __construct($namespace)
 	{
 		parent::__construct($namespace);

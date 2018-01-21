@@ -1,6 +1,7 @@
 <?php
 
-namespace Modules\common\Forms;
+namespace Modules\finance\Forms;
+use core\CoreClasses\html\link;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\Div;
@@ -18,41 +19,43 @@ use Modules\languages\PublicClasses\CurrentLanguageManager;
  *@creationDate 2015/02/20 10:40:48
  *@lastUpdate 2015/02/20 10:40:48
  *@SweetFrameworkHelperVersion 1.102
-*/
+ */
 
 
-class message_Design extends FormDesign {
-	/**
-	 * @var TextBox
-	 */
-	
-	/**
-	 * @var DataComboBox
-	 */
-	
-	/**
-	 * @var SweetButton
-	 */
-	
-	public function __construct()
-	{
-	}
-	public function getBodyHTML($command=null)
-	{
-		$Page=new Div();
-		$Page->setClass("sweet_formtitle");
+class lowbalance_Design extends FormDesign {
+    /**
+     * @var TextBox
+     */
+
+    /**
+     * @var DataComboBox
+     */
+
+    /**
+     * @var SweetButton
+     */
+
+    public function __construct()
+    {
+    }
+    public function getBodyHTML($command=null)
+    {
+        $Page=new Div();
+        $Page->setClass("sweet_formtitle");
+        $Page->setClass("finance_message_form");
         if($this->getMessage()!=""){
             $MessagePart=new Div();
-            if($this->getMessageType()==MessageType::$ERROR)
-                $MessagePart->setClass("sweet_messagepart alert alert-danger");
-            else
-                $MessagePart->setClass("sweet_messagepart alert alert-success");
+            $MessagePart->setClass("finance_message");
             $MessagePart->addElement(new Lable($this->getMessage()));
+            $lblPay=new Lable('افزایش موجودی حساب');
+            $lnkPay=new link('/fa/finance/userpayment.jsp',$lblPay);
+            $lnkPay->setClass('linkbutton');
             $Page->addElement($MessagePart);
+            $Page->addElement($lnkPay);
         }
-		$form=new SweetFrom("", "POST", $Page);
-		return $form->getHTML();
-	}
+        $form=new SweetFrom("", "POST", $Page);
+        return $form->getHTML();
+    }
 
     public function getJSON()
     {

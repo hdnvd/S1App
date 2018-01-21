@@ -75,6 +75,15 @@ class manageemployees_Design extends FormDesign {
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageemployees");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['employee']->getTableTitle() . " ها"));
+		$UnitInfo=new Div();
+        $UnitInfo->setClass("formtable");
+        $UnitInfo->addElement($this->getInfoRowCode(new Lable($this->Data['topunit']->getTitle()),"یگان مادر"));
+        $UnitInfo->addElement($this->getInfoRowCode(new Lable($this->Data['unit']->getTitle()),"یگان "));
+        if($this->Data['admin_employee']->getId()>0)
+            $UnitInfo->addElement($this->getInfoRowCode(new Lable($this->Data['admin_employee']->getName() . " " . $this->Data['admin_employee']->getFamily()),"مدیر بخش"));
+        else
+            $UnitInfo->addElement($this->getInfoRowCode(new Lable("تعیین نشده"),"مدیر بخش"));
+        $Page->addElement($UnitInfo);
 		$addUrl=new AppRooter('itsap',$this->itemPage);
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
@@ -120,13 +129,26 @@ class manageemployees_Design extends FormDesign {
 			$delurl=new AppRooter('itsap',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
+            $delurl->addParameter(new UrlParameter('uid',$_GET['uid']));
 			$lbDel[$i]=new Lable('حذف');
 			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
 			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$lnkDel[$i]->setClass('btn btn-danger');
+
+            $MakeAdminURL=new AppRooter('itsap',$this->listPage);
+            $MakeAdminURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+            $MakeAdminURL->addParameter(new UrlParameter('setasadmin',1));
+            $MakeAdminURL->addParameter(new UrlParameter('uid',$_GET['uid']));
+            $lbMakeAdmin[$i]=new Lable('ارتقا به مدیر');
+            $lnkMakeAdmin[$i]=new link($MakeAdminURL->getAbsoluteURL(),$lbMakeAdmin[$i]);
+            $lnkMakeAdmin[$i]->setGlyphiconClass('glyphicon glyphicon-king');
+            $lnkMakeAdmin[$i]->setClass('btn btn-primary');
+
+
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
 			$operationDiv[$i]->addElement($lnkView[$i]);
+            $operationDiv[$i]->addElement($lnkMakeAdmin[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");

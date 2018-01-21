@@ -45,34 +45,25 @@ class servicerequestinboxController extends Controller {
         $q1=new QueryLogic();
         $q1->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
         $emp=$emp->FindOne($q1);
-
         $unit=new itsap_unitEntity($DBAccessor);
         $unit->setId($emp->getUnit_fid());
 
-//        $topUnit=new itsap_topunitEntity($DBAccessor);
-//        $topUnit->setId($unit->getTopunit_fid());
+        $isFava=$unit->getIsfava();
+        $isAdmin=false;
+        if($unit->getAdmin_employee_fid()==$emp->getId())
+            $isAdmin=true;
+        $topUnit=new itsap_topunitEntity($DBAccessor);
+        $topUnit->setId($unit->getTopunit_fid());
 
-//        $q2=new QueryLogic();
-//        $q2->addCondition(new FieldCondition(itsap_unitEntity::$TOPUNIT_FID,$unit->getTopunit_fid()));
-//        $units=$unit->FindAll($q2);
-//        $AllCount2 = count($units);
-//        $unitids=array();
-//        /* @var $un itsap_unitEntity */
-//        foreach ($units as  $un) {
-//           array_push($unitids,$un->getId());
-//        }
-
+        $servicerequestEnt1=new itsap_servicerequestEntity($DBAccessor);
+        $count=$servicerequestEnt1->getRequests($isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),null,true);
 
         $servicerequestEnt=new itsap_viewservicerequesthandlerEntity($DBAccessor);
-//        $q3=new QueryLogic();
-        $QueryLogic->addCondition(new FieldCondition(itsap_viewservicerequesthandlerEntity::$HANDLERUID,$unit->getId()));
-
-//        $result['data']=$servicerequestEnt->FindAll($q3);
 		$result['servicerequest']=$servicerequestEnt;
-		$allcount=$servicerequestEnt->FindAllCount($QueryLogic);
+        $allcount=$count[0]['allcount'];
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-		$QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
-		$result['data']=$servicerequestEnt->FindAll($QueryLogic);
+        $res=$servicerequestEnt1->getRequests($isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$this->getPageRowsLimit($PageNum,$this->PAGESIZE),false);
+        $result['data']=$res;
 		$data=$result['data'];
         $AllCount1 = count($data);
         for ($i = 0; $i < $AllCount1; $i++) {

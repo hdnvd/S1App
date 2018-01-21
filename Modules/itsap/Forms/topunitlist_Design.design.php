@@ -96,14 +96,7 @@ class topunitlist_Design extends FormDesign {
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_topunitlist");
 		$Page->addElement($this->getPageTitlePart("فهرست " . $this->Data['topunit']->getTableTitle() . " ها"));
-		$LTable1=new Div();
-		$LTable1->setClass("searchtable");
-		$LTable1->addElement($this->getFieldRowCode($this->topunit_fid,$this->getFieldCaption('topunit_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
-		$Page->addElement($LTable1);
+
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$Div1=new Div();

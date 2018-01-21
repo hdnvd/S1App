@@ -3,6 +3,7 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -18,7 +19,7 @@ use Modules\itsap\Entity\itsap_employeeEntity;
 */
 class manageemployeesController extends employeelistController {
 	private $PAGESIZE=10;
-	public function DeleteItem($ID)
+	public function DeleteItem($ID,$UnitID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -35,7 +36,31 @@ class manageemployeesController extends employeelistController {
 			throw new DataNotFoundException();
 		$employeeEnt->Remove();
 		$DBAccessor->close_connection();
-		return $this->load(-1);
+		return $this->load(-1,$UnitID);
 	}
+    public function SetAsAdmin($ID,$UnitID)
+    {
+        $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
+        $DBAccessor=new dbaccess();
+        $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->getAdminMode())
+            $UserID=$role_systemuser_fid;
+        $employeeEnt=new itsap_employeeEntity($DBAccessor);
+        $employeeEnt->setId($ID);
+        if($employeeEnt->getId()==-1)
+            throw new DataNotFoundException();
+        if($UserID!=null && $employeeEnt->getRole_systemuser_fid()!=$UserID)
+            throw new DataNotFoundException();
+        $Unit=new itsap_unitEntity($DBAccessor);
+        $Unit->setId($UnitID);
+        if($Unit->getId()==-1)
+            throw new DataNotFoundException();
+        $Unit->setAdmin_employee_fid($ID);
+        $Unit->Save();
+        $DBAccessor->close_connection();
+        return $this->load(-1,$UnitID);
+    }
 }
 ?>

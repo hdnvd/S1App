@@ -15,10 +15,11 @@ use Modules\users\PublicClasses\sessionuser;
  */
 class Payment
 {
-    public function getBalance($ChapterID)
+    public function getBalance($ChapterID,$role_systemuser_fid=null)
     {
         $DBAccessor=new dbaccess();
         $su=new sessionuser();
+        if($role_systemuser_fid==null)
         $role_systemuser_fid=$su->getSystemUserID();
         $Tent=new finance_transactionEntity($DBAccessor);
         $q=new QueryLogic();
@@ -45,13 +46,18 @@ class Payment
             return 1;
         return 0;
     }
-    public function startTransaction($amount,$name,$family,$phonenumber,$portal_fid,$description,$ChapterID,$PayByPortal,$RedirectURL)
+    public function startTransaction($amount,$name,$family,$phonenumber,$portal_fid,$description,$ChapterID,$PayByPortal,$RedirectURL,$SystemUserID=null)
     {
         $DBAccessor=new dbaccess();
         $DBAccessor2=new dbaccess();
         $DBAccessor->beginTransaction();
-        $su=new sessionuser();
-        $role_systemuser_fid=$su->getSystemUserID();
+        if($SystemUserID==null)
+        {
+            $su=new sessionuser();
+            $role_systemuser_fid=$su->getSystemUserID();
+        }
+        else
+            $role_systemuser_fid=$SystemUserID;
         $Pent2=new finance_bankpaymentinfoEntity($DBAccessor2);
         $lastID=$Pent2->FindAllCount(new QueryLogic());
 
@@ -93,7 +99,11 @@ class Payment
         $DBAccessor->commit();
         $DBAccessor->close_connection();
         $DBAccessor2->close_connection();
-        $result['transaction']['id']=$Pent->getId();
+        if(isset($Pent) && $Pent!=null)
+            $result['transaction']['id']=$Pent->getId();
+        else
+            $result['transaction']['id']=$Tent->getId();
+
         return $result;
     }
 

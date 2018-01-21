@@ -49,11 +49,11 @@ class manageservicerequests_Code extends servicerequestlist_Code {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
-		catch(\Exception $uex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-		}
+//		catch(\Exception $uex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//		}
 		return $design;
 	}
 	public function __construct($namespace)

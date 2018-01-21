@@ -57,10 +57,11 @@ class servicerequest_Code extends FormCode {
 	public function btnChangeState_Click()
     {
         $design=new servicerequest_Design();
+        $message=$design->getTxtStatusMessage();
         $state=$design->getCmbState();
         $servicerequestController=new servicerequestController();
         try{
-            $Result=$servicerequestController->ChangeState($this->getID(),$state->getSelectedID());
+            $Result=$servicerequestController->ChangeState($this->getID(),$state->getSelectedID(),$message->getValue());
             $design->setData($Result);
             $design->setMessage("وضعیت جدید با موفقیت ثبت شد");
         }
@@ -80,9 +81,10 @@ class servicerequest_Code extends FormCode {
     {
         $design=new servicerequest_Design();
         $TopUnit=$design->getCMBTopUnits();
+        $message=$design->getTxtReferMessage();
         $servicerequestController=new servicerequestController();
         try{
-            $Result=$servicerequestController->Refer($this->getID(),$TopUnit->getSelectedID(),"Not Implemented Yet!");
+            $Result=$servicerequestController->Refer($this->getID(),$TopUnit->getSelectedID(),$message->getValue());
             $design->setData($Result);
             $design->setMessage("درخواست مورد نظر با موفقیت ارجاع داده شد.");
         }
@@ -103,9 +105,10 @@ class servicerequest_Code extends FormCode {
     {
         $design=new servicerequest_Design();
         $Employee=$design->getCMBUnitEmployees();
+        $message=$design->getTxtAssignMessage();
         $servicerequestController=new servicerequestController();
         try{
-            $Result=$servicerequestController->Assign($this->getID(),$Employee->getSelectedID(),"Not Implemented Yet!");
+            $Result=$servicerequestController->Assign($this->getID(),$Employee->getSelectedID(),$message->getValue());
             $design->setData($Result);
             $design->setMessage("درخواست مورد نظر با موفقیت تخصیص داده شد.");
         }

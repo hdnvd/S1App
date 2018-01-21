@@ -52,7 +52,7 @@ class doctorlist_Code extends FormCode {
 			}
 			else
 			{
-				$Result=$doctorlistController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$doctorlistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('specialityid',-1),$this->getHttpGETparameter('presencetypeid',-1));
 			if(isset($_GET['search']))
 					$design=new doctorlistsearch_Design();
 				$design->setData($Result);

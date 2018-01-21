@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-07 - 2017-11-28 18:02
-*@lastUpdate 1396-09-07 - 2017-11-28 18:02
+*@creationDate 1396-10-29 - 2018-01-19 13:06
+*@lastUpdate 1396-10-29 - 2018-01-19 13:06
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -26,11 +26,11 @@ class fileshop_filetransactionEntity extends EntityClass {
 		$this->setFieldInfo(fileshop_filetransactionEntity::$FILE_FID,$File_fidInfo);
 		$this->addTableField('1',fileshop_filetransactionEntity::$FILE_FID);
 
-		/******** finance_bankpaymentinfo_fid ********/
-		$Finance_bankpaymentinfo_fidInfo=new FieldInfo();
-		$Finance_bankpaymentinfo_fidInfo->setTitle("finance_bankpaymentinfo_fid");
-		$this->setFieldInfo(fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID,$Finance_bankpaymentinfo_fidInfo);
-		$this->addTableField('2',fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID);
+		/******** finance_transaction_fid ********/
+		$Finance_transaction_fidInfo=new FieldInfo();
+		$Finance_transaction_fidInfo->setTitle("finance_transaction_fid");
+		$this->setFieldInfo(fileshop_filetransactionEntity::$FINANCE_TRANSACTION_FID,$Finance_transaction_fidInfo);
+		$this->addTableField('2',fileshop_filetransactionEntity::$FINANCE_TRANSACTION_FID);
 	}
 	public static $FILE_FID="file_fid";
 	/**
@@ -45,18 +45,18 @@ class fileshop_filetransactionEntity extends EntityClass {
 	public function setFile_fid($File_fid){
 		$this->setField(fileshop_filetransactionEntity::$FILE_FID,$File_fid);
 	}
-	public static $FINANCE_BANKPAYMENTINFO_FID="finance_bankpaymentinfo_fid";
+	public static $FINANCE_TRANSACTION_FID="finance_transaction_fid";
 	/**
 	 * @return mixed
 	 */
-	public function getFinance_bankpaymentinfo_fid(){
-		return $this->getField(fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID);
+	public function getFinance_transaction_fid(){
+		return $this->getField(fileshop_filetransactionEntity::$FINANCE_TRANSACTION_FID);
 	}
 	/**
-	 * @param mixed $Finance_bankpaymentinfo_fid
+	 * @param mixed $Finance_transaction_fid
 	 */
-	public function setFinance_bankpaymentinfo_fid($Finance_bankpaymentinfo_fid){
-		$this->setField(fileshop_filetransactionEntity::$FINANCE_BANKPAYMENTINFO_FID,$Finance_bankpaymentinfo_fid);
+	public function setFinance_transaction_fid($Finance_transaction_fid){
+		$this->setField(fileshop_filetransactionEntity::$FINANCE_TRANSACTION_FID,$Finance_transaction_fid);
 	}
 }
 ?>

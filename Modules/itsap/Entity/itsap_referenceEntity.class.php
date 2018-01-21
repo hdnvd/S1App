@@ -17,7 +17,7 @@ class itsap_referenceEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_reference");
-		$this->setTableTitle("itsap_reference");
+		$this->setTableTitle("ارجاع");
 		$this->setTitleFieldName("id");
 
 		/******** servicerequest_fid ********/

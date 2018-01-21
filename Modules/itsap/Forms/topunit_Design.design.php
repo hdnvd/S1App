@@ -62,7 +62,10 @@ class topunit_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		if (key_exists("topunit", $this->Data)){
 			$this->setFieldCaption('topunit_fid',$this->Data['topunit']->getFieldInfo('topunit_fid')->getTitle());
-			$this->topunit_fid->setText($this->Data['topunit_fid']->getID());
+			if($this->Data['topunit_fid']->getId()>0)
+			    $this->topunit_fid->setText($this->Data['topunit_fid']->getTitle());
+			else
+                $this->topunit_fid->setText("ندارد");
 			$this->setFieldCaption('title',$this->Data['topunit']->getFieldInfo('title')->getTitle());
 			$this->title->setText($this->Data['topunit']->getTitle());
 		}

@@ -55,12 +55,14 @@ class specialitylistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum)
+	public function load($PageNum,$MotherSpecialityID=-1)
 	{
 		$DBAccessor=new dbaccess();
 		$specialityEnt=new ocms_specialityEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
+		if($MotherSpecialityID>0)
+		    $q->addCondition(new FieldCondition(ocms_specialityEntity::$SPECIALITY_FID,$MotherSpecialityID));
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}

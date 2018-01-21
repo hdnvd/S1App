@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 01:17
-*@lastUpdate 1396-09-23 - 2017-12-14 01:17
+*@creationDate 1396-10-24 - 2018-01-14 18:41
+*@lastUpdate 1396-10-24 - 2018-01-14 18:41
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -17,7 +17,7 @@ class ocms_doctorEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("ocms_doctor");
-		$this->setTableTitle("پزشک");
+		$this->setTableTitle("ocms_doctor");
 		$this->setTitleFieldName("family");
 
 		/******** name ********/
@@ -134,11 +134,17 @@ class ocms_doctorEntity extends EntityClass {
 		$this->setFieldInfo(ocms_doctorEntity::$PHOTO_FLU,$Photo_fluInfo);
 		$this->addTableField('19',ocms_doctorEntity::$PHOTO_FLU);
 
+		/******** price ********/
+		$PriceInfo=new FieldInfo();
+		$PriceInfo->setTitle("price");
+		$this->setFieldInfo(ocms_doctorEntity::$PRICE,$PriceInfo);
+		$this->addTableField('20',ocms_doctorEntity::$PRICE);
+
 		/******** role_systemuser_fid ********/
 		$Role_systemuser_fidInfo=new FieldInfo();
 		$Role_systemuser_fidInfo->setTitle("role_systemuser_fid");
 		$this->setFieldInfo(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
-		$this->addTableField('20',ocms_doctorEntity::$ROLE_SYSTEMUSER_FID);
+		$this->addTableField('21',ocms_doctorEntity::$ROLE_SYSTEMUSER_FID);
 	}
 	public static $NAME="name";
 	/**
@@ -386,6 +392,19 @@ class ocms_doctorEntity extends EntityClass {
 	 */
 	public function setPhoto_flu($Photo_flu){
 		$this->setField(ocms_doctorEntity::$PHOTO_FLU,$Photo_flu);
+	}
+	public static $PRICE="price";
+	/**
+	 * @return mixed
+	 */
+	public function getPrice(){
+		return $this->getField(ocms_doctorEntity::$PRICE);
+	}
+	/**
+	 * @param mixed $Price
+	 */
+	public function setPrice($Price){
+		$this->setField(ocms_doctorEntity::$PRICE,$Price);
 	}
 	public static $ROLE_SYSTEMUSER_FID="role_systemuser_fid";
 	/**

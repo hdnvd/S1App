@@ -17,18 +17,18 @@ class itsap_topunitEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_topunit");
-		$this->setTableTitle("itsap_topunit");
+		$this->setTableTitle("یگان");
 		$this->setTitleFieldName("title");
 
 		/******** topunit_fid ********/
 		$Topunit_fidInfo=new FieldInfo();
-		$Topunit_fidInfo->setTitle("topunit_fid");
+		$Topunit_fidInfo->setTitle("یگان مادر");
 		$this->setFieldInfo(itsap_topunitEntity::$TOPUNIT_FID,$Topunit_fidInfo);
 		$this->addTableField('1',itsap_topunitEntity::$TOPUNIT_FID);
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(itsap_topunitEntity::$TITLE,$TitleInfo);
 		$this->addTableField('2',itsap_topunitEntity::$TITLE);
 	}

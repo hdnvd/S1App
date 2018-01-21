@@ -52,7 +52,7 @@ class specialitylist_Code extends FormCode {
 			}
 			else
 			{
-				$Result=$specialitylistController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$specialitylistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('motherspecialityid',-1));
 			if(isset($_GET['search']))
 					$design=new specialitylistsearch_Design();
 				$design->setData($Result);

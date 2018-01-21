@@ -32,12 +32,12 @@ class manageunits_Code extends unitlist_Code {
 			$design=new manageunits_Design();
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
-				$Result=$manageunitsController->DeleteItem($this->getID());
+				$Result=$manageunitsController->DeleteItem($this->getID(),$this->getHttpGETparameter('tuid',-1));
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
 			}else{
-				$Result=$manageunitsController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$manageunitsController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('tuid',-1));
 				if(isset($_GET['search']))
 					$design=new unitlistsearch_Design();
 			}

@@ -7,17 +7,17 @@ use Modules\common\PublicClasses\AppRooter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
-use Modules\itsap\Controllers\manageemployeesController;
+use Modules\itsap\Controllers\manageservicerequestsController;
 use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-17 - 2017-12-08 11:51
-*@lastUpdate 1396-09-17 - 2017-12-08 11:51
+*@creationDate 1396-09-29 - 2017-12-20 15:49
+*@lastUpdate 1396-09-29 - 2017-12-20 15:49
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
-class manageemployees_Code extends employeelist_Code {
+class managereferedservicerequests_Code extends servicerequestlist_Code {
 	public function load()
 	{
 		return $this->getLoadDesign()->getResponse();
@@ -25,23 +25,21 @@ class manageemployees_Code extends employeelist_Code {
 	public function getLoadDesign()
 	{
 		try{
-		$manageemployeesController=new manageemployeesController();
-		$manageemployeesController->setAdminMode($this->getAdminMode());
+		$manageservicerequestsController=new manageservicerequestsController();
+		$manageservicerequestsController->setAdminMode($this->getAdminMode());
 		$translator=new ModuleTranslator("itsap");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-			$design=new manageemployees_Design();
+			$design=new manageservicerequests_Design();
 			$design->setAdminMode($this->getAdminMode());
-			if(isset($_GET['delete'])) {
-                $Result = $manageemployeesController->DeleteItem($this->getID(), $this->getHttpGETparameter('uid', -1));
-            }elseif(isset($_GET['setasadmin'])){
-                    $Result=$manageemployeesController->SetAsAdmin($this->getID(),$this->getHttpGETparameter('uid',-1));
+			if(isset($_GET['delete'])){
+				$Result=$manageservicerequestsController->DeleteItem($this->getID());
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
 			}else{
-				$Result=$manageemployeesController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('uid',-1));
+				$Result=$manageservicerequestsController->load($this->getHttpGETparameter('pn',-1));
 				if(isset($_GET['search']))
-					$design=new employeelistsearch_Design();
+					$design=new servicerequestlistsearch_Design();
 			}
 			$design->setData($Result);
 			$design->setMessage("");
@@ -61,7 +59,7 @@ class manageemployees_Code extends employeelist_Code {
 	public function __construct($namespace)
 	{
 		parent::__construct($namespace);
-		$this->setTitle("Manage Employees");
+		$this->setTitle("Manage Servicerequests");
 	}
 	public function getID()
 	{

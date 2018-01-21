@@ -27,22 +27,22 @@ class topunit_Code extends FormCode {
 		$topunitController=new topunitController();
 		$translator=new ModuleTranslator("itsap");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-		try{
+//		try{
 			$Result=$topunitController->load($this->getID());
 			$design=new topunit_Design();
 			$design->setData($Result);
 			$design->setMessage("");
-		}
-		catch(DataNotFoundException $dnfex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("آیتم مورد نظر پیدا نشد");
-		}
-		catch(\Exception $uex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-		}
+//		}
+//		catch(DataNotFoundException $dnfex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("آیتم مورد نظر پیدا نشد");
+//		}
+//		catch(\Exception $uex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//		}
 		return $design;
 	}
 	public function __construct($namespace)

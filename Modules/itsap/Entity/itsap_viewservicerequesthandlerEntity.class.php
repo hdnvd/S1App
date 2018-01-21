@@ -17,7 +17,7 @@ class itsap_viewservicerequesthandlerEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_viewservicerequesthandler");
-		$this->setTableTitle("itsap_viewservicerequesthandler");
+		$this->setTableTitle("درخواست خدمت");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/

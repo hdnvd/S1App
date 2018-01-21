@@ -75,7 +75,7 @@ class manageservicerequests_Design extends FormDesign {
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageservicerequests");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['servicerequest']->getTableTitle() . " ها"));
-		$addUrl=new AppRooter('itsap',$this->itemPage);
+		$addUrl=new AppRooter('itsap','manageservicerequest');
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');

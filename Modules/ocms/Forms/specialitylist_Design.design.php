@@ -96,23 +96,18 @@ class specialitylist_Design extends FormDesign {
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("ocms_specialitylist");
 		$Page->addElement($this->getPageTitlePart("فهرست " . $this->Data['speciality']->getTableTitle() . " ها"));
-		$LTable1=new Div();
-		$LTable1->setClass("searchtable");
-		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->speciality_fid,$this->getFieldCaption('speciality_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
-		$Page->addElement($LTable1);
+
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$Div1=new Div();
 		$Div1->setClass("list");
 		for($i=0;$i<count($this->Data['data']);$i++){
 		$innerDiv[$i]=new Div();
-		$innerDiv[$i]->setClass("listitem");
-			$url=new AppRooter('ocms','speciality');
-			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+            $innerDiv[$i]->setClass("doctorlist_listitem");
+			$url=new AppRooter('ocms','doctorlist');
+            $url->addParameter(new UrlParameter('presencetypeid',$_GET['presencetypeid']));
+
+            $url->addParameter(new UrlParameter('specialityid',$this->Data['data'][$i]->getID()));
 			$Title=$this->Data['data'][$i]->getTitleField();
 			if($this->Data['data'][$i]->getTitleField()=="")
 				$Title='-- بدون عنوان --';
@@ -122,7 +117,7 @@ class specialitylist_Design extends FormDesign {
 			$Div1->addElement($innerDiv[$i]);
 		}
 		$Page->addElement($Div1);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"ocms","specialitylist"));
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"ocms","specialitylist",[new UrlParameter('presencetypeid',$_GET['presencetypeid']),new UrlParameter('motherspecialityid',$_GET['motherspecialityid'])]));
 		$PageLink=new AppRooter('ocms','specialitylist');
 		$form=new SweetFrom($PageLink->getAbsoluteURL(), "GET", $Page);
 		$form->setClass('form-horizontal');

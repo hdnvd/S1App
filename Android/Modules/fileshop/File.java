@@ -24,6 +24,7 @@ public class File extends RemoteClass{
 	private String description;
 	private String price;
 	private String filecount;
+	private String filetype_fid;
 	private String role_systemuser_fid;
 	public void getAll(List<File> Files){
 		try {
@@ -69,6 +70,7 @@ public class File extends RemoteClass{
 					else if (key.equals("description")) {theFile.setDescription(reader.nextString());}
 					else if (key.equals("price")) {theFile.setPrice(reader.nextString());}
 					else if (key.equals("filecount")) {theFile.setFilecount(reader.nextString());}
+					else if (key.equals("filetype_fid")) {theFile.setFiletype_fid(reader.nextString());}
 					else if (key.equals("role_systemuser_fid")) {theFile.setRole_systemuser_fid(reader.nextString());}
 				}
 			reader.endObject();
@@ -87,6 +89,7 @@ public class File extends RemoteClass{
 					Data+="&description=" + String.valueOf(description);
 					Data+="&price=" + String.valueOf(price);
 					Data+="&filecount=" + String.valueOf(filecount);
+					Data+="&filetype_fid=" + String.valueOf(filetype_fid);
 					Data+="&role_systemuser_fid=" + String.valueOf(role_systemuser_fid);
 			JsonReader reader=getReader(PageURL,true,Data);        
        reader.beginObject();

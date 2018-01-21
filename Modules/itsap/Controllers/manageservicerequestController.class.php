@@ -6,6 +6,7 @@ use core\CoreClasses\db\dbaccess;
 use Modules\itsap\Entity\itsap_employeeEntity;
 use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
+use Modules\itsap\Entity\itsap_topunitEntity;
 use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
@@ -49,6 +50,41 @@ class manageservicerequestController extends Controller {
 		$RelationLogic=new QueryLogic();
 		$RelationLogic->addCondition(new FieldCondition('servicerequest_fid',$ID));
 		$result['servicerequest']=$servicerequestEntityObject;
+
+
+
+        //Get Requester Employee Unit
+        $emp=new itsap_employeeEntity($DBAccessor);
+        $q1=new QueryLogic();
+        $q1->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
+        $emp=$emp->FindOne($q1);
+        if($emp==null || $emp->getId()<0) throw new DataNotFoundException();
+        $result['employee']=$emp;
+        $unit=new itsap_unitEntity($DBAccessor);
+        $unit->setId($emp->getUnit_fid());
+        if($unit==null || $unit->getId()<0) throw new DataNotFoundException();
+        $result['unit']=$unit;
+
+        $topunit=new itsap_topunitEntity($DBAccessor);
+        $topunit->setId($unit->getTopunit_fid());
+        if($topunit==null || $topunit->getId()<0) throw new DataNotFoundException();
+        $result['topunit']=$topunit;
+
+        $itunit=new itsap_unitEntity($DBAccessor);
+        $qq=new QueryLogic();
+        $qq->addCondition(new FieldCondition(itsap_unitEntity::$ISFAVA,"1"));
+        $qq->addCondition(new FieldCondition(itsap_unitEntity::$TOPUNIT_FID,$topunit->getId()));
+        $itunit=$itunit->FindOne($qq);
+        if($itunit==null || $itunit->getId()<0) throw new DataNotFoundException();
+        $result['itunit']=$itunit;
+
+        $itunitAdmin=new itsap_employeeEntity($DBAccessor);
+        $itunitAdmin->setId($itunit->getAdmin_employee_fid());
+        if($itunitAdmin==null || $itunitAdmin->getId()<0) throw new DataNotFoundException();
+        $result['itunitadmin']=$itunitAdmin;
+
+        //EOF Get Requester Employee Unit
+
 		if($ID!=-1){
 			$servicerequestEntityObject->setId($ID);
 			if($servicerequestEntityObject->getId()==-1)

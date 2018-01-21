@@ -90,12 +90,26 @@ class manualpayment_Code extends FormCode {
 		if($this->Description!=null)
 		    $txtDescription=$this->Description;
 		$txtAmount=$design->getTxtAmount()->getValue();
-		$Result=$manualpaymentController->TxtPay($this->getID(),$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount);
-		if($Result['payinfo']['transaction']['id']>0)
+		$user=null;
+        $pass=null;
+		if(isset($_GET['username']))
         {
+
+            $user=$_GET['username'];
+            $pass=$_GET['password'];
+            $Result=$manualpaymentController->TxtPay($this->getID(),$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount,$user,$pass);
+
+        }
+		else
+            $Result=$manualpaymentController->TxtPay($this->getID(),$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount);
+
+        if($Result['payinfo']['transaction']['id']>0)
+        {
+//            echo "Hi";
             $url=new AppRooter("finance","epayment");
             $url->addParameter(new UrlParameter("id",$Result['payinfo']['transaction']['id']));
             AppRooter::redirect($url->getAbsoluteURL());
+//            AppRooter::redirect("http://asriran.com");
         }
 		$design->setData($Result);
 		$design->setMessage("در حال انتقال به صفحه پرداخت");

@@ -121,6 +121,7 @@ class file_Design extends FormDesign {
 		parent::getJSON();
 		if (key_exists("file", $this->Data)){
 			$Result=$this->Data['file']->GetArray();
+			$Result['ispurchased']=$this->Data['ispurchased'];
 			return json_encode($Result);
 		}
 		return json_encode(array());

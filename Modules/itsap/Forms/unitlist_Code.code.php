@@ -52,7 +52,7 @@ class unitlist_Code extends FormCode {
 			}
 			else
 			{
-				$Result=$unitlistController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$unitlistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('tuid',-1));
 			if(isset($_GET['search']))
 					$design=new unitlistsearch_Design();
 				$design->setData($Result);

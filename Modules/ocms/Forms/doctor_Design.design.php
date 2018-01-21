@@ -1,5 +1,6 @@
 <?php
 namespace Modules\ocms\Forms;
+use core\CoreClasses\html\Image;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -142,85 +143,53 @@ class doctor_Design extends FormDesign {
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("ocms_doctor");
-		$Page->addElement($this->getPageTitlePart("اطلاعات " . $this->Data['doctor']->getTableTitle() . ""));
+//		$Page->addElement($this->getPageTitlePart("اطلاعات " . $this->Data['doctor']->getTableTitle() . ""));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
-		if (key_exists("doctor", $this->Data)){
-			$this->setFieldCaption('name',$this->Data['doctor']->getFieldInfo('name')->getTitle());
-			$this->name->setText($this->Data['doctor']->getName());
-			$this->setFieldCaption('family',$this->Data['doctor']->getFieldInfo('family')->getTitle());
-			$this->family->setText($this->Data['doctor']->getFamily());
-			$this->setFieldCaption('nezam_code',$this->Data['doctor']->getFieldInfo('nezam_code')->getTitle());
-			$this->nezam_code->setText($this->Data['doctor']->getNezam_code());
-			$this->setFieldCaption('mellicode',$this->Data['doctor']->getFieldInfo('mellicode')->getTitle());
-			$this->mellicode->setText($this->Data['doctor']->getMellicode());
-			$this->setFieldCaption('mobile',$this->Data['doctor']->getFieldInfo('mobile')->getTitle());
-			$this->mobile->setText($this->Data['doctor']->getMobile());
-			$this->setFieldCaption('email',$this->Data['doctor']->getFieldInfo('email')->getTitle());
-			$this->email->setText($this->Data['doctor']->getEmail());
-			$this->setFieldCaption('tel',$this->Data['doctor']->getFieldInfo('tel')->getTitle());
-			$this->tel->setText($this->Data['doctor']->getTel());
-			$this->setFieldCaption('ismale',$this->Data['doctor']->getFieldInfo('ismale')->getTitle());
-			$ismaleTitle='No';
-			if($this->Data['doctor']->getIsmale()==1)
-				$ismaleTitle='Yes';
-			$this->ismale->setText($ismaleTitle);
-			$this->setFieldCaption('speciality_fid',$this->Data['doctor']->getFieldInfo('speciality_fid')->getTitle());
-			$this->speciality_fid->setText($this->Data['speciality_fid']->getID());
-			$this->setFieldCaption('education',$this->Data['doctor']->getFieldInfo('education')->getTitle());
-			$this->education->setText($this->Data['doctor']->getEducation());
-			$this->setFieldCaption('matabtel',$this->Data['doctor']->getFieldInfo('matabtel')->getTitle());
-			$this->matabtel->setText($this->Data['doctor']->getMatabtel());
-			$this->setFieldCaption('matabaddress',$this->Data['doctor']->getFieldInfo('matabaddress')->getTitle());
-			$this->matabaddress->setText($this->Data['doctor']->getMatabaddress());
-			$this->setFieldCaption('longitude',$this->Data['doctor']->getFieldInfo('longitude')->getTitle());
-			$this->longitude->setText($this->Data['doctor']->getLongitude());
-			$this->setFieldCaption('latitude',$this->Data['doctor']->getFieldInfo('latitude')->getTitle());
-			$this->latitude->setText($this->Data['doctor']->getLatitude());
-			$this->setFieldCaption('common_city_fid',$this->Data['doctor']->getFieldInfo('common_city_fid')->getTitle());
-			$this->common_city_fid->setText($this->Data['common_city_fid']->getID());
-			$this->setFieldCaption('isactiveonphone',$this->Data['doctor']->getFieldInfo('isactiveonphone')->getTitle());
-			$isactiveonphoneTitle='No';
-			if($this->Data['doctor']->getIsactiveonphone()==1)
-				$isactiveonphoneTitle='Yes';
-			$this->isactiveonphone->setText($isactiveonphoneTitle);
-			$this->setFieldCaption('isactiveonplace',$this->Data['doctor']->getFieldInfo('isactiveonplace')->getTitle());
-			$isactiveonplaceTitle='No';
-			if($this->Data['doctor']->getIsactiveonplace()==1)
-				$isactiveonplaceTitle='Yes';
-			$this->isactiveonplace->setText($isactiveonplaceTitle);
-			$this->setFieldCaption('isactiveonhome',$this->Data['doctor']->getFieldInfo('isactiveonhome')->getTitle());
-			$isactiveonhomeTitle='No';
-			if($this->Data['doctor']->getIsactiveonhome()==1)
-				$isactiveonhomeTitle='Yes';
-			$this->isactiveonhome->setText($isactiveonhomeTitle);
-			$this->setFieldCaption('photo_flu',$this->Data['doctor']->getFieldInfo('photo_flu')->getTitle());
-			$this->photo_flu->setText($this->Data['doctor']->getPhoto_flu());
-		}
+
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getInfoRowCode($this->name,$this->getFieldCaption('name')));
-		$LTable1->addElement($this->getInfoRowCode($this->family,$this->getFieldCaption('family')));
-		$LTable1->addElement($this->getInfoRowCode($this->nezam_code,$this->getFieldCaption('nezam_code')));
-		$LTable1->addElement($this->getInfoRowCode($this->mellicode,$this->getFieldCaption('mellicode')));
-		$LTable1->addElement($this->getInfoRowCode($this->mobile,$this->getFieldCaption('mobile')));
-		$LTable1->addElement($this->getInfoRowCode($this->email,$this->getFieldCaption('email')));
-		$LTable1->addElement($this->getInfoRowCode($this->tel,$this->getFieldCaption('tel')));
-		$LTable1->addElement($this->getInfoRowCode($this->ismale,$this->getFieldCaption('ismale')));
-		$LTable1->addElement($this->getInfoRowCode($this->speciality_fid,$this->getFieldCaption('speciality_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->education,$this->getFieldCaption('education')));
-		$LTable1->addElement($this->getInfoRowCode($this->matabtel,$this->getFieldCaption('matabtel')));
-		$LTable1->addElement($this->getInfoRowCode($this->matabaddress,$this->getFieldCaption('matabaddress')));
-		$LTable1->addElement($this->getInfoRowCode($this->longitude,$this->getFieldCaption('longitude')));
-		$LTable1->addElement($this->getInfoRowCode($this->latitude,$this->getFieldCaption('latitude')));
-		$LTable1->addElement($this->getInfoRowCode($this->common_city_fid,$this->getFieldCaption('common_city_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->isactiveonphone,$this->getFieldCaption('isactiveonphone')));
-		$LTable1->addElement($this->getInfoRowCode($this->isactiveonplace,$this->getFieldCaption('isactiveonplace')));
-		$LTable1->addElement($this->getInfoRowCode($this->isactiveonhome,$this->getFieldCaption('isactiveonhome')));
-		$LTable1->addElement($this->getInfoRowCode($this->photo_flu,$this->getFieldCaption('photo_flu')));
-		$Page->addElement($LTable1);
-		$form=new SweetFrom("", "POST", $Page);
-		return $form->getHTML();
+		$img=new Image(DEFAULT_PUBLICURL . $this->Data['doctor']->getPhoto_flu());
+        $name= new Lable($this->Data['doctor']->getName() . " " . $this->Data['doctor']->getFamily());
+        $Speciality= new Lable("تخصص : " . $this->Data['speciality_fid']->getTitle());
+        $MatabAddress= new Lable("آدرس : " . $this->Data['doctor']->getMatabAddress());
+        $MatabTel= new Lable("تلفن : " . $this->Data['doctor']->getMatabTel());
+
+        $LTable1->addElement($img);
+        $LTable1->addElement($name);
+        $LTable1->addElement($Speciality);
+        $LTable1->addElement($MatabAddress);
+        $LTable1->addElement($MatabTel);
+        $Page->addElement($LTable1);
+
+        $freeplans=$this->Data['freeplans'];
+        $AllCount1 = count($freeplans);
+        $LTable2=new Div();
+        $LTable2->setClass("doctor_planlist");
+        $TitleDiv=new Div();
+        $TitleDiv->setClass("doctor_planlisttitle");
+        $TitleDiv->addElement(new Lable('وقت های رزرو نشده'));
+        $LTable2->addElement($TitleDiv);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $item=new Div();
+            $item->setClass("doctor_planlistitem");
+            $time=$freeplans[$i]->getStart_time();
+            date_default_timezone_set("UTC");
+            $date = new SweetDate(true, true, 'Asia/Tehran');
+            $time= $date->date("Y-m-d H:i",$time);
+            $title=new Lable($time);
+            $hidId=new TextBox('txtplanid',$freeplans[$i]->getId(),false);
+            $btnReserve=new SweetButton(true,'رزرو');
+            $btnReserve->setAction('btnReserve');
+            $item->addElement($hidId);
+            $item->addElement($title);
+            $item->addElement($btnReserve);
+            $itemForm=new SweetFrom("", "POST", $item);
+            $LTable2->addElement($itemForm);
+        }
+        $Page->addElement($LTable2);
+//		$form=new SweetFrom("", "POST", $Page);
+		return $Page->getHTML();
 	}
 	public function getJSON()
 	{

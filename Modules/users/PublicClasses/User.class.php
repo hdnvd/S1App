@@ -35,6 +35,11 @@ class User {
 		$this->userID=User::FindUserIDsFromSystemUser($SystemUserID);
 		$this->userID=$this->userID[0];
 	}
+	public function getSystemUserIDFromUserPass($UserName,$Password)
+    {
+        $this->systemuserEntity=new roleSystemUserEntity();
+        return $this->systemuserEntity->getUserIdFromUserPass($UserName,$Password);
+    }
 	public function getUserInfo($info)
 	{
 		return $this->userEntity->getUserInfo($this->userID, $info);

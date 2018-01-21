@@ -28,6 +28,8 @@ public class FileItemFragment extends Fragment {
 	private TextView lbl_PriceCaption;
 	private TextView lbl_FilecountContent;
 	private TextView lbl_FilecountCaption;
+	private TextView lbl_Filetype_fidContent;
+	private TextView lbl_Filetype_fidCaption;
 	private TextView lbl_Role_systemuser_fidContent;
 	private TextView lbl_Role_systemuser_fidCaption;
 	public FileItemFragment() {
@@ -50,6 +52,8 @@ public class FileItemFragment extends Fragment {
 	lbl_PriceCaption=(TextView)getActivity().findViewById(R.id.lbl_price_caption);
 	lbl_FilecountContent=(TextView)getActivity().findViewById(R.id.lbl_filecount_content);
 	lbl_FilecountCaption=(TextView)getActivity().findViewById(R.id.lbl_filecount_caption);
+	lbl_Filetype_fidContent=(TextView)getActivity().findViewById(R.id.lbl_filetype_fid_content);
+	lbl_Filetype_fidCaption=(TextView)getActivity().findViewById(R.id.lbl_filetype_fid_caption);
 	lbl_Role_systemuser_fidContent=(TextView)getActivity().findViewById(R.id.lbl_role_systemuser_fid_content);
 	lbl_Role_systemuser_fidCaption=(TextView)getActivity().findViewById(R.id.lbl_role_systemuser_fid_caption);
 	lbl_File_fluContent.setTypeface(face);
@@ -66,6 +70,8 @@ public class FileItemFragment extends Fragment {
 	lbl_PriceCaption.setTypeface(face);
 	lbl_FilecountContent.setTypeface(face);
 	lbl_FilecountCaption.setTypeface(face);
+	lbl_Filetype_fidContent.setTypeface(face);
+	lbl_Filetype_fidCaption.setTypeface(face);
 	lbl_Role_systemuser_fidContent.setTypeface(face);
 	lbl_Role_systemuser_fidCaption.setTypeface(face);
 	}
@@ -78,6 +84,7 @@ public class FileItemFragment extends Fragment {
 	lbl_DescriptionContent.setText(theFile.getDescription());
 	lbl_PriceContent.setText(theFile.getPrice());
 	lbl_FilecountContent.setText(theFile.getFilecount());
+	lbl_Filetype_fidContent.setText(theFile.getFiletype_fid());
 	lbl_Role_systemuser_fidContent.setText(theFile.getRole_systemuser_fid());
 	}        
     @Override

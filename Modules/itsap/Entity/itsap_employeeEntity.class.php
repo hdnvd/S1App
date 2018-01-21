@@ -17,48 +17,48 @@ class itsap_employeeEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_employee");
-		$this->setTableTitle("itsap_employee");
+		$this->setTableTitle("کارکنان");
 		$this->setTitleFieldName("family");
 
 		/******** unit_fid ********/
 		$Unit_fidInfo=new FieldInfo();
-		$Unit_fidInfo->setTitle("unit_fid");
+		$Unit_fidInfo->setTitle("بخش");
 		$this->setFieldInfo(itsap_employeeEntity::$UNIT_FID,$Unit_fidInfo);
 		$this->addTableField('1',itsap_employeeEntity::$UNIT_FID);
 
 		/******** emp_code ********/
 		$Emp_codeInfo=new FieldInfo();
-		$Emp_codeInfo->setTitle("emp_code");
+		$Emp_codeInfo->setTitle("کد استخدام");
 		$this->setFieldInfo(itsap_employeeEntity::$EMP_CODE,$Emp_codeInfo);
 		$this->addTableField('2',itsap_employeeEntity::$EMP_CODE);
 
 		/******** mellicode ********/
 		$MellicodeInfo=new FieldInfo();
-		$MellicodeInfo->setTitle("mellicode");
+		$MellicodeInfo->setTitle("کد ملی");
 		$this->setFieldInfo(itsap_employeeEntity::$MELLICODE,$MellicodeInfo);
 		$this->addTableField('3',itsap_employeeEntity::$MELLICODE);
 
 		/******** name ********/
 		$NameInfo=new FieldInfo();
-		$NameInfo->setTitle("name");
+		$NameInfo->setTitle("نام");
 		$this->setFieldInfo(itsap_employeeEntity::$NAME,$NameInfo);
 		$this->addTableField('4',itsap_employeeEntity::$NAME);
 
 		/******** family ********/
 		$FamilyInfo=new FieldInfo();
-		$FamilyInfo->setTitle("family");
+		$FamilyInfo->setTitle("نام خانوادگی");
 		$this->setFieldInfo(itsap_employeeEntity::$FAMILY,$FamilyInfo);
 		$this->addTableField('5',itsap_employeeEntity::$FAMILY);
 
 		/******** mobile ********/
 		$MobileInfo=new FieldInfo();
-		$MobileInfo->setTitle("mobile");
+		$MobileInfo->setTitle("تلفن همراه");
 		$this->setFieldInfo(itsap_employeeEntity::$MOBILE,$MobileInfo);
 		$this->addTableField('6',itsap_employeeEntity::$MOBILE);
 
 		/******** degree_fid ********/
 		$Degree_fidInfo=new FieldInfo();
-		$Degree_fidInfo->setTitle("degree_fid");
+		$Degree_fidInfo->setTitle("درجه");
 		$this->setFieldInfo(itsap_employeeEntity::$DEGREE_FID,$Degree_fidInfo);
 		$this->addTableField('7',itsap_employeeEntity::$DEGREE_FID);
 

@@ -53,7 +53,7 @@ class manageunits_Design extends FormDesign {
     public function setAdminMode($adminMode)
     {
         $this->adminMode = $adminMode;
-        $this->itemViewPage = 'unit';
+        $this->itemViewPage = 'manageemployees';
         if($adminMode==true)
         {
             $this->itemPage = 'manageunit';
@@ -65,16 +65,45 @@ class manageunits_Design extends FormDesign {
             $this->listPage = 'manageuserunits';
         }
     }
+
+    /** @var lable */
+    private $topunit_fid;
+    /** @var lable */
+    private $title;
 	public function __construct()
 	{
 		parent::__construct();
+
+        /******* topunit_fid *******/
+        $this->topunit_fid= new lable("topunit_fid");
+
+        /******* title *******/
+        $this->title= new lable("title");
 	}
 	public function getBodyHTML($command=null)
 	{
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageunits");
+
+
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['unit']->getTableTitle() . " ها"));
+
+		if (key_exists("topunit", $this->Data)){
+            $this->setFieldCaption('topunit_fid',$this->Data['topunit']->getFieldInfo('topunit_fid')->getTitle());
+            if($this->Data['topunit_fid']->getId()>0)
+                $this->topunit_fid->setText($this->Data['topunit_fid']->getTitle());
+            else
+                $this->topunit_fid->setText("ندارد");
+            $this->setFieldCaption('title',$this->Data['topunit']->getFieldInfo('title')->getTitle());
+            $this->title->setText($this->Data['topunit']->getTitle());
+        }
+        $LTable2=new Div();
+        $LTable2->setClass("formtable");
+        $LTable2->addElement($this->getInfoRowCode($this->topunit_fid,$this->getFieldCaption('topunit_fid')));
+        $LTable2->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('title')));
+        $Page->addElement($LTable2);
+
 		$addUrl=new AppRooter('itsap',$this->itemPage);
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
@@ -112,7 +141,7 @@ class manageunits_Design extends FormDesign {
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('itsap',$this->itemViewPage);
-			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+			$ViewURL->addParameter(new UrlParameter('uid',$this->Data['data'][$i]->getID()));
 			$lbView[$i]=new Lable('مشاهده');
 			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
 			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');

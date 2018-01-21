@@ -4,12 +4,17 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\fileshop\Entity\fileshop_filecategoryEntity;
+use Modules\fileshop\Entity\fileshop_filetransactionEntity;
+use Modules\finance\Exceptions\LowBalanceException;
+use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\fileshop\Entity\fileshop_fileEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-09-09 - 2017-11-30 16:33
@@ -82,9 +87,6 @@ class filelistController extends Controller {
         $DBAccessor->close_connection();
         $fileEnt=new fileshop_fileEntity($DBAccessor);
         $result['file']=$fileEnt;
-//        $allcount=$fileEnt->FindAllCount($QueryLogic);
-//        $result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-//        $QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
         $result['data']=$files;
         return $result;
     }
@@ -106,5 +108,30 @@ class filelistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
+
+    public function buy($FileID,$UserName,$Password)
+    {
+        $DBAccessor=new dbaccess();
+        $ent=new fileshop_fileEntity($DBAccessor);
+        $ent->setId($FileID);
+        if($ent->getId()<=0)
+            throw new DataNotFoundException();
+
+        $user=new User(-1);
+        $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
+        $Payment=new Payment();
+        $UserBalance=$Payment->getBalance(1,$SystemUserID);
+//        echo $UserBalance;
+        if($UserBalance<$ent->getPrice())
+            throw new LowBalanceException();
+        $result=$Payment->startTransaction(-1*$ent->getPrice(),$SystemUserID,'','','','خرید فایل',1,false,'',$SystemUserID);
+        $resEnt=new fileshop_filetransactionEntity($DBAccessor);
+        $resEnt->setFinance_transaction_fid($result['transaction']['id']);
+        $resEnt->setFile_fid($ent->getId());
+        $resEnt->Save();
+        return [];
+
+
+    }
 }
 ?>

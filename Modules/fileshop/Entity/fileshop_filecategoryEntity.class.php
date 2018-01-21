@@ -58,5 +58,6 @@ class fileshop_filecategoryEntity extends EntityClass {
 	public function setCommon_category_fid($Common_category_fid){
 		$this->setField(fileshop_filecategoryEntity::$COMMON_CATEGORY_FID,$Common_category_fid);
 	}
+
 }
 ?>

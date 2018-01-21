@@ -10,6 +10,8 @@ use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\fileshop\Entity\fileshop_fileEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-09-15 - 2017-12-06 00:34
@@ -18,7 +20,7 @@ use Modules\fileshop\Entity\fileshop_fileEntity;
 *@SweetFrameworkVersion 2.004
 */
 class fileController extends Controller {
-	public function load($ID)
+	public function load($ID,$UserName=null,$Password=null)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -36,7 +38,12 @@ class fileController extends Controller {
 		$RelationLogic->addCondition(new FieldCondition('file_fid',$ID));
 			$result['filecategorys']=$fileshop_filecategoryEntityEntityObject->FindAll($RelationLogic);
 			$result['file']=$fileEntityObject;
-		}
+            $user=new User(-1);
+            $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
+			$ispurchased=$fileEntityObject->getFileIsPurchased($ID,$SystemUserID);
+            $result['ispurchased']=$ispurchased;
+
+        }
 		$result['param1']="";
 		$DBAccessor->close_connection();
 		return $result;

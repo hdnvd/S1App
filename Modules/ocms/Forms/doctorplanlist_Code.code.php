@@ -4,6 +4,7 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\finance\Exceptions\LowBalanceException;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -50,6 +51,20 @@ class doctorplanlist_Code extends FormCode {
 			if(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				return $this->search_Click();
 			}
+			elseif(isset($_GET['service']) && $_GET['service']=="getdoctorfreeplans")
+            {
+                $Result=$doctorplanlistController->getDayPlans($this->getHttpGETparameter('doctorid',-1),$this->getHttpGETparameter('y',-1),$this->getHttpGETparameter('m',-1),$this->getHttpGETparameter('d',-1));
+                $design->setService($_GET['service']);
+                $design->setData($Result);
+                $design->setMessage("");
+            }
+            elseif(isset($_GET['service']) && $_GET['service']=="reserve")
+            {
+                $Result=$doctorplanlistController->reserve($this->getHttpGETparameter('doctorplanid',-1),$this->getHttpGETparameter('userid',-1),$this->getHttpGETparameter('presencetypeid',-1));
+                $design->setService($_GET['service']);
+                $design->setData($Result);
+                $design->setMessage("رزرو وقت با موفقیت انجام شد.");
+            }
 			else
 			{
 				$Result=$doctorplanlistController->load($this->getHttpGETparameter('pn',-1));
@@ -64,6 +79,12 @@ class doctorplanlist_Code extends FormCode {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
+		catch (LowBalanceException $Lbex)
+        {
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("موجودی کافی نیست");
+        }
 		catch(\Exception $uex){
 			$design=new message_Design();
 			$design->setMessageType(MessageType::$ERROR);

@@ -44,6 +44,7 @@ public class FileRecyclerViewAdapter extends RecyclerView.Adapter<FileRecyclerVi
 			holder.Description.setText(String.valueOf(mValues.get(position).getDescription()));
 			holder.Price.setText(String.valueOf(mValues.get(position).getPrice()));
 			holder.Filecount.setText(String.valueOf(mValues.get(position).getFilecount()));
+			holder.Filetype_fid.setText(String.valueOf(mValues.get(position).getFiletype_fid()));
 			holder.Role_systemuser_fid.setText(String.valueOf(mValues.get(position).getRole_systemuser_fid()));
 		}
 	@Override
@@ -66,6 +67,8 @@ public class FileRecyclerViewAdapter extends RecyclerView.Adapter<FileRecyclerVi
 		public final TextView PriceLabel;
 		public final TextView Filecount;
 		public final TextView FilecountLabel;
+		public final TextView Filetype_fid;
+		public final TextView Filetype_fidLabel;
 		public final TextView Role_systemuser_fid;
 		public final TextView Role_systemuser_fidLabel;
 		public File mItem;
@@ -101,6 +104,10 @@ public class FileRecyclerViewAdapter extends RecyclerView.Adapter<FileRecyclerVi
 			Filecount.setTypeface(face);
 			FilecountLabel = view.findViewById(R.id.filecountlabel);
 			FilecountLabel.setTypeface(face);
+			Filetype_fid = view.findViewById(R.id.filetype_fid);
+			Filetype_fid.setTypeface(face);
+			Filetype_fidLabel = view.findViewById(R.id.filetype_fidlabel);
+			Filetype_fidLabel.setTypeface(face);
 			Role_systemuser_fid = view.findViewById(R.id.role_systemuser_fid);
 			Role_systemuser_fid.setTypeface(face);
 			Role_systemuser_fidLabel = view.findViewById(R.id.role_systemuser_fidlabel);

@@ -76,7 +76,7 @@ class servicerequestController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-    public function ChangeState($ID,$StateID)
+    public function ChangeState($ID,$StateID,$message)
     {
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor=new dbaccess();
@@ -107,6 +107,7 @@ class servicerequestController extends Controller {
                 $reqstatusEnt->setRole_systemuser_fid($role_systemuser_fid);
                 $reqstatusEnt->setServicerequest_fid($ID);
                 $reqstatusEnt->setServicestatus_fid($StateID);
+                $reqstatusEnt->setMessage($message);
                 $reqstatusEnt->Save();
             }
         }

@@ -4,6 +4,7 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\itsap\Entity\itsap_degreeEntity;
+use Modules\itsap\Entity\itsap_topunitEntity;
 use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
@@ -20,15 +21,26 @@ use Modules\itsap\Entity\itsap_employeeEntity;
 */
 class employeelistController extends Controller {
 	private $PAGESIZE=10;
-	public function getData($PageNum,QueryLogic $QueryLogic)
+	public function getData($PageNum,QueryLogic $QueryLogic,$UnitID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
-		$unitEntityObject=new itsap_unitEntity($DBAccessor);
-		$result['unit_fid']=$unitEntityObject->FindAll(new QueryLogic());
+        $unitEntityObject=new itsap_unitEntity($DBAccessor);
+        $unitEntityObject->setId($UnitID);
+        $result['unit']=$unitEntityObject;
+        $topUnitEntityObject=new itsap_topunitEntity($DBAccessor);
+        $topUnitEntityObject->setId($unitEntityObject->getTopunit_fid());
+        $result['topunit']=$topUnitEntityObject;
+		$unitEntityObject2=new itsap_unitEntity($DBAccessor);
+
+		$adminEmpEnt=new itsap_employeeEntity($DBAccessor);
+		$adminEmpEnt->setId($unitEntityObject->getAdmin_employee_fid());
+        $result['admin_employee']=$adminEmpEnt;
+
+		$result['unit_fid']=$unitEntityObject2->FindAll(new QueryLogic());
 		$degreeEntityObject=new itsap_degreeEntity($DBAccessor);
 		$result['degree_fid']=$degreeEntityObject->FindAll(new QueryLogic());
 		if($PageNum<=0)
@@ -36,6 +48,7 @@ class employeelistController extends Controller {
 		$UserID=null;
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
+        $QueryLogic->addCondition(new FieldCondition(itsap_employeeEntity::$UNIT_FID,$UnitID));
 		if($UserID!=null)
             $QueryLogic->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$UserID));
 		$employeeEnt=new itsap_employeeEntity($DBAccessor);
@@ -59,14 +72,11 @@ class employeelistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum)
+	public function load($PageNum,$UnitID)
 	{
-		$DBAccessor=new dbaccess();
-		$employeeEnt=new itsap_employeeEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
-		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,$UnitID);
 	}
 	public function Search($PageNum,$unit_fid,$emp_code,$mellicode,$name,$family,$mobile,$degree_fid,$sortby,$isdesc)
 	{

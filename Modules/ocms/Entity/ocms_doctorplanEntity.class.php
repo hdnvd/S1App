@@ -1,5 +1,7 @@
 <?php
 namespace Modules\ocms\Entity;
+use core\CoreClasses\db\DBField;
+use core\CoreClasses\db\selectQuery;
 use core\CoreClasses\services\EntityClass;
 use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
@@ -77,5 +79,29 @@ class ocms_doctorplanEntity extends EntityClass {
 	public function setDoctor_fid($Doctor_fid){
 		$this->setField(ocms_doctorplanEntity::$DOCTOR_FID,$Doctor_fid);
 	}
+
+
+	public function getDoctorFreePlans($DoctorID,$StartTime,$EndTime)
+    {
+        //SELECT * FROM `sweetp_ocms_doctorplan` dp LEFT JOIN sweetp_ocms_doctorreserve dr on dp.id=dr.doctorplan_fid where dr.doctorplan_fid IS NULL
+        $SelectQuery=$this->getDatabase()->Select(array("dp.*"))->From("ocms_doctorplan dp LEFT JOIN (SELECT * from sweetp_ocms_doctorreserve WHERE sweetp_ocms_doctorreserve.financial_canceltransaction_fid<0)dr on dp.id=dr.doctorplan_fid")->Where()->ISNULL(new DBField("dr.doctorplan_fid",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('dp.doctor_fid',$DoctorID);
+        if($StartTime!=null)
+        $SelectQuery=$SelectQuery->AndLogic()->Bigger('dp.start_time',$StartTime);
+        if($EndTime!=null)
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('dp.start_time',$EndTime);
+//        $SelectQuery=new selectQuery();
+        $SelectQuery=$SelectQuery->AddOrderBy('dp.start_time',false);
+        $result=$SelectQuery->ExecuteAssociated();
+        $AllCount1 = count($result);
+        $res=array();
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $item=new ocms_doctorplanEntity($this->getDatabase()->getDBAccessor());
+            $item->loadFromArray($result[$i]);
+            $res[$i]=$item;
+        }
+//        echo  $SelectQuery->getQueryString();
+return $res;
+    }
 }
 ?>

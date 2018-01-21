@@ -22,13 +22,13 @@ class itsap_degreeEntity extends EntityClass {
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(itsap_degreeEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',itsap_degreeEntity::$TITLE);
 
 		/******** priority ********/
 		$PriorityInfo=new FieldInfo();
-		$PriorityInfo->setTitle("priority");
+		$PriorityInfo->setTitle("کد");
 		$this->setFieldInfo(itsap_degreeEntity::$PRIORITY,$PriorityInfo);
 		$this->addTableField('2',itsap_degreeEntity::$PRIORITY);
 	}

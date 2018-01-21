@@ -53,7 +53,7 @@ class managetopunits_Design extends FormDesign {
     public function setAdminMode($adminMode)
     {
         $this->adminMode = $adminMode;
-        $this->itemViewPage = 'topunit';
+        $this->itemViewPage = 'manageunits';
         if($adminMode==true)
         {
             $this->itemPage = 'managetopunit';
@@ -65,6 +65,8 @@ class managetopunits_Design extends FormDesign {
             $this->listPage = 'manageusertopunits';
         }
     }
+
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -74,8 +76,13 @@ class managetopunits_Design extends FormDesign {
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_managetopunits");
+
+
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['topunit']->getTableTitle() . " ها"));
-		$addUrl=new AppRooter('itsap',$this->itemPage);
+
+
+
+        $addUrl=new AppRooter('itsap',$this->itemPage);
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
@@ -112,7 +119,7 @@ class managetopunits_Design extends FormDesign {
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('itsap',$this->itemViewPage);
-			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+			$ViewURL->addParameter(new UrlParameter('tuid',$this->Data['data'][$i]->getID()));
 			$lbView[$i]=new Lable('مشاهده');
 			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
 			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');

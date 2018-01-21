@@ -42,7 +42,12 @@ class manageservicerequest_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getInfoRowCode(new Lable($this->Data['topunit']->getTitle()),"یگان مادر"));
+        $LTable1->addElement($this->getInfoRowCode(new Lable($this->Data['itunitadmin']->getName() . " " . $this->Data['itunitadmin']->getFamily()),"مدیر یگان فاوا"));
+        $LTable1->addElement($this->getInfoRowCode(new Lable($this->Data['unit']->getTitle()),"یگان درخواست کننده"));
+        $LTable1->addElement($this->getInfoRowCode(new Lable($this->Data['employee']->getName() . " " . $this->Data['employee']->getFamily()),"درخواست کننده"));
+
+        $LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));

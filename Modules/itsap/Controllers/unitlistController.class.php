@@ -19,20 +19,36 @@ use Modules\itsap\Entity\itsap_unitEntity;
 */
 class unitlistController extends Controller {
 	private $PAGESIZE=10;
-	public function getData($PageNum,QueryLogic $QueryLogic)
+	public function getData($PageNum,QueryLogic $QueryLogic,$TopUnitID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
-		$topunitEntityObject=new itsap_topunitEntity($DBAccessor);
-		$result['topunit_fid']=$topunitEntityObject->FindAll(new QueryLogic());
+
+        $topunitEntityObject=new itsap_topunitEntity($DBAccessor);
+        $result['topunit']=$topunitEntityObject;
+
+        if($TopUnitID!=-1){
+            $topunitEntityObject->setId($TopUnitID);
+            if($topunitEntityObject->getId()==-1)
+                throw new DataNotFoundException();
+            $result['topunit']=$topunitEntityObject;
+            $topunitEntityObject=new itsap_topunitEntity($DBAccessor);
+            $topunitEntityObject->SetId($result['topunit']->getTopunit_fid());
+            $result['topunit_fid']=$topunitEntityObject;
+        }
+
+		$topunitEntityObject2=new itsap_topunitEntity($DBAccessor);
+		$result['topunits']=$topunitEntityObject2->FindAll(new QueryLogic());
 		if($PageNum<=0)
 			$PageNum=1;        
 		$UserID=null;
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
+
+        $QueryLogic->addCondition(new FieldCondition(itsap_unitEntity::$TOPUNIT_FID,$TopUnitID));
 		if($UserID!=null)
             $QueryLogic->addCondition(new FieldCondition(itsap_unitEntity::$ROLE_SYSTEMUSER_FID,$UserID));
 		$unitEnt=new itsap_unitEntity($DBAccessor);
@@ -56,14 +72,11 @@ class unitlistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum)
+	public function load($PageNum,$TopUnitID)
 	{
-		$DBAccessor=new dbaccess();
-		$unitEnt=new itsap_unitEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
-		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,$TopUnitID);
 	}
 	public function Search($PageNum,$topunit_fid,$title,$isfava,$sortby,$isdesc)
 	{

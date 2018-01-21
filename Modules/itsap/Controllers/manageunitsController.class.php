@@ -18,7 +18,7 @@ use Modules\itsap\Entity\itsap_unitEntity;
 */
 class manageunitsController extends unitlistController {
 	private $PAGESIZE=10;
-	public function DeleteItem($ID)
+	public function DeleteItem($ID,$TopUnitID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -35,7 +35,7 @@ class manageunitsController extends unitlistController {
 			throw new DataNotFoundException();
 		$unitEnt->Remove();
 		$DBAccessor->close_connection();
-		return $this->load(-1);
+		return $this->load(-1,$TopUnitID);
 	}
 }
 ?>

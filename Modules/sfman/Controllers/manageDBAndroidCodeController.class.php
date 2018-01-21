@@ -75,7 +75,7 @@ EOT;
         $C .= "\r\n\t\t\tholder.mView.setOnClickListener(new View.OnClickListener() {";
         $C .= "\r\n\t\t\t\t@Override";
         $C .= "\r\n\t\t\t\tpublic void onClick(View v) {";
-        $C .= "\r\n\t\t\t\t\ttheActivity.ItemID=holder.mItem.getId();";
+        $C .= "\r\n\t\t\t\t\ttheActivity.SharedConf_ItemID=holder.mItem.getId();";
         $C .= "\r\n\t\t\t\t\ttheActivity.showFragment($ItemFragmentName.class);";
         $C .= "\r\n\t\t\t\t}";
         $C .= "\r\n\t\t\t});";
@@ -545,7 +545,7 @@ EOT;
         AsyncTask.execute(new Runnable() {
 			@Override
 			public void run() {
-				the$UCFormName=new $UCFormName(getActivity()).getOne(((MainActivity)getActivity()).ItemID);
+				the$UCFormName=new $UCFormName(getActivity()).getOne(((MainActivity)getActivity()).SharedConf_ItemID);
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {

@@ -3,8 +3,12 @@ namespace Modules\ocms\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\SweetDate;
+use Modules\finance\Exceptions\LowBalanceException;
+use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\ocms\Entity\ocms_doctorEntity;
+use Modules\ocms\Entity\ocms_doctorreserveEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -65,6 +69,49 @@ class doctorplanlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
+	public function getDayPlans($DoctorID,$Year,$Month,$Day)
+    {
+        $DBAccessor=new dbaccess();
+        $ent=new ocms_doctorplanEntity($DBAccessor);
+        date_default_timezone_set("Asia/Tehran");
+        $sweetDate = new SweetDate(true, true, 'Asia/Tehran');
+        $start_time = $sweetDate->mktime("0", "0","0", $Month, $Day, $Year);
+        $start_time--;
+        $end_time = $sweetDate->mktime("23", "59","59", $Month, $Day, $Year);
+
+        $Plans=$ent->getDoctorFreePlans($DoctorID,$start_time,$end_time);
+
+        $result['data']=$Plans;
+        return $result;
+    }
+    public function reserve($DoctorPlanID,$SystemUserID,$PresenceTypeID)
+    {
+        $DBAccessor=new dbaccess();
+        $ent=new ocms_doctorplanEntity($DBAccessor);
+        $ent->setId($DoctorPlanID);
+        if($ent->getId()<=0)
+            throw new DataNotFoundException();
+        $DrEnt=new ocms_doctorEntity($DBAccessor);
+        $DrEnt->setId($ent->getDoctor_fid());
+        if($DrEnt->getId()<=0)
+            throw new DataNotFoundException();
+        $Payment=new Payment();
+        $UserBalance=$Payment->getBalance(1,$SystemUserID);
+//        echo $UserBalance;
+        if($UserBalance<$DrEnt->getPrice())
+            throw new LowBalanceException();
+        $result=$Payment->startTransaction(-1*$DrEnt->getPrice(),$SystemUserID,'','','','رزرو وقت',1,false,'',$SystemUserID);
+        $resEnt=new ocms_doctorreserveEntity($DBAccessor);
+        $resEnt->setReserve_date(time());
+        $resEnt->setDoctorplan_fid($DoctorPlanID);
+        $resEnt->setPresencetype_fid($PresenceTypeID);
+        $resEnt->setRole_systemuser_fid($SystemUserID);
+        $resEnt->setFinancial_transaction_fid($result['transaction']['id']);
+        $resEnt->Save();
+        return [];
+
+
+    }
 	public function Search($PageNum,$start_time_from,$start_time_to,$end_time_from,$end_time_to,$doctor_fid,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();

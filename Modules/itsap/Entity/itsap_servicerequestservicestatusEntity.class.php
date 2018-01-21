@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-08 - 2017-11-29 16:59
-*@lastUpdate 1396-09-08 - 2017-11-29 16:59
+*@creationDate 1396-10-21 - 2018-01-11 19:00
+*@lastUpdate 1396-10-21 - 2018-01-11 19:00
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -32,17 +32,23 @@ class itsap_servicerequestservicestatusEntity extends EntityClass {
 		$this->setFieldInfo(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$Servicerequest_fidInfo);
 		$this->addTableField('2',itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID);
 
+		/******** message ********/
+		$MessageInfo=new FieldInfo();
+		$MessageInfo->setTitle("message");
+		$this->setFieldInfo(itsap_servicerequestservicestatusEntity::$MESSAGE,$MessageInfo);
+		$this->addTableField('3',itsap_servicerequestservicestatusEntity::$MESSAGE);
+
 		/******** start_date ********/
 		$Start_dateInfo=new FieldInfo();
 		$Start_dateInfo->setTitle("start_date");
 		$this->setFieldInfo(itsap_servicerequestservicestatusEntity::$START_DATE,$Start_dateInfo);
-		$this->addTableField('3',itsap_servicerequestservicestatusEntity::$START_DATE);
+		$this->addTableField('4',itsap_servicerequestservicestatusEntity::$START_DATE);
 
 		/******** role_systemuser_fid ********/
 		$Role_systemuser_fidInfo=new FieldInfo();
 		$Role_systemuser_fidInfo->setTitle("role_systemuser_fid");
 		$this->setFieldInfo(itsap_servicerequestservicestatusEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
-		$this->addTableField('4',itsap_servicerequestservicestatusEntity::$ROLE_SYSTEMUSER_FID);
+		$this->addTableField('5',itsap_servicerequestservicestatusEntity::$ROLE_SYSTEMUSER_FID);
 	}
 	public static $SERVICESTATUS_FID="servicestatus_fid";
 	/**
@@ -69,6 +75,19 @@ class itsap_servicerequestservicestatusEntity extends EntityClass {
 	 */
 	public function setServicerequest_fid($Servicerequest_fid){
 		$this->setField(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$Servicerequest_fid);
+	}
+	public static $MESSAGE="message";
+	/**
+	 * @return mixed
+	 */
+	public function getMessage(){
+		return $this->getField(itsap_servicerequestservicestatusEntity::$MESSAGE);
+	}
+	/**
+	 * @param mixed $Message
+	 */
+	public function setMessage($Message){
+		$this->setField(itsap_servicerequestservicestatusEntity::$MESSAGE,$Message);
 	}
 	public static $START_DATE="start_date";
 	/**

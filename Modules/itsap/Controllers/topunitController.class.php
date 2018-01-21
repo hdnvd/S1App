@@ -33,8 +33,8 @@ class topunitController extends Controller {
 			$result['topunit']=$topunitEntityObject;
 			$topunitEntityObject=new itsap_topunitEntity($DBAccessor);
 			$topunitEntityObject->SetId($result['topunit']->getTopunit_fid());
-			if($topunitEntityObject->getId()==-1)
-				throw new DataNotFoundException();
+//			if($topunitEntityObject->getId()==-1)
+//				throw new DataNotFoundException();
 			$result['topunit_fid']=$topunitEntityObject;
 		}
 		$result['param1']="";

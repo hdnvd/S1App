@@ -49,9 +49,10 @@ class managefile_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->price,$this->getFieldCaption('price'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->filecount,$this->getFieldCaption('filecount'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
-		$LTable1->addElement($this->getFieldRowCode($this->Categorys,$this->getFieldCaption('Categorys'),null,'',null));
-		$Page->addElement($LTable1);
+		$LTable1->addElement($this->getFieldRowCode($this->Categorys,$this->getFieldCaption('موضوعات'),null,'',null));
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
+
+        $Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->SetAttribute("novalidate","novalidate");
 		$form->SetAttribute("data-toggle","validator");

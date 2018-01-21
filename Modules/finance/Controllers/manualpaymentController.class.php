@@ -9,6 +9,8 @@ use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-06-15 - 2017-09-06 16:47
@@ -32,7 +34,7 @@ class manualpaymentController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function TxtPay($ID,$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount)
+	public function TxtPay($ID,$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount,$username=null,$password=null)
 	{
         $txtAmount*=10;
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -41,11 +43,20 @@ class manualpaymentController extends Controller {
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
 		$PayInfo=null;
+
 		if($ID==-1){
 			$Pay=new Payment();
-            $PayInfo=$Pay->startTransaction($txtAmount,$txtName,$txtFamily,$txtTel,1,$txtDescription,1,true,"");
+			if($username == null)
+                $PayInfo = $Pay->startTransaction($txtAmount, $txtName, $txtFamily, $txtTel, 1, $txtDescription, 1, true, "");
+            else
+            {
 
-		}
+                $user=new User(-1);
+                $userID=$user->getSystemUserIDFromUserPass($username,$password);
+                $PayInfo = $Pay->startTransaction($txtAmount,$txtName,$txtFamily,$txtTel,1,$txtDescription,1,true,"",$userID);
+
+            }
+        }
 		else{
 			//UPDATE DATA
 		}

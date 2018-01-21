@@ -1,5 +1,7 @@
 <?php
 namespace Modules\itsap\Forms;
+use core\CoreClasses\html\Image;
+use core\CoreClasses\html\TextArea;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -47,10 +49,16 @@ class servicerequest_Design extends FormDesign {
 	private $description;
 	/** @var lable */
 	private $priority;
-	/** @var lable */
+	/** @var Image */
 	private $file1_flu;
     /** @var lable */
     private $request_date;
+    /** @var TextArea */
+    private $TxtStatusMessage;
+    /** @var TextArea */
+    private $TxtReferMessage;
+    /** @var TextArea */
+    private $TxtAssignMessage;
     /** @var ComboBox */
     private $CmbState;
     /** @var ComboBox */
@@ -95,7 +103,7 @@ class servicerequest_Design extends FormDesign {
 		$this->priority= new lable("priority");
 
 		/******* file1_flu *******/
-		$this->file1_flu= new lable("file1_flu");
+		$this->file1_flu= new Image("");
 
 		/******* request_date *******/
 		$this->request_date= new lable("request_date");
@@ -103,14 +111,30 @@ class servicerequest_Design extends FormDesign {
 		$this->CmbState=new ComboBox("cmbstate");
 		$this->btnChangeState=new SweetButton(true,"تغییر وضعیت");
 		$this->btnChangeState->setAction("btnChangeState");
+        $this->btnChangeState->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
+        $this->btnChangeState->setClass("btn btn-primary");
+        $this->CmbState->setClass("form-control");
 
         $this->CMBTopUnits=new ComboBox("cmbtopunits");
         $this->btnRefer=new SweetButton(true,"ارجاع");
         $this->btnRefer->setAction("btnRefer");
+        $this->btnRefer->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
+        $this->btnRefer->setClass("btn btn-primary");
+        $this->CMBTopUnits->setClass("form-control");
 
         $this->CMBUnitEmployees=new ComboBox("CMBUnitEmployees");
         $this->btnAssign=new SweetButton(true,"تخصیص");
         $this->btnAssign->setAction("btnAssign");
+        $this->btnAssign->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
+        $this->btnAssign->setClass("btn btn-primary");
+        $this->CMBUnitEmployees->setClass("form-control");
+
+        $this->TxtStatusMessage=new TextArea('TxtStatusMessage');
+        $this->TxtStatusMessage->setClass("form-control");
+        $this->TxtReferMessage=new TextArea('txtrefermessage');
+        $this->TxtReferMessage->setClass("form-control");
+        $this->TxtAssignMessage=new TextArea('TxtAssignMessage');
+        $this->TxtAssignMessage->setClass("form-control");
 
 	}
 
@@ -139,7 +163,9 @@ class servicerequest_Design extends FormDesign {
 			$this->setFieldCaption('priority',$this->Data['servicerequest']->getFieldInfo('priority')->getTitle());
 			$this->priority->setText($this->Data['servicerequest']->getPriority());
 			$this->setFieldCaption('file1_flu',$this->Data['servicerequest']->getFieldInfo('file1_flu')->getTitle());
-			$this->file1_flu->setText($this->Data['servicerequest']->getFile1_flu());
+			$this->file1_flu->setUrl(DEFAULT_PUBLICURL . "content/files/img/folder.png");
+			$this->file1_flu->setClass('datarowimage');
+			$FileURL=$this->Data['servicerequest']->getFile1_flu();
 			$this->setFieldCaption('request_date',$this->Data['servicerequest']->getFieldInfo('request_date')->getTitle());
 			$request_date_SD=new SweetDate(true, true, 'Asia/Tehran');
 			$request_date_Text=$request_date_SD->date("l d F Y",$this->Data['servicerequest']->getRequest_date());
@@ -172,28 +198,73 @@ class servicerequest_Design extends FormDesign {
 
             }
 		}
+		$fileLink=new link(DEFAULT_PUBLICURL . $FileURL,$this->file1_flu);
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('title')));
-		$LTable1->addElement($this->getInfoRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->description,$this->getFieldCaption('description')));
-		$LTable1->addElement($this->getInfoRowCode($this->priority,$this->getFieldCaption('priority')));
-		$LTable1->addElement($this->getInfoRowCode($this->file1_flu,$this->getFieldCaption('file1_flu')));
-		$LTable1->addElement($this->getInfoRowCode($this->request_date,$this->getFieldCaption('request_date')));
+		$LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('عنوان')));
+		$LTable1->addElement($this->getInfoRowCode($this->servicetype_fid,$this->getFieldCaption('نوع خدمت')));
+		$LTable1->addElement($this->getInfoRowCode($this->description,$this->getFieldCaption('توضیحات')));
+		$LTable1->addElement($this->getInfoRowCode($this->priority,$this->getFieldCaption('اولویت')));
+		$LTable1->addElement($this->getInfoRowCode($fileLink,$this->getFieldCaption('فایل ضمیمه شده')));
+		$LTable1->addElement($this->getInfoRowCode($this->request_date,$this->getFieldCaption('تاریخ درخواست')));
 		$Page->addElement($LTable1);
-
 		$ChangeStatus=new Div();
-
-        $ChangeStatus->addElement($this->CmbState);
+        $ChangeStatus->setClass("formtable smallform");
+		$lblStateTitle=new Lable("تغییر وضعیت");
+        $lblStateTitle->setClass('smallformtitle');
+		$ChangeStatus->addElement($lblStateTitle);
+        $ChangeStatus->addElement($this->getFieldRowCode($this->CmbState,"وضعیت","وضعیت "));
+        $ChangeStatus->addElement($this->getFieldRowCode($this->TxtStatusMessage,"پیام","پیام"));
         $ChangeStatus->addElement($this->btnChangeState);
-        $ChangeStatus->addElement($this->CMBTopUnits);
-        $ChangeStatus->addElement($this->btnRefer);
-        $ChangeStatus->addElement($this->CMBUnitEmployees);
-        $ChangeStatus->addElement($this->btnAssign);
         $Page->addElement($ChangeStatus);
+
+
+        $Refer=new Div();
+        $Refer->setClass("formtable smallform");
+        $lblReferTitle=new Lable("ارجاع به یگان دیگر");
+        $lblReferTitle->setClass('smallformtitle');
+        $Refer->addElement($lblReferTitle);
+        $Refer->addElement($this->getFieldRowCode($this->CMBTopUnits,"یگان","یگان"));
+        $Refer->addElement($this->getFieldRowCode($this->TxtReferMessage,"پیام","پیام"));
+        $Refer->addElement($this->btnRefer);
+        $Page->addElement($Refer);
+
+        $Assign=new Div();
+        $Assign->setClass("formtable smallform");
+        $lblAssignTitle=new Lable("تخصیص به کارکنان");
+        $lblAssignTitle->setClass('smallformtitle');
+        $Assign->addElement($lblAssignTitle);
+        $Assign->addElement($this->getFieldRowCode($this->CMBUnitEmployees,"تخصیص به ","تخصیص به "));
+        $Assign->addElement($this->getFieldRowCode($this->TxtAssignMessage,"پیام","پیام"));
+        $Assign->addElement($this->btnAssign);
+        $Page->addElement($Assign);
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
+
+    /**
+     * @return TextArea
+     */
+    public function getTxtStatusMessage()
+    {
+        return $this->TxtStatusMessage;
+    }
+
+    /**
+     * @return TextArea
+     */
+    public function getTxtReferMessage()
+    {
+        return $this->TxtReferMessage;
+    }
+
+    /**
+     * @return TextArea
+     */
+    public function getTxtAssignMessage()
+    {
+        return $this->TxtAssignMessage;
+    }
 	public function getJSON()
 	{
 		parent::getJSON();

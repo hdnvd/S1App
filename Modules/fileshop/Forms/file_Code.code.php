@@ -28,7 +28,7 @@ class file_Code extends FormCode {
 		$translator=new ModuleTranslator("fileshop");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
-			$Result=$fileController->load($this->getID());
+			$Result=$fileController->load($this->getID(),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
 			$design=new file_Design();
 			$design->setData($Result);
 			$design->setMessage("");
