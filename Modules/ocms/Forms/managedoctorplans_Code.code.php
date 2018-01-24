@@ -32,12 +32,12 @@ class managedoctorplans_Code extends doctorplanlist_Code {
 			$design=new managedoctorplans_Design();
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
-				$Result=$managedoctorplansController->DeleteItem($this->getID());
+				$Result=$managedoctorplansController->DeleteItem($this->getID(),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
 			}else{
-				$Result=$managedoctorplansController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$managedoctorplansController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
 				if(isset($_GET['search']))
 					$design=new doctorplanlistsearch_Design();
 			}

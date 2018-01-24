@@ -29,22 +29,22 @@ class doctor_Code extends FormCode {
 		$doctorController=new doctorController();
 		$translator=new ModuleTranslator("ocms");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-		try{
+//		try{
 			$Result=$doctorController->load($this->getID());
 			$design=new doctor_Design();
 			$design->setData($Result);
 			$design->setMessage("");
-		}
-		catch(DataNotFoundException $dnfex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("آیتم مورد نظر پیدا نشد");
-		}
-		catch(\Exception $uex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-		}
+//		}
+//		catch(DataNotFoundException $dnfex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("آیتم مورد نظر پیدا نشد");
+//		}
+//		catch(\Exception $uex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//		}
 		return $design;
 	}
     public function btnReserve_Click()

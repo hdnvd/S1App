@@ -42,12 +42,12 @@ class doctorController extends Controller {
 			if($specialityEntityObject->getId()==-1)
 				throw new DataNotFoundException();
 			$result['speciality_fid']=$specialityEntityObject;
-			$common_cityEntityObject=new common_cityEntity($DBAccessor);
-			$common_cityEntityObject->SetId($result['doctor']->getCommon_city_fid());
-			if($common_cityEntityObject->getId()==-1)
-				throw new DataNotFoundException();
+//			$common_cityEntityObject=new common_cityEntity($DBAccessor);
+//			$common_cityEntityObject->SetId($result['doctor']->getCommon_city_fid());
+//			if($common_cityEntityObject->getId()==-1)
+//				throw new DataNotFoundException();
 			$DPEnt=new ocms_doctorplanEntity($DBAccessor);
-			$result['common_city_fid']=$common_cityEntityObject;
+//			$result['common_city_fid']=$common_cityEntityObject;
             $result['freeplans']=$DPEnt->getDoctorFreePlans($ID,null,null);
 		}
 		$result['param1']="";

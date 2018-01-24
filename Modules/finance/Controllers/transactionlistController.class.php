@@ -4,6 +4,7 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\finance\Entity\finance_bankpaymentinfoEntity;
+use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -11,6 +12,8 @@ use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\finance\Entity\finance_transactionEntity;
 use Modules\finance\Entity\finance_chapterEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-06-15 - 2017-09-06 14:09
@@ -50,6 +53,16 @@ class transactionlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
+	public function getUserBalance($UserName,$Password)
+    {
+
+        $Payment=new Payment();
+        $user=new User(-1);
+        $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
+        $UserBalance=$Payment->getBalance(1,$SystemUserID);
+        $result['data'][0]['balance']=$UserBalance;
+        return $result;
+    }
 	public function Search($PageNum,$amount,$description,$add_time,$commit_time,$issuccessful,$chapter_fid,$sortby,$isdesc)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

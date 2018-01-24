@@ -17,78 +17,78 @@ class ocms_doctorEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("ocms_doctor");
-		$this->setTableTitle("ocms_doctor");
+		$this->setTableTitle("متخصص");
 		$this->setTitleFieldName("family");
 
 		/******** name ********/
 		$NameInfo=new FieldInfo();
-		$NameInfo->setTitle("name");
+		$NameInfo->setTitle("نام");
 		$this->setFieldInfo(ocms_doctorEntity::$NAME,$NameInfo);
 		$this->addTableField('1',ocms_doctorEntity::$NAME);
 
 		/******** family ********/
 		$FamilyInfo=new FieldInfo();
-		$FamilyInfo->setTitle("family");
+		$FamilyInfo->setTitle("نام خانوادگی");
 		$this->setFieldInfo(ocms_doctorEntity::$FAMILY,$FamilyInfo);
 		$this->addTableField('2',ocms_doctorEntity::$FAMILY);
 
 		/******** nezam_code ********/
 		$Nezam_codeInfo=new FieldInfo();
-		$Nezam_codeInfo->setTitle("nezam_code");
+		$Nezam_codeInfo->setTitle("شناسه شغلی");
 		$this->setFieldInfo(ocms_doctorEntity::$NEZAM_CODE,$Nezam_codeInfo);
 		$this->addTableField('3',ocms_doctorEntity::$NEZAM_CODE);
 
 		/******** mellicode ********/
 		$MellicodeInfo=new FieldInfo();
-		$MellicodeInfo->setTitle("mellicode");
+		$MellicodeInfo->setTitle("کد ملی");
 		$this->setFieldInfo(ocms_doctorEntity::$MELLICODE,$MellicodeInfo);
 		$this->addTableField('4',ocms_doctorEntity::$MELLICODE);
 
 		/******** mobile ********/
 		$MobileInfo=new FieldInfo();
-		$MobileInfo->setTitle("mobile");
+		$MobileInfo->setTitle("موبایل");
 		$this->setFieldInfo(ocms_doctorEntity::$MOBILE,$MobileInfo);
 		$this->addTableField('5',ocms_doctorEntity::$MOBILE);
 
 		/******** email ********/
 		$EmailInfo=new FieldInfo();
-		$EmailInfo->setTitle("email");
+		$EmailInfo->setTitle("ایمیل");
 		$this->setFieldInfo(ocms_doctorEntity::$EMAIL,$EmailInfo);
 		$this->addTableField('6',ocms_doctorEntity::$EMAIL);
 
 		/******** tel ********/
 		$TelInfo=new FieldInfo();
-		$TelInfo->setTitle("tel");
+		$TelInfo->setTitle("تلفن");
 		$this->setFieldInfo(ocms_doctorEntity::$TEL,$TelInfo);
 		$this->addTableField('7',ocms_doctorEntity::$TEL);
 
 		/******** ismale ********/
 		$IsmaleInfo=new FieldInfo();
-		$IsmaleInfo->setTitle("ismale");
+		$IsmaleInfo->setTitle("جنسیت");
 		$this->setFieldInfo(ocms_doctorEntity::$ISMALE,$IsmaleInfo);
 		$this->addTableField('8',ocms_doctorEntity::$ISMALE);
 
 		/******** speciality_fid ********/
 		$Speciality_fidInfo=new FieldInfo();
-		$Speciality_fidInfo->setTitle("speciality_fid");
+		$Speciality_fidInfo->setTitle("تخصص");
 		$this->setFieldInfo(ocms_doctorEntity::$SPECIALITY_FID,$Speciality_fidInfo);
 		$this->addTableField('9',ocms_doctorEntity::$SPECIALITY_FID);
 
 		/******** education ********/
 		$EducationInfo=new FieldInfo();
-		$EducationInfo->setTitle("education");
+		$EducationInfo->setTitle("تحصیلات");
 		$this->setFieldInfo(ocms_doctorEntity::$EDUCATION,$EducationInfo);
 		$this->addTableField('10',ocms_doctorEntity::$EDUCATION);
 
 		/******** matabtel ********/
 		$MatabtelInfo=new FieldInfo();
-		$MatabtelInfo->setTitle("matabtel");
+		$MatabtelInfo->setTitle("تلفن مطب");
 		$this->setFieldInfo(ocms_doctorEntity::$MATABTEL,$MatabtelInfo);
 		$this->addTableField('11',ocms_doctorEntity::$MATABTEL);
 
 		/******** matabaddress ********/
 		$MatabaddressInfo=new FieldInfo();
-		$MatabaddressInfo->setTitle("matabaddress");
+		$MatabaddressInfo->setTitle("آدرس مطب");
 		$this->setFieldInfo(ocms_doctorEntity::$MATABADDRESS,$MatabaddressInfo);
 		$this->addTableField('12',ocms_doctorEntity::$MATABADDRESS);
 
@@ -106,37 +106,37 @@ class ocms_doctorEntity extends EntityClass {
 
 		/******** common_city_fid ********/
 		$Common_city_fidInfo=new FieldInfo();
-		$Common_city_fidInfo->setTitle("common_city_fid");
+		$Common_city_fidInfo->setTitle("شهر");
 		$this->setFieldInfo(ocms_doctorEntity::$COMMON_CITY_FID,$Common_city_fidInfo);
 		$this->addTableField('15',ocms_doctorEntity::$COMMON_CITY_FID);
 
 		/******** isactiveonphone ********/
 		$IsactiveonphoneInfo=new FieldInfo();
-		$IsactiveonphoneInfo->setTitle("isactiveonphone");
+		$IsactiveonphoneInfo->setTitle("امکان مشاوره تلفنی");
 		$this->setFieldInfo(ocms_doctorEntity::$ISACTIVEONPHONE,$IsactiveonphoneInfo);
 		$this->addTableField('16',ocms_doctorEntity::$ISACTIVEONPHONE);
 
 		/******** isactiveonplace ********/
 		$IsactiveonplaceInfo=new FieldInfo();
-		$IsactiveonplaceInfo->setTitle("isactiveonplace");
+		$IsactiveonplaceInfo->setTitle("امکان مراجعه به محل کار");
 		$this->setFieldInfo(ocms_doctorEntity::$ISACTIVEONPLACE,$IsactiveonplaceInfo);
 		$this->addTableField('17',ocms_doctorEntity::$ISACTIVEONPLACE);
 
 		/******** isactiveonhome ********/
 		$IsactiveonhomeInfo=new FieldInfo();
-		$IsactiveonhomeInfo->setTitle("isactiveonhome");
+		$IsactiveonhomeInfo->setTitle("امکان ویزیت در منزل");
 		$this->setFieldInfo(ocms_doctorEntity::$ISACTIVEONHOME,$IsactiveonhomeInfo);
 		$this->addTableField('18',ocms_doctorEntity::$ISACTIVEONHOME);
 
 		/******** photo_flu ********/
 		$Photo_fluInfo=new FieldInfo();
-		$Photo_fluInfo->setTitle("photo_flu");
+		$Photo_fluInfo->setTitle("تصویر پروفایل");
 		$this->setFieldInfo(ocms_doctorEntity::$PHOTO_FLU,$Photo_fluInfo);
 		$this->addTableField('19',ocms_doctorEntity::$PHOTO_FLU);
 
 		/******** price ********/
 		$PriceInfo=new FieldInfo();
-		$PriceInfo->setTitle("price");
+		$PriceInfo->setTitle("هزینه ویزیت");
 		$this->setFieldInfo(ocms_doctorEntity::$PRICE,$PriceInfo);
 		$this->addTableField('20',ocms_doctorEntity::$PRICE);
 

@@ -46,8 +46,10 @@ class managedoctorplan_Design extends FormDesign {
         $LTable1->addElement($this->getFieldRowCode($this->date,$this->getFieldCaption('date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
         $LTable1->addElement($this->getFieldRowCode($this->start_time,$this->getFieldCaption('start_time'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->end_time,$this->getFieldCaption('end_time'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->doctor_fid,$this->getFieldCaption('doctor_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->doctor_fid,$this->getFieldCaption('doctor_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
+//		$Page->addElement(new TextBox('password',$_GET['password'],false));
+//        $Page->addElement(new TextBox('username',$_GET['username'],false));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->SetAttribute("novalidate","novalidate");

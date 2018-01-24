@@ -24,6 +24,14 @@ class transactionlist_Code extends FormCode {
 			if(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				return $this->search_Click();
 			}
+            elseif(isset($_GET['service']) && $_GET['service']=="getbalance"){
+
+                $Result=$transactionlistController->getUserBalance($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
+                $design=new transactionlist_Design();
+                $design->setData($Result);
+                $design->setMessage("");
+
+			}
 			else
 			{
 				$Result=$transactionlistController->load($this->getHttpGETparameter('pn',-1));
@@ -42,7 +50,7 @@ class transactionlist_Code extends FormCode {
 			$design=new message_Design();
 			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
 		}
-		return $design->getBodyHTML();
+		return $design->getResponse();
 	}
 	public function search_Click()
 	{

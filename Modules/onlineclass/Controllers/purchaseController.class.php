@@ -10,6 +10,7 @@ use Modules\onlineclass\Entity\onlineclass_courseEntity;
 use Modules\onlineclass\Entity\onlineclass_usercourseEntity;
 use Modules\onlineclass\Entity\onlineclass_userEntity;
 use Modules\users\Entity\roleSystemUserEntity;
+use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -42,12 +43,12 @@ class purchaseController extends Controller {
         $Payment=new finance_bankpaymentinfoEntity($DBAccessor);
         $Payment->setId($PaymentID);
         $Transaction=$Payment->getTransaction_fid();
-        $user=new onlineclass_userEntity($DBAccessor);
+        $user=new users_userEntity($DBAccessor);
         $SysUserID=$this->getSysUserID($DBAccessor,$UserName);
         if($SysUserID<=0)
             throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
 
 
         $user=$user->FindOne($q);

@@ -4,6 +4,7 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -27,7 +28,7 @@ class manageusersController extends userlistController {
         $UserID=null;
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
-		$userEnt=new onlineclass_userEntity($DBAccessor);
+		$userEnt=new users_userEntity($DBAccessor);
 		$userEnt->setId($ID);
 		if($userEnt->getId()==-1)
 			throw new DataNotFoundException();

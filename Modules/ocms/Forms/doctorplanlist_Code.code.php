@@ -60,14 +60,14 @@ class doctorplanlist_Code extends FormCode {
             }
             elseif(isset($_GET['service']) && $_GET['service']=="reserve")
             {
-                $Result=$doctorplanlistController->reserve($this->getHttpGETparameter('doctorplanid',-1),$this->getHttpGETparameter('userid',-1),$this->getHttpGETparameter('presencetypeid',-1));
+                $Result=$doctorplanlistController->reserve($this->getHttpGETparameter('doctorplanid',-1),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1),$this->getHttpGETparameter('presencetypeid',-1));
                 $design->setService($_GET['service']);
                 $design->setData($Result);
                 $design->setMessage("رزرو وقت با موفقیت انجام شد.");
             }
 			else
 			{
-				$Result=$doctorplanlistController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$doctorplanlistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
 			if(isset($_GET['search']))
 					$design=new doctorplanlistsearch_Design();
 				$design->setData($Result);

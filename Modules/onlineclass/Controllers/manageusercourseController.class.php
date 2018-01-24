@@ -4,6 +4,7 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -42,7 +43,7 @@ class manageusercourseController extends Controller {
             $UserID=$role_systemuser_fid;
 		$result=array();
 		$usercourseEntityObject=new onlineclass_usercourseEntity($DBAccessor);
-			$userEntityObject=new onlineclass_userEntity($DBAccessor);
+			$userEntityObject=new users_userEntity($DBAccessor);
 			$result['user_fid']=$userEntityObject->FindAll(new QueryLogic());
 			$courseEntityObject=new onlineclass_courseEntity($DBAccessor);
 			$result['course_fid']=$courseEntityObject->FindAll(new QueryLogic());

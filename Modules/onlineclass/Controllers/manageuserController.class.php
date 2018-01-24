@@ -6,6 +6,7 @@ use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\Entity\roleSystemUserEntity;
 use Modules\users\Entity\RoleSystemUserRoleEntity;
+use Modules\users\Entity\users_userEntity;
 use Modules\users\Exceptions\UsernameExistsException;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -42,7 +43,7 @@ class manageuserController extends Controller {
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
 		$result=array();
-		$userEntityObject=new onlineclass_userEntity($DBAccessor);
+		$userEntityObject=new users_userEntity($DBAccessor);
 		$result['user']=$userEntityObject;
 		if($ID!=-1){
 			$userEntityObject->setId($ID);
@@ -67,8 +68,8 @@ class manageuserController extends Controller {
             $UserID=$role_systemuser_fid;
 		$result=array();
 
-		$userEntityObject=new onlineclass_userEntity($DBAccessor);
-		$this->ValidateFieldArray([$fullname,$ismale,$email,$mobile,$registration_time,$devicecode],[$userEntityObject->getFieldInfo(onlineclass_userEntity::$FULLNAME),$userEntityObject->getFieldInfo(onlineclass_userEntity::$ISMALE),$userEntityObject->getFieldInfo(onlineclass_userEntity::$EMAIL),$userEntityObject->getFieldInfo(onlineclass_userEntity::$MOBILE),$userEntityObject->getFieldInfo(onlineclass_userEntity::$REGISTRATION_TIME),$userEntityObject->getFieldInfo(onlineclass_userEntity::$DEVICECODE)]);
+		$userEntityObject=new users_userEntity($DBAccessor);
+		$this->ValidateFieldArray([$fullname,$ismale,$email,$mobile,$registration_time,$devicecode],[$userEntityObject->getFieldInfo(users_userEntity::$FAMILY),$userEntityObject->getFieldInfo(users_userEntity::$ISMALE),$userEntityObject->getFieldInfo(users_userEntity::$MAIL),$userEntityObject->getFieldInfo(users_userEntity::$MOBILE),$userEntityObject->getFieldInfo(users_userEntity::$SIGNUP_TIME),$userEntityObject->getFieldInfo(users_userEntity::$ADDITIONALFIELD1)]);
 		if($ID==-1){
 
             $sysUserEnt=new roleSystemUserEntity($DBAccessor);
@@ -79,12 +80,12 @@ class manageuserController extends Controller {
             $NewUserID=$sysUserEnt->Add($username,$password);
             $roleEnt=new RoleSystemUserRoleEntity();
             $roleEnt->addUserRole($NewUserID,5);
-			$userEntityObject->setFullname($fullname);
+			$userEntityObject->setFamily($fullname);
 			$userEntityObject->setIsmale($ismale);
-			$userEntityObject->setEmail($email);
+			$userEntityObject->setMail($email);
 			$userEntityObject->setMobile($mobile);
-			$userEntityObject->setRegistration_time($registration_time);
-			$userEntityObject->setDevicecode($devicecode);
+			$userEntityObject->setSignup_time($registration_time);
+			$userEntityObject->setAdditionalfield1($devicecode);
 			$userEntityObject->setRole_systemuser_fid($NewUserID);
 			$userEntityObject->Save();
 			$DBAccessor->commit();
@@ -95,12 +96,12 @@ class manageuserController extends Controller {
 				throw new DataNotFoundException();
 			if($UserID!=null && $userEntityObject->getRole_systemuser_fid()!=$UserID)
 				throw new DataNotFoundException();
-			$userEntityObject->setFullname($fullname);
+			$userEntityObject->setFamily($fullname);
 			$userEntityObject->setIsmale($ismale);
-			$userEntityObject->setEmail($email);
+			$userEntityObject->setMail($email);
 			$userEntityObject->setMobile($mobile);
-			$userEntityObject->setRegistration_time($registration_time);
-			$userEntityObject->setDevicecode($devicecode);
+			$userEntityObject->setSignup_time($registration_time);
+			$userEntityObject->setAdditionalfield1($devicecode);
 			$userEntityObject->Save();
 		}
 		$result=$this->load($ID);

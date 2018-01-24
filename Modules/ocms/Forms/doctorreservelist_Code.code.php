@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 01:18
-*@lastUpdate 1396-09-23 - 2017-12-14 01:18
+*@creationDate 1396-11-03 - 2018-01-23 00:07
+*@lastUpdate 1396-11-03 - 2018-01-23 00:07
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -52,7 +52,7 @@ class doctorreservelist_Code extends FormCode {
 			}
 			else
 			{
-				$Result=$doctorreservelistController->load($this->getHttpGETparameter('pn',-1));
+				$Result=$doctorreservelistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
 			if(isset($_GET['search']))
 					$design=new doctorreservelistsearch_Design();
 				$design->setData($Result);
@@ -64,11 +64,11 @@ class doctorreservelist_Code extends FormCode {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
-		catch(\Exception $uex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-		}
+//		catch(\Exception $uex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//		}
 		return $design;
 	}
 	public function __construct($namespace)
@@ -87,12 +87,13 @@ class doctorreservelist_Code extends FormCode {
 		$doctorreservelistController->setAdminMode($this->getAdminMode());
 		$doctorplan_fid_ID=$this->getHttpGETparameter('doctorplan_fid','');
 		$financial_transaction_fid_ID=$this->getHttpGETparameter('financial_transaction_fid','');
+		$financial_canceltransaction_fid_ID=$this->getHttpGETparameter('financial_canceltransaction_fid','');
 		$presencetype_fid_ID=$this->getHttpGETparameter('presencetype_fid','');
 		$reserve_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('reserve_date_from',''));
 		$reserve_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('reserve_date_to',''));
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$doctorreservelistController->Search($this->getHttpGETparameter('pn',-1),$doctorplan_fid_ID,$financial_transaction_fid_ID,$presencetype_fid_ID,$reserve_date_from,$reserve_date_to,$sortby_ID,$isdesc_ID);
+		$Result=$doctorreservelistController->Search($this->getHttpGETparameter('pn',-1),$doctorplan_fid_ID,$financial_transaction_fid_ID,$financial_canceltransaction_fid_ID,$presencetype_fid_ID,$reserve_date_from,$reserve_date_to,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

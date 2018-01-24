@@ -76,20 +76,14 @@ class managedoctorplans_Design extends FormDesign {
 		$Page->setId("ocms_managedoctorplans");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['doctorplan']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('ocms',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+        $addUrl->addParameter(new UrlParameter('username',$_GET['username']));
+        $addUrl->addParameter(new UrlParameter('password',$_GET['password']));
+		$LblAdd=new Lable('وقت جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
 		$lnkAdd->setId('adddoctorplanlink');
 		$Page->addElement($lnkAdd);
-		$SearchUrl=new AppRooter('ocms',$this->listPage);
-		$SearchUrl->addParameter(new URLParameter('search',null));
-		$LblSearch=new Lable('جستجو');
-		$lnkSearch=new link($SearchUrl->getAbsoluteURL(),$LblSearch);
-		$lnkSearch->setClass('linkbutton btn btn-primary');
-		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
-		$lnkSearch->setId('searchdoctorplanlink');
-		$Page->addElement($lnkSearch);
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
@@ -106,27 +100,34 @@ class managedoctorplans_Design extends FormDesign {
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('ocms',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+            $url->addParameter(new UrlParameter('username',$_GET['username']));
+            $url->addParameter(new UrlParameter('password',$_GET['password']));
+			$Title=$this->Data['data'][$i]->getStart_time();
+            date_default_timezone_set("Asia/Tehran");
+            $sweetDate = new SweetDate(false, true, 'Asia/Tehran');
+            $Title = $sweetDate->date("Y/m/d H:i", $Title);
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('ocms',$this->itemViewPage);
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$lbView[$i]=new Lable('مشاهده');
-			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
-			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
-			$lnkView[$i]->setClass('btn btn-primary');
+//			$lbView[$i]=new Lable('مشاهده');
+//			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
+//			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
+//			$lnkView[$i]->setClass('btn btn-primary');
 			$delurl=new AppRooter('ocms',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
+            $delurl->addParameter(new UrlParameter('username',$_GET['username']));
+            $delurl->addParameter(new UrlParameter('password',$_GET['password']));
 			$lbDel[$i]=new Lable('حذف');
 			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
 			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
@@ -137,7 +138,7 @@ class managedoctorplans_Design extends FormDesign {
 		}
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"ocms",$this->listPage));
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"ocms",$this->listPage,[new UrlParameter('username',$_GET['username']),new UrlParameter('password',$_GET['password'])]));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}    

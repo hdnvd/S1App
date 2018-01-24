@@ -19,18 +19,18 @@ class ocms_doctorplanEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("ocms_doctorplan");
-		$this->setTableTitle("ocms_doctorplan");
+        $this->setTableTitle("برنامه ویزیت");
 		$this->setTitleFieldName("id");
 
 		/******** start_time ********/
 		$Start_timeInfo=new FieldInfo();
-		$Start_timeInfo->setTitle("start_time");
+		$Start_timeInfo->setTitle("ساعت شروع");
 		$this->setFieldInfo(ocms_doctorplanEntity::$START_TIME,$Start_timeInfo);
 		$this->addTableField('1',ocms_doctorplanEntity::$START_TIME);
 
 		/******** end_time ********/
 		$End_timeInfo=new FieldInfo();
-		$End_timeInfo->setTitle("end_time");
+		$End_timeInfo->setTitle("ساعت پایان");
 		$this->setFieldInfo(ocms_doctorplanEntity::$END_TIME,$End_timeInfo);
 		$this->addTableField('2',ocms_doctorplanEntity::$END_TIME);
 

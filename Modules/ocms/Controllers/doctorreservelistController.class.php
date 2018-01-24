@@ -3,47 +3,57 @@ namespace Modules\ocms\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\finance\Entity\finance_transactionEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\ocms\Entity\ocms_doctorEntity;
+use Modules\ocms\Entity\ocms_doctorplanEntity;
+use Modules\ocms\Entity\ocms_presencetypeEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\ocms\Entity\ocms_doctorreserveEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 01:18
-*@lastUpdate 1396-09-23 - 2017-12-14 01:18
+*@creationDate 1396-11-03 - 2018-01-23 00:07
+*@lastUpdate 1396-11-03 - 2018-01-23 00:07
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
 class doctorreservelistController extends Controller {
-	private $PAGESIZE=10;
-	public function getData($PageNum,QueryLogic $QueryLogic)
+	private $PAGESIZE=30;
+	public function getData($PageNum,QueryLogic $QueryLogic,$username,$password)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-		$role_systemuser_fid=$su->getSystemUserID();
+        $user=new User(-1);
+        $role_systemuser_fid=$user->getSystemUserIDFromUserPass($username,$password);
 		$result=array();
 		$doctorplanEntityObject=new ocms_doctorplanEntity($DBAccessor);
 		$result['doctorplan_fid']=$doctorplanEntityObject->FindAll(new QueryLogic());
-		$financial_transactionEntityObject=new ocms_transactionEntity($DBAccessor);
+		$financial_transactionEntityObject=new finance_transactionEntity($DBAccessor);
 		$result['financial_transaction_fid']=$financial_transactionEntityObject->FindAll(new QueryLogic());
+		$financial_canceltransactionEntityObject=new finance_transactionEntity($DBAccessor);
+		$result['financial_canceltransaction_fid']=$financial_canceltransactionEntityObject->FindAll(new QueryLogic());
 		$presencetypeEntityObject=new ocms_presencetypeEntity($DBAccessor);
 		$result['presencetype_fid']=$presencetypeEntityObject->FindAll(new QueryLogic());
 		if($PageNum<=0)
 			$PageNum=1;        
-		$UserID=null;
-        if(!$this->getAdminMode())
-            $UserID=$role_systemuser_fid;
-		if($UserID!=null)
-            $QueryLogic->addCondition(new FieldCondition(ocms_doctorreserveEntity::$ROLE_SYSTEMUSER_FID,$UserID));
+
+		$doctorEnt=new ocms_doctorEntity($DBAccessor);
+		$q=new QueryLogic();
+		$q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
+		$doctorEnt=$doctorEnt->FindOne($q);
 		$doctorreserveEnt=new ocms_doctorreserveEntity($DBAccessor);
-		$result['doctorreserve']=$doctorreserveEnt;
-		$allcount=$doctorreserveEnt->FindAllCount($QueryLogic);
-		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-		$QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
-		$result['data']=$doctorreserveEnt->FindAll($QueryLogic);
+//		$reserveinfo=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),'0,100');
+//		$result['doctorreserves']=$reserveinfo;
+		$allcount=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),null,true);
+		$result['pagecount']=$this->getPageCount($allcount[0]['count'],$this->PAGESIZE);
+		$Limit=$this->getPageRowsLimit($PageNum,$this->PAGESIZE);
+		$result['data']=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),$Limit,false);
 		$DBAccessor->close_connection();
 		return $result;
 	}
@@ -59,16 +69,16 @@ class doctorreservelistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum)
+	public function load($PageNum,$username,$password)
 	{
 		$DBAccessor=new dbaccess();
 		$doctorreserveEnt=new ocms_doctorreserveEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,$username,$password);
 	}
-	public function Search($PageNum,$doctorplan_fid,$financial_transaction_fid,$presencetype_fid,$reserve_date_from,$reserve_date_to,$sortby,$isdesc)
+	public function Search($PageNum,$doctorplan_fid,$financial_transaction_fid,$financial_canceltransaction_fid,$presencetype_fid,$reserve_date_from,$reserve_date_to,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();
 		$doctorreserveEnt=new ocms_doctorreserveEntity($DBAccessor);
@@ -76,6 +86,7 @@ class doctorreservelistController extends Controller {
 		$q->addOrderBy("id",true);
 		$q->addCondition(new FieldCondition("doctorplan_fid","%$doctorplan_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("financial_transaction_fid","%$financial_transaction_fid%",LogicalOperator::LIKE));
+		$q->addCondition(new FieldCondition("financial_canceltransaction_fid","%$financial_canceltransaction_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("presencetype_fid","%$presencetype_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("reserve_date",$reserve_date_from,LogicalOperator::Bigger));
 		$q->addCondition(new FieldCondition("reserve_date",$reserve_date_to,LogicalOperator::Smaller));

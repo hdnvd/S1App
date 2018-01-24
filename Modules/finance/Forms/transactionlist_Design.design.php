@@ -204,30 +204,44 @@ class transactionlist_Design extends FormDesign {
         }
         $Page->addElement($Div1);
         $Page->addElement($LTable1);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount']));
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],'finance','transactionlist'));
 		$form=new SweetFrom("", "GET", $Page);
 		return $form->getHTML();
 	}
-	protected function getPaginationPart($PageCount)
-	{
-		$div=new Div();
-		for($i=1;$i<=$PageCount;$i++)
-		{
-			$RTR=null;
-			if(isset($_GET['action']) && $_GET['action']=="search_Click")
-				$RTR=new AppRooter("finance","transactionlist");
-			else
-			{
-				$RTR=new AppRooter("finance","transactionlist");
-				//$RTR->addParameter(new UrlParameter("g",$this->Data['groupid']));
-			}
-			$RTR->addParameter(new UrlParameter("pn",$i));
-			$RTR->setAppendToCurrentParams(false);
-			$lbl=new Lable($i);
-			$lnk=new link($RTR->getAbsoluteURL(),$lbl);
-			$div->addElement($lnk);
-		}
-		return $div;
-	}
+
+    public function getJSON()
+    {
+        parent::getJSON();
+        if (key_exists("data", $this->Data)){
+            $AllCount1 = count($this->Data['data']);
+            $Result=array();
+            for($i=0;$i<$AllCount1;$i++){
+                $Result[$i]=$this->Data['data'][$i];
+            }
+            return json_encode($Result);
+        }
+        return json_encode(array());
+    }
+//	protected function getPaginationPart($PageCount)
+//	{
+//		$div=new Div();
+//		for($i=1;$i<=$PageCount;$i++)
+//		{
+//			$RTR=null;
+//			if(isset($_GET['action']) && $_GET['action']=="search_Click")
+//				$RTR=new AppRooter("finance","transactionlist");
+//			else
+//			{
+//				$RTR=new AppRooter("finance","transactionlist");
+//				//$RTR->addParameter(new UrlParameter("g",$this->Data['groupid']));
+//			}
+//			$RTR->addParameter(new UrlParameter("pn",$i));
+//			$RTR->setAppendToCurrentParams(false);
+//			$lbl=new Lable($i);
+//			$lnk=new link($RTR->getAbsoluteURL(),$lbl);
+//			$div->addElement($lnk);
+//		}
+//		return $div;
+//	}
 }
 ?>

@@ -10,6 +10,8 @@ use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\ocms\Entity\ocms_doctorplanEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-09-23 - 2017-12-14 01:18
@@ -50,7 +52,12 @@ class managedoctorplanController extends Controller {
 			$doctorplanEntityObject->setId($ID);
 			if($doctorplanEntityObject->getId()==-1)
 				throw new DataNotFoundException();
-			if($UserID!=null && $doctorplanEntityObject->getRole_systemuser_fid()!=$UserID)
+            $doctorEntityObject=new ocms_doctorEntity($DBAccessor);
+            $q=new QueryLogic();
+            $q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
+            $doctorEntityObject=$doctorEntityObject->FindOne($q);
+
+			if($UserID!=null && $doctorplanEntityObject->getDoctor_fid()!=$doctorEntityObject->getId())
 				throw new DataNotFoundException();
 			$result['doctorplan']=$doctorplanEntityObject;
 		}
@@ -58,22 +65,29 @@ class managedoctorplanController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$start_time,$end_time,$doctor_fid)
+	public function BtnSave($ID,$start_time,$end_time,$doctor_fid,$username,$password)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-		$role_systemuser_fid=$su->getSystemUserID();        
-		$UserID=null;
-        if(!$this->getAdminMode())
+        $user=new User(-1);
+        $role_systemuser_fid=$user->getSystemUserIDFromUserPass($username,$password);
+//		$role_systemuser_fid=$su->getSystemUserID();
+//		$UserID=null;
+//        if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
 		$result=array();
 		$doctorplanEntityObject=new ocms_doctorplanEntity($DBAccessor);
 		$this->ValidateFieldArray([$start_time,$end_time,$doctor_fid],[$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$START_TIME),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$END_TIME),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$DOCTOR_FID)]);
+
+        $doctorEntityObject=new ocms_doctorEntity($DBAccessor);
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
+        $doctorEntityObject=$doctorEntityObject->FindOne($q);
 		if($ID==-1){
 			$doctorplanEntityObject->setStart_time($start_time);
 			$doctorplanEntityObject->setEnd_time($end_time);
-			$doctorplanEntityObject->setDoctor_fid($doctor_fid);
+			$doctorplanEntityObject->setDoctor_fid($doctorEntityObject->getId());
 			$doctorplanEntityObject->Save();
 			$ID=$doctorplanEntityObject->getId();
 		}
@@ -81,11 +95,11 @@ class managedoctorplanController extends Controller {
 			$doctorplanEntityObject->setId($ID);
 			if($doctorplanEntityObject->getId()==-1)
 				throw new DataNotFoundException();
-			if($UserID!=null && $doctorplanEntityObject->getRole_systemuser_fid()!=$UserID)
+			if($UserID!=null && $doctorplanEntityObject->getDoctor_fid()!=$doctorEntityObject->getId())
 				throw new DataNotFoundException();
 			$doctorplanEntityObject->setStart_time($start_time);
 			$doctorplanEntityObject->setEnd_time($end_time);
-			$doctorplanEntityObject->setDoctor_fid($doctor_fid);
+            $doctorplanEntityObject->setDoctor_fid($doctorEntityObject->getId());
 			$doctorplanEntityObject->Save();
 		}
 		$RelationLogic=new QueryLogic();

@@ -78,6 +78,7 @@ class managedoctor_Code extends FormCode {
 		try{
 		$design=new managedoctor_Design();
 		$name=$design->getName()->getValue();
+            $price=$design->getPrice()->getValue();
 		$family=$design->getFamily()->getValue();
 		$nezam_code=$design->getNezam_code()->getValue();
 		$mellicode=$design->getMellicode()->getValue();
@@ -97,11 +98,13 @@ class managedoctor_Code extends FormCode {
 		$isactiveonhome_ID=$design->getIsactiveonhome()->getSelectedID();
 		$photo_fluPaths=$design->getPhoto_flu()->getSelectedFilesTempPath();
 		$photo_fluNames=$design->getPhoto_flu()->getSelectedFilesName();
+            $user=$design->getUsername()->getValue();
+            $pass=$design->getPassword()->getValue();
 		$photo_fluURLs=array();
 		for($fileIndex=0;$fileIndex<count($photo_fluPaths) && $photo_fluPaths[$fileIndex]!=null;$fileIndex++){
 			$photo_fluURLs[$fileIndex]=uploadHelper::UploadFile($photo_fluPaths[$fileIndex], $photo_fluNames[$fileIndex], "content/files/ocms/managedoctor/");
 		}
-		$Result=$managedoctorController->BtnSave($this->getID(),$name,$family,$nezam_code,$mellicode,$mobile,$email,$tel,$ismale_ID,$speciality_fid_ID,$education,$matabtel,$matabaddress,$longitude,$latitude,$common_city_fid_ID,$isactiveonphone_ID,$isactiveonplace_ID,$isactiveonhome_ID,$photo_fluURLs);
+		$Result=$managedoctorController->BtnSave($this->getID(),$name,$family,$nezam_code,$mellicode,$mobile,$email,$tel,$ismale_ID,$speciality_fid_ID,$education,$matabtel,$matabaddress,$longitude,$latitude,$common_city_fid_ID,$isactiveonphone_ID,$isactiveonplace_ID,$isactiveonhome_ID,$photo_fluURLs,$price,$user,$pass);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

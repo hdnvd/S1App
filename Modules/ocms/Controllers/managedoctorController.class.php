@@ -6,6 +6,9 @@ use core\CoreClasses\db\dbaccess;
 use Modules\common\Entity\common_cityEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\ocms\Entity\ocms_specialityEntity;
+use Modules\users\Entity\roleSystemRoleEntity;
+use Modules\users\Entity\roleSystemUserEntity;
+use Modules\users\Entity\RoleSystemUserRoleEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -61,8 +64,9 @@ class managedoctorController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$name,$family,$nezam_code,$mellicode,$mobile,$email,$tel,$ismale,$speciality_fid,$education,$matabtel,$matabaddress,$longitude,$latitude,$common_city_fid,$isactiveonphone,$isactiveonplace,$isactiveonhome,$photo_flu)
+	public function BtnSave($ID,$name,$family,$nezam_code,$mellicode,$mobile,$email,$tel,$ismale,$speciality_fid,$education,$matabtel,$matabaddress,$longitude,$latitude,$common_city_fid,$isactiveonphone,$isactiveonplace,$isactiveonhome,$photo_flu,$price,$user,$pass)
 	{
+//	    echo "Price;" . $price;
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
@@ -93,19 +97,32 @@ class managedoctorController extends Controller {
 			$doctorEntityObject->setLatitude($latitude);
 			$doctorEntityObject->setCommon_city_fid($common_city_fid);
 			$doctorEntityObject->setIsactiveonphone($isactiveonphone);
-			$doctorEntityObject->setIsactiveonplace($isactiveonplace);
+            $doctorEntityObject->setIsactiveonplace($isactiveonplace);
 			$doctorEntityObject->setIsactiveonhome($isactiveonhome);
+            $doctorEntityObject->setPrice($price);
+
+			$uEnt=new roleSystemUserEntity($DBAccessor);
+			$userid=$uEnt->Add($user,$pass);
+			$role=new RoleSystemUserRoleEntity();
+			$role->addUserRole($userid,3);
+            $doctorEntityObject->setRole_systemuser_fid($userid);
 			if($photo_fluURL!='')
 			$doctorEntityObject->setPhoto_flu($photo_fluURL);
 			$doctorEntityObject->Save();
 			$ID=$doctorEntityObject->getId();
+
 		}
 		else{
 			$doctorEntityObject->setId($ID);
 			if($doctorEntityObject->getId()==-1)
 				throw new DataNotFoundException();
-			if($UserID!=null && $doctorEntityObject->getRole_systemuser_fid()!=$UserID)
-				throw new DataNotFoundException();
+			if(strlen(trim($pass))>1)
+            {
+                $userid=$doctorEntityObject->getRole_systemuser_fid();
+                $uEnt=new roleSystemUserEntity($DBAccessor);
+                $uEnt->Update($userid,null,$pass,$pass,-1);
+            }
+
 			$doctorEntityObject->setName($name);
 			$doctorEntityObject->setFamily($family);
 			$doctorEntityObject->setNezam_code($nezam_code);
@@ -124,6 +141,7 @@ class managedoctorController extends Controller {
 			$doctorEntityObject->setIsactiveonphone($isactiveonphone);
 			$doctorEntityObject->setIsactiveonplace($isactiveonplace);
 			$doctorEntityObject->setIsactiveonhome($isactiveonhome);
+            $doctorEntityObject->setPrice($price);
 			if($photo_fluURL!='')
 			$doctorEntityObject->setPhoto_flu($photo_fluURL);
 			$doctorEntityObject->Save();

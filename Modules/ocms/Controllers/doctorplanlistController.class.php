@@ -14,6 +14,8 @@ use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\ocms\Entity\ocms_doctorplanEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-09-23 - 2017-12-14 01:18
@@ -22,13 +24,14 @@ use Modules\ocms\Entity\ocms_doctorplanEntity;
 *@SweetFrameworkVersion 2.004
 */
 class doctorplanlistController extends Controller {
-	private $PAGESIZE=10;
-	public function getData($PageNum,QueryLogic $QueryLogic)
+	private $PAGESIZE=100;
+	public function getData($PageNum,QueryLogic $QueryLogic,$username,$password)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-		$role_systemuser_fid=$su->getSystemUserID();
+		$user=new User(-1);
+		$role_systemuser_fid=$user->getSystemUserIDFromUserPass($username,$password);
 		$result=array();
 		$doctorEntityObject=new ocms_doctorEntity($DBAccessor);
 		$result['doctor_fid']=$doctorEntityObject->FindAll(new QueryLogic());
@@ -37,8 +40,11 @@ class doctorplanlistController extends Controller {
 		$UserID=null;
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
-		if($UserID!=null)
-            $QueryLogic->addCondition(new FieldCondition(ocms_doctorplanEntity::$ROLE_SYSTEMUSER_FID,$UserID));
+
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
+        $doctorEntityObject=$doctorEntityObject->FindOne($q);
+        $QueryLogic->addCondition(new FieldCondition(ocms_doctorplanEntity::$DOCTOR_FID,$doctorEntityObject->getId()));
 		$doctorplanEnt=new ocms_doctorplanEntity($DBAccessor);
 		$result['doctorplan']=$doctorplanEnt;
 		$allcount=$doctorplanEnt->FindAllCount($QueryLogic);
@@ -60,14 +66,14 @@ class doctorplanlistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum)
+	public function load($PageNum,$username,$password)
 	{
 		$DBAccessor=new dbaccess();
 		$doctorplanEnt=new ocms_doctorplanEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,$username,$password);
 	}
 	public function getDayPlans($DoctorID,$Year,$Month,$Day)
     {
@@ -84,7 +90,7 @@ class doctorplanlistController extends Controller {
         $result['data']=$Plans;
         return $result;
     }
-    public function reserve($DoctorPlanID,$SystemUserID,$PresenceTypeID)
+    public function reserve($DoctorPlanID,$UserName,$Password,$PresenceTypeID)
     {
         $DBAccessor=new dbaccess();
         $ent=new ocms_doctorplanEntity($DBAccessor);
@@ -96,10 +102,15 @@ class doctorplanlistController extends Controller {
         if($DrEnt->getId()<=0)
             throw new DataNotFoundException();
         $Payment=new Payment();
+
+        $user=new User(-1);
+        $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
         $UserBalance=$Payment->getBalance(1,$SystemUserID);
 //        echo $UserBalance;
         if($UserBalance<$DrEnt->getPrice())
             throw new LowBalanceException();
+
+        //Deduction from customer account
         $result=$Payment->startTransaction(-1*$DrEnt->getPrice(),$SystemUserID,'','','','رزرو وقت',1,false,'',$SystemUserID);
         $resEnt=new ocms_doctorreserveEntity($DBAccessor);
         $resEnt->setReserve_date(time());
@@ -108,6 +119,11 @@ class doctorplanlistController extends Controller {
         $resEnt->setRole_systemuser_fid($SystemUserID);
         $resEnt->setFinancial_transaction_fid($result['transaction']['id']);
         $resEnt->Save();
+        $doctorSystemUserID=$DrEnt->getRole_systemuser_fid();
+
+        //Add to Doctor Account
+        $result=$Payment->startTransaction($DrEnt->getPrice(),$doctorSystemUserID,'','','','رزرو وقت توسط کاربر شماره '. $SystemUserID,1,false,'',$doctorSystemUserID);
+
         return [];
 
 

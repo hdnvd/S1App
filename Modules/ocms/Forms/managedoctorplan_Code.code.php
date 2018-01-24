@@ -7,6 +7,7 @@ use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use core\CoreClasses\SweetDate;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\common\PublicClasses\UrlParameter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -88,7 +89,6 @@ class managedoctorplan_Code extends FormCode
             $design = new managedoctorplan_Design();
             $start_time = $design->getStart_time()->getAllMinutes();
             $end_time = $design->getEnd_time()->getAllMinutes();
-
             $datePicker = $design->getDate();
             $datePicker->setHour((int)($start_time / 60));
             $datePicker->setMinute($start_time % 60);
@@ -101,16 +101,20 @@ class managedoctorplan_Code extends FormCode
 
 
             $doctor_fid_ID = $design->getDoctor_fid()->getSelectedID();
-            $Result = $managedoctorplanController->BtnSave($this->getID(), $start_time, $end_time, $doctor_fid_ID);
+            $Result = $managedoctorplanController->BtnSave($this->getID(), $start_time, $end_time, $doctor_fid_ID,$this->getHttpGETparameter('username', -1),$this->getHttpGETparameter('password', -1));
             $design->setData($Result);
             $design->setMessage("اطلاعات با موفقیت ذخیره شد.");
             $design->setMessageType(MessageType::$SUCCESS);
             if ($this->getAdminMode()) {
                 $ManageListRooter = new AppRooter("ocms", "managedoctorplans");
+                $ManageListRooter->addParameter(new UrlParameter('username',$_GET['username']));
+                $ManageListRooter->addParameter(new UrlParameter('password',$_GET['password']));
             }
             else
             {
                 $ManageListRooter = new AppRooter("ocms", "manageuserdoctorplans");
+                $ManageListRooter->addParameter(new UrlParameter('username',$_GET['username']));
+                $ManageListRooter->addParameter(new UrlParameter('password',$_GET['password']));
 
             }
             AppRooter::redirect($ManageListRooter->getAbsoluteURL(), DEFAULT_PAGESAVEREDIRECTTIME);

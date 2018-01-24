@@ -53,15 +53,19 @@ class managedoctor_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->speciality_fid,$this->getFieldCaption('speciality_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->education,$this->getFieldCaption('education'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->matabtel,$this->getFieldCaption('matabtel'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->matabaddress,$this->getFieldCaption('matabaddress'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->longitude,$this->getFieldCaption('longitude'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->latitude,$this->getFieldCaption('latitude'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->common_city_fid,$this->getFieldCaption('common_city_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->matabaddress,$this->getFieldCaption('matabaddress'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->price,$this->getFieldCaption('price'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->longitude,$this->getFieldCaption('longitude'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->latitude,$this->getFieldCaption('latitude'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->common_city_fid,$this->getFieldCaption('common_city_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isactiveonphone,$this->getFieldCaption('isactiveonphone'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isactiveonplace,$this->getFieldCaption('isactiveonplace'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isactiveonhome,$this->getFieldCaption('isactiveonhome'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->photo_flu,$this->getFieldCaption('photo_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
+        $LTable1->addElement($this->getFieldRowCode($this->username,'نام کاربری',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->password,'کلمه عبور',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->SetAttribute("novalidate","novalidate");
@@ -89,6 +93,11 @@ class managedoctor_Design extends FormDesign {
 			$this->name->setValue($this->Data['doctor']->getName());
 			$this->setFieldCaption('name',$this->Data['doctor']->getFieldInfo('name')->getTitle());
 			$this->name->setFieldInfo($this->Data['doctor']->getFieldInfo('name'));
+
+			/********* price **********/
+            $this->price->setValue($this->Data['doctor']->getPrice());
+            $this->setFieldCaption('price',$this->Data['doctor']->getFieldInfo('price')->getTitle());
+            $this->price->setFieldInfo($this->Data['doctor']->getFieldInfo('price'));
 
 			/******** family ********/
 			$this->family->setValue($this->Data['doctor']->getFamily());
@@ -183,6 +192,11 @@ class managedoctor_Design extends FormDesign {
 		$this->name= new textbox("name");
 		$this->name->setClass("form-control");
 
+        /******* price *******/
+        $this->price= new textbox("price");
+        $this->price->setClass("form-control");
+
+
 		/******* family *******/
 		$this->family= new textbox("family");
 		$this->family->setClass("form-control");
@@ -223,6 +237,11 @@ class managedoctor_Design extends FormDesign {
 		$this->matabtel= new textbox("matabtel");
 		$this->matabtel->setClass("form-control");
 
+        $this->username= new textbox("username");
+        $this->username->setClass("form-control");
+        $this->password= new textbox("password");
+        $this->password->setClass("form-control");
+
 		/******* matabaddress *******/
 		$this->matabaddress= new textbox("matabaddress");
 		$this->matabaddress->setClass("form-control");
@@ -261,6 +280,22 @@ class managedoctor_Design extends FormDesign {
 		$this->btnSave->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
 		$this->btnSave->setClass("btn btn-primary");
 	}
+
+    /**
+     * @return TextBox
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @return TextBox
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
 	private $Data;
 	/**
 	 * @param mixed $Data
@@ -281,8 +316,28 @@ class managedoctor_Design extends FormDesign {
     {
         $this->adminMode = $adminMode;
     }
+
+    /** @var textbox */
+    private $username;
+
+    /** @var textbox */
+    private $password;
+
+
+    /** @var textbox */
+    private $name;
+
 	/** @var textbox */
-	private $name;
+	private $price;
+
+    /**
+     * @return TextBox
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
 	/**
 	 * @return textbox
 	 */

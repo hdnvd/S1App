@@ -194,11 +194,12 @@ class doctor_Design extends FormDesign {
 	public function getJSON()
 	{
 		parent::getJSON();
+        $Result=[];
 		if (key_exists("doctor", $this->Data)){
 			$Result=$this->Data['doctor']->GetArray();
-			return json_encode($Result);
 		}
-		return json_encode(array());
+        $Result['speciality']=$this->Data['speciality_fid']->getTitle();
+        return json_encode($Result);
 	}
 }
 ?>

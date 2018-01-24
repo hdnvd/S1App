@@ -12,13 +12,17 @@ use Modules\onlineclass\Entity\onlineclass_tutorEntity;
 use Modules\onlineclass\Entity\onlineclass_usercourseEntity;
 use Modules\onlineclass\Entity\onlineclass_videoEntity;
 use Modules\users\Entity\roleSystemUserEntity;
+use Modules\users\Entity\RoleSystemUserRoleEntity;
 use Modules\users\Entity\roleUserEntity;
 use Modules\users\Entity\userEntity;
+use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\onlineclass\Entity\onlineclass_userEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-07-25 - 2017-10-17 22:27
@@ -41,8 +45,8 @@ class userlistController extends Controller {
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
 		if($UserID!=null)
-            $QueryLogic->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$UserID));
-		$userEnt=new onlineclass_userEntity($DBAccessor);
+            $QueryLogic->addCondition(new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$UserID));
+		$userEnt=new users_userEntity($DBAccessor);
 		$result['user']=$userEnt;
 //        echo "1";
 		$allcount=$userEnt->FindAllCount($QueryLogic);
@@ -68,7 +72,7 @@ class userlistController extends Controller {
 	public function load($PageNum)
 	{
 		$DBAccessor=new dbaccess();
-		$userEnt=new onlineclass_userEntity($DBAccessor);
+		$userEnt=new users_userEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
@@ -77,7 +81,7 @@ class userlistController extends Controller {
 	public function Search($PageNum,$fullname,$ismale,$email,$mobile,$registration_time_from,$registration_time_to,$devicecode,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();
-        $userEnt=new onlineclass_userEntity($DBAccessor);
+        $userEnt=new users_userEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$q->addCondition(new FieldCondition("fullname","%$fullname%",LogicalOperator::LIKE));
@@ -96,12 +100,12 @@ class userlistController extends Controller {
 	public function getUserCourses($UserName,$Password)
     {
         $DBAccessor=new dbaccess();
-        $userEnt=new onlineclass_userEntity($DBAccessor);
+        $userEnt=new users_userEntity($DBAccessor);
         $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
         if($SysUserID<=0)
             throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $userEnt=$userEnt->FindOne($q);
 
         $UserCourseEnt=new onlineclass_usercourseEntity($DBAccessor);
@@ -141,15 +145,24 @@ class userlistController extends Controller {
             $id=$res[0]['id'];
         return $id;
     }
+    private function getSysUserRole($SystemUserID)
+    {
+        $RoleEnt=new RoleSystemUserRoleEntity();
+        $res=$RoleEnt->getUserRole($SystemUserID);
+        $id=-1;
+        if($res!=null && count($res)>0)
+            $id=$res[0]['roleid'];
+        return $id;
+    }
     public function getUserNotBuyedCourses($UserName,$Password)
     {
         $DBAccessor=new dbaccess();
-        $userEnt=new onlineclass_userEntity($DBAccessor);
+        $userEnt=new users_userEntity($DBAccessor);
         $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
         if($SysUserID<=0)
             throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $userEnt=$userEnt->FindOne($q);
 
         $UserCourseEnt=new onlineclass_usercourseEntity($DBAccessor);
@@ -192,12 +205,12 @@ class userlistController extends Controller {
     public function getCourseVideos($UserName,$Password,$CourseID)
     {
         $DBAccessor=new dbaccess();
-        $userEnt=new onlineclass_userEntity($DBAccessor);
+        $userEnt=new users_userEntity($DBAccessor);
         $SysUserID=$this->getSysUserID($DBAccessor,$UserName,$Password);
         if($SysUserID<=0)
             throw new \Exception('usernotfound');
         $q=new QueryLogic();
-        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
         $userEnt=$userEnt->FindOne($q);
 
         $videoEnt=new onlineclass_videoEntity($DBAccessor);
@@ -218,31 +231,48 @@ class userlistController extends Controller {
 //        echo "1";
         if($SysUserID<=0)
             return ['status'=>404];//Not Found
+        $role=$this->getSysUserRole($SysUserID);
         $q=new QueryLogic();
         $q->addOrderBy("id",true);
 //        echo "1";
-        $q->addCondition(new FieldCondition(onlineclass_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
+        $q->addCondition(new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$SysUserID,LogicalOperator::Equal));
+
         $dt=$this->getData(1,$q);
-//        echo "1";
-        if($dt['data']!=null && count($dt['data'])>0)
+        if($role==5)//simple user
         {
-            if(trim($dt['data'][0]->getDevicecode())==$Device)
+
+            $dt['role']=5;
+//        echo "1";
+            if($dt['data']!=null && count($dt['data'])>0)
             {
-                $dt['data']=$dt['data'][0];
-                $dt['status']=1;//Found
-                return $dt;
-            }
-            elseif(trim($dt['data'][0]->getDevicecode())=="")
-            {
-                $dt['data'][0]->setDevicecode($Device);
-                $dt['data'][0]->Save();
-                return ['status'=>2];//Empty Device Code
-            }
-            else
-            {
-                return ['status'=>3];//Invalid Device Code
+                if(trim($dt['data'][0]->getAdditionalField1())==$Device)
+                {
+                    $dt['data']=$dt['data'][0];
+                    $dt['status']=1;//Found
+                    return $dt;
+                }
+                elseif(trim($dt['data'][0]->getDevicecode())=="")
+                {
+                    $dt['data'][0]->setDevicecode($Device);
+                    $dt['data'][0]->Save();
+                    return ['status'=>2];//Empty Device Code
+                }
+                else
+                {
+                    return ['status'=>3];//Invalid Device Code
+                }
             }
         }
+        else
+        {
+            if($dt['data']!=null && count($dt['data'])>0)
+                return ['status'=>1,'role'=>$role,'data'=>$dt['data'][0]];//Found
+            else
+            {
+                return ['status'=>1,'role'=>$role,'userid'=>$SysUserID];//Found
+            }
+        }
+
 //        $DBAccessor->beginTransaction();
 //        $userEnt=new onlineclass_userEntity($DBAccessor);
 //        $us=new roleSystemUserEntity();

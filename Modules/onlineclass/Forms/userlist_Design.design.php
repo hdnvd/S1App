@@ -328,10 +328,19 @@ class userlist_Design extends FormDesign {
         if($this->Data['service']=="getuserstatus")
         {
             $status=$this->Data['status'];
+            $role=$this->Data['role'];
             if($status!=1)
-                return json_encode(['status'=>$status]);
+                return json_encode(['status'=>$status,'role'=>'-1']);
             else
-                return json_encode(['userid'=>$this->Data['data']->getRole_systemuser_fid(),'status'=>$status]);
+            {
+
+                if(isset($this->Data['data']))
+                    return json_encode(['userid'=>$this->Data['data']->getRole_systemuser_fid(),'status'=>$status,'role'=>$role]);
+                else
+                    return json_encode(['userid'=>$this->Data['userid'],'status'=>$status,'role'=>$role]);
+
+            }
+
         }
         elseif($this->Data['service']=="getusercourses")
         {
