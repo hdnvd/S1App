@@ -17,7 +17,7 @@ use Modules\shift\Entity\shift_personelEntity;
 *@SweetFrameworkVersion 2.004
 */
 class managepersonelsController extends personellistController {
-	private $PAGESIZE=10;
+	private $PAGESIZE=30;
 	public function DeleteItem($ID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

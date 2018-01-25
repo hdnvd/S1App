@@ -4,6 +4,11 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\shift\Entity\shift_bakhshEntity;
+use Modules\shift\Entity\shift_inputfileEntity;
+use Modules\shift\Entity\shift_personelEntity;
+use Modules\shift\Entity\shift_roleEntity;
+use Modules\shift\Entity\shift_shifttypeEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -11,8 +16,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\shift\Entity\shift_shiftEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-27 - 2018-01-17 00:25
-*@lastUpdate 1396-10-27 - 2018-01-17 00:25
+*@creationDate 1396-11-05 - 2018-01-25 00:33
+*@lastUpdate 1396-11-05 - 2018-01-25 00:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -31,11 +36,26 @@ class shiftController extends Controller {
 			if($shiftEntityObject->getId()==-1)
 				throw new DataNotFoundException();
 			$result['shift']=$shiftEntityObject;
-			$personEntityObject=new shift_personEntity($DBAccessor);
-			$personEntityObject->SetId($result['shift']->getPerson_fid());
-			if($personEntityObject->getId()==-1)
+			$shifttypeEntityObject=new shift_shifttypeEntity($DBAccessor);
+			$shifttypeEntityObject->SetId($result['shift']->getShifttype_fid());
+			if($shifttypeEntityObject->getId()==-1)
 				throw new DataNotFoundException();
-			$result['person_fid']=$personEntityObject;
+			$result['shifttype_fid']=$shifttypeEntityObject;
+			$personelEntityObject=new shift_personelEntity($DBAccessor);
+			$personelEntityObject->SetId($result['shift']->getPersonel_fid());
+			if($personelEntityObject->getId()==-1)
+				throw new DataNotFoundException();
+			$result['personel_fid']=$personelEntityObject;
+			$bakhshEntityObject=new shift_bakhshEntity($DBAccessor);
+			$bakhshEntityObject->SetId($result['shift']->getBakhsh_fid());
+			if($bakhshEntityObject->getId()==-1)
+				throw new DataNotFoundException();
+			$result['bakhsh_fid']=$bakhshEntityObject;
+			$roleEntityObject=new shift_roleEntity($DBAccessor);
+			$roleEntityObject->SetId($result['shift']->getRole_fid());
+			if($roleEntityObject->getId()==-1)
+				throw new DataNotFoundException();
+			$result['role_fid']=$roleEntityObject;
 			$inputfileEntityObject=new shift_inputfileEntity($DBAccessor);
 			$inputfileEntityObject->SetId($result['shift']->getInputfile_fid());
 			if($inputfileEntityObject->getId()==-1)

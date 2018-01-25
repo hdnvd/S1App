@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\shift\Entity\shift_shiftEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-28 - 2018-01-18 18:55
-*@lastUpdate 1396-10-28 - 2018-01-18 18:55
+*@creationDate 1396-11-05 - 2018-01-25 00:33
+*@lastUpdate 1396-11-05 - 2018-01-25 00:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */

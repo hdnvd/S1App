@@ -4,6 +4,10 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\shift\Entity\shift_bakhshEntity;
+use Modules\shift\Entity\shift_eshteghalEntity;
+use Modules\shift\Entity\shift_madrakEntity;
+use Modules\shift\Entity\shift_roleEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -46,8 +50,8 @@ class personelController extends Controller {
 			if($eshteghalEntityObject->getId()==-1)
 				throw new DataNotFoundException();
 			$result['eshteghal_fid']=$eshteghalEntityObject;
-			$sematEntityObject=new shift_sematEntity($DBAccessor);
-			$sematEntityObject->SetId($result['personel']->getSemat_fid());
+			$sematEntityObject=new shift_roleEntity($DBAccessor);
+			$sematEntityObject->SetId($result['personel']->getRole_fid());
 			if($sematEntityObject->getId()==-1)
 				throw new DataNotFoundException();
 			$result['semat_fid']=$sematEntityObject;

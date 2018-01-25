@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-28 - 2018-01-18 18:55
-*@lastUpdate 1396-10-28 - 2018-01-18 18:55
+*@creationDate 1396-11-05 - 2018-01-25 00:33
+*@lastUpdate 1396-11-05 - 2018-01-25 00:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -39,14 +39,14 @@ class shiftlistsearch_Design extends FormDesign {
 	{
 		$this->Data = $Data;
 	}
-	/** @var textbox */
-	private $shifttype;
+	/** @var combobox */
+	private $shifttype_fid;
 	/**
-	 * @return textbox
+	 * @return combobox
 	 */
-	public function getShifttype()
+	public function getShifttype_fid()
 	{
-		return $this->shifttype;
+		return $this->shifttype_fid;
 	}
 	/** @var DatePicker */
 	private $due_date_from;
@@ -94,6 +94,24 @@ class shiftlistsearch_Design extends FormDesign {
 		return $this->personel_fid;
 	}
 	/** @var combobox */
+	private $bakhsh_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getBakhsh_fid()
+	{
+		return $this->bakhsh_fid;
+	}
+	/** @var combobox */
+	private $role_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getRole_fid()
+	{
+		return $this->role_fid;
+	}
+	/** @var combobox */
 	private $inputfile_fid;
 	/**
 	 * @return combobox
@@ -126,9 +144,9 @@ class shiftlistsearch_Design extends FormDesign {
 	{
 		parent::__construct();
 
-		/******* shifttype *******/
-		$this->shifttype= new textbox("shifttype");
-		$this->shifttype->setClass("form-control");
+		/******* shifttype_fid *******/
+		$this->shifttype_fid= new combobox("shifttype_fid");
+		$this->shifttype_fid->setClass("form-control");
 
 		/******* due_date_from *******/
 		$this->due_date_from= new DatePicker("due_date_from");
@@ -149,6 +167,14 @@ class shiftlistsearch_Design extends FormDesign {
 		/******* personel_fid *******/
 		$this->personel_fid= new combobox("personel_fid");
 		$this->personel_fid->setClass("form-control");
+
+		/******* bakhsh_fid *******/
+		$this->bakhsh_fid= new combobox("bakhsh_fid");
+		$this->bakhsh_fid->setClass("form-control");
+
+		/******* role_fid *******/
+		$this->role_fid= new combobox("role_fid");
+		$this->role_fid->setClass("form-control");
 
 		/******* inputfile_fid *******/
 		$this->inputfile_fid= new combobox("inputfile_fid");
@@ -179,12 +205,14 @@ class shiftlistsearch_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("searchtable");
-		$LTable1->addElement($this->getFieldRowCode($this->shifttype,$this->getFieldCaption('shifttype'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->due_date_from,$this->getFieldCaption('due_date_from'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->due_date_to,$this->getFieldCaption('due_date_to'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->register_date_from,$this->getFieldCaption('register_date_from'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->register_date_to,$this->getFieldCaption('register_date_to'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
@@ -196,17 +224,26 @@ class shiftlistsearch_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
+			$this->shifttype_fid->addOption("", "مهم نیست");
+		foreach ($this->Data['shifttype_fid'] as $item)
+			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
 			$this->personel_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['personel_fid'] as $item)
-			$this->personel_fid->addOption($item->getID(), $item->getTitleField());
+			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getPersonelcode());
+			$this->bakhsh_fid->addOption("", "مهم نیست");
+		foreach ($this->Data['bakhsh_fid'] as $item)
+			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
+			$this->role_fid->addOption("", "مهم نیست");
+		foreach ($this->Data['role_fid'] as $item)
+			$this->role_fid->addOption($item->getID(), $item->getTitleField());
 			$this->inputfile_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['inputfile_fid'] as $item)
 			$this->inputfile_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("shift", $this->Data)){
 
-			/******** shifttype ********/
-			$this->shifttype->setValue($this->Data['shift']->getShifttype());
-			$this->setFieldCaption('shifttype',$this->Data['shift']->getFieldInfo('shifttype')->getTitle());
+			/******** shifttype_fid ********/
+			$this->shifttype_fid->setSelectedValue($this->Data['shift']->getShifttype_fid());
+			$this->setFieldCaption('shifttype_fid',$this->Data['shift']->getFieldInfo('shifttype_fid')->getTitle());
 
 			/******** due_date_from ********/
 			$this->due_date_from->setTime($this->Data['shift']->getDue_date_from());
@@ -230,6 +267,14 @@ class shiftlistsearch_Design extends FormDesign {
 			$this->personel_fid->setSelectedValue($this->Data['shift']->getPersonel_fid());
 			$this->setFieldCaption('personel_fid',$this->Data['shift']->getFieldInfo('personel_fid')->getTitle());
 
+			/******** bakhsh_fid ********/
+			$this->bakhsh_fid->setSelectedValue($this->Data['shift']->getBakhsh_fid());
+			$this->setFieldCaption('bakhsh_fid',$this->Data['shift']->getFieldInfo('bakhsh_fid')->getTitle());
+
+			/******** role_fid ********/
+			$this->role_fid->setSelectedValue($this->Data['shift']->getRole_fid());
+			$this->setFieldCaption('role_fid',$this->Data['shift']->getFieldInfo('role_fid')->getTitle());
+
 			/******** inputfile_fid ********/
 			$this->inputfile_fid->setSelectedValue($this->Data['shift']->getInputfile_fid());
 			$this->setFieldCaption('inputfile_fid',$this->Data['shift']->getFieldInfo('inputfile_fid')->getTitle());
@@ -243,10 +288,10 @@ class shiftlistsearch_Design extends FormDesign {
 			$this->isdesc->addOption('0','صعودی');
 			$this->isdesc->addOption('1','نزولی');
 
-		/******** shifttype ********/
-		$this->sortby->addOption($this->Data['shift']->getTableFieldID('shifttype'),$this->getFieldCaption('shifttype'));
-		if(isset($_GET['shifttype']))
-			$this->shifttype->setValue($_GET['shifttype']);
+		/******** shifttype_fid ********/
+		$this->sortby->addOption($this->Data['shift']->getTableFieldID('shifttype_fid'),$this->getFieldCaption('shifttype_fid'));
+		if(isset($_GET['shifttype_fid']))
+			$this->shifttype_fid->setSelectedValue($_GET['shifttype_fid']);
 
 		/******** due_date_from ********/
 
@@ -262,6 +307,16 @@ class shiftlistsearch_Design extends FormDesign {
 		$this->sortby->addOption($this->Data['shift']->getTableFieldID('personel_fid'),$this->getFieldCaption('personel_fid'));
 		if(isset($_GET['personel_fid']))
 			$this->personel_fid->setSelectedValue($_GET['personel_fid']);
+
+		/******** bakhsh_fid ********/
+		$this->sortby->addOption($this->Data['shift']->getTableFieldID('bakhsh_fid'),$this->getFieldCaption('bakhsh_fid'));
+		if(isset($_GET['bakhsh_fid']))
+			$this->bakhsh_fid->setSelectedValue($_GET['bakhsh_fid']);
+
+		/******** role_fid ********/
+		$this->sortby->addOption($this->Data['shift']->getTableFieldID('role_fid'),$this->getFieldCaption('role_fid'));
+		if(isset($_GET['role_fid']))
+			$this->role_fid->setSelectedValue($_GET['role_fid']);
 
 		/******** inputfile_fid ********/
 		$this->sortby->addOption($this->Data['shift']->getTableFieldID('inputfile_fid'),$this->getFieldCaption('inputfile_fid'));

@@ -85,9 +85,26 @@ class makeEntityController extends Controller {
     {
         $FieldNameInfoVar="\$" . ucfirst($FieldName) . "Info";
         $FieldNameUPPERVar="\$" . strtoupper($FieldName);
+        $FieldTitle=$FieldName;
+        if(strtolower($FieldTitle)=='title')
+            $FieldTitle='عنوان';
+        elseif(strtolower($FieldTitle)=='name')
+            $FieldTitle='نام';
+        elseif(strtolower($FieldTitle)=='ismale')
+            $FieldTitle='جنسیت';
+        elseif(strtolower($FieldTitle)=='ismarried')
+            $FieldTitle='وضعیت تاهل';
+        elseif(strtolower($FieldTitle)=='family')
+            $FieldTitle='نام خانوادگی';
+        elseif(strtolower($FieldTitle)=='add_date')
+            $FieldTitle='تاریخ ثبت در سیستم';
+        elseif(strtolower($FieldTitle)=='mellicode')
+            $FieldTitle='کد ملی';
+        elseif(strtolower($FieldTitle)=='shsh')
+            $FieldTitle='شماره شناسنامه';
         $Info="\n\n\t\t/******** $FieldName ********/";
         $Info.="\n\t\t$FieldNameInfoVar=new FieldInfo();";
-        $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldName\");";
+        $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldTitle\");";
         $Info.="\n\t\t\$this->setFieldInfo($EntityClassName" . "::" . $FieldNameUPPERVar . ",$FieldNameInfoVar);";
         $Info.="\n\t\t\$this->addTableField('$ID',$EntityClassName" . "::" . $FieldNameUPPERVar . ");";
         return $Info;

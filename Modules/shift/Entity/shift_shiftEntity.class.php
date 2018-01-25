@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-28 - 2018-01-18 18:55
-*@lastUpdate 1396-10-28 - 2018-01-18 18:55
+*@creationDate 1396-11-05 - 2018-01-25 00:32
+*@lastUpdate 1396-11-05 - 2018-01-25 00:32
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -20,11 +20,11 @@ class shift_shiftEntity extends EntityClass {
 		$this->setTableTitle("shift_shift");
 		$this->setTitleFieldName("id");
 
-		/******** shifttype ********/
-		$ShifttypeInfo=new FieldInfo();
-		$ShifttypeInfo->setTitle("shifttype");
-		$this->setFieldInfo(shift_shiftEntity::$SHIFTTYPE,$ShifttypeInfo);
-		$this->addTableField('1',shift_shiftEntity::$SHIFTTYPE);
+		/******** shifttype_fid ********/
+		$Shifttype_fidInfo=new FieldInfo();
+		$Shifttype_fidInfo->setTitle("shifttype_fid");
+		$this->setFieldInfo(shift_shiftEntity::$SHIFTTYPE_FID,$Shifttype_fidInfo);
+		$this->addTableField('1',shift_shiftEntity::$SHIFTTYPE_FID);
 
 		/******** due_date ********/
 		$Due_dateInfo=new FieldInfo();
@@ -44,24 +44,36 @@ class shift_shiftEntity extends EntityClass {
 		$this->setFieldInfo(shift_shiftEntity::$PERSONEL_FID,$Personel_fidInfo);
 		$this->addTableField('4',shift_shiftEntity::$PERSONEL_FID);
 
+		/******** bakhsh_fid ********/
+		$Bakhsh_fidInfo=new FieldInfo();
+		$Bakhsh_fidInfo->setTitle("bakhsh_fid");
+		$this->setFieldInfo(shift_shiftEntity::$BAKHSH_FID,$Bakhsh_fidInfo);
+		$this->addTableField('5',shift_shiftEntity::$BAKHSH_FID);
+
+		/******** role_fid ********/
+		$Role_fidInfo=new FieldInfo();
+		$Role_fidInfo->setTitle("role_fid");
+		$this->setFieldInfo(shift_shiftEntity::$ROLE_FID,$Role_fidInfo);
+		$this->addTableField('6',shift_shiftEntity::$ROLE_FID);
+
 		/******** inputfile_fid ********/
 		$Inputfile_fidInfo=new FieldInfo();
 		$Inputfile_fidInfo->setTitle("inputfile_fid");
 		$this->setFieldInfo(shift_shiftEntity::$INPUTFILE_FID,$Inputfile_fidInfo);
-		$this->addTableField('5',shift_shiftEntity::$INPUTFILE_FID);
+		$this->addTableField('7',shift_shiftEntity::$INPUTFILE_FID);
 	}
-	public static $SHIFTTYPE="shifttype";
+	public static $SHIFTTYPE_FID="shifttype_fid";
 	/**
 	 * @return mixed
 	 */
-	public function getShifttype(){
-		return $this->getField(shift_shiftEntity::$SHIFTTYPE);
+	public function getShifttype_fid(){
+		return $this->getField(shift_shiftEntity::$SHIFTTYPE_FID);
 	}
 	/**
-	 * @param mixed $Shifttype
+	 * @param mixed $Shifttype_fid
 	 */
-	public function setShifttype($Shifttype){
-		$this->setField(shift_shiftEntity::$SHIFTTYPE,$Shifttype);
+	public function setShifttype_fid($Shifttype_fid){
+		$this->setField(shift_shiftEntity::$SHIFTTYPE_FID,$Shifttype_fid);
 	}
 	public static $DUE_DATE="due_date";
 	/**
@@ -101,6 +113,32 @@ class shift_shiftEntity extends EntityClass {
 	 */
 	public function setPersonel_fid($Personel_fid){
 		$this->setField(shift_shiftEntity::$PERSONEL_FID,$Personel_fid);
+	}
+	public static $BAKHSH_FID="bakhsh_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getBakhsh_fid(){
+		return $this->getField(shift_shiftEntity::$BAKHSH_FID);
+	}
+	/**
+	 * @param mixed $Bakhsh_fid
+	 */
+	public function setBakhsh_fid($Bakhsh_fid){
+		$this->setField(shift_shiftEntity::$BAKHSH_FID,$Bakhsh_fid);
+	}
+	public static $ROLE_FID="role_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getRole_fid(){
+		return $this->getField(shift_shiftEntity::$ROLE_FID);
+	}
+	/**
+	 * @param mixed $Role_fid
+	 */
+	public function setRole_fid($Role_fid){
+		$this->setField(shift_shiftEntity::$ROLE_FID,$Role_fid);
 	}
 	public static $INPUTFILE_FID="inputfile_fid";
 	/**

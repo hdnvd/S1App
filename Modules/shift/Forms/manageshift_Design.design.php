@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-28 - 2018-01-18 18:55
-*@lastUpdate 1396-10-28 - 2018-01-18 18:55
+*@creationDate 1396-11-05 - 2018-01-25 00:33
+*@lastUpdate 1396-11-05 - 2018-01-25 00:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -42,10 +42,12 @@ class manageshift_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->shifttype,$this->getFieldCaption('shifttype'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->due_date,$this->getFieldCaption('due_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->register_date,$this->getFieldCaption('register_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
@@ -57,16 +59,21 @@ class manageshift_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
+		foreach ($this->Data['shifttype_fid'] as $item)
+			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['personel_fid'] as $item)
 			$this->personel_fid->addOption($item->getID(), $item->getTitleField());
+		foreach ($this->Data['bakhsh_fid'] as $item)
+			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
+		foreach ($this->Data['role_fid'] as $item)
+			$this->role_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['inputfile_fid'] as $item)
 			$this->inputfile_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("shift", $this->Data)){
 
-			/******** shifttype ********/
-			$this->shifttype->setValue($this->Data['shift']->getShifttype());
-			$this->setFieldCaption('shifttype',$this->Data['shift']->getFieldInfo('shifttype')->getTitle());
-			$this->shifttype->setFieldInfo($this->Data['shift']->getFieldInfo('shifttype'));
+			/******** shifttype_fid ********/
+			$this->shifttype_fid->setSelectedValue($this->Data['shift']->getShifttype_fid());
+			$this->setFieldCaption('shifttype_fid',$this->Data['shift']->getFieldInfo('shifttype_fid')->getTitle());
 
 			/******** due_date ********/
 			$this->due_date->setTime($this->Data['shift']->getDue_date());
@@ -82,6 +89,14 @@ class manageshift_Design extends FormDesign {
 			$this->personel_fid->setSelectedValue($this->Data['shift']->getPersonel_fid());
 			$this->setFieldCaption('personel_fid',$this->Data['shift']->getFieldInfo('personel_fid')->getTitle());
 
+			/******** bakhsh_fid ********/
+			$this->bakhsh_fid->setSelectedValue($this->Data['shift']->getBakhsh_fid());
+			$this->setFieldCaption('bakhsh_fid',$this->Data['shift']->getFieldInfo('bakhsh_fid')->getTitle());
+
+			/******** role_fid ********/
+			$this->role_fid->setSelectedValue($this->Data['shift']->getRole_fid());
+			$this->setFieldCaption('role_fid',$this->Data['shift']->getFieldInfo('role_fid')->getTitle());
+
 			/******** inputfile_fid ********/
 			$this->inputfile_fid->setSelectedValue($this->Data['shift']->getInputfile_fid());
 			$this->setFieldCaption('inputfile_fid',$this->Data['shift']->getFieldInfo('inputfile_fid')->getTitle());
@@ -93,9 +108,9 @@ class manageshift_Design extends FormDesign {
 	{
 		parent::__construct();
 
-		/******* shifttype *******/
-		$this->shifttype= new textbox("shifttype");
-		$this->shifttype->setClass("form-control");
+		/******* shifttype_fid *******/
+		$this->shifttype_fid= new combobox("shifttype_fid");
+		$this->shifttype_fid->setClass("form-control");
 
 		/******* due_date *******/
 		$this->due_date= new DatePicker("due_date");
@@ -108,6 +123,14 @@ class manageshift_Design extends FormDesign {
 		/******* personel_fid *******/
 		$this->personel_fid= new combobox("personel_fid");
 		$this->personel_fid->setClass("form-control");
+
+		/******* bakhsh_fid *******/
+		$this->bakhsh_fid= new combobox("bakhsh_fid");
+		$this->bakhsh_fid->setClass("form-control");
+
+		/******* role_fid *******/
+		$this->role_fid= new combobox("role_fid");
+		$this->role_fid->setClass("form-control");
 
 		/******* inputfile_fid *******/
 		$this->inputfile_fid= new combobox("inputfile_fid");
@@ -139,14 +162,14 @@ class manageshift_Design extends FormDesign {
     {
         $this->adminMode = $adminMode;
     }
-	/** @var textbox */
-	private $shifttype;
+	/** @var combobox */
+	private $shifttype_fid;
 	/**
-	 * @return textbox
+	 * @return combobox
 	 */
-	public function getShifttype()
+	public function getShifttype_fid()
 	{
-		return $this->shifttype;
+		return $this->shifttype_fid;
 	}
 	/** @var DatePicker */
 	private $due_date;
@@ -174,6 +197,24 @@ class manageshift_Design extends FormDesign {
 	public function getPersonel_fid()
 	{
 		return $this->personel_fid;
+	}
+	/** @var combobox */
+	private $bakhsh_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getBakhsh_fid()
+	{
+		return $this->bakhsh_fid;
+	}
+	/** @var combobox */
+	private $role_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getRole_fid()
+	{
+		return $this->role_fid;
 	}
 	/** @var combobox */
 	private $inputfile_fid;

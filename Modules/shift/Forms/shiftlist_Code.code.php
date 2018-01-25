@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-28 - 2018-01-18 18:55
-*@lastUpdate 1396-10-28 - 2018-01-18 18:55
+*@creationDate 1396-11-05 - 2018-01-25 00:33
+*@lastUpdate 1396-11-05 - 2018-01-25 00:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -85,16 +85,18 @@ class shiftlist_Code extends FormCode {
 		$design=$this->searchForm;
 		$design->setAdminMode($this->getAdminMode());
 		$shiftlistController->setAdminMode($this->getAdminMode());
-		$shifttype=$this->getHttpGETparameter('shifttype','');
+		$shifttype_fid_ID=$this->getHttpGETparameter('shifttype_fid','');
 		$due_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('due_date_from',''));
 		$due_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('due_date_to',''));
 		$register_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('register_date_from',''));
 		$register_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('register_date_to',''));
 		$personel_fid_ID=$this->getHttpGETparameter('personel_fid','');
+		$bakhsh_fid_ID=$this->getHttpGETparameter('bakhsh_fid','');
+		$role_fid_ID=$this->getHttpGETparameter('role_fid','');
 		$inputfile_fid_ID=$this->getHttpGETparameter('inputfile_fid','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$shiftlistController->Search($this->getHttpGETparameter('pn',-1),$shifttype,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid_ID,$inputfile_fid_ID,$sortby_ID,$isdesc_ID);
+		$Result=$shiftlistController->Search($this->getHttpGETparameter('pn',-1),$shifttype_fid_ID,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

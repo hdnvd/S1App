@@ -40,6 +40,8 @@ class importshiftdata_Design extends FormDesign {
 		$this->Data = $Data;
 	}
 	private $FieldCaptions;
+    /** @var ComboBox */
+    private $DataType;
 	/** @var FileUploadBox */
 	private $inputfile;
 	/**
@@ -59,6 +61,13 @@ class importshiftdata_Design extends FormDesign {
 		$this->inputfile= new FileUploadBox("inputfile");
 		$this->inputfile->setClass("form-control-file");
 
+        /******* DataType *******/
+        $this->DataType= new ComboBox("datatype");
+        $this->DataType->setClass("form-control-file");
+        $this->DataType->addOption('1','اطلاعات شیفت');
+        $this->DataType->addOption('2','اطلاعات پرسنل');
+        $this->DataType->addOption('3','اطلاعات بخش ها');
+
 		/******* btnsave *******/
 		$this->btnsave= new SweetButton(true,"ذخیره");
 		$this->btnsave->setAction("btnsave");
@@ -75,12 +84,23 @@ class importshiftdata_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->inputfile,$this->getFieldCaption('inputfile'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->btnsave));
+        $LTable1->addElement($this->getFieldRowCode($this->DataType,'نوع فایل',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+
+        $LTable1->addElement($this->getFieldRowCode($this->inputfile,'فایل ورودی',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+
+        $LTable1->addElement($this->getSingleFieldRowCode($this->btnsave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->setClass('form-horizontal');
 		return $form->getHTML();
 	}
+
+    /**
+     * @return ComboBox
+     */
+    public function getDataType()
+    {
+        return $this->DataType;
+    }
 }
 ?>

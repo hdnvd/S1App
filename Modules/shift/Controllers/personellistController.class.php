@@ -21,7 +21,7 @@ use Modules\shift\Entity\shift_personelEntity;
 *@SweetFrameworkVersion 2.004
 */
 class personellistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=40;
 	public function getData($PageNum,QueryLogic $QueryLogic)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

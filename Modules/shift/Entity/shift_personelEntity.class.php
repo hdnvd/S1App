@@ -476,5 +476,6 @@ class shift_personelEntity extends EntityClass {
 	public function setIs_married($Is_married){
 		$this->setField(shift_personelEntity::$IS_MARRIED,$Is_married);
 	}
+
 }
 ?>

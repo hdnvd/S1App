@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-28 - 2018-01-18 18:55
-*@lastUpdate 1396-10-28 - 2018-01-18 18:55
+*@creationDate 1396-11-05 - 2018-01-25 00:33
+*@lastUpdate 1396-11-05 - 2018-01-25 00:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -77,12 +77,14 @@ class manageshift_Code extends FormCode {
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
 		$design=new manageshift_Design();
-		$shifttype=$design->getShifttype()->getValue();
+		$shifttype_fid_ID=$design->getShifttype_fid()->getSelectedID();
 		$due_date=$design->getDue_date()->getTime();
 		$register_date=$design->getRegister_date()->getTime();
 		$personel_fid_ID=$design->getPersonel_fid()->getSelectedID();
+		$bakhsh_fid_ID=$design->getBakhsh_fid()->getSelectedID();
+		$role_fid_ID=$design->getRole_fid()->getSelectedID();
 		$inputfile_fid_ID=$design->getInputfile_fid()->getSelectedID();
-		$Result=$manageshiftController->BtnSave($this->getID(),$shifttype,$due_date,$register_date,$personel_fid_ID,$inputfile_fid_ID);
+		$Result=$manageshiftController->BtnSave($this->getID(),$shifttype_fid_ID,$due_date,$register_date,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

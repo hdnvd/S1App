@@ -54,13 +54,14 @@ class importshiftdata_Code extends FormCode {
 		$translator=new ModuleTranslator("shift");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		$design=new importshiftdata_Design();
+		$datatypeid=$design->getDataType()->getSelectedID();
 		$inputfilePaths=$design->getInputfile()->getSelectedFilesTempPath();
 		$inputfileNames=$design->getInputfile()->getSelectedFilesName();
 		$inputfileURLs=array();
 		for($fileIndex=0;$fileIndex<count($inputfilePaths);$fileIndex++){
 			$inputfileURLs[$fileIndex]=uploadHelper::UploadFile($inputfilePaths[$fileIndex], $inputfileNames[$fileIndex], "content/files/shift/importshiftdata/");
 		}
-		$Result=$importshiftdataController->Btnsave($this->getID(),$inputfileURLs);
+		$Result=$importshiftdataController->Btnsave($this->getID(),$inputfileURLs,$datatypeid);
 		$design->setData($Result);
 		$design->setMessage("btnsave is done!");
 		return $design->getBodyHTML();

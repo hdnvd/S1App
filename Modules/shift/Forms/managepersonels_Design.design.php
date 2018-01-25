@@ -99,14 +99,14 @@ class managepersonels_Design extends FormDesign {
 		$LTable1->setClass("table-striped table-hover managelist");
 		$LTable1->addElement(new Lable('#'));
 		$LTable1->setLastElementClass("listtitle");
-		$LTable1->addElement(new Lable('عنوان'));
+		$LTable1->addElement(new Lable('نام'));
 		$LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عملیات'));
 		$LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('shift',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+			$Title=$this->Data['data'][$i]->getName() . " " . $this->Data['data'][$i]->getFamily();
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
