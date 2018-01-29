@@ -5,6 +5,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\shift\Entity\shift_bakhshEntity;
+use Modules\shift\Entity\shift_eshteghalEntity;
 use Modules\shift\Entity\shift_inputfileEntity;
 use Modules\shift\Entity\shift_personelEntity;
 use Modules\shift\Entity\shift_roleEntity;
@@ -23,7 +24,7 @@ use Modules\shift\Entity\shift_shiftEntity;
 */
 class shiftlistController extends Controller {
 	private $PAGESIZE=10;
-	public function getData($PageNum,QueryLogic $QueryLogic)
+	public function getData($PageNum,QueryLogic $QueryLogic,$daycount=14,$startdate=null)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -53,6 +54,21 @@ class shiftlistController extends Controller {
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
 		$QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
 		$result['data']=$shiftEnt->FindAll($QueryLogic);
+        $AllCount1 = count($result['data']);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $item=$result['data'][$i];
+            $em=new shift_personelEntity($DBAccessor);
+            $em->setId($item->getPersonel_fid());
+            $result['personel'][$i]=$em;
+            $role=new shift_roleEntity($DBAccessor);
+            $role->setId($em->getRole_fid());
+            $result['role'][$i]=$role;
+            $Esh=new shift_eshteghalEntity($DBAccessor);
+            $Esh->setId($em->getEshteghal_fid());
+            $result['eshteghaltype'][$i]=$Esh;
+        }
+        $result['daycount']=$daycount;
+        $result['starttime']=$startdate;
 		$DBAccessor->close_connection();
 		return $result;
 	}
@@ -79,6 +95,8 @@ class shiftlistController extends Controller {
 	}
 	public function Search($PageNum,$shifttype_fid,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid,$bakhsh_fid,$role_fid,$inputfile_fid,$sortby,$isdesc)
 	{
+	    $daycount=($due_date_to-$due_date_from)/86400;
+        $starttime=$due_date_from;
 		$DBAccessor=new dbaccess();
 		$shiftEnt=new shift_shiftEntity($DBAccessor);
 		$q=new QueryLogic();
@@ -96,7 +114,7 @@ class shiftlistController extends Controller {
 		if($sortByField!=null)
 			$q->addOrderBy($sortByField,$isdesc);
 		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,$daycount,$starttime);
 	}
 }
 ?>

@@ -1,13 +1,15 @@
 <?php
 namespace Modules\finance\Entity;
 use core\CoreClasses\services\EntityClass;
+use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
 use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-06-15 - 2017-09-06 13:18
-*@lastUpdate 1396-06-15 - 2017-09-06 13:18
-*@SweetFrameworkHelperVersion 2.001
+*@creationDate 1396-11-09 - 2018-01-29 11:25
+*@lastUpdate 1396-11-09 - 2018-01-29 11:25
+*@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
 class finance_transactionEntity extends EntityClass {
@@ -15,6 +17,50 @@ class finance_transactionEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("finance_transaction");
+		$this->setTableTitle("تراکنش");
+		$this->setTitleFieldName("description");
+
+		/******** amount ********/
+		$AmountInfo=new FieldInfo();
+		$AmountInfo->setTitle("مبلغ");
+		$this->setFieldInfo(finance_transactionEntity::$AMOUNT,$AmountInfo);
+		$this->addTableField('1',finance_transactionEntity::$AMOUNT);
+
+		/******** description ********/
+		$DescriptionInfo=new FieldInfo();
+		$DescriptionInfo->setTitle("توضیحات");
+		$this->setFieldInfo(finance_transactionEntity::$DESCRIPTION,$DescriptionInfo);
+		$this->addTableField('2',finance_transactionEntity::$DESCRIPTION);
+
+		/******** add_time ********/
+		$Add_timeInfo=new FieldInfo();
+		$Add_timeInfo->setTitle("تاریخ ثبت");
+		$this->setFieldInfo(finance_transactionEntity::$ADD_TIME,$Add_timeInfo);
+		$this->addTableField('3',finance_transactionEntity::$ADD_TIME);
+
+		/******** commit_time ********/
+		$Commit_timeInfo=new FieldInfo();
+		$Commit_timeInfo->setTitle("تاریخ تایید");
+		$this->setFieldInfo(finance_transactionEntity::$COMMIT_TIME,$Commit_timeInfo);
+		$this->addTableField('4',finance_transactionEntity::$COMMIT_TIME);
+
+		/******** role_systemuser_fid ********/
+		$Role_systemuser_fidInfo=new FieldInfo();
+		$Role_systemuser_fidInfo->setTitle("role_systemuser_fid");
+		$this->setFieldInfo(finance_transactionEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
+		$this->addTableField('5',finance_transactionEntity::$ROLE_SYSTEMUSER_FID);
+
+		/******** issuccessful ********/
+		$IssuccessfulInfo=new FieldInfo();
+		$IssuccessfulInfo->setTitle("موفق");
+		$this->setFieldInfo(finance_transactionEntity::$ISSUCCESSFUL,$IssuccessfulInfo);
+		$this->addTableField('6',finance_transactionEntity::$ISSUCCESSFUL);
+
+		/******** chapter_fid ********/
+		$Chapter_fidInfo=new FieldInfo();
+		$Chapter_fidInfo->setTitle("سرفصل");
+		$this->setFieldInfo(finance_transactionEntity::$CHAPTER_FID,$Chapter_fidInfo);
+		$this->addTableField('7',finance_transactionEntity::$CHAPTER_FID);
 	}
 	public static $AMOUNT="amount";
 	/**

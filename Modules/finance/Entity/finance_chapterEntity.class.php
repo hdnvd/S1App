@@ -1,13 +1,15 @@
 <?php
 namespace Modules\finance\Entity;
 use core\CoreClasses\services\EntityClass;
+use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
 use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-06-15 - 2017-09-06 17:42
-*@lastUpdate 1396-06-15 - 2017-09-06 17:42
-*@SweetFrameworkHelperVersion 2.001
+*@creationDate 1396-11-09 - 2018-01-29 11:29
+*@lastUpdate 1396-11-09 - 2018-01-29 11:29
+*@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
 class finance_chapterEntity extends EntityClass {
@@ -15,6 +17,20 @@ class finance_chapterEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("finance_chapter");
+		$this->setTableTitle("finance_chapter");
+		$this->setTitleFieldName("title");
+
+		/******** title ********/
+		$TitleInfo=new FieldInfo();
+		$TitleInfo->setTitle("عنوان");
+		$this->setFieldInfo(finance_chapterEntity::$TITLE,$TitleInfo);
+		$this->addTableField('1',finance_chapterEntity::$TITLE);
+
+		/******** latintitle ********/
+		$LatintitleInfo=new FieldInfo();
+		$LatintitleInfo->setTitle("latintitle");
+		$this->setFieldInfo(finance_chapterEntity::$LATINTITLE,$LatintitleInfo);
+		$this->addTableField('2',finance_chapterEntity::$LATINTITLE);
 	}
 	public static $TITLE="title";
 	/**

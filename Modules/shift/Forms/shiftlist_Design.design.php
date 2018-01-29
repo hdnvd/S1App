@@ -152,6 +152,13 @@ class shiftlist_Design extends FormDesign {
 	}
 	/** @var SweetButton */
 	private $search;
+	private function getDateFromTime($time)
+    {
+        date_default_timezone_set("Asia/Tehran");
+        $sweetDate = new SweetDate(false, true, 'Asia/Tehran');
+        $dt = $sweetDate->date("y/m/d", $time);
+        return $dt;
+    }
 	public function getBodyHTML($command=null)
 	{
 		$this->FillItems();
@@ -159,37 +166,33 @@ class shiftlist_Design extends FormDesign {
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("shift_shiftlist");
 		$Page->addElement($this->getPageTitlePart("فهرست " . $this->Data['shift']->getTableTitle() . " ها"));
-		$LTable1=new Div();
-		$LTable1->setClass("searchtable");
-		$LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->due_date_from,$this->getFieldCaption('due_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->due_date_to,$this->getFieldCaption('due_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->register_date_from,$this->getFieldCaption('register_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->register_date_to,$this->getFieldCaption('register_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
-		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
-		$Page->addElement($LTable1);
+
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
-		$Div1=new Div();
-		$Div1->setClass("list");
+		$Div1=new ListTable(6+$this->Data['daycount']);
+		$Div1->setClass("shiftlist");
+		$Div1->addElement(new Lable('#'));
+        $Div1->addElement(new Lable('نام'));
+        $Div1->addElement(new Lable('نام خانوادگی'));
+        $Div1->addElement(new Lable('سمت'));
+        $Div1->addElement(new Lable('نوع استخدام'));
+        $Div1->addElement(new Lable('تاریخ استخدام'));
+        $AllCount1 = $this->Data['daycount'];
+        $daylength=86400;
+        for ($i = 0; $i < $AllCount1; $i++)
+            $Div1->addElement(new Lable($this->getDateFromTime($this->Data['starttime']+$daylength*$i)));
+
 		for($i=0;$i<count($this->Data['data']);$i++){
-		$innerDiv[$i]=new Div();
-		$innerDiv[$i]->setClass("listitem");
-			$url=new AppRooter('shift','shift');
-			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
-			if($this->Data['data'][$i]->getTitleField()=="")
-				$Title='-- بدون عنوان --';
-			$lbTit[$i]=new Lable($Title);
-			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
-			$innerDiv[$i]->addElement($liTit[$i]);
-			$Div1->addElement($innerDiv[$i]);
+			$Name=$this->Data['personel'][$i]->getName();
+            $Family=$this->Data['personel'][$i]->getFamily();
+            $Role=$this->Data['role'][$i]->getTitleField();
+            $eshteghal=$this->Data['eshteghaltype'][$i]->getTitleField();
+
+            $Div1->addElement(new Lable($i+1));
+			$Div1->addElement(new Lable($Name));
+            $Div1->addElement(new Lable($Family));
+            $Div1->addElement(new Lable($Role));
+            $Div1->addElement(new Lable($eshteghal));
 		}
 		$Page->addElement($Div1);
 		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"shift","shiftlist"));

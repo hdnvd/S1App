@@ -9,6 +9,7 @@ use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\ocms\Entity\ocms_doctorEntity;
 use Modules\ocms\Entity\ocms_doctorreserveEntity;
+use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -109,9 +110,11 @@ class doctorplanlistController extends Controller {
 //        echo $UserBalance;
         if($UserBalance<$DrEnt->getPrice())
             throw new LowBalanceException();
-
+        $UserInf=new users_userEntity($DBAccessor);
+        $UserInf=$UserInf->FindOne(new QueryLogic([new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$SystemUserID)]));
+        $UserInf=new users_userEntity($DBAccessor);
         //Deduction from customer account
-        $result=$Payment->startTransaction(-1*$DrEnt->getPrice(),$SystemUserID,'','','','رزرو وقت',1,false,'',$SystemUserID);
+        $result=$Payment->startTransaction(-1*$DrEnt->getPrice(),$UserInf->getName(),$UserInf->getFamily(),$UserInf->getMobile(),'','رزرو وقت',1,false,'',$SystemUserID);
         $resEnt=new ocms_doctorreserveEntity($DBAccessor);
         $resEnt->setReserve_date(time());
         $resEnt->setDoctorplan_fid($DoctorPlanID);
@@ -122,7 +125,7 @@ class doctorplanlistController extends Controller {
         $doctorSystemUserID=$DrEnt->getRole_systemuser_fid();
 
         //Add to Doctor Account
-        $result=$Payment->startTransaction($DrEnt->getPrice(),$doctorSystemUserID,'','','','رزرو وقت توسط کاربر شماره '. $SystemUserID,1,false,'',$doctorSystemUserID);
+        $result=$Payment->startTransaction($DrEnt->getPrice(),$DrEnt->getName(),$DrEnt->getFamily(),$DrEnt->getMobile(),'','رزرو وقت توسط کاربر شماره '. $SystemUserID,1,false,'',$doctorSystemUserID);
 
         return [];
 
