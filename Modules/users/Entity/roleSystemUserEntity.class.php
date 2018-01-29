@@ -113,7 +113,9 @@ class roleSystemUserEntity extends EntityClass
     public static function getUserIdFromUserPass($username,$Password)
     {
         $Database=new dbquery();
+        $username=strtolower($username);
         $Query=$Database->Select("id")->From("role_systemuser")->Where()->Equal("username", $username)->AndLogic()->Equal("password",$Password);
+//        echo $Query->getQueryString();
         $result=$Query->ExecuteAssociated();
         $id=null;
         if($result!=null)
