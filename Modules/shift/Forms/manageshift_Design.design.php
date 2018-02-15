@@ -44,11 +44,11 @@ class manageshift_Design extends FormDesign {
 		$LTable1->setClass("formtable");
 		$LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->due_date,$this->getFieldCaption('due_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->register_date,$this->getFieldCaption('register_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->register_date,$this->getFieldCaption('register_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -62,13 +62,7 @@ class manageshift_Design extends FormDesign {
 		foreach ($this->Data['shifttype_fid'] as $item)
 			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['personel_fid'] as $item)
-			$this->personel_fid->addOption($item->getID(), $item->getTitleField());
-		foreach ($this->Data['bakhsh_fid'] as $item)
-			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
-		foreach ($this->Data['role_fid'] as $item)
-			$this->role_fid->addOption($item->getID(), $item->getTitleField());
-		foreach ($this->Data['inputfile_fid'] as $item)
-			$this->inputfile_fid->addOption($item->getID(), $item->getTitleField());
+			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getPersonelCode());
 		if (key_exists("shift", $this->Data)){
 
 			/******** shifttype_fid ********/
@@ -80,28 +74,10 @@ class manageshift_Design extends FormDesign {
 			$this->setFieldCaption('due_date',$this->Data['shift']->getFieldInfo('due_date')->getTitle());
 			$this->due_date->setFieldInfo($this->Data['shift']->getFieldInfo('due_date'));
 
-			/******** register_date ********/
-			$this->register_date->setTime($this->Data['shift']->getRegister_date());
-			$this->setFieldCaption('register_date',$this->Data['shift']->getFieldInfo('register_date')->getTitle());
-			$this->register_date->setFieldInfo($this->Data['shift']->getFieldInfo('register_date'));
-
 			/******** personel_fid ********/
 			$this->personel_fid->setSelectedValue($this->Data['shift']->getPersonel_fid());
 			$this->setFieldCaption('personel_fid',$this->Data['shift']->getFieldInfo('personel_fid')->getTitle());
 
-			/******** bakhsh_fid ********/
-			$this->bakhsh_fid->setSelectedValue($this->Data['shift']->getBakhsh_fid());
-			$this->setFieldCaption('bakhsh_fid',$this->Data['shift']->getFieldInfo('bakhsh_fid')->getTitle());
-
-			/******** role_fid ********/
-			$this->role_fid->setSelectedValue($this->Data['shift']->getRole_fid());
-			$this->setFieldCaption('role_fid',$this->Data['shift']->getFieldInfo('role_fid')->getTitle());
-
-			/******** inputfile_fid ********/
-			$this->inputfile_fid->setSelectedValue($this->Data['shift']->getInputfile_fid());
-			$this->setFieldCaption('inputfile_fid',$this->Data['shift']->getFieldInfo('inputfile_fid')->getTitle());
-
-			/******** btnSave ********/
 		}
 	}
 	public function __construct()
@@ -116,25 +92,10 @@ class manageshift_Design extends FormDesign {
 		$this->due_date= new DatePicker("due_date");
 		$this->due_date->setClass("form-control");
 
-		/******* register_date *******/
-		$this->register_date= new DatePicker("register_date");
-		$this->register_date->setClass("form-control");
 
 		/******* personel_fid *******/
 		$this->personel_fid= new combobox("personel_fid");
 		$this->personel_fid->setClass("form-control");
-
-		/******* bakhsh_fid *******/
-		$this->bakhsh_fid= new combobox("bakhsh_fid");
-		$this->bakhsh_fid->setClass("form-control");
-
-		/******* role_fid *******/
-		$this->role_fid= new combobox("role_fid");
-		$this->role_fid->setClass("form-control");
-
-		/******* inputfile_fid *******/
-		$this->inputfile_fid= new combobox("inputfile_fid");
-		$this->inputfile_fid->setClass("form-control");
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");

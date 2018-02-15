@@ -50,6 +50,14 @@ class transactionlist_Code extends FormCode {
 			if(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				return $this->search_Click();
 			}
+            elseif(isset($_GET['service']) && $_GET['service']=="getbalance"){
+
+                $Result=$transactionlistController->getUserBalance($this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
+                $design=new transactionlist_Design();
+                $design->setData($Result);
+                $design->setMessage("");
+
+            }
 			else
 			{
 				$Result=$transactionlistController->load($this->getHttpGETparameter('pn',-1));

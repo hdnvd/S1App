@@ -76,7 +76,7 @@ class managedoctors_Design extends FormDesign {
 		$Page->setId("ocms_managedoctors");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['doctor']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('ocms',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+		$LblAdd=new Lable('افزودن متخصص جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
@@ -106,7 +106,7 @@ class managedoctors_Design extends FormDesign {
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('ocms',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+			$Title=$this->Data['data'][$i]->getName() . " " . $this->Data['data'][$i]->getFamily();
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
@@ -124,9 +124,18 @@ class managedoctors_Design extends FormDesign {
 			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
 			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$lnkDel[$i]->setClass('btn btn-danger');
+
+            $TransactionsUrl=new AppRooter('finance','managetransactions');
+            $TransactionsUrl->addParameter(new UrlParameter('userid',$this->Data['data'][$i]->getRole_systemuser_fid()));
+            $lbTransactions[$i]=new Lable('امور مالی');
+            $lnkTransactions[$i]=new link($TransactionsUrl->getAbsoluteURL(),$lbTransactions[$i]);
+            $lnkTransactions[$i]->setGlyphiconClass('glyphicon glyphicon-usd');
+            $lnkTransactions[$i]->setClass('btn');
+
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+            $operationDiv[$i]->addElement($lnkTransactions[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");

@@ -5,6 +5,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\shift\Entity\shift_bakhshEntity;
+use Modules\shift\Entity\shift_dateEntity;
 use Modules\shift\Entity\shift_eshteghalEntity;
 use Modules\shift\Entity\shift_inputfileEntity;
 use Modules\shift\Entity\shift_personelEntity;
@@ -23,7 +24,7 @@ use Modules\shift\Entity\shift_shiftEntity;
 *@SweetFrameworkVersion 2.004
 */
 class shiftlistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=25;
 	public function getData($PageNum,QueryLogic $QueryLogic,$daycount=14,$startdate=null)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -41,7 +42,9 @@ class shiftlistController extends Controller {
 		$result['role_fid']=$roleEntityObject->FindAll(new QueryLogic());
 		$inputfileEntityObject=new shift_inputfileEntity($DBAccessor);
 		$result['inputfile_fid']=$inputfileEntityObject->FindAll(new QueryLogic());
-		if($PageNum<=0)
+		$freedates=new shift_dateEntity($DBAccessor);
+        $result['freedates']=$freedates->FindAll(new QueryLogic());
+		if($PageNum<=0 && $PageNum!=-2)
 			$PageNum=1;        
 		$UserID=null;
         if(!$this->getAdminMode())
@@ -49,19 +52,35 @@ class shiftlistController extends Controller {
 		if($UserID!=null)
             $QueryLogic->addCondition(new FieldCondition(shift_shiftEntity::$ROLE_SYSTEMUSER_FID,$UserID));
 		$shiftEnt=new shift_shiftEntity($DBAccessor);
+
 		$result['shift']=$shiftEnt;
 		$allcount=$shiftEnt->FindAllCount($QueryLogic);
-		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-		$QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
+		if($PageNum>0)
+        {
+
+            $result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
+            $QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
+        }
+        else
+        {
+
+            $result['pagecount']=1;
+
+
+        }
 		$result['data']=$shiftEnt->FindAll($QueryLogic);
         $AllCount1 = count($result['data']);
         for ($i = 0; $i < $AllCount1; $i++) {
             $item=$result['data'][$i];
+            $bakhsh=new shift_bakhshEntity($DBAccessor);
+            $bakhsh->setId($item->getBakhsh_fid());
+            $result['bakhsh'][$i]=$bakhsh;
             $em=new shift_personelEntity($DBAccessor);
             $em->setId($item->getPersonel_fid());
             $result['personel'][$i]=$em;
+
             $role=new shift_roleEntity($DBAccessor);
-            $role->setId($em->getRole_fid());
+            $role->setId($item->getRole_fid());
             $result['role'][$i]=$role;
             $Esh=new shift_eshteghalEntity($DBAccessor);
             $Esh->setId($em->getEshteghal_fid());
@@ -89,30 +108,81 @@ class shiftlistController extends Controller {
 		$DBAccessor=new dbaccess();
 		$shiftEnt=new shift_shiftEntity($DBAccessor);
 		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
+		$q->addOrderBy("due_date",true);
+        $q->addOrderBy("shifttype_fid",true);
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function Search($PageNum,$shifttype_fid,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid,$bakhsh_fid,$role_fid,$inputfile_fid,$sortby,$isdesc)
+
+    private function getPersonShiftCondition($personel_fid,$due_date_from,$due_date_to,$ShiftType)
+    {
+        $q=new QueryLogic();
+        $q->addCondition(new FieldCondition(shift_shiftEntity::$PERSONEL_FID,$personel_fid));
+        $q->addCondition(new FieldCondition(shift_shiftEntity::$DUE_DATE,$due_date_from,LogicalOperator::Bigger));
+        $q->addCondition(new FieldCondition(shift_shiftEntity::$DUE_DATE,$due_date_to,LogicalOperator::Smaller));
+        $q->addCondition(new FieldCondition(shift_shiftEntity::$SHIFTTYPE_FID,$ShiftType));
+        return $q;
+
+    }
+
+    public function Search($PageNum,$shifttype_fid,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid,$bakhsh_fid,$role_fid,$inputfile_fid,$sortby,$isdesc,$ReportType)
 	{
 	    $daycount=($due_date_to-$due_date_from)/86400;
         $starttime=$due_date_from;
 		$DBAccessor=new dbaccess();
 		$shiftEnt=new shift_shiftEntity($DBAccessor);
 		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
-		$q->addCondition(new FieldCondition("shifttype_fid","%$shifttype_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("due_date",$due_date_from,LogicalOperator::Bigger));
-		$q->addCondition(new FieldCondition("due_date",$due_date_to,LogicalOperator::Smaller));
-		$q->addCondition(new FieldCondition("register_date",$register_date_from,LogicalOperator::Bigger));
-		$q->addCondition(new FieldCondition("register_date",$register_date_to,LogicalOperator::Smaller));
-		$q->addCondition(new FieldCondition("personel_fid","%$personel_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("bakhsh_fid","%$bakhsh_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("role_fid","%$role_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("inputfile_fid","%$inputfile_fid%",LogicalOperator::LIKE));
-		$sortByField=$shiftEnt->getTableField($sortby);
-		if($sortByField!=null)
-			$q->addOrderBy($sortByField,$isdesc);
+		if($ReportType==2 || $ReportType==4)//2Weeks or 1 weeks
+        {
+            $daycount=14;
+            if($ReportType==4)
+                $daycount=7;
+            $q->addOrderBy("bakhsh_fid",true);
+            $q->addCondition(new FieldCondition("due_date",$due_date_from,LogicalOperator::Bigger));
+            $q->addCondition(new FieldCondition("due_date",$due_date_from+$daycount*86400,LogicalOperator::Smaller));
+            $q->addCondition(new FieldCondition("bakhsh_fid","%$bakhsh_fid%",LogicalOperator::LIKE));
+            $q->addCondition(new FieldCondition("role_fid","%$role_fid%",LogicalOperator::LIKE));
+            $PageNum=-2;
+        }
+        elseif($ReportType==3)//Daily
+        {
+            $q->addOrderBy("bakhsh_fid",true);
+//            echo $due_date_from;
+            $q->addCondition(new FieldCondition("due_date",$due_date_from,LogicalOperator::Equal));
+            $q->addCondition(new FieldCondition("shifttype_fid",$shifttype_fid,LogicalOperator::Equal));
+
+            $PageNum=-2;
+        }
+        elseif($ReportType==5)//stat
+        {
+            $shift=new shift_shiftEntity($DBAccessor);
+            $count=[];
+            for($i=1;$i<=5;$i++)
+            {
+
+                $q=$this->getPersonShiftCondition($personel_fid,$due_date_from,$due_date_to,$i);
+                $count[$i]=$shift->FindAllCount($q);
+            }
+            $DBAccessor->close_connection();
+            return $count;
+        }
+        else
+        {
+
+            $q->addOrderBy("id",true);
+            $q->addCondition(new FieldCondition("shifttype_fid","%$shifttype_fid%",LogicalOperator::LIKE));
+            $q->addCondition(new FieldCondition("due_date",$due_date_from,LogicalOperator::Bigger));
+            $q->addCondition(new FieldCondition("due_date",$due_date_to,LogicalOperator::Smaller));
+            $q->addCondition(new FieldCondition("register_date",$register_date_from,LogicalOperator::Bigger));
+            $q->addCondition(new FieldCondition("register_date",$register_date_to,LogicalOperator::Smaller));
+            $q->addCondition(new FieldCondition("personel_fid","%$personel_fid%",LogicalOperator::LIKE));
+            $q->addCondition(new FieldCondition("bakhsh_fid","%$bakhsh_fid%",LogicalOperator::LIKE));
+            $q->addCondition(new FieldCondition("role_fid","%$role_fid%",LogicalOperator::LIKE));
+            $q->addCondition(new FieldCondition("inputfile_fid","%$inputfile_fid%",LogicalOperator::LIKE));
+            $sortByField=$shiftEnt->getTableField($sortby);
+            if($sortByField!=null)
+                $q->addOrderBy($sortByField,$isdesc);
+        }
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q,$daycount,$starttime);
 	}

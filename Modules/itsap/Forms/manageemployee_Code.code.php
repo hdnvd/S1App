@@ -4,6 +4,7 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\common\PublicClasses\UrlParameter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -77,7 +78,7 @@ class manageemployee_Code extends FormCode {
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
 		$design=new manageemployee_Design();
-		$unit_fid_ID=$design->getUnit_fid()->getSelectedID();
+		$unit_fid_ID=$this->getHttpGETparameter('uid',-1);
 		$emp_code=$design->getEmp_code()->getValue();
 		$mellicode=$design->getMellicode()->getValue();
 		$name=$design->getName()->getValue();
@@ -90,6 +91,7 @@ class manageemployee_Code extends FormCode {
 		$design->setMessageType(MessageType::$SUCCESS);
 		if($this->getAdminMode()){
 			$ManageListRooter=new AppRooter("itsap","manageemployees");
+            $ManageListRooter->addParameter(new UrlParameter('uid',$unit_fid_ID));
 		}
 			AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
 		}
@@ -105,5 +107,36 @@ class manageemployee_Code extends FormCode {
 		}
 		return $design->getResponse();
 	}
+    public function btnResetPassword_Click()
+    {
+        $manageemployeeController=new manageemployeeController();
+        $manageemployeeController->setAdminMode($this->getAdminMode());
+        $translator=new ModuleTranslator("itsap");
+        $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
+        try{
+            $design=new manageemployee_Design();
+            $unit_fid_ID=$this->getHttpGETparameter('uid',-1);
+            $Result=$manageemployeeController->ResetPassword($this->getID());
+            $design->setData($Result);
+            $design->setMessage("اطلاعات با موفقیت ذخیره شد.");
+            $design->setMessageType(MessageType::$SUCCESS);
+            if($this->getAdminMode()){
+                $ManageListRooter=new AppRooter("itsap","manageemployees");
+                $ManageListRooter->addParameter(new UrlParameter('uid',$unit_fid_ID));
+            }
+            AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
+        }
+        catch(DataNotFoundException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("آیتم مورد نظر پیدا نشد");
+        }
+        catch(\Exception $uex){
+            $design=$this->getLoadDesign();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
+        return $design->getResponse();
+    }
 }
 ?>

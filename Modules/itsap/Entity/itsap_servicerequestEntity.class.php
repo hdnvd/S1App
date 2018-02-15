@@ -219,7 +219,7 @@ class itsap_servicerequestEntity extends EntityClass {
         {
             $result= $sq->ExecuteAssociated();
         }
-        echo $sq->getQueryString();
+//        echo $sq->getQueryString();
         $this->getDatabase()->getDBAccessor()->close_connection();
         return $result;
     }

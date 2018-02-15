@@ -84,12 +84,13 @@ class ocms_doctorplanEntity extends EntityClass {
 	public function getDoctorFreePlans($DoctorID,$StartTime,$EndTime)
     {
         //SELECT * FROM `sweetp_ocms_doctorplan` dp LEFT JOIN sweetp_ocms_doctorreserve dr on dp.id=dr.doctorplan_fid where dr.doctorplan_fid IS NULL
-        $SelectQuery=$this->getDatabase()->Select(array("dp.*"))->From("ocms_doctorplan dp LEFT JOIN (SELECT * from sweetp_ocms_doctorreserve WHERE sweetp_ocms_doctorreserve.financial_canceltransaction_fid<0)dr on dp.id=dr.doctorplan_fid")->Where()->ISNULL(new DBField("dr.doctorplan_fid",false));
+        $SelectQuery=$this->getDatabase()->Select(array("dp.*"))->From("ocms_doctorplan dp LEFT JOIN (SELECT * from sweetp_ocms_doctorreserve WHERE sweetp_ocms_doctorreserve.financial_canceltransaction_fid<0 and deletetime<1)dr on dp.id=dr.doctorplan_fid")->Where()->ISNULL(new DBField("dr.doctorplan_fid",false));
         $SelectQuery=$SelectQuery->AndLogic()->Equal('dp.doctor_fid',$DoctorID);
         if($StartTime!=null)
         $SelectQuery=$SelectQuery->AndLogic()->Bigger('dp.start_time',$StartTime);
         if($EndTime!=null)
         $SelectQuery=$SelectQuery->AndLogic()->Smaller('dp.start_time',$EndTime);
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('dp.deletetime',"1");
 //        $SelectQuery=new selectQuery();
         $SelectQuery=$SelectQuery->AddOrderBy('dp.start_time',false);
         $result=$SelectQuery->ExecuteAssociated();
@@ -102,6 +103,44 @@ class ocms_doctorplanEntity extends EntityClass {
         }
 //        echo  $SelectQuery->getQueryString();
 return $res;
+    }
+
+    public function getPlanIsReserved($DoctorPlanID)
+    {
+        $SelectQuery=$this->getDatabase()->Select("count(*) as cnt")->From(["ocms_doctorplan dp",'ocms_doctorreserve res'])->Where()
+            ->Equal('res.doctorplan_fid',new DBField("dp.id",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.financial_canceltransaction_fid','1');
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('dp.deletetime',"1");
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('dp.id',$DoctorPlanID);
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.deletetime',"1");
+//        echo $SelectQuery->getQueryString();
+        $result=$SelectQuery->ExecuteAssociated();
+        if($result[0]['cnt']>0)
+            return true;
+        return false;
+    }
+
+    public function getDoctorReserves($DoctorID,$Limit,$SelectCount)
+    {
+        $Fields=array("dp.start_time as start_time","us.family as family",'us.mobile mobile');
+        if($SelectCount)
+            $Fields=array("count(dp.start_time) as count");
+        $SelectQuery=$this->getDatabase()->Select($Fields)->From(["ocms_doctorplan dp",'ocms_doctorreserve res','users_user us','ocms_presencetype pt'])->Where()
+            ->Equal('res.doctorplan_fid',new DBField("dp.id",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('res.role_systemuser_fid',new DBField("us.role_systemuser_fid",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('res.presencetype_fid',new DBField("pt.id",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.financial_canceltransaction_fid','1');
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('dp.doctor_fid',$DoctorID);
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('dp.deletetime',"1");
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.deletetime',"1");
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('us.deletetime',"1");
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('pt.deletetime',"1");
+        $SelectQuery=$SelectQuery->AddOrderBy('dp.start_time',false);
+        if($Limit!=null)
+            $SelectQuery->setLimit($Limit);
+//        echo $SelectQuery->getQueryString();
+        $result=$SelectQuery->ExecuteAssociated();
+        return $result;
     }
 }
 ?>

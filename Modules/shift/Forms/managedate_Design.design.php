@@ -43,8 +43,13 @@ class managedate_Design extends FormDesign {
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
 		$LTable1->addElement($this->getFieldRowCode($this->day_date,$this->getFieldCaption('day_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->score,$this->getFieldCaption('score'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->score,$this->getFieldCaption('score'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
+		$this->score->setValue(10);
+		$this->score->setVisible(false);
+
+		$LTable1->addElement($this->score);
+
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->SetAttribute("novalidate","novalidate");

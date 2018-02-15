@@ -1,20 +1,19 @@
 <?php
 namespace Modules\onlineclass\Controllers;
 use core\CoreClasses\services\Controller;
-use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\finance\Entity\finance_bankpaymentinfoEntity;
 use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\onlineclass\Entity\onlineclass_courseEntity;
 use Modules\onlineclass\Entity\onlineclass_usercourseEntity;
-use Modules\onlineclass\Entity\onlineclass_userEntity;
-use Modules\users\Entity\roleSystemUserEntity;
 use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-08-02 - 2017-10-24 14:14
@@ -65,12 +64,8 @@ class purchaseController extends Controller {
 	}
     private function getSysUserID(dbaccess $DBAccessor,$Username)
     {
-        $sysu=new roleSystemUserEntity($DBAccessor);
-        $res=$sysu->Select(array('username'),array(strtolower($Username)));
-        $id=-1;
-        if($res!=null && count($res)>0)
-            $id=$res[0]['id'];
-        return $id;
+
+        return User::getSystemUserIDFromUser($Username,$DBAccessor);
     }
 }
 ?>

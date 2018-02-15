@@ -17,7 +17,7 @@ use Modules\shift\Entity\shift_bakhshEntity;
 *@SweetFrameworkVersion 2.004
 */
 class bakhshlistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=25;
 	public function getData($PageNum,QueryLogic $QueryLogic)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

@@ -6,7 +6,7 @@ use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\sfman\Entity\sfman_formEntity;
 use Modules\sfman\Entity\sfman_moduleEntity;
-use Modules\users\Entity\role_menuitemEntity;
+use Modules\users\Entity\users_menuitemEntity;
 
 
 /**
@@ -37,7 +37,7 @@ class generateformController extends Controller {
 		$Fent->Insert($Name,$Title,$ModuleID,true);
         $Ment=new sfman_moduleEntity($DBAccessor);
        $Module=$Ment->Select($ModuleID,null,null,null,array('id'),array(true),"0,1");
-		$MenuEnt=new role_menuitemEntity($DBAccessor);
+		$MenuEnt=new users_menuitemEntity($DBAccessor);
         $MenuEnt->setLatintitle($Title);
         $MenuEnt->setModule($Module[0]['name']);
         $MenuEnt->setPage($Name);

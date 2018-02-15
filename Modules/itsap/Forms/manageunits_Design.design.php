@@ -82,6 +82,10 @@ class manageunits_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+        $tuid=0;
+        if(isset($_GET['tuid']))
+            $tuid=$_GET['tuid'];
+
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageunits");
@@ -105,7 +109,8 @@ class manageunits_Design extends FormDesign {
         $Page->addElement($LTable2);
 
 		$addUrl=new AppRooter('itsap',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+		$addUrl->addParameter(new UrlParameter('tuid',$tuid));
+		$LblAdd=new Lable('افزودن بخش جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
@@ -118,7 +123,7 @@ class manageunits_Design extends FormDesign {
 		$lnkSearch->setClass('linkbutton btn btn-primary');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchunitlink');
-		$Page->addElement($lnkSearch);
+//		$Page->addElement($lnkSearch);
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
@@ -135,7 +140,9 @@ class manageunits_Design extends FormDesign {
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('itsap',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+			$url->addParameter(new UrlParameter('tuid',$tuid));
 			$Title=$this->Data['data'][$i]->getTitleField();
+
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
@@ -166,7 +173,8 @@ class manageunits_Design extends FormDesign {
 		}
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"itsap",$this->listPage));
+		    $PageParams=[new UrlParameter('tuid',$tuid)];
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"itsap",$this->listPage,$PageParams));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}    

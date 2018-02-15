@@ -5,13 +5,14 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\common\Entity\common_cityEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
-use Modules\users\Entity\roleSystemUserEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\buysell\Entity\buysell_userEntity;
 use Modules\buysell\Entity\buysell_carmodelEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-06-16 - 2017-09-07 01:34
@@ -91,8 +92,7 @@ $q->addOrderBy($sortby,$isdesc);
 		if($userEnt->getId()==-1)
 			throw new DataNotFoundException();
         $roleSystemUser=$userEnt->getRole_systemuser_fid();
-        $rs=new roleSystemUserEntity();
-        $rs->Update($roleSystemUser,null,null,null,1);
+        User::DeleteUser($roleSystemUser);
 		$userEnt->Remove();
         $DBAccessor->commit();
         $DBAccessor->close_connection();

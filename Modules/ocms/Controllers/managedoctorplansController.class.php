@@ -26,8 +26,7 @@ class managedoctorplansController extends doctorplanlistController {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-        $user=new User(-1);
-        $role_systemuser_fid=$user->getSystemUserIDFromUserPass($UserName,$Password);
+        $role_systemuser_fid=User::getSystemUserIDFromUserPass($UserName,$Password);
         $UserID=null;
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;

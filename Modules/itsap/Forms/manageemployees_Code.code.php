@@ -4,6 +4,7 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\itsap\Exceptions\EmployeeHasUnitException;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -24,7 +25,8 @@ class manageemployees_Code extends employeelist_Code {
 	}
 	public function getLoadDesign()
 	{
-		try{
+		try
+{
 		$manageemployeesController=new manageemployeesController();
 		$manageemployeesController->setAdminMode($this->getAdminMode());
 		$translator=new ModuleTranslator("itsap");
@@ -35,6 +37,8 @@ class manageemployees_Code extends employeelist_Code {
                 $Result = $manageemployeesController->DeleteItem($this->getID(), $this->getHttpGETparameter('uid', -1));
             }elseif(isset($_GET['setasadmin'])){
                     $Result=$manageemployeesController->SetAsAdmin($this->getID(),$this->getHttpGETparameter('uid',-1));
+            }elseif(isset($_GET['removeunit'])){
+                $Result=$manageemployeesController->RemoveUnit($this->getID(),$this->getHttpGETparameter('uid',-1));
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
@@ -58,6 +62,34 @@ class manageemployees_Code extends employeelist_Code {
 		}
 		return $design;
 	}
+	public function btnmove_Click()
+    {
+
+        $manageemployeesController=new manageemployeesController();
+        $manageemployeesController->setAdminMode($this->getAdminMode());
+        $design=new manageemployees_Design();
+        $MelliCode=$design->getTxtMellicode()->getValue();
+        try
+        {
+            $res=$manageemployeesController->AddToUnit($MelliCode,$this->getHttpGETparameter('uid', -1));
+            $design=$this->getLoadDesign();
+            $design->setMessageType(MessageType::$SUCCESS);
+            $design->setMoveMessage("انتقال با موفقیت انجام گرفت.");
+        }
+        catch(EmployeeHasUnitException $euex){
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMoveMessage("این شخص هنوز در یک بخش مشغول به کار است.");
+        }
+        catch(DataNotFoundException $dnfex){
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMoveMessage("هیچ شخصی با این کد ملی پیدا نشد");
+        }
+        catch(\Exception $uex){
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMoveMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
+        return $design->getResponse();
+    }
 	public function __construct($namespace)
 	{
 		parent::__construct($namespace);

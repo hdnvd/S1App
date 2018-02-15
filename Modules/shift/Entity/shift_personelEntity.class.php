@@ -17,150 +17,150 @@ class shift_personelEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("shift_personel");
-		$this->setTableTitle("shift_personel");
+		$this->setTableTitle("کارمند");
 		$this->setTitleFieldName("family");
 
 		/******** childcount ********/
 		$ChildcountInfo=new FieldInfo();
-		$ChildcountInfo->setTitle("childcount");
+		$ChildcountInfo->setTitle("تعداد فرزندان");
 		$this->setFieldInfo(shift_personelEntity::$CHILDCOUNT,$ChildcountInfo);
 		$this->addTableField('1',shift_personelEntity::$CHILDCOUNT);
 
 		/******** address ********/
 		$AddressInfo=new FieldInfo();
-		$AddressInfo->setTitle("address");
+		$AddressInfo->setTitle("آدرس");
 		$this->setFieldInfo(shift_personelEntity::$ADDRESS,$AddressInfo);
 		$this->addTableField('2',shift_personelEntity::$ADDRESS);
 
 		/******** fathername ********/
 		$FathernameInfo=new FieldInfo();
-		$FathernameInfo->setTitle("fathername");
+		$FathernameInfo->setTitle("نام پدر");
 		$this->setFieldInfo(shift_personelEntity::$FATHERNAME,$FathernameInfo);
 		$this->addTableField('3',shift_personelEntity::$FATHERNAME);
 
 		/******** priority ********/
 		$PriorityInfo=new FieldInfo();
-		$PriorityInfo->setTitle("priority");
+		$PriorityInfo->setTitle("اولویت");
 		$this->setFieldInfo(shift_personelEntity::$PRIORITY,$PriorityInfo);
 		$this->addTableField('4',shift_personelEntity::$PRIORITY);
 
 		/******** employment_date ********/
 		$Employment_dateInfo=new FieldInfo();
-		$Employment_dateInfo->setTitle("employment_date");
+		$Employment_dateInfo->setTitle("تاریخ استخدام");
 		$this->setFieldInfo(shift_personelEntity::$EMPLOYMENT_DATE,$Employment_dateInfo);
 		$this->addTableField('5',shift_personelEntity::$EMPLOYMENT_DATE);
 
 		/******** personelcode ********/
 		$PersonelcodeInfo=new FieldInfo();
-		$PersonelcodeInfo->setTitle("personelcode");
+		$PersonelcodeInfo->setTitle("کد پرسنلی");
 		$this->setFieldInfo(shift_personelEntity::$PERSONELCODE,$PersonelcodeInfo);
 		$this->addTableField('6',shift_personelEntity::$PERSONELCODE);
 
 		/******** sanavat ********/
 		$SanavatInfo=new FieldInfo();
-		$SanavatInfo->setTitle("sanavat");
+		$SanavatInfo->setTitle("سنوات");
 		$this->setFieldInfo(shift_personelEntity::$SANAVAT,$SanavatInfo);
 		$this->addTableField('7',shift_personelEntity::$SANAVAT);
 
 		/******** shhesab ********/
 		$ShhesabInfo=new FieldInfo();
-		$ShhesabInfo->setTitle("shhesab");
+		$ShhesabInfo->setTitle("شماره حساب");
 		$this->setFieldInfo(shift_personelEntity::$SHHESAB,$ShhesabInfo);
 		$this->addTableField('8',shift_personelEntity::$SHHESAB);
 
 		/******** bakhsh_fid ********/
 		$Bakhsh_fidInfo=new FieldInfo();
-		$Bakhsh_fidInfo->setTitle("bakhsh_fid");
+		$Bakhsh_fidInfo->setTitle("بخش");
 		$this->setFieldInfo(shift_personelEntity::$BAKHSH_FID,$Bakhsh_fidInfo);
 		$this->addTableField('9',shift_personelEntity::$BAKHSH_FID);
 
 		/******** madrak_fid ********/
 		$Madrak_fidInfo=new FieldInfo();
-		$Madrak_fidInfo->setTitle("madrak_fid");
+		$Madrak_fidInfo->setTitle("مدرک");
 		$this->setFieldInfo(shift_personelEntity::$MADRAK_FID,$Madrak_fidInfo);
 		$this->addTableField('10',shift_personelEntity::$MADRAK_FID);
 
 		/******** name ********/
 		$NameInfo=new FieldInfo();
-		$NameInfo->setTitle("name");
+		$NameInfo->setTitle("نام");
 		$this->setFieldInfo(shift_personelEntity::$NAME,$NameInfo);
 		$this->addTableField('11',shift_personelEntity::$NAME);
 
 		/******** family ********/
 		$FamilyInfo=new FieldInfo();
-		$FamilyInfo->setTitle("family");
+		$FamilyInfo->setTitle("نام خانوادگی");
 		$this->setFieldInfo(shift_personelEntity::$FAMILY,$FamilyInfo);
 		$this->addTableField('12',shift_personelEntity::$FAMILY);
 
 		/******** tel ********/
 		$TelInfo=new FieldInfo();
-		$TelInfo->setTitle("tel");
+		$TelInfo->setTitle("تلفن");
 		$this->setFieldInfo(shift_personelEntity::$TEL,$TelInfo);
 		$this->addTableField('13',shift_personelEntity::$TEL);
 
 		/******** born_date ********/
 		$Born_dateInfo=new FieldInfo();
-		$Born_dateInfo->setTitle("born_date");
+		$Born_dateInfo->setTitle("تاریخ تولد");
 		$this->setFieldInfo(shift_personelEntity::$BORN_DATE,$Born_dateInfo);
 		$this->addTableField('14',shift_personelEntity::$BORN_DATE);
 
 		/******** is_male ********/
 		$Is_maleInfo=new FieldInfo();
-		$Is_maleInfo->setTitle("is_male");
+		$Is_maleInfo->setTitle("جنسیت");
 		$this->setFieldInfo(shift_personelEntity::$IS_MALE,$Is_maleInfo);
 		$this->addTableField('15',shift_personelEntity::$IS_MALE);
 
 		/******** extrasanavat ********/
 		$ExtrasanavatInfo=new FieldInfo();
-		$ExtrasanavatInfo->setTitle("extrasanavat");
+		$ExtrasanavatInfo->setTitle("سنوات اضافه");
 		$this->setFieldInfo(shift_personelEntity::$EXTRASANAVAT,$ExtrasanavatInfo);
 		$this->addTableField('16',shift_personelEntity::$EXTRASANAVAT);
 
 		/******** monthsanavat ********/
 		$MonthsanavatInfo=new FieldInfo();
-		$MonthsanavatInfo->setTitle("monthsanavat");
+		$MonthsanavatInfo->setTitle("ماه سنوات");
 		$this->setFieldInfo(shift_personelEntity::$MONTHSANAVAT,$MonthsanavatInfo);
 		$this->addTableField('17',shift_personelEntity::$MONTHSANAVAT);
 
 		/******** eshteghal_fid ********/
 		$Eshteghal_fidInfo=new FieldInfo();
-		$Eshteghal_fidInfo->setTitle("eshteghal_fid");
+		$Eshteghal_fidInfo->setTitle(" اشتغال");
 		$this->setFieldInfo(shift_personelEntity::$ESHTEGHAL_FID,$Eshteghal_fidInfo);
 		$this->addTableField('18',shift_personelEntity::$ESHTEGHAL_FID);
 
 		/******** zarib ********/
 		$ZaribInfo=new FieldInfo();
-		$ZaribInfo->setTitle("zarib");
+		$ZaribInfo->setTitle("ضریب");
 		$this->setFieldInfo(shift_personelEntity::$ZARIB,$ZaribInfo);
 		$this->addTableField('19',shift_personelEntity::$ZARIB);
 
 		/******** role_fid ********/
 		$Role_fidInfo=new FieldInfo();
-		$Role_fidInfo->setTitle("role_fid");
+		$Role_fidInfo->setTitle("سمت");
 		$this->setFieldInfo(shift_personelEntity::$ROLE_FID,$Role_fidInfo);
 		$this->addTableField('20',shift_personelEntity::$ROLE_FID);
 
 		/******** shsh ********/
 		$ShshInfo=new FieldInfo();
-		$ShshInfo->setTitle("shsh");
+		$ShshInfo->setTitle("شماره شناسنامه");
 		$this->setFieldInfo(shift_personelEntity::$SHSH,$ShshInfo);
 		$this->addTableField('21',shift_personelEntity::$SHSH);
 
 		/******** computercode ********/
 		$ComputercodeInfo=new FieldInfo();
-		$ComputercodeInfo->setTitle("computercode");
+		$ComputercodeInfo->setTitle("کد کامپیوتر");
 		$this->setFieldInfo(shift_personelEntity::$COMPUTERCODE,$ComputercodeInfo);
 		$this->addTableField('22',shift_personelEntity::$COMPUTERCODE);
 
 		/******** mellicode ********/
 		$MellicodeInfo=new FieldInfo();
-		$MellicodeInfo->setTitle("mellicode");
+		$MellicodeInfo->setTitle("کد ملی");
 		$this->setFieldInfo(shift_personelEntity::$MELLICODE,$MellicodeInfo);
 		$this->addTableField('23',shift_personelEntity::$MELLICODE);
 
 		/******** is_married ********/
 		$Is_marriedInfo=new FieldInfo();
-		$Is_marriedInfo->setTitle("is_married");
+		$Is_marriedInfo->setTitle("وضعیت تاهل");
 		$this->setFieldInfo(shift_personelEntity::$IS_MARRIED,$Is_marriedInfo);
 		$this->addTableField('24',shift_personelEntity::$IS_MARRIED);
 	}

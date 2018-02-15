@@ -9,3 +9,33 @@
 *@ActionCode 1
 */
 ?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.004
+*@SweetFrameworkVersion 1.021
+*@Date 1396-11-23 - 2018-02-12 00:10
+*@Module Name shift
+*@ActionTitle Regenerate WholeFormFiles For bakhsh
+*@ActionCode 1
+*/
+?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.004
+*@SweetFrameworkVersion 1.021
+*@Date 1396-11-23 - 2018-02-12 00:11
+*@Module Name shift
+*@ActionTitle Regenerate WholeFormFiles For bakhsh
+*@ActionCode 1
+*/
+?>
+<?php
+/**
+*@SweetFrameworkHelperVersion 2.004
+*@SweetFrameworkVersion 1.021
+*@Date 1396-11-23 - 2018-02-12 00:13
+*@Module Name shift
+*@ActionTitle Regenerate WholeFormFiles For makesampleinput
+*@ActionCode 1
+*/
+?>

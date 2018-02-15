@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-26 - 2018-01-16 19:13
-*@lastUpdate 1396-10-26 - 2018-01-16 19:13
+*@creationDate 1396-11-23 - 2018-02-12 00:11
+*@lastUpdate 1396-11-23 - 2018-02-12 00:11
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -39,49 +39,55 @@ class bakhsh_Design extends FormDesign {
 	{
 		$this->Data = $Data;
 	}
-	/** @var lable */
-	private $title;
-	/** @var lable */
-	private $sakhtikar;
+	private $FieldCaptions;
+	/** @var DatePicker */
+	private $startdate;
+	/** @var textbox */
+	private $txtdaycount;
+	/**
+	 * @return textbox
+	 */
+	public function getTxtdaycount()
+	{
+		return $this->txtdaycount;
+	}
+	/** @var SweetButton */
+	private $btnGenerate;
 	public function __construct()
 	{
+		$this->FieldCaptions=array();
 
-		/******* title *******/
-		$this->title= new lable("title");
+		/******* startdate *******/
+		$this->startdate= new DatePicker("startdate");
+		$this->startdate->setClass("form-control");
 
-		/******* sakhtikar *******/
-		$this->sakhtikar= new lable("sakhtikar");
+		/******* txtdaycount *******/
+		$this->txtdaycount= new textbox("txtdaycount");
+		$this->txtdaycount->setClass("form-control");
+
+		/******* btnGenerate *******/
+		$this->btnGenerate= new SweetButton(true,"دریافت فایل نمونه");
+		$this->btnGenerate->setAction("btnGenerate");
+		$this->btnGenerate->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
+		$this->btnGenerate->setClass("btn btn-primary");
 	}
 	public function getBodyHTML($command=null)
 	{
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("shift_bakhsh");
-		$Page->addElement($this->getPageTitlePart("اطلاعات " . $this->Data['bakhsh']->getTableTitle() . ""));
+		$Page->addElement($this->getPageTitlePart("bakhsh"));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
-		if (key_exists("bakhsh", $this->Data)){
-			$this->setFieldCaption('title',$this->Data['bakhsh']->getFieldInfo('title')->getTitle());
-			$this->title->setText($this->Data['bakhsh']->getTitle());
-			$this->setFieldCaption('sakhtikar',$this->Data['bakhsh']->getFieldInfo('sakhtikar')->getTitle());
-			$this->sakhtikar->setText($this->Data['bakhsh']->getSakhtikar());
-		}
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('title')));
-		$LTable1->addElement($this->getInfoRowCode($this->sakhtikar,$this->getFieldCaption('sakhtikar')));
+		$LTable1->addElement($this->getFieldRowCode($this->startdate,$this->getFieldCaption('startdate'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->txtdaycount,$this->getFieldCaption('txtdaycount'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getSingleFieldRowCode($this->btnGenerate));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
+		$form->setClass('form-horizontal');
 		return $form->getHTML();
-	}
-	public function getJSON()
-	{
-		parent::getJSON();
-		if (key_exists("bakhsh", $this->Data)){
-			$Result=$this->Data['bakhsh']->GetArray();
-			return json_encode($Result);
-		}
-		return json_encode(array());
 	}
 }
 ?>

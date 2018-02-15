@@ -8,8 +8,6 @@ namespace Modules\users\Forms;
 
 use core\CoreClasses\html\GRecaptchaValidationStatus;
 use core\CoreClasses\services\FormCode;
-use Modules\common\Forms\message_Design;
-use Modules\users\Entity\userEntity;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\Controllers\signinController;

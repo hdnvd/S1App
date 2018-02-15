@@ -50,9 +50,7 @@ class manualpaymentController extends Controller {
                 $PayInfo = $Pay->startTransaction($txtAmount, $txtName, $txtFamily, $txtTel, 1, $txtDescription, 1, true, "");
             else
             {
-
-                $user=new User(-1);
-                $userID=$user->getSystemUserIDFromUserPass($username,$password);
+                $userID=User::getSystemUserIDFromUserPass($username,$password);
                 $PayInfo = $Pay->startTransaction($txtAmount,$txtName,$txtFamily,$txtTel,1,$txtDescription,1,true,"",$userID);
 
             }

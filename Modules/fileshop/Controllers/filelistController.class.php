@@ -117,8 +117,7 @@ class filelistController extends Controller {
         if($ent->getId()<=0)
             throw new DataNotFoundException();
 
-        $user=new User(-1);
-        $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
+        $SystemUserID=User::getSystemUserIDFromUserPass($UserName,$Password);
         $Payment=new Payment();
         $UserBalance=$Payment->getBalance(1,$SystemUserID);
 //        echo $UserBalance;

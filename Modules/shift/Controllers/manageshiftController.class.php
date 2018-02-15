@@ -70,7 +70,7 @@ class manageshiftController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$shifttype_fid,$due_date,$register_date,$personel_fid,$bakhsh_fid,$role_fid,$inputfile_fid)
+	public function BtnSave($ID,$shifttype_fid,$due_date,$personel_fid)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -80,8 +80,13 @@ class manageshiftController extends Controller {
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
 		$result=array();
+        $register_date=time();
+        $person=new shift_personelEntity($DBAccessor);
+        $person->setId($personel_fid);
+        $bakhsh_fid=$person->getBakhsh_fid();
+        $role_fid=$person->getRole_fid();
 		$shiftEntityObject=new shift_shiftEntity($DBAccessor);
-		$this->ValidateFieldArray([$shifttype_fid,$due_date,$register_date,$personel_fid,$bakhsh_fid,$role_fid,$inputfile_fid],[$shiftEntityObject->getFieldInfo(shift_shiftEntity::$SHIFTTYPE_FID),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$DUE_DATE),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$REGISTER_DATE),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$PERSONEL_FID),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$BAKHSH_FID),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$ROLE_FID),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$INPUTFILE_FID)]);
+		$this->ValidateFieldArray([$shifttype_fid,$due_date,$personel_fid],[$shiftEntityObject->getFieldInfo(shift_shiftEntity::$SHIFTTYPE_FID),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$DUE_DATE),$shiftEntityObject->getFieldInfo(shift_shiftEntity::$PERSONEL_FID)]);
 		if($ID==-1){
 			$shiftEntityObject->setShifttype_fid($shifttype_fid);
 			$shiftEntityObject->setDue_date($due_date);
@@ -89,7 +94,7 @@ class manageshiftController extends Controller {
 			$shiftEntityObject->setPersonel_fid($personel_fid);
 			$shiftEntityObject->setBakhsh_fid($bakhsh_fid);
 			$shiftEntityObject->setRole_fid($role_fid);
-			$shiftEntityObject->setInputfile_fid($inputfile_fid);
+			$shiftEntityObject->setInputfile_fid(-1);
 			$shiftEntityObject->Save();
 			$ID=$shiftEntityObject->getId();
 		}
@@ -105,7 +110,7 @@ class manageshiftController extends Controller {
 			$shiftEntityObject->setPersonel_fid($personel_fid);
 			$shiftEntityObject->setBakhsh_fid($bakhsh_fid);
 			$shiftEntityObject->setRole_fid($role_fid);
-			$shiftEntityObject->setInputfile_fid($inputfile_fid);
+//			$shiftEntityObject->setInputfile_fid(-1);
 			$shiftEntityObject->Save();
 		}
 		$RelationLogic=new QueryLogic();

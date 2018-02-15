@@ -10,6 +10,8 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use Modules\shift\Controllers\importshiftdataController;
 use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
+use Modules\shift\Exceptions\ShiftExistsException;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-10-27 - 2018-01-17 16:12
@@ -50,6 +52,7 @@ class importshiftdata_Code extends FormCode {
 	}
 	public function btnsave_Click()
 	{
+
 		$importshiftdataController=new importshiftdataController();
 		$translator=new ModuleTranslator("shift");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
@@ -61,9 +64,26 @@ class importshiftdata_Code extends FormCode {
 		for($fileIndex=0;$fileIndex<count($inputfilePaths);$fileIndex++){
 			$inputfileURLs[$fileIndex]=uploadHelper::UploadFile($inputfilePaths[$fileIndex], $inputfileNames[$fileIndex], "content/files/shift/importshiftdata/");
 		}
-		$Result=$importshiftdataController->Btnsave($this->getID(),$inputfileURLs,$datatypeid);
-		$design->setData($Result);
-		$design->setMessage("btnsave is done!");
+        try {
+            $Result = $importshiftdataController->Btnsave($this->getID(), $inputfileURLs, $datatypeid);
+            $design->setData($Result);
+            $design->setMessage("اطلاعات با موفقیت وارد سیستم شدند!");
+        }
+        catch(DataNotFoundException $dnfex){
+                $design=new message_Design();
+                $design->setMessageType(MessageType::$ERROR);
+                $design->setMessage("اطلاعات یک یا چند نفر از کارکنان از پایگاه داده پیدا نشد،لطفا این افراد را از طریق بخش تعریف کارکنان به سیستم اظافه نموده و دوباره تلاش کنید");
+            }
+		catch(ShiftExistsException $shex){
+                $design=new message_Design();
+                $design->setMessageType(MessageType::$ERROR);
+                $design->setMessage("برخی از روزهای موجود در این فایل از قبل در پایگاه داده برای این بخش موجود است،لطفا اطلاعات را بررسی نمایید.");
+            }
+        catch(\Exception $uex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
 		return $design->getBodyHTML();
 	}
 }

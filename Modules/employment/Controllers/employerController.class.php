@@ -1,14 +1,11 @@
 <?php
 
 namespace Modules\employment\Controllers;
-use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
-use Modules\common\Entity\common_cityEntity;
-use Modules\common\Entity\common_provinceEntity;
 use Modules\common\Controllers\ProvinceCitiesController;
 use Modules\employment\Entity\employment_employerEntity;
-use Modules\users\Entity\roleSystemUserEntity;
+use Modules\users\PublicClasses\User;
 
 
 /**
@@ -36,9 +33,8 @@ class employerController extends ProvinceCitiesController {
 		$result=array();
 		$result['provinces']=$this->getProvinces();
 		$Ent=new employment_employerEntity($DBAccessor);
-		$UserEnt=new roleSystemUserEntity();
 		$Systemuser_fid=-1;
-		$Systemuser_fid=$UserEnt->Add($Mail, $Pass);
+        $Systemuser_fid=User::addUser($Mail,$Pass,$DBAccessor);
 		$Ent->Insert($Title, null, null, $Mob, $Mail, null, null, null, null, $City, $Systemuser_fid, null, false, $Finance_type, $Distance, null, null);
 		$DBAccessor->close_connection();
 		return $result;

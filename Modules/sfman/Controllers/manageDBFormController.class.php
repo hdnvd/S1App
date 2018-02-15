@@ -320,7 +320,16 @@ abstract class manageDBFormController extends BaseManageDBFormController
             $this->makeAndroid_Item_Fragment($formInfo);
             $this->makeAndroid_Item_FragmentLayout($formInfo);
         }
+        if ($this->getIsItemSelected($FormsToGenerate, "sencha_codes")) {
 
+            $this->makeSenchaListController($formInfo);
+            $this->makeSenchaListModel($formInfo);
+            $this->makeSenchaListView($formInfo);
+
+            $this->makeSenchaListDataModel($formInfo);
+            $this->makeSenchaListTestData($formInfo);
+            $this->makeSenchaListStore($formInfo);
+        }
         $DBAccessor->close_connection();
     }
 
@@ -481,6 +490,12 @@ EOT;
 
     protected function SaveFile($File, $Content)
     {
+        $lastSlash=strrpos($File,'/');
+        $FileDir=substr($File,0,$lastSlash);
+        if(!is_dir($FileDir)){
+            //Directory does not exist, so lets create it.
+            mkdir($FileDir, 0755, true);
+        }
         file_put_contents($File, $Content);
         chmod($File, 0777);
     }

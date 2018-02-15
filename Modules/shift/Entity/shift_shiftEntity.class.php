@@ -17,48 +17,48 @@ class shift_shiftEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("shift_shift");
-		$this->setTableTitle("shift_shift");
+		$this->setTableTitle("شیفت");
 		$this->setTitleFieldName("id");
 
 		/******** shifttype_fid ********/
 		$Shifttype_fidInfo=new FieldInfo();
-		$Shifttype_fidInfo->setTitle("shifttype_fid");
+		$Shifttype_fidInfo->setTitle("نوع شیفت");
 		$this->setFieldInfo(shift_shiftEntity::$SHIFTTYPE_FID,$Shifttype_fidInfo);
 		$this->addTableField('1',shift_shiftEntity::$SHIFTTYPE_FID);
 
 		/******** due_date ********/
 		$Due_dateInfo=new FieldInfo();
-		$Due_dateInfo->setTitle("due_date");
+		$Due_dateInfo->setTitle("تاریخ");
 		$this->setFieldInfo(shift_shiftEntity::$DUE_DATE,$Due_dateInfo);
 		$this->addTableField('2',shift_shiftEntity::$DUE_DATE);
 
 		/******** register_date ********/
 		$Register_dateInfo=new FieldInfo();
-		$Register_dateInfo->setTitle("register_date");
+		$Register_dateInfo->setTitle("تاریخ ثبت در سیستم");
 		$this->setFieldInfo(shift_shiftEntity::$REGISTER_DATE,$Register_dateInfo);
 		$this->addTableField('3',shift_shiftEntity::$REGISTER_DATE);
 
 		/******** personel_fid ********/
 		$Personel_fidInfo=new FieldInfo();
-		$Personel_fidInfo->setTitle("personel_fid");
+		$Personel_fidInfo->setTitle("شخص");
 		$this->setFieldInfo(shift_shiftEntity::$PERSONEL_FID,$Personel_fidInfo);
 		$this->addTableField('4',shift_shiftEntity::$PERSONEL_FID);
 
 		/******** bakhsh_fid ********/
 		$Bakhsh_fidInfo=new FieldInfo();
-		$Bakhsh_fidInfo->setTitle("bakhsh_fid");
+		$Bakhsh_fidInfo->setTitle("بخش");
 		$this->setFieldInfo(shift_shiftEntity::$BAKHSH_FID,$Bakhsh_fidInfo);
 		$this->addTableField('5',shift_shiftEntity::$BAKHSH_FID);
 
 		/******** role_fid ********/
 		$Role_fidInfo=new FieldInfo();
-		$Role_fidInfo->setTitle("role_fid");
+		$Role_fidInfo->setTitle("سمت");
 		$this->setFieldInfo(shift_shiftEntity::$ROLE_FID,$Role_fidInfo);
 		$this->addTableField('6',shift_shiftEntity::$ROLE_FID);
 
 		/******** inputfile_fid ********/
 		$Inputfile_fidInfo=new FieldInfo();
-		$Inputfile_fidInfo->setTitle("inputfile_fid");
+		$Inputfile_fidInfo->setTitle("فایل ورودی");
 		$this->setFieldInfo(shift_shiftEntity::$INPUTFILE_FID,$Inputfile_fidInfo);
 		$this->addTableField('7',shift_shiftEntity::$INPUTFILE_FID);
 	}

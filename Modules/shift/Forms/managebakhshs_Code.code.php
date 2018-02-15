@@ -33,7 +33,8 @@ class managebakhshs_Code extends bakhshlist_Code {
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
 				$Result=$managebakhshsController->DeleteItem($this->getID());
-			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
+			}else
+                if(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
 			}else{

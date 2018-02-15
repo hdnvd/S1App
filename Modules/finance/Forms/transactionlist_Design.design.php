@@ -188,19 +188,19 @@ class transactionlist_Design extends FormDesign {
 		$form->setClass('form-horizontal');
 		return $form->getHTML();
 	}
-	public function getJSON()
-	{
-		parent::getJSON();
-		if (key_exists("data", $this->Data)){
-			$AllCount1 = count($this->Data['data']);
-			$Result=array();
-			for($i=0;$i<$AllCount1;$i++){
-				$Result[$i]=$this->Data['data'][$i]->GetArray();
-			}
-			return json_encode($Result);
-		}
-		return json_encode(array());
-	}
+    public function getJSON()
+    {
+        parent::getJSON();
+        if (key_exists("data", $this->Data)){
+            $AllCount1 = count($this->Data['data']);
+            $Result=array();
+            for($i=0;$i<$AllCount1;$i++){
+                $Result[$i]=$this->Data['data'][$i];
+            }
+            return json_encode($Result);
+        }
+        return json_encode(array());
+    }
 	public function FillItems()
 	{
 			$this->issuccessful->addOption("", "مهم نیست");

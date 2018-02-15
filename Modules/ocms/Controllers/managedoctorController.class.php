@@ -6,14 +6,12 @@ use core\CoreClasses\db\dbaccess;
 use Modules\common\Entity\common_cityEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\ocms\Entity\ocms_specialityEntity;
-use Modules\users\Entity\roleSystemRoleEntity;
-use Modules\users\Entity\roleSystemUserEntity;
-use Modules\users\Entity\RoleSystemUserRoleEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
-use core\CoreClasses\db\LogicalOperator;
 use Modules\ocms\Entity\ocms_doctorEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-09-23 - 2017-12-14 01:18
@@ -100,11 +98,8 @@ class managedoctorController extends Controller {
             $doctorEntityObject->setIsactiveonplace($isactiveonplace);
 			$doctorEntityObject->setIsactiveonhome($isactiveonhome);
             $doctorEntityObject->setPrice($price);
-
-			$uEnt=new roleSystemUserEntity($DBAccessor);
-			$userid=$uEnt->Add($user,$pass);
-			$role=new RoleSystemUserRoleEntity();
-			$role->addUserRole($userid,3);
+            $userid=User::addUser($user,$pass,$DBAccessor);
+            User::setUserRole($userid,3);
             $doctorEntityObject->setRole_systemuser_fid($userid);
 			if($photo_fluURL!='')
 			$doctorEntityObject->setPhoto_flu($photo_fluURL);
@@ -119,8 +114,7 @@ class managedoctorController extends Controller {
 			if(strlen(trim($pass))>1)
             {
                 $userid=$doctorEntityObject->getRole_systemuser_fid();
-                $uEnt=new roleSystemUserEntity($DBAccessor);
-                $uEnt->Update($userid,null,$pass,$pass,-1);
+                User::UpdatePassword($userid,$pass,$DBAccessor);
             }
 
 			$doctorEntityObject->setName($name);

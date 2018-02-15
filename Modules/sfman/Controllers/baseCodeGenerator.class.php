@@ -26,6 +26,15 @@ class baseCodeGenerator extends Controller {
     public static $SFVERSION="1.021";
 	private $CodeModuleDir;
     private $AndroidCodeModuleDir;
+    private $SenchaCodeModuleDir;
+
+    /**
+     * @return mixed
+     */
+    public function getSenchaCodeModuleDir()
+    {
+        return $this->SenchaCodeModuleDir;
+    }
 
     /**
      * @return mixed
@@ -44,6 +53,7 @@ class baseCodeGenerator extends Controller {
         $mDir=DEFAULT_APPPATH;
         $this->CodeModuleDir=$mDir . "Modules/" .  $CodeModuleName;
         $this->AndroidCodeModuleDir=$mDir . "Android/Modules/" .  $CodeModuleName;
+        $this->SenchaCodeModuleDir=$mDir . "Sencha/Modules/" .  $CodeModuleName;
         $this->changeLogFile=$this->CodeModuleDir . "/changelog.php";
     }
 

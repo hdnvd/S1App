@@ -11,8 +11,10 @@ use core\CoreClasses\html\Div;
 use core\CoreClasses\html\link;
 use core\CoreClasses\html\Lable;
 use core\CoreClasses\html\TextBox;
+use core\CoreClasses\html\DatePicker;
 use core\CoreClasses\html\DataComboBox;
 use core\CoreClasses\html\SweetButton;
+use core\CoreClasses\html\Button;
 use core\CoreClasses\html\CheckBox;
 use core\CoreClasses\html\RadioBox;
 use core\CoreClasses\html\SweetFrom;
@@ -20,12 +22,13 @@ use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
+use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-07-09 - 2017-10-01 01:08
-*@lastUpdate 1396-07-09 - 2017-10-01 01:08
-*@SweetFrameworkHelperVersion 2.002
-*@SweetFrameworkVersion 2.002
+*@creationDate 1396-11-20 - 2018-02-09 00:17
+*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@SweetFrameworkHelperVersion 2.004
+*@SweetFrameworkVersion 2.004
 */
 class managemenuitem_Design extends FormDesign {
 	public function getBodyHTML($command=null)
@@ -33,55 +36,50 @@ class managemenuitem_Design extends FormDesign {
 		$this->FillItems();
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
-		$Page->setId("role_managemenuitem");
+		$Page->setId("users_managemenuitem");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['menuitem']->getTableTitle() . ""));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->latintitle,$this->getFieldCaption('latintitle'),null,''));
-		$LTable1->addElement($this->getFieldRowCode($this->module,$this->getFieldCaption('module'),null,''));
-		$LTable1->addElement($this->getFieldRowCode($this->page,$this->getFieldCaption('page'),null,''));
-		$LTable1->addElement($this->getFieldRowCode($this->parameters,$this->getFieldCaption('parameters'),null,''));
+		$LTable1->addElement($this->getFieldRowCode($this->latintitle,$this->getFieldCaption('latintitle'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->module,$this->getFieldCaption('module'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->page,$this->getFieldCaption('page'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->parameters,$this->getFieldCaption('parameters'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
 		$form->SetAttribute("novalidate","novalidate");
+		$form->SetAttribute("data-toggle","validator");
 		$form->setClass('form-horizontal');
 		return $form->getHTML();
 	}
 	public function FillItems()
 	{
+		if (key_exists("menuitem", $this->Data)){
 
 			/******** latintitle ********/
-		if (key_exists("menuitem", $this->Data)){
 			$this->latintitle->setValue($this->Data['menuitem']->getLatintitle());
 			$this->setFieldCaption('latintitle',$this->Data['menuitem']->getFieldInfo('latintitle')->getTitle());
 			$this->latintitle->setFieldInfo($this->Data['menuitem']->getFieldInfo('latintitle'));
-		}
 
 			/******** module ********/
-		if (key_exists("menuitem", $this->Data)){
 			$this->module->setValue($this->Data['menuitem']->getModule());
 			$this->setFieldCaption('module',$this->Data['menuitem']->getFieldInfo('module')->getTitle());
 			$this->module->setFieldInfo($this->Data['menuitem']->getFieldInfo('module'));
-		}
 
 			/******** page ********/
-		if (key_exists("menuitem", $this->Data)){
 			$this->page->setValue($this->Data['menuitem']->getPage());
 			$this->setFieldCaption('page',$this->Data['menuitem']->getFieldInfo('page')->getTitle());
 			$this->page->setFieldInfo($this->Data['menuitem']->getFieldInfo('page'));
-		}
 
 			/******** parameters ********/
-		if (key_exists("menuitem", $this->Data)){
 			$this->parameters->setValue($this->Data['menuitem']->getParameters());
 			$this->setFieldCaption('parameters',$this->Data['menuitem']->getFieldInfo('parameters')->getTitle());
 			$this->parameters->setFieldInfo($this->Data['menuitem']->getFieldInfo('parameters'));
-		}
 
 			/******** btnSave ********/
+		}
 	}
 	public function __construct()
 	{
@@ -106,6 +104,7 @@ class managemenuitem_Design extends FormDesign {
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
 		$this->btnSave->setAction("btnSave");
+		$this->btnSave->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
 		$this->btnSave->setClass("btn btn-primary");
 	}
 	private $Data;
@@ -115,10 +114,13 @@ class managemenuitem_Design extends FormDesign {
 	public function setData($Data)
 	{
 		$this->Data = $Data;
-	}    
-private $adminMode=true;
-
-    /**
+	}
+	private $adminMode=true;
+    public function getAdminMode()
+    {
+        return $this->adminMode;
+    }
+        /**
      * @param bool $adminMode
      */
     public function setAdminMode($adminMode)
@@ -163,5 +165,11 @@ private $adminMode=true;
 	}
 	/** @var SweetButton */
 	private $btnSave;
+    public function getJSON()
+    {
+       parent::getJSON();
+       $Result=['message'=>$this->getMessage(),'messagetype'=>$this->getMessageType()];
+       return json_encode($Result);
+    }
 }
 ?>

@@ -4,23 +4,17 @@ use core\CoreClasses\Exception\SweetException;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
-use Modules\finance\Entity\finance_transactionEntity;
 use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\onlineclass\Entity\onlineclass_courseEntity;
 use Modules\onlineclass\Entity\onlineclass_tutorEntity;
 use Modules\onlineclass\Entity\onlineclass_usercourseEntity;
 use Modules\onlineclass\Entity\onlineclass_videoEntity;
-use Modules\users\Entity\roleSystemUserEntity;
-use Modules\users\Entity\RoleSystemUserRoleEntity;
-use Modules\users\Entity\roleUserEntity;
-use Modules\users\Entity\userEntity;
 use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
-use Modules\onlineclass\Entity\onlineclass_userEntity;
 use Modules\users\PublicClasses\User;
 
 /**
@@ -138,17 +132,13 @@ class userlistController extends Controller {
 
     private function getSysUserID(dbaccess $DBAccessor,$Username,$Password)
     {
-        $sysu=new roleSystemUserEntity($DBAccessor);
-        $res=$sysu->Select(array('username','password'),array(strtolower($Username),$Password));
-        $id=-1;
-        if($res!=null && count($res)>0)
-            $id=$res[0]['id'];
+        $id=User::getSystemUserIDFromUserPass($Username,$Password,$DBAccessor);
         return $id;
     }
     private function getSysUserRole($SystemUserID)
     {
-        $RoleEnt=new RoleSystemUserRoleEntity();
-        $res=$RoleEnt->getUserRole($SystemUserID);
+        $user=new User($SystemUserID);
+        $res=$user->getSystemUserRoles();
         $id=-1;
         if($res!=null && count($res)>0)
             $id=$res[0]['roleid'];

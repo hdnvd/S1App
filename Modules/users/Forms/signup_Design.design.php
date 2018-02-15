@@ -57,18 +57,18 @@ class signup_Design extends FormDesign
 			$table->addElement($txtpass2);
 			$table->addElement(new Lable($this->userphotoTitle));
 			$table->addElement($filePhoto);
-			$listRoles=new DataComboBox($this->roles,"roleid");
+//			$listRoles=new DataComboBox($this->roles,"roleid");
 			if($this->ShowRoles)
 			{
-			 $table->addElement(new Lable("سمت:"));
-			 $table->addElement($listRoles);
+//			 $table->addElement(new Lable("سمت:"));
+//			 $table->addElement($listRoles);
 			}
 			for($i=0;$i<count($this->AdditionalFields);$i++)
 			{
-			    $textboxName="txt" . $this->AdditionalFields[$i]['userinfo_field'];
-			    $labelName="lbl" . $this->AdditionalFields[$i]['userinfo_field'];
+			    $textboxName="txt" . $this->AdditionalFields[$i]->getUserinfo_field();
+			    $labelName="lbl" . $this->AdditionalFields[$i]->getUserinfo_field();
 			    $$textboxName=new TextBox($textboxName);
-			    $$labelName=new Lable($this->AdditionalFields[$i]['userinfo_fieldcaption']);
+			    $$labelName=new Lable($this->AdditionalFields[$i]->getUserinfo_fieldcaption());
 
 			    $table->addElement($$labelName);
 			    $table->addElement($$textboxName);

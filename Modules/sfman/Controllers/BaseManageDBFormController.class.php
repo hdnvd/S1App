@@ -76,6 +76,15 @@ abstract class BaseManageDBFormController extends baseFormCodeGenerator {
     protected abstract function makeTableListCode($formInfo);
 
 
+
+    protected abstract function makeSenchaListController($formInfo);
+    protected abstract function makeSenchaListModel($formInfo);
+    protected abstract function makeSenchaListView($formInfo);
+    protected abstract function makeSenchaListDataModel($formInfo);
+    protected abstract function makeSenchaListTestData($formInfo);
+    protected abstract function makeSenchaListStore($formInfo);
+
+
     /**
      * @param array $formInfo
      * @param string $changeLogFile

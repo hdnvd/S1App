@@ -94,21 +94,66 @@ class manageshifts_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
 		$TableDiv->setClass('table-responsive');
-		$LTable1=new ListTable(3);
+		$LTable1=new ListTable(8);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped table-hover managelist");
 		$LTable1->addElement(new Lable('#'));
 		$LTable1->setLastElementClass("listtitle");
-		$LTable1->addElement(new Lable('عنوان'));
+		$LTable1->addElement(new Lable('نام'));
 		$LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('نام خانوادگی'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('سمت'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('بخش'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('تاریخ'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('شیفت'));
+        $LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عملیات'));
 		$LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('shift',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
-			if($Title=="")
-				$Title='- بدون عنوان -';
+			$Title=$this->Data['personel'][$i]->getName();
+            $Family=$this->Data['personel'][$i]->getFamily();
+
+            $Bakhsh=$this->Data['bakhsh'][$i]->getTitleField();
+
+            $Role=$this->Data['role'][$i]->getTitleField();
+            $Date=$this->Data['data'][$i]->getDue_date();
+            date_default_timezone_set("Asia/Tehran");
+            $sweetDate = new SweetDate(false, true, 'Asia/Tehran');
+            $Date = $sweetDate->date("l y/m/d", $Date);
+            $Shift=$this->Data['data'][$i]->getShifttype_fid();
+            switch ($Shift)
+            {
+                case 1:
+                    $Shift="صبح";
+                    break;
+                case 2:
+                    $Shift="بعد از ظهر";
+                    break;
+                case 3:
+                    $Shift="شب";
+                    break;
+                case 4:
+                    $Shift="خالی";
+                    break;
+                case 5:
+                    $Shift="مرخصی";
+                    break;
+                case 6:
+                    $Shift=" مرخصی استعلاجی";
+                    break;
+                case 7:
+                    $Shift="مرخصی زایمان";
+                    break;
+            }
+
+            if($Title=="")
+				$Title='- بدون نام -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('shift',$this->itemViewPage);
@@ -126,12 +171,22 @@ class manageshifts_Design extends FormDesign {
 			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
 			$LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($Family));
+            $LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($Role));
+            $LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($Bakhsh));
+            $LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($Date));
+            $LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($Shift));
+            $LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($operationDiv[$i]);
 			$LTable1->setLastElementClass("listcontent");
 		}

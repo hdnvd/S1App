@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-27 - 2018-01-17 00:24
-*@lastUpdate 1396-10-27 - 2018-01-17 00:24
+*@creationDate 1396-11-24 - 2018-02-13 10:17
+*@lastUpdate 1396-11-24 - 2018-02-13 10:17
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -69,6 +69,14 @@ class manageinputfiles_Design extends FormDesign {
 	{
 		parent::__construct();
 	}
+
+    private function getDateFromTime($time)
+    {
+        date_default_timezone_set("Asia/Tehran");
+        $sweetDate = new SweetDate(false, true, 'Asia/Tehran');
+        $dt = $sweetDate->date("l y/m/d H:n", $time);
+        return $dt;
+    }
 	public function getBodyHTML($command=null)
 	{
 		$Page=new Div();
@@ -94,23 +102,31 @@ class manageinputfiles_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
 		$TableDiv->setClass('table-responsive');
-		$LTable1=new ListTable(3);
+		$LTable1=new ListTable(5);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped table-hover managelist");
 		$LTable1->addElement(new Lable('#'));
 		$LTable1->setLastElementClass("listtitle");
-		$LTable1->addElement(new Lable('عنوان'));
+		$LTable1->addElement(new Lable('نام فایل'));
 		$LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('تاریخ آپلود'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('تعداد شیفت ثبت شده'));
+        $LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عملیات'));
 		$LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('shift',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+			$Title=$this->Data['data'][$i]->getFile_flu();
+			$lastSlash=strrpos($Title,'/');
+			$Title=substr($Title,$lastSlash+1);
+            $shiftCount=$this->Data['shiftcount'][$i];
+            $date=$this->getDateFromTime($this->Data['data'][$i]->getupload_time());
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
-			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
+			$liTit[$i]=new link(DEFAULT_PUBLICURL . $this->Data['data'][$i]->getFile_flu(),$lbTit[$i]);
 			$ViewURL=new AppRooter('shift',$this->itemViewPage);
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$lbView[$i]=new Lable('مشاهده');
@@ -120,18 +136,22 @@ class manageinputfiles_Design extends FormDesign {
 			$delurl=new AppRooter('shift',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-			$lbDel[$i]=new Lable('حذف');
+			$lbDel[$i]=new Lable('حذف تمام اطلاعات وارد شده از طریق این فایل');
 			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
 			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
 			$LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($date));
+            $LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($shiftCount));
+            $LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($operationDiv[$i]);
 			$LTable1->setLastElementClass("listcontent");
 		}

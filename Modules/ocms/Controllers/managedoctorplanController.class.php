@@ -70,8 +70,7 @@ class managedoctorplanController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-        $user=new User(-1);
-        $role_systemuser_fid=$user->getSystemUserIDFromUserPass($username,$password);
+        $role_systemuser_fid=User::getSystemUserIDFromUserPass($username,$password);
 //		$role_systemuser_fid=$su->getSystemUserID();
 //		$UserID=null;
 //        if(!$this->getAdminMode())

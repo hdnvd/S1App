@@ -28,7 +28,7 @@ class itsap_referenceEntity extends EntityClass {
 
 		/******** message ********/
 		$MessageInfo=new FieldInfo();
-		$MessageInfo->setTitle("message");
+		$MessageInfo->setTitle("پیام");
 		$this->setFieldInfo(itsap_referenceEntity::$MESSAGE,$MessageInfo);
 		$this->addTableField('2',itsap_referenceEntity::$MESSAGE);
 
@@ -40,19 +40,19 @@ class itsap_referenceEntity extends EntityClass {
 
 		/******** unit_fid ********/
 		$Unit_fidInfo=new FieldInfo();
-		$Unit_fidInfo->setTitle("unit_fid");
+		$Unit_fidInfo->setTitle("بخش");
 		$this->setFieldInfo(itsap_referenceEntity::$UNIT_FID,$Unit_fidInfo);
 		$this->addTableField('4',itsap_referenceEntity::$UNIT_FID);
 
 		/******** employee_fid ********/
 		$Employee_fidInfo=new FieldInfo();
-		$Employee_fidInfo->setTitle("employee_fid");
+		$Employee_fidInfo->setTitle("کارمند");
 		$this->setFieldInfo(itsap_referenceEntity::$EMPLOYEE_FID,$Employee_fidInfo);
 		$this->addTableField('5',itsap_referenceEntity::$EMPLOYEE_FID);
 
 		/******** reference_time ********/
 		$Reference_timeInfo=new FieldInfo();
-		$Reference_timeInfo->setTitle("reference_time");
+		$Reference_timeInfo->setTitle("تاریخ ارجاع");
 		$this->setFieldInfo(itsap_referenceEntity::$REFERENCE_TIME,$Reference_timeInfo);
 		$this->addTableField('6',itsap_referenceEntity::$REFERENCE_TIME);
 	}

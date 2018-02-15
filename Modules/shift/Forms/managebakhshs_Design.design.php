@@ -76,7 +76,7 @@ class managebakhshs_Design extends FormDesign {
 		$Page->setId("shift_managebakhshs");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['bakhsh']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('shift',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+		$LblAdd=new Lable('تعریف بخش جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
@@ -111,9 +111,9 @@ class managebakhshs_Design extends FormDesign {
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
-			$ViewURL=new AppRooter('shift',$this->itemViewPage);
+			$ViewURL=new AppRooter('shift','makesampleinput');
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$lbView[$i]=new Lable('مشاهده');
+			$lbView[$i]=new Lable('دریافت فایل اکسل نمونه');
 			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
 			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
 			$lnkView[$i]->setClass('btn btn-primary');

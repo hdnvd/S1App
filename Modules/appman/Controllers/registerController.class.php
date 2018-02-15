@@ -5,12 +5,10 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\appman\Entity\appman_productkeyEntity;
-use Modules\appman\Forms\register_Code;
-use Modules\appman\Forms\register_Design;
-use Modules\users\Entity\roleSystemUserEntity;
 use Modules\appman\Entity\appman_userdeviceEntity;
 use Modules\common\PublicClasses\AppDate;
 use Modules\appman\Entity\appman_appuserEntity;
+use Modules\users\PublicClasses\User;
 
 
 /**
@@ -83,19 +81,16 @@ class registerController extends Controller {
 	
 	private function registerNewDevice(dbaccess $DBAccessor,$ProductKeyID,$deviceCode,$name,$mobile,$width,$height,$appid,$os,$devicename,$osversion,$accounts,$city,$mail,$ismale)
 	{
-	   $SystemUserEnt=new roleSystemUserEntity($DBAccessor);
 	   $PKeyEnt=new appman_productkeyEntity($DBAccessor);
 	   $DeviceEnt=new appman_userdeviceEntity($DBAccessor);
 	   $AppUserEnt=new appman_appuserEntity($DBAccessor);
 	   
 	   
 	   /*****************************SystemUser***************************/
-	   $OldUser=$SystemUserEnt->Select(array("username"), array($mobile));
-	   $SystemUserID=-1;
-	   if($OldUser!==null && is_array($OldUser) && count($OldUser)>0)
-	       $SystemUserID=$OldUser[0]['id'];
-	   else
-	       $SystemUserID=$SystemUserEnt->Add($mobile, $mobile);
+        $SystemUserID=-1;
+        $SystemUserID=User::getSystemUserIDFromUser($mobile);
+	   if($SystemUserID<=0)
+	       $SystemUserID=User::addUser($mobile, $mobile);
 	   /*****************************EOF SystemUser***************************/
 	   
 	   /*****************************Device***************************/

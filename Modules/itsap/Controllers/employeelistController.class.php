@@ -23,6 +23,7 @@ class employeelistController extends Controller {
 	private $PAGESIZE=10;
 	public function getData($PageNum,QueryLogic $QueryLogic,$UnitID)
 	{
+
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
@@ -30,6 +31,13 @@ class employeelistController extends Controller {
 		$result=array();
         $unitEntityObject=new itsap_unitEntity($DBAccessor);
         $unitEntityObject->setId($UnitID);
+        if($su->getUserType()!=3 && $su->getUserType()!=1)//!=SystemAdmin Or Developer
+        {
+            $org=new OrganizationController();
+            $TopUnitID=($org->getCurrentUserInfo())['unit']->getTopunit_fid();
+            if($unitEntityObject->getTopunit_fid()!=$TopUnitID)
+                throw new DataNotFoundException();
+        }
         $result['unit']=$unitEntityObject;
         $topUnitEntityObject=new itsap_topunitEntity($DBAccessor);
         $topUnitEntityObject->setId($unitEntityObject->getTopunit_fid());
@@ -78,24 +86,24 @@ class employeelistController extends Controller {
 		$q->addOrderBy("id",true);
 		return $this->getData($PageNum,$q,$UnitID);
 	}
-	public function Search($PageNum,$unit_fid,$emp_code,$mellicode,$name,$family,$mobile,$degree_fid,$sortby,$isdesc)
-	{
-		$DBAccessor=new dbaccess();
-		$employeeEnt=new itsap_employeeEntity($DBAccessor);
-		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
-		$q->addCondition(new FieldCondition("unit_fid","%$unit_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("emp_code","%$emp_code%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("mellicode","%$mellicode%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("name","%$name%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("family","%$family%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("mobile","%$mobile%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("degree_fid","%$degree_fid%",LogicalOperator::LIKE));
-		$sortByField=$employeeEnt->getTableField($sortby);
-		if($sortByField!=null)
-			$q->addOrderBy($sortByField,$isdesc);
-		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
-	}
+//	public function Search($PageNum,$unit_fid,$emp_code,$mellicode,$name,$family,$mobile,$degree_fid,$sortby,$isdesc)
+//	{
+//		$DBAccessor=new dbaccess();
+//		$employeeEnt=new itsap_employeeEntity($DBAccessor);
+//		$q=new QueryLogic();
+//		$q->addOrderBy("id",true);
+//		$q->addCondition(new FieldCondition("unit_fid","%$unit_fid%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("emp_code","%$emp_code%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("mellicode","%$mellicode%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("name","%$name%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("family","%$family%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("mobile","%$mobile%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("degree_fid","%$degree_fid%",LogicalOperator::LIKE));
+//		$sortByField=$employeeEnt->getTableField($sortby);
+//		if($sortByField!=null)
+//			$q->addOrderBy($sortByField,$isdesc);
+//		$DBAccessor->close_connection();
+//		return $this->getData($PageNum,$q);
+//	}
 }
 ?>

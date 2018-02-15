@@ -5,6 +5,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\finance\Entity\finance_bankpaymentinfoEntity;
 use Modules\finance\Entity\finance_chapterEntity;
+use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\Entity\users_userEntity;
 use Modules\users\PublicClasses\sessionuser;
@@ -12,6 +13,8 @@ use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\finance\Entity\finance_transactionEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-11-09 - 2018-01-29 11:26
@@ -21,7 +24,7 @@ use Modules\finance\Entity\finance_transactionEntity;
 */
 class transactionlistController extends Controller {
 	private $PAGESIZE=25;
-	public function getData($PageNum,QueryLogic $QueryLogic)
+	public function getData($PageNum,QueryLogic $QueryLogic,$SystemUserID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -31,12 +34,9 @@ class transactionlistController extends Controller {
 		$chapterEntityObject=new finance_chapterEntity($DBAccessor);
 		$result['chapter_fid']=$chapterEntityObject->FindAll(new QueryLogic());
 		if($PageNum<=0)
-			$PageNum=1;        
-		$UserID=null;
-        if(!$this->getAdminMode())
-            $UserID=$role_systemuser_fid;
-		if($UserID!=null)
-            $QueryLogic->addCondition(new FieldCondition(finance_transactionEntity::$ROLE_SYSTEMUSER_FID,$UserID));
+			$PageNum=1;
+		if($SystemUserID!=null && $SystemUserID>0)
+            $QueryLogic->addCondition(new FieldCondition(finance_transactionEntity::$ROLE_SYSTEMUSER_FID,$SystemUserID));
 		$transactionEnt=new finance_transactionEntity($DBAccessor);
 		$result['transaction']=$transactionEnt;
 		$allcount=$transactionEnt->FindAllCount($QueryLogic);
@@ -46,11 +46,13 @@ class transactionlistController extends Controller {
         for ($i=0;$i<count($result['data']);$i++)
         {
             $dt=$result['data'][$i];
+//            echo $dt->getRole_systemuser_fid();
             if($dt->getRole_systemuser_fid()>0)
             {
 
                 $user=new users_userEntity($DBAccessor);
-                $user=$user->FindOne(new QueryLogic([new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$dt->getRole_systemuser_fid())]));
+                $qqq=new QueryLogic([0=>new FieldCondition(users_userEntity::$ROLE_SYSTEMUSER_FID,$dt->getRole_systemuser_fid())]);
+                $user=$user->FindOne($qqq);
                 $result['userinfo'][$i]=$user;
             }
             $Pent=new finance_bankpaymentinfoEntity($DBAccessor);
@@ -74,15 +76,24 @@ class transactionlistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum)
+	public function load($PageNum,$SystemUserID)
 	{
 		$DBAccessor=new dbaccess();
 		$transactionEnt=new finance_transactionEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,$SystemUserID);
 	}
+    public function getUserBalance($UserName,$Password)
+    {
+
+        $Payment=new Payment();
+        $SystemUserID=User::getSystemUserIDFromUserPass($UserName,$Password);
+        $UserBalance=$Payment->getBalance(1,$SystemUserID);
+        $result['data'][0]['balance']=$UserBalance;
+        return $result;
+    }
 	public function Search($PageNum,$amount,$description,$add_time_from,$add_time_to,$commit_time_from,$commit_time_to,$issuccessful,$chapter_fid,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();
@@ -101,7 +112,7 @@ class transactionlistController extends Controller {
 		if($sortByField!=null)
 			$q->addOrderBy($sortByField,$isdesc);
 		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
+		return $this->getData($PageNum,$q,-1);
 	}
 }
 ?>

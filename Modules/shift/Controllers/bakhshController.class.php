@@ -8,15 +8,15 @@ use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
-use Modules\shift\Entity\shift_bakhshEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-26 - 2018-01-16 19:13
-*@lastUpdate 1396-10-26 - 2018-01-16 19:13
+*@creationDate 1396-11-23 - 2018-02-12 00:11
+*@lastUpdate 1396-11-23 - 2018-02-12 00:11
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
 class bakhshController extends Controller {
+	private $PAGESIZE=10;
 	public function load($ID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -24,14 +24,27 @@ class bakhshController extends Controller {
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
-		$bakhshEntityObject=new shift_bakhshEntity($DBAccessor);
-		$result['bakhsh']=$bakhshEntityObject;
 		if($ID!=-1){
-			$bakhshEntityObject->setId($ID);
-			if($bakhshEntityObject->getId()==-1)
-				throw new DataNotFoundException();
-			$result['bakhsh']=$bakhshEntityObject;
+			//Do Something...
 		}
+		$result['param1']="";
+		$DBAccessor->close_connection();
+		return $result;
+	}
+	public function BtnGenerate($ID,$txtdaycount)
+	{
+		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
+		$DBAccessor=new dbaccess();
+		$su=new sessionuser();
+		$role_systemuser_fid=$su->getSystemUserID();
+		$result=array();
+		if($ID==-1){
+			//INSERT NEW DATA
+		}
+		else{
+			//UPDATE DATA
+		}
+		$result=$this->load($ID);
 		$result['param1']="";
 		$DBAccessor->close_connection();
 		return $result;

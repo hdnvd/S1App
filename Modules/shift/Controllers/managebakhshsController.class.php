@@ -3,12 +3,15 @@ namespace Modules\shift\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\SweetDate;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\shift\Entity\shift_personelEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\shift\Entity\shift_bakhshEntity;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-10-26 - 2018-01-16 19:13
@@ -18,6 +21,8 @@ use Modules\shift\Entity\shift_bakhshEntity;
 */
 class managebakhshsController extends bakhshlistController {
 	private $PAGESIZE=10;
+
+
 	public function DeleteItem($ID)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

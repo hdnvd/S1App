@@ -31,6 +31,15 @@ use core\CoreClasses\SweetDate;
 *@SweetFrameworkVersion 2.004
 */
 class manageemployees_Design extends FormDesign {
+    private $moveMessage;
+
+    /**
+     * @param string $moveMessage
+     */
+    public function setMoveMessage($moveMessage)
+    {
+        $this->moveMessage = $moveMessage;
+    }
 	private $Data;
 	/**
 	 * @param mixed $Data
@@ -65,9 +74,16 @@ class manageemployees_Design extends FormDesign {
             $this->listPage = 'manageuseremployees';
         }
     }
+
+    /**
+     * @TextBox
+     */
+    private $txtMellicode;
 	public function __construct()
 	{
 		parent::__construct();
+		$this->txtMellicode=new TextBox('txtmellicode');
+        $this->moveMessage='';
 	}
 	public function getBodyHTML($command=null)
 	{
@@ -84,7 +100,24 @@ class manageemployees_Design extends FormDesign {
         else
             $UnitInfo->addElement($this->getInfoRowCode(new Lable("تعیین نشده"),"مدیر بخش"));
         $Page->addElement($UnitInfo);
+        $DivMove=new Div();
+        $DivMove->setClass('itsap_divmove');
+        $lbtitle=new Lable('انتقال کارکنان از بخش های دیگر');
+        $lbtitle->setId('itsap_divmovetitle');
+        $lblMcode=new Lable('کد ملی');
+        $lblMcode->setId('itsap_mellicodetitle');
+        $lblMessage=new Lable($this->moveMessage);
+        $lblMessage->setId('itsap_divmovemessage');
+        $btnFind=new SweetButton(true,'انتقال به بخش');
+        $btnFind->setAction('btnmove');
+        $DivMove->addElement($lbtitle);
+        $DivMove->addElement($lblMcode);
+        $DivMove->addElement($this->txtMellicode);
+        $DivMove->addElement($lblMessage);
+        $DivMove->addElement($btnFind);
+        $Page->addElement($DivMove);
 		$addUrl=new AppRooter('itsap',$this->itemPage);
+        $addUrl->addParameter(new UrlParameter('uid',$_GET['uid']));
 		$LblAdd=new Lable('افزودن آیتم جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
@@ -98,7 +131,7 @@ class manageemployees_Design extends FormDesign {
 		$lnkSearch->setClass('linkbutton btn btn-primary');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchemployeelink');
-		$Page->addElement($lnkSearch);
+//		$Page->addElement($lnkSearch);
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
@@ -115,7 +148,8 @@ class manageemployees_Design extends FormDesign {
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('itsap',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+			$url->addParameter(new UrlParameter('uid',$_GET['uid']));
+			$Title=$this->Data['data'][$i]->getName() . " " . $this->Data['data'][$i]->getFamily();
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
@@ -144,11 +178,21 @@ class manageemployees_Design extends FormDesign {
             $lnkMakeAdmin[$i]->setGlyphiconClass('glyphicon glyphicon-king');
             $lnkMakeAdmin[$i]->setClass('btn btn-primary');
 
+            $RemoveUnitURL=new AppRooter('itsap',$this->listPage);
+            $RemoveUnitURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+            $RemoveUnitURL->addParameter(new UrlParameter('removeunit',1));
+            $RemoveUnitURL->addParameter(new UrlParameter('uid',$_GET['uid']));
+            $lbRemoveUnit[$i]=new Lable('خارج کردن از بخش');
+            $lnkRemoveUnit[$i]=new link($RemoveUnitURL->getAbsoluteURL(),$lbRemoveUnit[$i]);
+            $lnkRemoveUnit[$i]->setGlyphiconClass('glyphicon glyphicon-export');
+            $lnkRemoveUnit[$i]->setClass('btn btn-primary');
+
 
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
             $operationDiv[$i]->addElement($lnkMakeAdmin[$i]);
+            $operationDiv[$i]->addElement($lnkRemoveUnit[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
@@ -159,10 +203,18 @@ class manageemployees_Design extends FormDesign {
 		}
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"itsap",$this->listPage));
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"itsap",$this->listPage,[new UrlParameter('uid',$_GET['uid'])]));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
-	}    
+	}
+
+    /**
+     * @return mixed
+     */
+    public function getTxtMellicode()
+    {
+        return $this->txtMellicode;
+    }
     public function getJSON()
     {
        parent::getJSON();

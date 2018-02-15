@@ -25,6 +25,11 @@ class unitlistController extends Controller {
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
+        if($su->getUserType()!=3 && $su->getUserType()!=1)//!=SystemAdmin Or Developer
+        {
+            $org=new OrganizationController();
+            $TopUnitID=($org->getCurrentUserInfo())['unit']->getTopunit_fid();
+        }
 		$result=array();
 
         $topunitEntityObject=new itsap_topunitEntity($DBAccessor);
@@ -78,20 +83,21 @@ class unitlistController extends Controller {
 		$q->addOrderBy("id",true);
 		return $this->getData($PageNum,$q,$TopUnitID);
 	}
-	public function Search($PageNum,$topunit_fid,$title,$isfava,$sortby,$isdesc)
-	{
-		$DBAccessor=new dbaccess();
-		$unitEnt=new itsap_unitEntity($DBAccessor);
-		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
-		$q->addCondition(new FieldCondition("topunit_fid","%$topunit_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("isfava","%$isfava%",LogicalOperator::LIKE));
-		$sortByField=$unitEnt->getTableField($sortby);
-		if($sortByField!=null)
-			$q->addOrderBy($sortByField,$isdesc);
-		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
-	}
+//	public function Search($PageNum,$topunit_fid,$title,$isfava,$sortby,$isdesc)
+//	{
+//
+//		$DBAccessor=new dbaccess();
+//		$unitEnt=new itsap_unitEntity($DBAccessor);
+//		$q=new QueryLogic();
+//		$q->addOrderBy("id",true);
+//		$q->addCondition(new FieldCondition("topunit_fid","%$topunit_fid%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));
+//		$q->addCondition(new FieldCondition("isfava","%$isfava%",LogicalOperator::LIKE));
+//		$sortByField=$unitEnt->getTableField($sortby);
+//		if($sortByField!=null)
+//			$q->addOrderBy($sortByField,$isdesc);
+//		$DBAccessor->close_connection();
+//		return $this->getData($PageNum,$q);
+//	}
 }
 ?>

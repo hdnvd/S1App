@@ -42,7 +42,7 @@ class manageunit_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->topunit_fid,$this->getFieldCaption('topunit_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->topunit_fid,$this->getFieldCaption('topunit_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isfava,$this->getFieldCaption('isfava'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));

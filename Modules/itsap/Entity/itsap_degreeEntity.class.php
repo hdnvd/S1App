@@ -17,7 +17,7 @@ class itsap_degreeEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_degree");
-		$this->setTableTitle("itsap_degree");
+		$this->setTableTitle("درجه");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/

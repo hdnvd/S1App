@@ -79,12 +79,8 @@ class manageshift_Code extends FormCode {
 		$design=new manageshift_Design();
 		$shifttype_fid_ID=$design->getShifttype_fid()->getSelectedID();
 		$due_date=$design->getDue_date()->getTime();
-		$register_date=$design->getRegister_date()->getTime();
 		$personel_fid_ID=$design->getPersonel_fid()->getSelectedID();
-		$bakhsh_fid_ID=$design->getBakhsh_fid()->getSelectedID();
-		$role_fid_ID=$design->getRole_fid()->getSelectedID();
-		$inputfile_fid_ID=$design->getInputfile_fid()->getSelectedID();
-		$Result=$manageshiftController->BtnSave($this->getID(),$shifttype_fid_ID,$due_date,$register_date,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID);
+		$Result=$manageshiftController->BtnSave($this->getID(),$shifttype_fid_ID,$due_date,$personel_fid_ID);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

@@ -31,6 +31,7 @@ class postmanage_Code extends FormCode {
 	private function setContent(postmanage_Design $design)
 	{
 		$postmanageController=new postmanageController();
+
 		$Fields=array();
 		if(!isset($_GET['id']))
 			$Fields=$postmanageController->load();

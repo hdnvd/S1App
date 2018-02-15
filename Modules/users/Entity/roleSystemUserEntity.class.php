@@ -16,20 +16,20 @@ class roleSystemUserEntity extends EntityClass
 {
     public static $MIN_USERNAME_LENGTH=4;
     public static $MIN_PASSWORD_LENGTH=8;
-    public function __construct(dbaccess $DBAccessor=null)
+    public function __construct(dbaccess $DBAccessor)
     {
-        if($DBAccessor===null)
-            $this->setDatabase(new dbquery());
-        else 
-            $this->setDatabase(new dbquery($DBAccessor));
+        $this->setDatabase(new dbquery($DBAccessor));
         $this->setTableName("role_systemuser");
     }
-	/**
-	 * @param string $Username
-	 * @param string $Password
-	 * @return number UserID Or -1
-	 */
-	public function Add($Username,$Password)
+
+    /**
+     * @param string $Username
+     * @param string $Password
+     * @return int|null
+     * @throws TooSmallPasswordException
+     * @throws TooSmallUsernameException
+     */
+    public function Add($Username, $Password)
 	{
 	    if(strlen($Username)<roleSystemUserEntity::$MIN_USERNAME_LENGTH)
 	        throw new TooSmallUsernameException();
@@ -37,11 +37,11 @@ class roleSystemUserEntity extends EntityClass
         if(strlen($Password)<roleSystemUserEntity::$MIN_PASSWORD_LENGTH)
             throw new TooSmallPasswordException();
         $Username=strtolower(trim($Username));
+        $Password=roleSystemUserEntity::hashPassword($Password);
 		$Database=new dbquery();
 		$Query=$Database->InsertInto("role_systemuser")
 		->Set("username", $Username)
 		->Set("password", $Password)
-		->Set("password2", $Password)
 		->Set("isdeleted", 0);
 // 		echo $Query->getQueryString();
 		$Query->Execute();
@@ -55,11 +55,11 @@ class roleSystemUserEntity extends EntityClass
         if($Password!=null && strlen($Password)<roleSystemUserEntity::$MIN_PASSWORD_LENGTH)
             throw new TooSmallPasswordException();
 
+        $Password=roleSystemUserEntity::hashPassword($Password);
 		$Database=new dbquery();
 		$Query=$Database->Update("role_systemuser")
 		->NotNullSet("username", $Username)
 		->NotNullSet("password", $Password)
-		->NotNullSet("password2", $Password2)
 		->NotNullSet("isdeleted", $IsDeleted);
 		if($IsDeleted==1)
             $Query=$Query->NotNullSet("deletetime", time());
@@ -68,40 +68,26 @@ class roleSystemUserEntity extends EntityClass
 
 		$Query->Execute();
 	}
-	public function Select(array $Fields,array $FieldValues,array $Logics=null)
-	{
-		$theFields=array();
-		for($i=0;$i<count($Fields);$i++)
-		{
-		$theFields[$i]['name']=$Fields[$i];
-		if($i<count($FieldValues))
-			$theFields[$i]['value']=$FieldValues[$i];
-			else
-				$theFields[$i]['value']=null;
-		}
-	
-		return $this->getSelect(array("*"), $theFields,$Logics);
-	}
+	public static function hashPassword($Password)
+    {
+        $Password=password_hash($Password,PASSWORD_DEFAULT);
+        return $Password;
+    }
 	public static function checkUserPass($username,$password)
 	{
-	
 		$Database=new dbquery();
-		$result=$Database->Select("*")->From("role_systemuser")->Where()->Equal("username", $username)->AndLogic()->Equal("password", $password)->ExecuteAssociated();
-		if($result!=null)
-			return true;
-		return false;
-	}
-	public static function checkSecondUserPass($username,$password)
-	{
-	
-		$Database=new dbquery();
-		$result=$Database->Select("*")->From("role_systemuser")->Where()->Equal("username", $username)->AndLogic()->Equal("password2", $password)->ExecuteAssociated();
-		if($result!=null)
-			return true;
+		$result=$Database->Select("*")->From("role_systemuser")->Where()->Equal("username", $username)->ExecuteAssociated();
+		if($result!=null && count($result)>0)
+        {
+            $CurrentPass=$result[0]['password'];
+            return password_verify($password,$CurrentPass);
+        }
 		return false;
 	}
 	public static function getUserId($username)
 	{
+        $username=strtolower($username);
+        $username=trim($username);
 		$Database=new dbquery();
 		$Query=$Database->Select("id")->From("role_systemuser")->Where()->Equal("username", $username);
 		$result=$Query->ExecuteAssociated();
@@ -114,12 +100,21 @@ class roleSystemUserEntity extends EntityClass
     {
         $Database=new dbquery();
         $username=strtolower($username);
-        $Query=$Database->Select("id")->From("role_systemuser")->Where()->Equal("username", $username)->AndLogic()->Equal("password",$Password);
+        $username=trim($username);
+        $Password=roleSystemUserEntity::hashPassword($Password);
+        $Query=$Database->Select("id")->From("role_systemuser")->Where()->Equal("username", $username);
 //        echo $Query->getQueryString();
         $result=$Query->ExecuteAssociated();
         $id=null;
+        if($result!=null && count($result)>0)
+        if($result!=null && count($result)>0)
+        {
+            $CurrentPass=$result[0]['password'];
+            if(password_verify($Password,$CurrentPass))
+                $id=$result[0]['id'];
+
+        }
         if($result!=null)
-            $id=$result[0]['id'];
         return $id;
     }
 	

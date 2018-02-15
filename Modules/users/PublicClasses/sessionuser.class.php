@@ -4,27 +4,28 @@
 *@Last Update:2014/5/08
 */
 namespace Modules\users\PublicClasses;
-use Modules\users\Entity\userEntity;
+use core\CoreClasses\db\dbaccess;
 use Modules\users\Entity\roleSystemUserEntity;
 use core\CoreClasses\Forms\FormInfo;
-use Modules\users\Entity\RoleSystemUserRoleEntity;
 class sessionuser
 {
-	private $systemuserEntity=null;
 	private $User;
 	public function __construct()
 	{
-		$this->systemuserEntity=new roleSystemUserEntity();
 		$this->User=new User($this->getSystemUserID());
 	}
 	public function getUserType()
 	{
-		return $this->User->getSystemUserRole();
+		$roles=$this->User->getSystemUserRoles();
+		return $roles[0];
 	}
-	
-	public function getUserInfo($info)
+
+    /**
+     * @return \Modules\users\Entity\users_userEntity
+     */
+    public function getUser()
 	{
-		return $this->User->getUserInfo($info);
+		return $this->User->getUser();
 	}
 	public function getUserAccess(FormInfo $Form)
 	{
@@ -38,17 +39,25 @@ class sessionuser
 			session_start();
 		$user=$_SESSION['username'];
 		$pass=$_SESSION['password'];
-		return($this->systemuserEntity->checkUserPass($user,$pass));
+		$dbAccess=new dbaccess();
+        $systemuserEntity=new roleSystemUserEntity($dbAccess);
+		$res=($systemuserEntity->checkUserPass($user,$pass));
+		$dbAccess->close_connection();
+		return $dbAccess;
 	}
 	public function getSystemUserID()
 	{
+        $dbAccess=new dbaccess();
+        $systemuserEntity=new roleSystemUserEntity($dbAccess);
 		if(isset($_SESSION['username']))
 		{
 			$uname=$_SESSION['username'];
-			return $this->systemuserEntity->getUserId($uname);
+			$res= $systemuserEntity->getUserId($uname);
 		}
 		else
-			return null;
+			$res= null;
+        $dbAccess->close_connection();
+        return $res;
 	}
 }
 

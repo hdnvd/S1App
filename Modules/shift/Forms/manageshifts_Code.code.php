@@ -36,11 +36,15 @@ class manageshifts_Code extends shiftlist_Code {
 			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
-			}else{
-				$Result=$manageshiftsController->load($this->getHttpGETparameter('pn',-1));
-				if(isset($_GET['search']))
-					$design=new shiftlistsearch_Design();
-			}
+			}else {
+                $Result = $manageshiftsController->load($this->getHttpGETparameter('pn', -1));
+                if (isset($_GET['search'])) {
+
+                    $ReportType = $this->getHttpGETparameter('reporttype', '1');
+                    $design = new shiftlistsearch_Design();
+                    $design->setReportType($ReportType);
+                }
+            }
 			$design->setData($Result);
 			$design->setMessage("");
 		}

@@ -135,23 +135,5 @@ class ocms_doctorreserveEntity extends EntityClass {
 	public function setRole_systemuser_fid($Role_systemuser_fid){
 		$this->setField(ocms_doctorreserveEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fid);
 	}
-    public function getDoctorReserves($DoctorID,$Limit,$SelectCount)
-    {
-        $Fields=array("dp.start_time as start_time","us.family as family",'us.mobile mobile');
-        if($SelectCount)
-            $Fields=array("count(dp.start_time) as count");
-        $SelectQuery=$this->getDatabase()->Select($Fields)->From(["ocms_doctorplan dp",'ocms_doctorreserve res','users_user us','ocms_presencetype pt'])->Where()
-            ->Equal('res.doctorplan_fid',new DBField("dp.id",false));
-        $SelectQuery=$SelectQuery->AndLogic()->Equal('res.role_systemuser_fid',new DBField("us.role_systemuser_fid",false));
-        $SelectQuery=$SelectQuery->AndLogic()->Equal('res.presencetype_fid',new DBField("pt.id",false));
-        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.financial_canceltransaction_fid','1');
-        $SelectQuery=$SelectQuery->AndLogic()->Equal('dp.doctor_fid',$DoctorID);
-        $SelectQuery=$SelectQuery->AddOrderBy('dp.start_time',false);
-        if($Limit!=null)
-            $SelectQuery->setLimit($Limit);
-//        echo $SelectQuery->getQueryString();
-        $result=$SelectQuery->ExecuteAssociated();
-        return $result;
-    }
 }
 ?>

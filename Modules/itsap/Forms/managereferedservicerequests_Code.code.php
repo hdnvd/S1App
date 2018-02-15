@@ -29,7 +29,7 @@ class managereferedservicerequests_Code extends servicerequestlist_Code {
 		$manageservicerequestsController->setAdminMode($this->getAdminMode());
 		$translator=new ModuleTranslator("itsap");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-			$design=new manageservicerequests_Design();
+			$design=new outbox_Design();
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
 				$Result=$manageservicerequestsController->DeleteItem($this->getID());

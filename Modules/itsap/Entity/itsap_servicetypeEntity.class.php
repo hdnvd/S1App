@@ -17,18 +17,18 @@ class itsap_servicetypeEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_servicetype");
-		$this->setTableTitle("itsap_servicetype");
+		$this->setTableTitle("نوع خدمت");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(itsap_servicetypeEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',itsap_servicetypeEntity::$TITLE);
 
 		/******** priority ********/
 		$PriorityInfo=new FieldInfo();
-		$PriorityInfo->setTitle("priority");
+		$PriorityInfo->setTitle("اولویت");
 		$this->setFieldInfo(itsap_servicetypeEntity::$PRIORITY,$PriorityInfo);
 		$this->addTableField('2',itsap_servicetypeEntity::$PRIORITY);
 	}

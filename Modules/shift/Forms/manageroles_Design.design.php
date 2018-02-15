@@ -76,7 +76,7 @@ class manageroles_Design extends FormDesign {
 		$Page->setId("shift_manageroles");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['role']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('shift',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+		$LblAdd=new Lable('تعریف سمت جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');

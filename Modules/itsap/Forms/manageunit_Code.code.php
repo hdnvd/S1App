@@ -4,6 +4,7 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\common\PublicClasses\UrlParameter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -77,7 +78,7 @@ class manageunit_Code extends FormCode {
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
 		$design=new manageunit_Design();
-		$topunit_fid_ID=$design->getTopunit_fid()->getSelectedID();
+		$topunit_fid_ID=$this->getHttpGETparameter('tuid',-1);
 		$title=$design->getTitle()->getValue();
 		$isfava_ID=$design->getIsfava()->getSelectedID();
 		$Result=$manageunitController->BtnSave($this->getID(),$topunit_fid_ID,$title,$isfava_ID);
@@ -86,6 +87,7 @@ class manageunit_Code extends FormCode {
 		$design->setMessageType(MessageType::$SUCCESS);
 		if($this->getAdminMode()){
 			$ManageListRooter=new AppRooter("itsap","manageunits");
+			$ManageListRooter->addParameter(new UrlParameter('tuid',$topunit_fid_ID));
 		}
 			AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
 		}

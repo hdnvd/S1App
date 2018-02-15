@@ -15,6 +15,7 @@ use core\CoreClasses\html\JavascriptLink;
 use Modules\common\PublicClasses\AppJSLink;
 use core\CoreClasses\html\Div;
 use core\CoreClasses\html\CheckBox;
+use Modules\parameters\Entity\ParameterEntity;
 
 
 class postmanage_Design extends FormDesign {
@@ -44,11 +45,18 @@ class postmanage_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+		$par=new ParameterEntity();
+		$simplemode=$par->getParameter('posts_simplemode');
+		if($simplemode!=null )
+		    $simplemode=$simplemode[0]['value'];
+
 		$Page=new ListTable(2);
 		$lblLinkTitle=new Lable($this->lblLinkTitle);
+        if($simplemode!=1)
 		$Page->addElement($lblLinkTitle);
 		$txtLinkTitle=new TextBox("txtLinkTitle",$this->txtLinkTitle);
 		$txtLinkTitle->setClass("longtextbox");
+        if($simplemode!=1)
 		$Page->addElement($txtLinkTitle);
 		
 		$lblTitle=new Lable($this->lblTitle);
@@ -58,9 +66,11 @@ class postmanage_Design extends FormDesign {
 		$Page->addElement($txtTitle);
 	
 		$lblDescriptionTitle=new Lable($this->lblDescriptionTitle);
+        if($simplemode!=1)
 		$Page->addElement($lblDescriptionTitle);
 		$txtDescription=new TextBox("txtDescription",$this->txtDescription);
 		$txtDescription->setClass("longtextbox");
+        if($simplemode!=1)
 		$Page->addElement($txtDescription);
 		
 		$lblSummary=new Lable($this->lblSummary);
@@ -78,36 +88,48 @@ class postmanage_Design extends FormDesign {
 		$Page->addElement($txtContent);
 	
 		$lblExternalLink=new Lable($this->lblExternalLink);
+        if($simplemode!=1)
 		$Page->addElement($lblExternalLink);
 	
 		$txtExternalLink=new TextBox("txtExternalLink",$this->txtExternalLink);
 		$txtExternalLink->setClass("longtextbox");
+        if($simplemode!=1)
 		$Page->addElement($txtExternalLink);
-	
+
+        if($simplemode!=1)
 		$Page->addElement(new Lable("تگ ها"));
 		$this->txtTags->setClass("longtextbox");
+        if($simplemode!=1)
 		$Page->addElement($this->txtTags);
-		
+
+        if($simplemode!=1)
 		$Page->addElement(new Lable("کلمات کلیدی"));
 		$this->txtKeywords->setClass("longtextbox");
+        if($simplemode!=1)
 		$Page->addElement($this->txtKeywords);
-		
-		if($this->flgShowCanonicalURL)
-		{
-		  $Page->addElement(new Lable("آدرس یکتا(بدون آدرس سایت)"));
-		  $this->txtCanonicalURL->setClass("longtextbox");
-		  $Page->addElement($this->txtCanonicalURL);
-		}
-		else 
-		{
-		    $this->txtCanonicalURL->setVisible(false);
-		    $Page->addElement($this->txtCanonicalURL,2);
-		}
+
+        if($simplemode!=1)
+        {
+            if($this->flgShowCanonicalURL)
+            {
+              $Page->addElement(new Lable("آدرس یکتا(بدون آدرس سایت)"));
+              $this->txtCanonicalURL->setClass("longtextbox");
+              $Page->addElement($this->txtCanonicalURL);
+            }
+            else
+            {
+                $this->txtCanonicalURL->setVisible(false);
+                $Page->addElement($this->txtCanonicalURL,2);
+            }
+
+        }
 		$lblVisits=new Lable($this->lblVisits);
+        if($simplemode!=1)
 		$Page->addElement($lblVisits);
 	
 		$txtVisits=new TextBox("txtVisits",$this->txtVisits);
 		$txtVisits->setClass("longtextbox");
+        if($simplemode!=1)
 		$Page->addElement($txtVisits);
 		
 		

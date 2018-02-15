@@ -38,8 +38,7 @@ class fileController extends Controller {
 		$RelationLogic->addCondition(new FieldCondition('file_fid',$ID));
 			$result['filecategorys']=$fileshop_filecategoryEntityEntityObject->FindAll($RelationLogic);
 			$result['file']=$fileEntityObject;
-            $user=new User(-1);
-            $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
+            $SystemUserID=User::getSystemUserIDFromUserPass($UserName,$Password);
 			$ispurchased=$fileEntityObject->getFileIsPurchased($ID,$SystemUserID);
             $result['ispurchased']=$ispurchased;
 

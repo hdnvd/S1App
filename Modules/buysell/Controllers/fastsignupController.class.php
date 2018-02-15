@@ -6,9 +6,7 @@ use Modules\buysell\Entity\buysell_userEntity;
 use Modules\buysell\Exceptions\nosamepassException;
 use Modules\common\Entity\common_cityEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
-use Modules\users\Entity\roleSystemUserEntity;
-use Modules\users\Entity\RoleSystemUserRoleEntity;
-use Modules\users\Exceptions\UsernameExistsException;
+use Modules\users\PublicClasses\User;
 
 /**
 *@author Hadi AmirNahavandi
@@ -35,16 +33,10 @@ class fastsignupController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$result=array();
-        $sysUserEnt=new roleSystemUserEntity($DBAccessor);
         $UserEnt=new buysell_userEntity($DBAccessor);
         $DBAccessor->beginTransaction();
-        $found=$sysUserEnt->Select(array("username"),array($txtMobile));
-        if($found!=null)
-            throw new UsernameExistsException();
-
-        $id=$sysUserEnt->Add($txtMobile,$txtpassword);
-        $roleEnt=new RoleSystemUserRoleEntity();
-        $roleEnt->addUserRole($id,5);
+        $id=User::addUser($txtMobile,$txtpassword,$DBAccessor);
+        User::setUserRole($id,5);//Simple User
         $UserEnt->setName($txtName);
         $UserEnt->setEmail($txtEmail);
         $UserEnt->setMob($txtMobile);

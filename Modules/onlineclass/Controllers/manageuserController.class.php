@@ -4,15 +4,10 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
-use Modules\users\Entity\roleSystemUserEntity;
-use Modules\users\Entity\RoleSystemUserRoleEntity;
 use Modules\users\Entity\users_userEntity;
-use Modules\users\Exceptions\UsernameExistsException;
 use Modules\users\PublicClasses\sessionuser;
-use core\CoreClasses\db\QueryLogic;
-use core\CoreClasses\db\FieldCondition;
-use core\CoreClasses\db\LogicalOperator;
-use Modules\onlineclass\Entity\onlineclass_userEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-07-25 - 2017-10-17 22:27
@@ -72,14 +67,9 @@ class manageuserController extends Controller {
 		$this->ValidateFieldArray([$fullname,$ismale,$email,$mobile,$registration_time,$devicecode],[$userEntityObject->getFieldInfo(users_userEntity::$FAMILY),$userEntityObject->getFieldInfo(users_userEntity::$ISMALE),$userEntityObject->getFieldInfo(users_userEntity::$MAIL),$userEntityObject->getFieldInfo(users_userEntity::$MOBILE),$userEntityObject->getFieldInfo(users_userEntity::$SIGNUP_TIME),$userEntityObject->getFieldInfo(users_userEntity::$ADDITIONALFIELD1)]);
 		if($ID==-1){
 
-            $sysUserEnt=new roleSystemUserEntity($DBAccessor);
             $DBAccessor->beginTransaction();
-            $found=$sysUserEnt->Select(array("username"),array($username));
-            if($found!=null)
-                throw new UsernameExistsException();
-            $NewUserID=$sysUserEnt->Add($username,$password);
-            $roleEnt=new RoleSystemUserRoleEntity();
-            $roleEnt->addUserRole($NewUserID,5);
+            $NewUserID=User::addUser($username,$password);
+            User::setUserRole($NewUserID,5);
 			$userEntityObject->setFamily($fullname);
 			$userEntityObject->setIsmale($ismale);
 			$userEntityObject->setMail($email);

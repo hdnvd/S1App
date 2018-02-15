@@ -69,6 +69,14 @@ class managedates_Design extends FormDesign {
 	{
 		parent::__construct();
 	}
+
+    private function getDateFromTime($time)
+    {
+        date_default_timezone_set("Asia/Tehran");
+        $sweetDate = new SweetDate(false, true, 'Asia/Tehran');
+        $dt = $sweetDate->date("y/m/d", $time);
+        return $dt;
+    }
 	public function getBodyHTML($command=null)
 	{
 		$Page=new Div();
@@ -76,7 +84,7 @@ class managedates_Design extends FormDesign {
 		$Page->setId("shift_managedates");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['date']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('shift',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+		$LblAdd=new Lable('تعریف روز تعطیل جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
@@ -106,7 +114,8 @@ class managedates_Design extends FormDesign {
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('shift',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+			$Title=$this->Data['data'][$i]->getday_date();
+			$Title=$this->getDateFromTime($Title);
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
@@ -126,7 +135,7 @@ class managedates_Design extends FormDesign {
 			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");

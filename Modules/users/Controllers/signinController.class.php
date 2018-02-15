@@ -2,12 +2,14 @@
 
 namespace Modules\users\Controllers;
 
+use core\CoreClasses\db\dbaccess;
+use core\CoreClasses\db\FieldCondition;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\Controller;
-use Modules\users\Entity\userEntity;
 use Modules\users\Entity\roleSystemUserEntity;
-use Modules\users\Entity\roleSystemRoleEntity;
-use Modules\users\Entity\RoleSystemUserRoleEntity;
 use Modules\parameters\PublicClasses\ParameterManager;
+use Modules\users\Entity\users_systemroleEntity;
+use Modules\users\Entity\users_systemuserroleEntity;
 
 /**
  *
@@ -26,33 +28,30 @@ class signinController extends Controller {
     }
 	public function getUserID($Username,$Password)
 	{
-		$ent=new roleSystemUserEntity();
+        $DBAccessor=new dbaccess();
+		$ent=new roleSystemUserEntity($DBAccessor);
 		$isTrue=$ent->checkUserPass($Username, $Password);
 		if($isTrue)
-			return $ent->getUserId($Username);
+			$userid=$ent->getUserId($Username);
 		else 
-			return null;
-	}
-	public function getUserIDWithSecondPass($Username,$Password)
-	{
-		$ent=new roleSystemUserEntity();
-		$isTrue=$ent->checkSecondUserPass($Username, $Password);
-		if($isTrue)
-			return $ent->getUserId($Username);
-		else
-			return null;
+			$userid=null;
+        $DBAccessor->close_connection();
+		return $userid;
 	}
 	public function getUserIndex($SystemUserID)
 	{
-		$ent1=new RoleSystemUserRoleEntity();
-		$Userrole=$ent1->getUserRole($SystemUserID);
-		$ent=new roleSystemRoleEntity();
+        $DBAccessor=new dbaccess();
+		$ent1=new users_systemuserroleEntity($DBAccessor);
+        $ent1=$ent1->FindOne(new QueryLogic([new FieldCondition(users_systemuserroleEntity::$SYSTEMUSER_FID,$SystemUserID)]));
+		$RoleID=$ent1->getSystemrole_fid();
+		$ent=new users_systemroleEntity($DBAccessor);
 		//print_r($Userrole);
-		$role=$ent->Select(array("id"), array($Userrole[0]['roleid']));
+        $ent->setId($RoleID);
 
-		$result['module']=$role[0]['defaultmodule'];
-		$result['page']=$role[0]['defaultpage'];
-		$result['parameters']=$role[0]['indexparameters'];
+		$result['module']=$ent->getDefaultmodule();
+		$result['page']=$ent->getDefaultpage();
+		$result['parameters']=$ent->getIndexparameters();
+		$DBAccessor->close_connection();
 		//print_r($result);
 		return $result;
 	}

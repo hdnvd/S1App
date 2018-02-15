@@ -5,6 +5,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\SweetDate;
 use Modules\finance\Exceptions\LowBalanceException;
+use Modules\finance\Exceptions\PlanIsReservedException;
 use Modules\finance\PublicClasses\Payment;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\ocms\Entity\ocms_doctorEntity;
@@ -31,8 +32,7 @@ class doctorplanlistController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-		$user=new User(-1);
-		$role_systemuser_fid=$user->getSystemUserIDFromUserPass($username,$password);
+		$role_systemuser_fid=User::getSystemUserIDFromUserPass($username,$password);
 		$result=array();
 		$doctorEntityObject=new ocms_doctorEntity($DBAccessor);
 		$result['doctor_fid']=$doctorEntityObject->FindAll(new QueryLogic());
@@ -98,14 +98,14 @@ class doctorplanlistController extends Controller {
         $ent->setId($DoctorPlanID);
         if($ent->getId()<=0)
             throw new DataNotFoundException();
+        if($ent->getPlanIsReserved($DoctorPlanID))
+            throw new PlanIsReservedException();
         $DrEnt=new ocms_doctorEntity($DBAccessor);
         $DrEnt->setId($ent->getDoctor_fid());
         if($DrEnt->getId()<=0)
             throw new DataNotFoundException();
         $Payment=new Payment();
-
-        $user=new User(-1);
-        $SystemUserID=$user->getSystemUserIDFromUserPass($UserName,$Password);
+        $SystemUserID=User::getSystemUserIDFromUserPass($UserName,$Password);
         $UserBalance=$Payment->getBalance(1,$SystemUserID);
 //        echo $UserBalance;
         if($UserBalance<$DrEnt->getPrice())
@@ -125,7 +125,7 @@ class doctorplanlistController extends Controller {
         $doctorSystemUserID=$DrEnt->getRole_systemuser_fid();
 
         //Add to Doctor Account
-        $result=$Payment->startTransaction($DrEnt->getPrice(),$DrEnt->getName(),$DrEnt->getFamily(),$DrEnt->getMobile(),'','رزرو وقت توسط کاربر شماره '. $SystemUserID,1,false,'',$doctorSystemUserID);
+        $result=$Payment->startTransaction($DrEnt->getPrice(),$DrEnt->getName(),$DrEnt->getFamily(),$DrEnt->getMobile(),'','رزرو وقت '.$DrEnt->getName() . " " . $DrEnt->getFamily().' توسط کاربر شماره '. $SystemUserID,1,false,'',$doctorSystemUserID);
 
         return [];
 

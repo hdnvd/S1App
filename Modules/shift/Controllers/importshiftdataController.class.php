@@ -5,8 +5,10 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\SweetDate;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\shift\Entity\shift_inputfileEntity;
 use Modules\shift\Entity\shift_personelEntity;
 use Modules\shift\Entity\shift_shiftEntity;
+use Modules\shift\Exceptions\ShiftExistsException;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -47,7 +49,16 @@ class importshiftdataController extends Controller {
         $InputData=strtolower($InputData);
         return $InputData;
     }
-	public function Btnsave($ID,$inputfile,$datatype)
+
+    /**
+     * @param $ID
+     * @param $inputfile
+     * @param $datatype
+     * @return array
+     * @throws DataNotFoundException
+     * @throws ShiftExistsException
+     */
+    public function Btnsave($ID, $inputfile, $datatype)
 	{
 		if($datatype==1)
 		    return $this->ImportShiftData($ID,$inputfile);
@@ -119,14 +130,30 @@ class importshiftdataController extends Controller {
         $DBAccessor->close_connection();
         return $result;
     }
-    public function ImportShiftData($ID,$inputfile)
+
+    /**
+     * @param $ID
+     * @param $inputfile
+     * @return array
+     * @throws DataNotFoundException
+     * @throws ShiftExistsException
+     */
+    public function ImportShiftData($ID, $inputfile)
     {
+        $MetaDataColCount=2;
+        $HelpMetaDataRowCount=8;
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor=new dbaccess();
+        $DBAccessor->beginTransaction();
         $DBAccessor2=new dbaccess();
         $su=new sessionuser();
         $role_systemuser_fid=$su->getSystemUserID();
         $result=array();
+        $InputFileEnt=new shift_inputfileEntity($DBAccessor);
+        $InputFileEnt->setFile_flu($inputfile[0]['path']);
+        $InputFileEnt->setRole_systemuser_fid($su->getSystemUserID());
+        $InputFileEnt->setUpload_time(time());
+        $InputFileEnt->Save();
         $exel=new \SimpleXLSX($inputfile[0]['path']);
         if ($exel->success())
         {
@@ -134,7 +161,7 @@ class importshiftdataController extends Controller {
             $firstrow=$sheetdata[0];
             $AllCount2 = count($firstrow);
             $day=array();
-            for ($collumnNumber = 1; $collumnNumber < $AllCount2; $collumnNumber++) {
+            for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
                 $day[$collumnNumber]=$firstrow[$collumnNumber];
                 $day[$collumnNumber]=str_replace(" ","",$day[$collumnNumber]);
                 $day[$collumnNumber]=str_replace("-","/",$day[$collumnNumber]);
@@ -142,21 +169,44 @@ class importshiftdataController extends Controller {
                 $day[$collumnNumber]=str_replace("\\","/",$day[$collumnNumber]);
                 $day[$collumnNumber]=SweetDate::getTimeFromDateText($day[$collumnNumber],0,0,'/');
             }
-
             $AllCount1 = count($sheetdata);
-            for ($RowNumber = 1; $RowNumber < $AllCount1; $RowNumber++) {
+            for ($RowNumber = 1; $RowNumber < ($AllCount1-$HelpMetaDataRowCount); $RowNumber++) {
                 $row=$sheetdata[$RowNumber];
                 $row[0]=$this->removeExtraCharsAndNormalize($row[0]);
-                $data[$RowNumber-1]['personcode']=$row[0];
+                $data[$RowNumber-1]['personcode']=$row[1];
                 $pcode=$data[$RowNumber-1]['personcode'];
                 $AllCount2 = count($row);
-                for ($collumnNumber = 1; $collumnNumber < $AllCount2; $collumnNumber++) {
+
+                for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
                     $row[$collumnNumber]=$this->removeExtraCharsAndNormalize($row[$collumnNumber]);
                     $presenceinfo=$row[$collumnNumber];
-                    $data[$RowNumber-1]['presenceinfo'][$collumnNumber-1]=$presenceinfo;
-                    $data[$RowNumber-1]['time'][$collumnNumber-1]=$day[$collumnNumber];
+                    $data[$RowNumber-1]['presenceinfo'][$collumnNumber-$MetaDataColCount]=$presenceinfo;
+                    $data[$RowNumber-1]['time'][$collumnNumber-$MetaDataColCount]=$day[$collumnNumber];
                 }
             }
+
+            /************************Check if other record exists for this day and bakhsh in db  **********************/
+            if(count($data)>0)
+            {
+
+                $Pent=new shift_personelEntity($DBAccessor2);
+                $q=new QueryLogic();
+                $q->addCondition(new FieldCondition(shift_personelEntity::$PERSONELCODE,$data[0]['personcode']));
+                $Pent=$Pent->FindOne($q);
+                if($Pent==null || $Pent->getId()<=0)
+                    throw new DataNotFoundException();
+                $PersonCurrentBakhshID=$Pent->getBakhsh_fid();
+                $AllCount1 = count($day);
+                for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
+                    $shift=new shift_shiftEntity($DBAccessor2);
+                    $cnt=$shift->FindAllCount(new QueryLogic([new FieldCondition(shift_shiftEntity::$DUE_DATE,$day[$collumnNumber]),new FieldCondition(shift_shiftEntity::$BAKHSH_FID,$PersonCurrentBakhshID)]));
+                    if($cnt>0)
+                        throw new ShiftExistsException();
+                }
+            }
+
+            /************************Check if other record exists for this day and bakhsh in db  **********************/
+
             $AllCount3 = count($data);
             for ($i = 0; $i < $AllCount3; $i++) {
                 $item=$data[$i];
@@ -175,80 +225,51 @@ class importshiftdataController extends Controller {
                 for ($PersonTimeNum = 0; $PersonTimeNum < $AllCount4; $PersonTimeNum++) {
                     $pTime=$item['time'][$PersonTimeNum];
                     $pShiftInfo=$item['presenceinfo'][$PersonTimeNum];
-
-                    if(strpos('m',$pShiftInfo)!==false)
-                    {
-                        $shiftEnt=new shift_shiftEntity($DBAccessor);
-                        $shiftEnt->setDue_date($pTime);
-                        $shiftEnt->setPersonel_fid($PersonID);
-                        $shiftEnt->setBakhsh_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRole_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRegister_date(time());
-                        $shiftEnt->setShifttype_fid(1);
-                        $shiftEnt->Save();
-                    }
-                    if(strpos('a',$pShiftInfo)!==false)
-                    {
-                        $shiftEnt=new shift_shiftEntity($DBAccessor);
-                        $shiftEnt->setDue_date($pTime);
-                        $shiftEnt->setPersonel_fid($PersonID);
-                        $shiftEnt->setBakhsh_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRole_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRegister_date(time());
-                        $shiftEnt->setShifttype_fid(2);
-                        $shiftEnt->Save();
-                    }
-                    if(strpos('n',$pShiftInfo)!==false)
-                    {
-                        $shiftEnt=new shift_shiftEntity($DBAccessor);
-                        $shiftEnt->setDue_date($pTime);
-                        $shiftEnt->setPersonel_fid($PersonID);
-                        $shiftEnt->setBakhsh_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRole_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRegister_date(time());
-                        $shiftEnt->setShifttype_fid(3);
-                        $shiftEnt->Save();
-                    }
-                    if(strpos('f',$pShiftInfo)!==false)
-                    {
-                        $shiftEnt=new shift_shiftEntity($DBAccessor);
-                        $shiftEnt->setDue_date($pTime);
-                        $shiftEnt->setPersonel_fid($PersonID);
-                        $shiftEnt->setBakhsh_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRole_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRegister_date(time());
-                        $shiftEnt->setShifttype_fid(4);
-                        $shiftEnt->Save();
-                    }
-                    if(strpos('v',$pShiftInfo)!==false)
-                    {
-                        $shiftEnt=new shift_shiftEntity($DBAccessor);
-                        $shiftEnt->setDue_date($pTime);
-                        $shiftEnt->setPersonel_fid($PersonID);
-                        $shiftEnt->setBakhsh_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRole_fid($PersonCurrentBakhshID);
-                        $shiftEnt->setRegister_date(time());
-                        $shiftEnt->setShifttype_fid(5);
-                        $shiftEnt->Save();
-                    }
+                    if($pShiftInfo==null)
+                        $pShiftInfo=" ";
+                    $this->AddNewShiftFromShiftTitle($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,$pShiftInfo,$InputFileEnt->getId());
                 }
             }
         }
         else
             echo 'xlsx error: '.$exel->error();
 
-        if($ID==-1){
-            //INSERT NEW DATA
-        }
-        else{
-            //UPDATE DATA
-        }
         $result=$this->load($ID);
         $result['param1']="";
         $DBAccessor->commit();
         $DBAccessor->close_connection();
         $DBAccessor2->close_connection();
         return $result;
+    }
+    private function AddNewShiftFromShiftTitle($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,$pShiftInfo,$InputFileID)
+    {
+        if(strpos('m',$pShiftInfo)!==false)
+            $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,1,$InputFileID);
+        if(strpos('a',$pShiftInfo)!==false)
+            $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,2,$InputFileID);
+        if(strpos('n',$pShiftInfo)!==false)
+            $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,3,$InputFileID);
+//                    if(strpos('f',$pShiftInfo)!==false)
+//                        $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,4);
+        if(strpos('v',$pShiftInfo)!==false)
+            $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,5,$InputFileID);
+        if(strpos('c',$pShiftInfo)!==false)
+            $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,6,$InputFileID);
+        if(strpos('p',$pShiftInfo)!==false)
+            $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,7,$InputFileID);
+
+    }
+    private function AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,$ShiftTypeID,$FileID)
+    {
+        $shiftEnt=new shift_shiftEntity($DBAccessor);
+        $shiftEnt->setDue_date($pTime);
+        $shiftEnt->setPersonel_fid($PersonID);
+        $shiftEnt->setBakhsh_fid($PersonCurrentBakhshID);
+        $shiftEnt->setRole_fid($PersonCurrentRoleID);
+        $shiftEnt->setRegister_date(time());
+        $shiftEnt->setShifttype_fid($ShiftTypeID);
+        $shiftEnt->setInputfile_fid($FileID);
+        $shiftEnt->Save();
     }
 }
 ?>

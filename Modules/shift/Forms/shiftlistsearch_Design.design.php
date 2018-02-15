@@ -39,6 +39,15 @@ class shiftlistsearch_Design extends FormDesign {
 	{
 		$this->Data = $Data;
 	}
+	private $reportType;
+
+    /**
+     * @param mixed $reportType
+     */
+    public function setReportType($reportType)
+    {
+        $this->reportType = $reportType;
+    }
 	/** @var combobox */
 	private $shifttype_fid;
 	/**
@@ -205,18 +214,43 @@ class shiftlistsearch_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("searchtable");
-		$LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->due_date_from,$this->getFieldCaption('due_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->due_date_to,$this->getFieldCaption('due_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->register_date_from,$this->getFieldCaption('register_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->register_date_to,$this->getFieldCaption('register_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
+		if($this->reportType==1)//Simple
+        {
+            $LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->due_date_from,$this->getFieldCaption('due_date_from'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->due_date_to,$this->getFieldCaption('due_date_to'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->register_date_from,$this->getFieldCaption('register_date_from'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->register_date_to,$this->getFieldCaption('register_date_to'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
+        }
+		elseif($this->reportType==2 || $this->reportType==4)//2Weeks or 1Weeks
+        {
+            $LTable1->addElement($this->getFieldRowCode($this->due_date_from,'تاریخ شروع',null,'',null));
+          $LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
+        }
+        elseif($this->reportType==3)//Daily
+        {
+
+            $LTable1->addElement($this->getFieldRowCode($this->due_date_from,'تاریخ',null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->shifttype_fid,$this->getFieldCaption('shifttype_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode(new TextBox('pagelength','7'),'تعداد بخش در هر صفحه',null,'',null));
+
+        }
+        elseif($this->reportType==5)//Amar
+        {
+            $LTable1->addElement($this->getFieldRowCode($this->personel_fid,$this->getFieldCaption('personel_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->due_date_from,$this->getFieldCaption('due_date_from'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->due_date_to,$this->getFieldCaption('due_date_to'),null,'',null));
+
+        }
+//		$LTable1->addElement($this->getFieldRowCode($this->inputfile_fid,$this->getFieldCaption('inputfile_fid'),null,'',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
+		$LTable1->addElement(new TextBox('reporttype',$this->reportType,false));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "GET", $Page);
 		$form->setClass('form-horizontal');
@@ -224,19 +258,19 @@ class shiftlistsearch_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
-			$this->shifttype_fid->addOption("", "مهم نیست");
+//			$this->shifttype_fid->addOption("", "همه");
 		foreach ($this->Data['shifttype_fid'] as $item)
 			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
-			$this->personel_fid->addOption("", "مهم نیست");
+			$this->personel_fid->addOption("", "همه");
 		foreach ($this->Data['personel_fid'] as $item)
 			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getPersonelcode());
-			$this->bakhsh_fid->addOption("", "مهم نیست");
+//			$this->bakhsh_fid->addOption("", "همه");
 		foreach ($this->Data['bakhsh_fid'] as $item)
 			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
-			$this->role_fid->addOption("", "مهم نیست");
+			$this->role_fid->addOption("", "همه");
 		foreach ($this->Data['role_fid'] as $item)
 			$this->role_fid->addOption($item->getID(), $item->getTitleField());
-			$this->inputfile_fid->addOption("", "مهم نیست");
+			$this->inputfile_fid->addOption("", "همه");
 		foreach ($this->Data['inputfile_fid'] as $item)
 			$this->inputfile_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("shift", $this->Data)){

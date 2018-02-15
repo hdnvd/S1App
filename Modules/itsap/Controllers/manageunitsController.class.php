@@ -3,6 +3,7 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\finance\Exceptions\InvalidPortalException;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -24,11 +25,18 @@ class manageunitsController extends unitlistController {
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
         $role_systemuser_fid=$su->getSystemUserID();
+        if($su->getUserType()!=3 && $su->getUserType()!=1)//!=SystemAdmin Or Developer
+        {
+            $org=new OrganizationController();
+            $TopUnitID=($org->getCurrentUserInfo())['unit']->getTopunit_fid();
+        }
         $UserID=null;
         if(!$this->getAdminMode())
             $UserID=$role_systemuser_fid;
 		$unitEnt=new itsap_unitEntity($DBAccessor);
 		$unitEnt->setId($ID);
+		if($unitEnt->getTopunit_fid()!=$TopUnitID)
+            throw new InvalidPortalException();
 		if($unitEnt->getId()==-1)
 			throw new DataNotFoundException();
 		if($UserID!=null && $unitEnt->getRole_systemuser_fid()!=$UserID)

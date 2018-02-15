@@ -18,6 +18,15 @@ use Modules\common\Forms\message_Design;
 *@SweetFrameworkVersion 2.004
 */
 class shiftlist_Code extends FormCode {
+
+    public function __construct($namespace)
+    {
+        parent::__construct($namespace);
+        $this->setThemePage("page.php");
+        if(isset($_GET['action']) && $_GET['action']=="search_Click")
+            $this->setThemePage('print.php');
+        $this->setTitle("Shift List");
+    }
 	private $searchForm='shiftlist';
 	protected function setSearchForm($searchForm){
 		$this->searchForm=$searchForm;
@@ -53,8 +62,12 @@ class shiftlist_Code extends FormCode {
 			else
 			{
 				$Result=$shiftlistController->load($this->getHttpGETparameter('pn',-1));
-			if(isset($_GET['search']))
-					$design=new shiftlistsearch_Design();
+			if(isset($_GET['search'])){
+
+                $ReportType=$this->getHttpGETparameter('reporttype','1');
+                $design=new shiftlistsearch_Design();
+                $design->setReportType($ReportType);
+            }
 				$design->setData($Result);
 				$design->setMessage("");
 			}
@@ -71,20 +84,22 @@ class shiftlist_Code extends FormCode {
 		}
 		return $design;
 	}
-	public function __construct($namespace)
-	{
-		parent::__construct($namespace);
-		$this->setTitle("Shift List");
-	}
 	public function search_Click()
 	{
 		$shiftlistController=new shiftlistController();
 		$translator=new ModuleTranslator("shift");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
-		$design=$this->searchForm;
-		$design->setAdminMode($this->getAdminMode());
 		$shiftlistController->setAdminMode($this->getAdminMode());
+            $ReportType=$this->getHttpGETparameter('reporttype','1');
+            $design=$this->searchForm;
+            if($ReportType==2 || $ReportType==4 )
+                $design=new twoweeksreport_Design();
+            elseif($ReportType==3)
+                $design=new dailyreport_Design();
+            elseif($ReportType==5)
+                $design=new stat_Design();
+            $design->setAdminMode($this->getAdminMode());
 		$shifttype_fid_ID=$this->getHttpGETparameter('shifttype_fid','');
 		$due_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('due_date_from',''));
 		$due_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('due_date_to',''));
@@ -96,13 +111,12 @@ class shiftlist_Code extends FormCode {
 		$inputfile_fid_ID=$this->getHttpGETparameter('inputfile_fid','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$shiftlistController->Search($this->getHttpGETparameter('pn',-1),$shifttype_fid_ID,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID,$sortby_ID,$isdesc_ID);
+		$Result=$shiftlistController->Search($this->getHttpGETparameter('pn',-1),$shifttype_fid_ID,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID,$sortby_ID,$isdesc_ID,$ReportType);
 		$design->setData($Result);
-		if($Result['data']==null || count($Result['data'])==0){
+        if(key_exists('data',$Result) && ($Result['data']==null || count($Result['data'])==0)){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");
 			$design->setMessageType(MessageType::$ERROR);
 		}else{
-			$design->setMessage("نتایج جستجو : ");
 			$design->setMessageType(MessageType::$INFORMATION);
 		}
 		}

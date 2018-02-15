@@ -29,8 +29,7 @@ class doctorreservelistController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-        $user=new User(-1);
-        $role_systemuser_fid=$user->getSystemUserIDFromUserPass($username,$password);
+        $role_systemuser_fid=User::getSystemUserIDFromUserPass($username,$password);
 		$result=array();
 		$doctorplanEntityObject=new ocms_doctorplanEntity($DBAccessor);
 		$result['doctorplan_fid']=$doctorplanEntityObject->FindAll(new QueryLogic());
@@ -47,7 +46,7 @@ class doctorreservelistController extends Controller {
 		$q=new QueryLogic();
 		$q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
 		$doctorEnt=$doctorEnt->FindOne($q);
-		$doctorreserveEnt=new ocms_doctorreserveEntity($DBAccessor);
+		$doctorreserveEnt=new ocms_doctorplanEntity($DBAccessor);
 //		$reserveinfo=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),'0,100');
 //		$result['doctorreserves']=$reserveinfo;
 		$allcount=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),null,true);

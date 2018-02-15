@@ -42,7 +42,7 @@ class manageemployee_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getFieldRowCode($this->unit_fid,$this->getFieldCaption('unit_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->unit_fid,$this->getFieldCaption('unit_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->emp_code,$this->getFieldCaption('emp_code'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->mellicode,$this->getFieldCaption('mellicode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->name,$this->getFieldCaption('name'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
@@ -60,8 +60,8 @@ class manageemployee_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
-		foreach ($this->Data['unit_fid'] as $item)
-			$this->unit_fid->addOption($item->getID(), $item->getTitleField());
+//		foreach ($this->Data['unit_fid'] as $item)
+//			$this->unit_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['degree_fid'] as $item)
 			$this->degree_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("employee", $this->Data)){

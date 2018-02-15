@@ -6,7 +6,6 @@
 namespace Modules\users\Forms;
 use core\CoreClasses\db\dbquery;
 use core\CoreClasses\services\FormCode;
-use Modules\users\Entity\userEntity;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\Controllers\signupController;
@@ -77,7 +76,7 @@ class signup_Code extends FormCode
 	    $AdditionalFields=array();
 	    for($i=0;$i<count($EnabledFields);$i++)
 	    {
-	        $FieldName=$EnabledFields[$i]['userinfo_field'];
+	        $FieldName=$EnabledFields[$i]->getUserinfo_field();
 	        if(isset($_POST['txt'.$FieldName]))
 	           $AdditionalFields[$FieldName]=$_POST['txt'.$FieldName];
 	        else 
