@@ -105,6 +105,7 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("Item Search Design","search_design");
         $this->chkItemsToGenerate->addSelectedValue("search_design");
         $this->chkItemsToGenerate->addOption("Sencha Framework Codes","sencha_codes");
+        $this->chkItemsToGenerate->addOption("Laravel Framework Codes","laravel_api_codes");
 
 
         $this->chkItemsToGenerate->addOption("Android Class","android_class");

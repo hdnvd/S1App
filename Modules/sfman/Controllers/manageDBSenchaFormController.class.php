@@ -41,7 +41,23 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         $DesignFile = $this->getSenchaCodeModuleDir() . "/classic/src/view/" . $ModuleName . "/$FormNames/Manage" . $FormName . "sController.js";
         $this->SaveFile($DesignFile, $C);
     }
+    protected function makeSenchaItemController($formInfo)
+    {
 
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormName" . "Controller', {
+    
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.manage$FormName',
+});
+
+";
+
+        $DesignFile = $this->getSenchaCodeModuleDir() . "/classic/src/view/" . $ModuleName . "/$FormNames/Manage" . $FormName . "Controller.js";
+        $this->SaveFile($DesignFile, $C);
+    }
     protected function makeSenchaListModel($formInfo)
     {
 
@@ -81,6 +97,22 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         $DesignFile = $this->getSenchaCodeModuleDir() . "/classic/src/view/" . $ModuleName . "/$FormNames/Manage" . $FormName . "sModel.js";
         $this->SaveFile($DesignFile, $C);
     }
+    protected function makeSenchaItemModel($formInfo)
+    {
+
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormName" . "Model', {
+    extend: 'Ext.app.ViewModel',
+    alias: 'viewmodel.$FormName'
+});
+";
+
+        $DesignFile = $this->getSenchaCodeModuleDir() . "/classic/src/view/" . $ModuleName . "/$FormNames/Manage" . $FormName . "Model.js";
+        $this->SaveFile($DesignFile, $C);
+    }
+
 
     protected function makeSenchaListView($formInfo)
     {
@@ -90,6 +122,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         $FormNames = $FormName . "s";
         $FormNameList = $FormName . "List";
         $ModuleNames = $ModuleName . "s";
+        $titleFiled=$this->getCurrentTableFields()[$this->getTitleFieldIndex()];
         $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormNames', {
     extend: 'Ext.tab.Panel',
     xtype: 'manage$FormNames',
@@ -112,21 +145,21 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         {
             xtype: 'gridpanel',
             cls: '$FormName-grid',
-            title: 'فهرست ',
+            title: 'فهرست $FormName',
             routeId: '$FormName',
-            bind: '{$FormNameList}',
+            bind: '{" . $FormNameList . "}',
             scrollable: false,
             columns: [
                 {
                     xtype: 'gridcolumn',
                     width: 40,
-                    dataIndex: 'identifier',
+                    dataIndex: 'id',
                     text: '#'
                 },
                 {
                     xtype: 'gridcolumn',
                     cls: 'content-column',
-                    dataIndex: 'title',
+                    dataIndex: '$titleFiled',
                     text: 'عنوان',
                     flex: 1
                 },
@@ -161,7 +194,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
                     dock: 'bottom',
                     itemId: '$FormName" . "PaginationToolbar',
                     displayInfo: true,
-                    bind: '{$FormNameList}'
+                    bind: '{" . $FormNameList . "}'
                 }
             ]
         },
@@ -170,6 +203,105 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
 });";
 
         $DesignFile = $this->getSenchaCodeModuleDir() . "/classic/src/view/" . $ModuleName . "/$FormNames/Manage" . $FormName . "s.js";
+        $this->SaveFile($DesignFile, $C);
+    }
+    protected function makeSenchaItemView($formInfo)
+    {
+
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $UCFormNames = ucfirst($FormNames);
+        $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormName', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.manage$FormName',
+    requires: [
+        'Ext.button.Button',
+        'Ext.form.field.Text',
+        'Ext.form.field.ComboBox',
+        'Ext.form.field.File',
+        'Ext.form.field.HtmlEditor'
+    ],
+    cls: 'manage$FormName',
+
+    layout: {
+        type:'vbox',
+        align:'stretch'
+    },
+
+    bodyPadding: 10,
+    scrollable: true,
+
+    defaults: {
+        labelWidth: 60,
+        labelSeparator: ''
+    },
+
+    items: [
+";
+
+        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+                $UCField = $this->getCurrentTableFields()[$i];
+                $UCField = trim(strtolower($UCField));
+                if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FID) {
+                    $Field=$this->getCurrentTableFields()[$i];
+                    $FieldEntityName=substr($Field,0,strlen($Field)-4);
+                    $C .= "\n{
+            xtype: 'combobox',
+            fieldLabel: '$FieldEntityName',
+            displayField: 'title',
+            id: '$UCField',
+            valueField: 'id',
+            store:
+                {
+                    type:'$FieldEntityName" ."s',
+                    autoLoad: true,
+                },
+        },";
+                }
+                else
+                {
+
+                    $C .= "\n{
+            xtype: 'textfield',
+            id: '$UCField',
+            fieldLabel: '$UCField',
+        },";
+                }
+            }
+        }
+        $C.="
+        {
+            xtype: 'button',
+            text:  'ذخیره',
+            handler:function()
+            {
+                var $FormName = Ext.create('MyApp.model.$ModuleName.$UCFormNames', {";
+        $FieldSetCode="";
+        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+                $UCField = $this->getCurrentTableFields()[$i];
+                $Field = trim(strtolower($UCField));
+                if($FieldSetCode!="")
+                    $FieldSetCode.=",";
+                $FieldSetCode .= "$Field: Ext.getCmp('$Field').getValue()";
+            }
+        }
+        $C.=$FieldSetCode."});
+                $FormName.save({
+                    callback: function (records, operation) {
+                        Ext.Msg.alert('Saved', operation.getResponse().responseText);
+                    },
+                });
+
+            }
+        }
+    ],
+});
+";
+
+        $DesignFile = $this->getSenchaCodeModuleDir() . "/classic/src/view/" . $ModuleName . "/$FormNames/Manage" . $FormName . ".js";
         $this->SaveFile($DesignFile, $C);
     }
 
@@ -187,7 +319,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
     fields: [
         {
             type: 'int',
-            name: 'identifier'
+            name: 'id'
         },
         ";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
@@ -201,7 +333,19 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
             }
         }
         $ModelCode .= "
-    ]
+    ],
+    proxy: {
+        type: 'rest',
+        url : 'http://laravel.test/api/$ModuleName/$FormNames',
+        paramsAsJson: false,
+        useDefaultXhrHeader: false,
+        actionMethods: {
+            create: 'POST', //When you want to save/create new record
+            read: 'GET', //When you want to get data from server side
+            update: 'PUT', //When you want to update the record
+            destroy: 'DELETE' //When you want to delete the record
+        },
+    },
 });
 ";
         $DesignFile = $this->getSenchaCodeModuleDir() . "/app/model/" . $ModuleName . "/" . ucfirst($FormName) . "s.js";
@@ -222,7 +366,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         ";
         $ModelCode.="
         \n{";
-        $ModelCode.="\n\"identifier\": 1,";
+        $ModelCode.="\n\"id\": 1,";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
             if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
@@ -247,7 +391,6 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
         $UFormNames = ucfirst($FormNames);
-        $ModuleNames = $ModuleName . "s";
         $C = "Ext.define('MyApp.store.$ModuleName.$UFormNames', {
         extend: 'Ext.data.Store',
 
@@ -255,16 +398,27 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
 
     model: 'MyApp.model.$ModuleName.$UFormNames',
 
-    proxy: {
+    /*proxy: {
         type: 'api',
         url: '~api/$ModuleName/$FormNames'
+    },*/
+    proxy: {
+        type: 'rest',
+        url : 'http://laravel.test/api/$ModuleName/$FormNames',
+        paramsAsJson: false,
+        useDefaultXhrHeader: false,
+        actionMethods: {
+            create: 'POST', //When you want to save/create new record
+            read: 'GET', //When you want to get data from server side
+            update: 'PUT', //When you want to update the record
+            destroy: 'DELETE' //When you want to delete the record
+        },
     },
-
     autoLoad: 'true',
 
     sorters: {
         direction: 'ASC',
-        property: 'identifier'
+        property: 'id'
     }
 });
 

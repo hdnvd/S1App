@@ -58,8 +58,17 @@ class formnotfound_Design extends FormDesign {
 		$lblMessage=new Lable("صفحه ای که به دنبال آن هستید وجود ندارد");
 		$LTable1->addElement($lblMessage);
 		$Page->addElement($LTable1);
+//		echo $_SERVER['REQUEST_URI'];
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}
+
+    public function getJSON()
+    {
+        parent::getJSON();
+
+        $Result=['message'=>'pagenotfound','error'=>404,'URL'=>$_SERVER['REQUEST_URI']];
+        return json_encode($Result);
+    }
 }
 ?>

@@ -25,5 +25,6 @@ class formnotfound_Code extends FormCode {
 		$design=new formnotfound_Design();
 		return $design->getBodyHTML();
 	}
+
 }
 ?>

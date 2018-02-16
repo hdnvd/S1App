@@ -83,7 +83,11 @@ abstract class BaseManageDBFormController extends baseFormCodeGenerator {
     protected abstract function makeSenchaListDataModel($formInfo);
     protected abstract function makeSenchaListTestData($formInfo);
     protected abstract function makeSenchaListStore($formInfo);
+    protected abstract function makeSenchaItemController($formInfo);
+    protected abstract function makeSenchaItemModel($formInfo);
+    protected abstract function makeSenchaItemView($formInfo);
 
+    protected abstract function makeLaravelAPIController($formInfo);
 
     /**
      * @param array $formInfo
@@ -117,6 +121,7 @@ class FieldType{
     public static $FILE=5;
     public static $DATE=6;
     public static $AUTOTIME=7;
+    public static $LARAVELMETAINF=8;
 
     public static function getFieldType($FieldName)
     {
@@ -137,6 +142,8 @@ class FieldType{
             return FieldType::$AUTOTIME;
         if(substr($FieldName,0,2)=="is")
             return FieldType::$BOOLEAN;
+        if($FieldName=="updated_at" || $FieldName=="created_at" )
+            return FieldType::$LARAVELMETAINF;
         return FieldType::$NORMAL;
     }
 

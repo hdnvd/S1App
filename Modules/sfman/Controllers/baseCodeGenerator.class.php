@@ -27,6 +27,7 @@ class baseCodeGenerator extends Controller {
 	private $CodeModuleDir;
     private $AndroidCodeModuleDir;
     private $SenchaCodeModuleDir;
+    private $LaravelCodeModuleDir;
 
     /**
      * @return mixed
@@ -36,6 +37,13 @@ class baseCodeGenerator extends Controller {
         return $this->SenchaCodeModuleDir;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getLaravelCodeModuleDir()
+    {
+        return $this->LaravelCodeModuleDir;
+    }
     /**
      * @return mixed
      */
@@ -54,6 +62,7 @@ class baseCodeGenerator extends Controller {
         $this->CodeModuleDir=$mDir . "Modules/" .  $CodeModuleName;
         $this->AndroidCodeModuleDir=$mDir . "Android/Modules/" .  $CodeModuleName;
         $this->SenchaCodeModuleDir=$mDir . "Sencha/Modules/" .  $CodeModuleName;
+        $this->LaravelCodeModuleDir=$mDir . "Laravel/Modules/" .  $CodeModuleName;
         $this->changeLogFile=$this->CodeModuleDir . "/changelog.php";
     }
 

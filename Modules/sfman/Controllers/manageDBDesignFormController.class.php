@@ -594,6 +594,10 @@ EOT;
         if($TitleInd===false)
             $TitleInd=array_search("name",$Fields);
         if($TitleInd===false)
+            $TitleInd=array_search("latintitle",$Fields);
+        if($TitleInd===false)
+            $TitleInd=array_search("fullname",$Fields);
+        if($TitleInd===false)
             $TitleInd=array_search("mellicode",$Fields);
         if($TitleInd===false)
             $TitleInd=array_search("email",$Fields);

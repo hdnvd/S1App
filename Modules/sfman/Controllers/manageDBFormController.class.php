@@ -329,6 +329,14 @@ abstract class manageDBFormController extends BaseManageDBFormController
             $this->makeSenchaListDataModel($formInfo);
             $this->makeSenchaListTestData($formInfo);
             $this->makeSenchaListStore($formInfo);
+
+            $this->makeSenchaItemController($formInfo);
+            $this->makeSenchaItemModel($formInfo);
+            $this->makeSenchaItemView($formInfo);
+        }
+        if ($this->getIsItemSelected($FormsToGenerate, "laravel_api_codes")) {
+
+            $this->makeLaravelAPIController($formInfo);
         }
         $DBAccessor->close_connection();
     }
