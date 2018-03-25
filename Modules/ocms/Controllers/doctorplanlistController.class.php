@@ -31,8 +31,7 @@ class doctorplanlistController extends Controller {
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
-		$su=new sessionuser();
-		$role_systemuser_fid=User::getSystemUserIDFromUserPass($username,$password);
+        $role_systemuser_fid=AppUserManager::getUserID($username,$password);
 		$result=array();
 		$doctorEntityObject=new ocms_doctorEntity($DBAccessor);
 		$result['doctor_fid']=$doctorEntityObject->FindAll(new QueryLogic());
@@ -85,10 +84,11 @@ class doctorplanlistController extends Controller {
         $start_time = $sweetDate->mktime("0", "0","0", $Month, $Day, $Year);
         $start_time--;
         $end_time = $sweetDate->mktime("23", "59","59", $Month, $Day, $Year);
-
         $Plans=$ent->getDoctorFreePlans($DoctorID,$start_time,$end_time);
-
         $result['data']=$Plans;
+        $doct=new ocms_doctorEntity(new dbaccess());
+        $doct->setId($DoctorID);
+        $result['doctor']=$doct;
         return $result;
     }
     public function reserve($DoctorPlanID,$UserName,$Password,$PresenceTypeID)
@@ -105,7 +105,7 @@ class doctorplanlistController extends Controller {
         if($DrEnt->getId()<=0)
             throw new DataNotFoundException();
         $Payment=new Payment();
-        $SystemUserID=User::getSystemUserIDFromUserPass($UserName,$Password);
+        $SystemUserID=AppUserManager::getUserID($UserName,$Password);
         $UserBalance=$Payment->getBalance(1,$SystemUserID);
 //        echo $UserBalance;
         if($UserBalance<$DrEnt->getPrice())

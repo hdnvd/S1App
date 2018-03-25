@@ -29,7 +29,7 @@ class doctorreservelistController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-        $role_systemuser_fid=User::getSystemUserIDFromUserPass($username,$password);
+        $role_systemuser_fid=AppUserManager::getUserID($username,$password);
 		$result=array();
 		$doctorplanEntityObject=new ocms_doctorplanEntity($DBAccessor);
 		$result['doctorplan_fid']=$doctorplanEntityObject->FindAll(new QueryLogic());
