@@ -34,7 +34,7 @@ class manualpaymentController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function TxtPay($ID,$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount,$username=null,$password=null)
+	public function TxtPay($ID,$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount,$username=null,$password=null,$RedirectURL="")
 	{
         $txtAmount*=10;
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -47,11 +47,11 @@ class manualpaymentController extends Controller {
 		if($ID==-1){
 			$Pay=new Payment();
 			if($username == null)
-                $PayInfo = $Pay->startTransaction($txtAmount, $txtName, $txtFamily, $txtTel, 1, $txtDescription, 1, true, "");
+                $PayInfo = $Pay->startTransaction($txtAmount, $txtName, $txtFamily, $txtTel, 1, $txtDescription, 1, true, $RedirectURL);
             else
             {
                 $userID=User::getSystemUserIDFromUserPass($username,$password);
-                $PayInfo = $Pay->startTransaction($txtAmount,$txtName,$txtFamily,$txtTel,1,$txtDescription,1,true,"",$userID);
+                $PayInfo = $Pay->startTransaction($txtAmount,$txtName,$txtFamily,$txtTel,1,$txtDescription,1,true,$RedirectURL,$userID);
 
             }
         }

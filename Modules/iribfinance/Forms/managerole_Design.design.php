@@ -45,7 +45,7 @@ class managerole_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
-		$form=new SweetFrom("", "POST", $Page);
+		$form=new SweetFrom("", "GET", $Page);
 		$form->SetAttribute("novalidate","novalidate");
 		$form->SetAttribute("data-toggle","validator");
 		$form->setClass('form-horizontal');

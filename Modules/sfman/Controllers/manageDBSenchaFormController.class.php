@@ -25,16 +25,50 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
 {
 
 
+//    private $SiteURL='http://iflaravel.test';
+    private $SiteURL='http://ifinance.sweetsoft.ir';
     protected function makeSenchaListController($formInfo)
     {
 
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
+        $UFormNames =ucfirst($FormNames);
+        $UFormName =ucfirst($FormName);
         $ModuleNames = $ModuleName . "s";
-        $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormNames" . "Controller', {
+        $C = "var Action='';\n
+        Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormNames" . "Controller', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.manage$FormNames'
+    alias: 'controller.manage$FormNames',
+    onEdit:function(){
+            Action='edit';
+    },
+    onDelete:function(){
+        Action='delete';
+    },
+    onRowClick:function(view, td, cellIndex, record){
+        if(Action=='edit')
+        {
+            this.setCurrentView('widget.manage$FormName', {record: record});
+            Action='';
+        }
+        else if(Action=='delete')
+        {
+            MyApp.model.$ModuleName.$UFormNames.load(record.data.id,{success:function () {
+                this.erase();
+            }});
+            Action='';
+        }
+    },
+    setCurrentView: function(view, params) {
+        var recorditem=params['record'];
+        var contentPanel = this.getView('viewport');
+        contentPanel.removeAll();
+        var Panel=Ext.create(view);
+        Panel.setRecord(recorditem);
+        // Panel.getForm().findField('title').setFieldLabel('عنوان');
+        contentPanel.add(Panel);
+    },
 });
 ";
 
@@ -117,12 +151,15 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
     protected function makeSenchaListView($formInfo)
     {
 
+        $trans=new Translator();
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
+        $PersianFormName  = $trans->getPersian($FormName,$FormName);
         $FormNames = $FormName . "s";
         $FormNameList = $FormName . "List";
         $ModuleNames = $ModuleName . "s";
         $titleFiled=$this->getCurrentTableFields()[$this->getTitleFieldIndex()];
+        $ptitleField=$trans->getPersian($titleFiled,$titleFiled);
         $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormNames', {
     extend: 'Ext.tab.Panel',
     xtype: 'manage$FormNames',
@@ -145,10 +182,13 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         {
             xtype: 'gridpanel',
             cls: '$FormName-grid',
-            title: 'فهرست $FormName',
+            title: 'فهرست $PersianFormName',
             routeId: '$FormName',
             bind: '{" . $FormNameList . "}',
             scrollable: false,
+            listeners: {
+                cellclick: 'onRowClick',
+            },
             columns: [
                 {
                     xtype: 'gridcolumn',
@@ -157,10 +197,18 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
                     text: '#'
                 },
                 {
+                    xtype: 'textfield',
+                    cls: 'content-column',
+                    dataIndex: 'id',
+                    text: 'ID',
+                    hidden: true,
+                    flex: 2
+                },
+                {
                     xtype: 'gridcolumn',
                     cls: 'content-column',
                     dataIndex: '$titleFiled',
-                    text: 'عنوان',
+                    text: '$ptitleField',
                     flex: 1
                 },
                 {
@@ -169,16 +217,13 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
                         {
                             xtype: 'button',
                             iconCls: 'x-fa fa-pencil',
-                            handler:function(){location.href = '#manage$FormName'}
+                            handler: 'onEdit',
                         },
                         {
                             xtype: 'button',
-                            iconCls: 'x-fa fa-close'
+                            iconCls: 'x-fa fa-close',
+                            handler: 'onDelete',
                         },
-                        {
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-ban'
-                        }
                     ],
 
                     cls: 'content-column',
@@ -198,6 +243,13 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
                 }
             ]
         },
+        {
+            xtype: 'manage$FormName',
+            cls: 'bank-grid',
+            title: 'تعریف $PersianFormName جدید',
+            routeId: 'add$FormName',
+            scrollable: false,
+        },
 
     ]
 });";
@@ -208,8 +260,10 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
     protected function makeSenchaItemView($formInfo)
     {
 
+        $trans=new Translator();
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
+        $PFormName = $trans->getPersian($FormName,$FormName);
         $FormNames = $FormName . "s";
         $UCFormNames = ucfirst($FormNames);
         $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormName', {
@@ -238,20 +292,28 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
     },
 
     items: [
+    
+        {
+            xtype: 'textfield',
+            id: 'manage$FormName" ."_id',
+            hidden:true,
+        },
 ";
 
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
             if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $UCField = trim(strtolower($UCField));
+                $PersianField = $trans->getPersian($UCField,$UCField);
                 if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FID) {
                     $Field=$this->getCurrentTableFields()[$i];
                     $FieldEntityName=substr($Field,0,strlen($Field)-4);
+                    $PersianField = $trans->getPersian($FieldEntityName,$FieldEntityName);
                     $C .= "\n{
             xtype: 'combobox',
-            fieldLabel: '$FieldEntityName',
+            fieldLabel: '$PersianField',
             displayField: 'title',
-            id: '$UCField',
+            id: 'manage$FormName" . "_$UCField',
             valueField: 'id',
             store:
                 {
@@ -265,8 +327,8 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
 
                     $C .= "\n{
             xtype: 'textfield',
-            id: '$UCField',
-            fieldLabel: '$UCField',
+            id: 'manage$FormName" . "_$UCField',
+            fieldLabel: '$PersianField',
         },";
                 }
             }
@@ -277,27 +339,42 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
             text:  'ذخیره',
             handler:function()
             {
-                var $FormName = Ext.create('MyApp.model.$ModuleName.$UCFormNames', {";
+                var the$FormName=null;
+                var itemID=Ext.getCmp('manage$FormName" . "_id').getValue();
+                if(itemID>0)
+                    the$FormName = MyApp.model.$ModuleName.$UCFormNames.load(itemID);
+                else
+                    the$FormName = Ext.create('MyApp.model.$ModuleName.$UCFormNames', {";
         $FieldSetCode="";
+        $FieldLoadCode="";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
             if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $Field = trim(strtolower($UCField));
                 if($FieldSetCode!="")
                     $FieldSetCode.=",";
-                $FieldSetCode .= "$Field: Ext.getCmp('$Field').getValue()";
+                $FieldSetCode .= "$Field: Ext.getCmp('manage$FormName" . "_$Field').getValue()";
+                $FieldLoadCode .= "\nExt.getCmp('manage$FormName" . "_$Field').setValue(record.data.$Field);";
             }
         }
         $C.=$FieldSetCode."});
-                $FormName.save({
+                the$FormName.save({
                     callback: function (records, operation) {
-                        Ext.Msg.alert('Saved', operation.getResponse().responseText);
+                        Ext.Msg.alert('اطلاعات با موفقیت ذخیره شد.', operation.getResponse().responseText);
                     },
                 });
 
             }
         }
     ],
+    setRecord: function(record) {
+        var me = this;
+        me._record = record;
+        this.setData(record.data);
+        $FieldLoadCode
+        Ext.getCmp('manage$FormName" . "_id').setValue(record.data.id);
+        return this;
+    },
 });
 ";
 
@@ -334,11 +411,15 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         }
         $ModelCode .= "
     ],
+    
     proxy: {
         type: 'rest',
-        url : 'http://laravel.test/api/$ModuleName/$FormNames',
+        url : '".$this->SiteURL."/api/$ModuleName/$FormNames',
         paramsAsJson: false,
         useDefaultXhrHeader: false,
+        writer:{
+            writeAllFields: true,
+        },
         actionMethods: {
             create: 'POST', //When you want to save/create new record
             read: 'GET', //When you want to get data from server side
@@ -404,7 +485,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
     },*/
     proxy: {
         type: 'rest',
-        url : 'http://laravel.test/api/$ModuleName/$FormNames',
+        url : '".$this->SiteURL."/api/$ModuleName/$FormNames',
         paramsAsJson: false,
         useDefaultXhrHeader: false,
         actionMethods: {

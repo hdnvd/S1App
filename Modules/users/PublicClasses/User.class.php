@@ -43,6 +43,7 @@ class User {
             $DBAccessor = new dbaccess();
         }
         $SystemUserEnt=new users_systemuserEntity($DBAccessor);
+        $UserName=strtolower(trim($UserName));
         $OldUser=$SystemUserEnt->FindOne(new QueryLogic([new FieldCondition(users_systemuserEntity::$USERNAME,$UserName)]));
         $SystemUserID=-1;
         if($OldUser!=null && $OldUser->getId()>0)

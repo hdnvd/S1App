@@ -41,22 +41,26 @@ class $ModuleName" . "_" . "$FormName extends Model
 {
     protected \$table = \"$ModuleName" . "_" . "$FormName\";
     protected \$fillable = [";
-        $fieldSetCode='';
-for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
-$UCField = $this->getCurrentTableFields()[$i];
-$Field = trim(strtolower($UCField));
-$UCField = ucfirst($Field);
-if ($fieldSetCode != "")
-$fieldSetCode .= ",";
-    $fieldSetCode .= "'$Field'";
-}
-}
-$C.=$fieldSetCode . "];";
-        $C.="\n}";
-        $DesignFile = $this->getLaravelCodeModuleDir()."/" . $ModuleName . "/$ModuleName" . "_$FormName" . ".php";
+        $fieldSetCode = '';
+        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+                $UCField = $this->getCurrentTableFields()[$i];
+                $Field = trim(strtolower($UCField));
+                $UCField = ucfirst($Field);
+                if ($Field != "deletetime") {
+
+                    if ($fieldSetCode != "")
+                        $fieldSetCode .= ",";
+                    $fieldSetCode .= "'$Field'";
+                }
+            }
+        }
+        $C .= $fieldSetCode . "];";
+        $C .= "\n}";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/$ModuleName" . "_$FormName" . ".php";
         $this->SaveFile($DesignFile, $C);
     }
+
     protected function makeLaravelRoutes($formInfo)
     {
 
@@ -69,14 +73,16 @@ $C.=$fieldSetCode . "];";
         $C .= "\nRoute::put('$ModuleName/$FormNames/{id}', 'API\\$FormName" . "Controller@update');";
         $C .= "\nRoute::delete('$ModuleName/$FormNames/{id}', 'API\\$FormName" . "Controller@delete');";
 
-        $DesignFile = $this->getLaravelCodeModuleDir() ."/" .$ModuleName . "/routes/$FormName" . ".php";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/$FormName" . ".php";
         $this->SaveFile($DesignFile, $C);
     }
+
     protected function makeLaravelAPIController($formInfo)
     {
 
         $this->makeLaravelAPIModel($formInfo);
         $this->makeLaravelRoutes($formInfo);
+        $this->makeLaravelMigrations($formInfo);
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $UCFormName = ucfirst($FormName);
@@ -91,7 +97,7 @@ use Illuminate\\Http\\Request;
 class $UCFormName" . "Controller extends Controller
 {
 ";
-  $C.="\npublic function add(Request \$request)
+        $C .= "\npublic function add(Request \$request)
     {
     ";
         $fieldSetCode = "";
@@ -99,7 +105,7 @@ class $UCFormName" . "Controller extends Controller
             if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $Field = trim(strtolower($UCField));
-                if($Field!="deletetime") {
+                if ($Field != "deletetime") {
                     $UCField = ucfirst($Field);
                     $C .= "\n\$$UCField=\$request->input('$Field');";
                     if ($fieldSetCode != "")
@@ -112,7 +118,7 @@ class $UCFormName" . "Controller extends Controller
         $C .= $fieldSetCode . ",'deletetime'=>-1]);";
         $C .= "\nreturn response()->json(\$$UCFormName, 201);";
         $C .= "\n}";
-        $C.="\npublic function update(\$id,Request \$request)
+        $C .= "\npublic function update(\$id,Request \$request)
     {
     ";
         $fieldSetCode = "";
@@ -120,18 +126,17 @@ class $UCFormName" . "Controller extends Controller
             if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $Field = trim(strtolower($UCField));
-                if($Field!="deletetime")
-                {
+                if ($Field != "deletetime") {
                     $UCField = ucfirst($Field);
-                    $C .= "\n\$$UCField=\$request->input('$Field');";
+                    $C .= "\n\$$UCField=\$request->get('$Field');";
                     $fieldSetCode .= "\n\$$UCFormName->$Field=\$$UCField;";
                 }
             }
         }
         $C .= "\n\$$UCFormName" . " = new $ModuleName" . "_" . "$FormName();";
-        $C .= "\n\$$UCFormName" . " = \$$UCFormName"  ."->find(\$id);";
+        $C .= "\n\$$UCFormName" . " = \$$UCFormName" . "->find(\$id);";
         $C .= $fieldSetCode;
-        $C.="\n\$$UCFormName" . "->save();";
+        $C .= "\n\$$UCFormName" . "->save();";
         $C .= "\nreturn response()->json(\$$UCFormName, 201);";
         $C .= "\n}";
         $C .= "\npublic function list()";
@@ -151,7 +156,70 @@ class $UCFormName" . "Controller extends Controller
         $C .= "\nreturn response()->json(['message'=>'deleted'], 201);";
         $C .= "\n}";
         $C .= "\n}";
-        $DesignFile = $this->getLaravelCodeModuleDir() ."/" . $ModuleName . "/Http/Controllers/API/$FormName" . "Controller.php";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/Http/Controllers/API/$FormName" . "Controller.php";
+        $this->SaveFile($DesignFile, $C);
+    }
+
+    protected function makeLaravelMigrations($formInfo)
+    {
+        $this->makeLaravelAPIModel($formInfo);
+        $this->makeLaravelRoutes($formInfo);
+        $ModuleName = $formInfo['module']['name'];
+        $UModuleName = ucfirst($ModuleName);
+        $FormName = $formInfo['form']['name'];
+        $UCFormName = ucfirst($FormName);
+        $FormNames = $FormName . "s";
+        $ModuleNames = $ModuleName . "s";
+        $C = "<?php
+use Illuminate\\Support\\Facades\\Schema;
+use Illuminate\\Database\Schema\\Blueprint;
+use Illuminate\\Database\\Migrations\\Migration;
+
+class Create$UModuleName$UCFormName" . "Table extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('$ModuleName" . "_$FormName', function (Blueprint \$table) {
+            \$table->increments('id');
+            ";
+        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+                $UCField = $this->getCurrentTableFields()[$i];
+                $Field = trim(strtolower($UCField));
+                if ($Field != "deletetime") {
+                    if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FID)
+                        $C .= "\n\$table->integer('$Field');";
+                    elseif (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$BOOLEAN)
+                        $C .= "\n\$table->boolean('$Field');";
+                    elseif (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FILE)
+                        $C .= "\n\$table->string('$Field',250);";
+                    else
+                        $C .= "\n\$table->string('$Field',250);";
+                }
+            }
+        }
+        $C .= "
+            \$table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('$FormNames');
+    }
+}
+";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/database/migrations/2014_10_12_000000_create_$ModuleName" . "_$FormName" . "_table.php";
         $this->SaveFile($DesignFile, $C);
     }
 }

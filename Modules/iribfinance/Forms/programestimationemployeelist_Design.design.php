@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-05 - 2018-01-25 18:01
-*@lastUpdate 1396-11-05 - 2018-01-25 18:01
+*@creationDate 1396-11-27 - 2018-02-16 01:43
+*@lastUpdate 1396-11-27 - 2018-02-16 01:43
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -59,6 +59,15 @@ class programestimationemployeelist_Design extends FormDesign {
 	public function getEmployee_fid()
 	{
 		return $this->employee_fid;
+	}
+	/** @var combobox */
+	private $activity_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getActivity_fid()
+	{
+		return $this->activity_fid;
 	}
 	/** @var combobox */
 	private $programestimation_fid;
@@ -126,6 +135,7 @@ class programestimationemployeelist_Design extends FormDesign {
 		$LTable1=new Div();
 		$LTable1->setClass("searchtable");
 		$LTable1->addElement($this->getFieldRowCode($this->employee_fid,$this->getFieldCaption('employee_fid'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->activity_fid,$this->getFieldCaption('activity_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->programestimation_fid,$this->getFieldCaption('programestimation_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->employmenttype_fid,$this->getFieldCaption('employmenttype_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->totalwork,$this->getFieldCaption('totalwork'),null,'',null));
@@ -176,6 +186,9 @@ class programestimationemployeelist_Design extends FormDesign {
 			$this->employee_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['employee_fid'] as $item)
 			$this->employee_fid->addOption($item->getID(), $item->getTitleField());
+			$this->activity_fid->addOption("", "مهم نیست");
+		foreach ($this->Data['activity_fid'] as $item)
+			$this->activity_fid->addOption($item->getID(), $item->getTitleField());
 			$this->programestimation_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['programestimation_fid'] as $item)
 			$this->programestimation_fid->addOption($item->getID(), $item->getTitleField());
@@ -190,6 +203,10 @@ class programestimationemployeelist_Design extends FormDesign {
 			/******** employee_fid ********/
 			$this->employee_fid->setSelectedValue($this->Data['programestimationemployee']->getEmployee_fid());
 			$this->setFieldCaption('employee_fid',$this->Data['programestimationemployee']->getFieldInfo('employee_fid')->getTitle());
+
+			/******** activity_fid ********/
+			$this->activity_fid->setSelectedValue($this->Data['programestimationemployee']->getActivity_fid());
+			$this->setFieldCaption('activity_fid',$this->Data['programestimationemployee']->getFieldInfo('activity_fid')->getTitle());
 
 			/******** programestimation_fid ********/
 			$this->programestimation_fid->setSelectedValue($this->Data['programestimationemployee']->getProgramestimation_fid());
@@ -220,6 +237,11 @@ class programestimationemployeelist_Design extends FormDesign {
 		$this->sortby->addOption($this->Data['programestimationemployee']->getTableFieldID('employee_fid'),$this->getFieldCaption('employee_fid'));
 		if(isset($_GET['employee_fid']))
 			$this->employee_fid->setSelectedValue($_GET['employee_fid']);
+
+		/******** activity_fid ********/
+		$this->sortby->addOption($this->Data['programestimationemployee']->getTableFieldID('activity_fid'),$this->getFieldCaption('activity_fid'));
+		if(isset($_GET['activity_fid']))
+			$this->activity_fid->setSelectedValue($_GET['activity_fid']);
 
 		/******** programestimation_fid ********/
 		$this->sortby->addOption($this->Data['programestimationemployee']->getTableFieldID('programestimation_fid'),$this->getFieldCaption('programestimation_fid'));
@@ -258,6 +280,10 @@ class programestimationemployeelist_Design extends FormDesign {
 		/******* employee_fid *******/
 		$this->employee_fid= new combobox("employee_fid");
 		$this->employee_fid->setClass("form-control");
+
+		/******* activity_fid *******/
+		$this->activity_fid= new combobox("activity_fid");
+		$this->activity_fid->setClass("form-control");
 
 		/******* programestimation_fid *******/
 		$this->programestimation_fid= new combobox("programestimation_fid");

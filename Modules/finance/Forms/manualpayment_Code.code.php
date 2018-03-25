@@ -97,7 +97,10 @@ class manualpayment_Code extends FormCode {
 
             $user=$_GET['username'];
             $pass=$_GET['password'];
-            $Result=$manualpaymentController->TxtPay($this->getID(),$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount,$user,$pass);
+            $redURL="";
+            if(isset($_POST['redirecturl']))
+                $redURL=$_POST['redirecturl'];
+            $Result=$manualpaymentController->TxtPay($this->getID(),$txtName,$txtFamily,$txtTel,$txtDescription,$txtAmount,$user,$pass,$redURL);
 
         }
 		else

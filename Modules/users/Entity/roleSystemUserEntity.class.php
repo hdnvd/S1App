@@ -101,8 +101,8 @@ class roleSystemUserEntity extends EntityClass
         $Database=new dbquery();
         $username=strtolower($username);
         $username=trim($username);
-        $Password=roleSystemUserEntity::hashPassword($Password);
-        $Query=$Database->Select("id")->From("role_systemuser")->Where()->Equal("username", $username);
+//        $Password=roleSystemUserEntity::hashPassword($Password);
+        $Query=$Database->Select("*")->From("role_systemuser")->Where()->Equal("username", $username);
 //        echo $Query->getQueryString();
         $result=$Query->ExecuteAssociated();
         $id=null;
@@ -110,8 +110,13 @@ class roleSystemUserEntity extends EntityClass
         if($result!=null && count($result)>0)
         {
             $CurrentPass=$result[0]['password'];
+//            echo "CurPass:" . $CurrentPass;
+//            echo ":".$Password;
             if(password_verify($Password,$CurrentPass))
+            {
+//                echo "--Verified!";
                 $id=$result[0]['id'];
+            }
 
         }
         if($result!=null)

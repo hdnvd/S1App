@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-05 - 2018-01-25 18:01
-*@lastUpdate 1396-11-05 - 2018-01-25 18:01
+*@creationDate 1396-11-27 - 2018-02-16 01:43
+*@lastUpdate 1396-11-27 - 2018-02-16 01:43
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -51,6 +51,15 @@ class prosperityfundlist_Design extends FormDesign {
     {
         $this->adminMode = $adminMode;
     }
+	/** @var combobox */
+	private $employee_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getEmployee_fid()
+	{
+		return $this->employee_fid;
+	}
 	/** @var textbox */
 	private $totalamount;
 	/**
@@ -134,6 +143,7 @@ class prosperityfundlist_Design extends FormDesign {
 		$Page->addElement($this->getPageTitlePart("فهرست " . $this->Data['prosperityfund']->getTableTitle() . " ها"));
 		$LTable1=new Div();
 		$LTable1->setClass("searchtable");
+		$LTable1->addElement($this->getFieldRowCode($this->employee_fid,$this->getFieldCaption('employee_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->totalamount,$this->getFieldCaption('totalamount'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->add_date_from,$this->getFieldCaption('add_date_from'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->add_date_to,$this->getFieldCaption('add_date_to'),null,'',null));
@@ -183,10 +193,17 @@ class prosperityfundlist_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
+			$this->employee_fid->addOption("", "مهم نیست");
+		foreach ($this->Data['employee_fid'] as $item)
+			$this->employee_fid->addOption($item->getID(), $item->getTitleField());
 			$this->isactive->addOption("", "مهم نیست");
 			$this->isactive->addOption(1,'بله');
 			$this->isactive->addOption(0,'خیر');
 		if (key_exists("prosperityfund", $this->Data)){
+
+			/******** employee_fid ********/
+			$this->employee_fid->setSelectedValue($this->Data['prosperityfund']->getEmployee_fid());
+			$this->setFieldCaption('employee_fid',$this->Data['prosperityfund']->getFieldInfo('employee_fid')->getTitle());
 
 			/******** totalamount ********/
 			$this->totalamount->setValue($this->Data['prosperityfund']->getTotalamount());
@@ -221,6 +238,11 @@ class prosperityfundlist_Design extends FormDesign {
 		}
 			$this->isdesc->addOption('0','صعودی');
 			$this->isdesc->addOption('1','نزولی');
+
+		/******** employee_fid ********/
+		$this->sortby->addOption($this->Data['prosperityfund']->getTableFieldID('employee_fid'),$this->getFieldCaption('employee_fid'));
+		if(isset($_GET['employee_fid']))
+			$this->employee_fid->setSelectedValue($_GET['employee_fid']);
 
 		/******** totalamount ********/
 		$this->sortby->addOption($this->Data['prosperityfund']->getTableFieldID('totalamount'),$this->getFieldCaption('totalamount'));
@@ -260,6 +282,10 @@ class prosperityfundlist_Design extends FormDesign {
 	public function __construct()
 	{
 		parent::__construct();
+
+		/******* employee_fid *******/
+		$this->employee_fid= new combobox("employee_fid");
+		$this->employee_fid->setClass("form-control");
 
 		/******* totalamount *******/
 		$this->totalamount= new textbox("totalamount");
