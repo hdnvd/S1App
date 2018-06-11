@@ -1,5 +1,6 @@
 <?php
 namespace Modules\shift\Forms;
+use core\CoreClasses\html\htmlcode;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -65,75 +66,57 @@ class stat_Design extends FormDesign {
 		$Page->addElement($this->getPageTitlePart("خروجی آمار"));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
-        $divcount = new Div();
-        $divcount2 = new Div();
-        $divcount3 = new Div();
-        $divcount4 = new Div();
-        $divcount5 = new Div();
+        $Colors=["'rgba(237,12,111,1)'","'rgba(100, 173, 60, 0.99)'","'rgba(251, 173, 41, 0.99)'","'rgba(251, 42, 255, 0.63)'","'rgba(13, 0, 255, 0.63)'","'rgba(0, 144, 255, 0.63)'","'rgba(0, 102, 84, 0.74)'","'rgba(95, 32, 0, 0.74)'","'rgba(92, 9, 66, 0.87)'","'rgba(240, 66, 0, 1)'","'rgba(0, 0, 0, 1)'","'rgba(0, 0, 80, 0.74)'","'rgba(47, 0, 56, 0.57)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'","'rgba(237,12,111,1)'"];
 
+        $ChartHTML="<canvas id=\"myChart\" width=\"400\" height=\"400\" style='max-with:200px;'></canvas>
+        <script lang=\"javascript\">var data = {
+                datasets: [{";
+        $AllCount1 = count($this->Data['shifttypes']);
+                        $data="";
+                        $Labels="";
+                        $FillColors="";
+                        for ($i = 0; $i < $AllCount1; $i++) {
+                            $item=$this->Data['shifttypes'][$i];
+                            if($data!="")
+                                $data.=",";
+                            $data.=$this->Data['counts'][$item->getId()];
+                            if($Labels!="")
+                                $Labels.=",";
+                            $Labels.="'" . $item->getTitle() . "'";
+                            if($FillColors!="")
+                                $FillColors.=",";
+//                            $FillColors.="'rgba(153, 102, 255, 0.2)'";
+                            $FillColors.=$Colors[$i];
 
-		$la=new Lable($this->Data[1]);
-        $divcount->addElement($la);
-        $divcount->setClass('count');
-        $la2=new Lable($this->Data[2]);
-        $divcount2->addElement($la2);
-        $divcount2->setClass('count2');
-        $la3=new Lable($this->Data[3]);
-        $divcount3->addElement($la3);
-        $divcount3->setClass('count3');
-        $la4=new Lable($this->Data[4]);
-        $divcount4->addElement($la4);
-        $divcount4->setClass('count4');
-        $la5=new Lable($this->Data[5]);
-        $divcount5->addElement($la5);
-        $divcount5->setClass('count5');
-
-        $divlabl = new Div();
-        $divlabl2 = new Div();
-        $divlabl3 = new Div();
-        $divlabl4 = new Div();
-        $divlabl5 = new Div();
-
-        $l=new Lable('تعداد شیفت صبح: ');
-        $divlabl->addElement($l);
-        $divlabl->setClass('labl');
-        $l2=new Lable('تعداد شیفت ظهر: ');
-        $divlabl2->addElement($l2);
-        $divlabl2->setClass('labl2');
-        $l3=new Lable('تعداد شیفت شب: ');
-        $divlabl3->addElement($l3);
-        $divlabl3->setClass('labl3');
-        $l4=new Lable('تعداد مرخصی: ');
-        $divlabl4->addElement($l4);
-        $divlabl4->setClass('labl4');
-        $l5=new Lable('تعداد شیفت صبح: ');
-        $divlabl5->addElement($l5);
-        $divlabl5->setClass('labl5');
-
-
-		$LTable1=new Div();
-		$Page->addElement($LTable1);
-		$form=new SweetFrom("", "POST", $Page);
-		$form->setClass('form-horizontal');
-
-        $Page->addElement($divlabl);
-		$Page->addElement($divcount);
-        $Page->addElement($divlabl2);
-        $Page->addElement($divcount2);
-        $Page->addElement($divlabl3);
-        $Page->addElement($divcount3);
-        $Page->addElement($divlabl4);
-        $Page->addElement($divcount4);
-        $Page->addElement($divlabl5);
-        $Page->addElement($divcount5);
-
-
-
-    
-
-
-
-		return $form->getHTML();
+                        }
+        $ChartHTML.="
+                    data: [$data],
+                    backgroundColor: [$FillColors],
+                    }],";
+        $ChartHTML.="labels: [ $Labels ],";
+        $ChartHTML.="};
+        var options={
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }};
+            var ctx = document.getElementById(\"myChart\").getContext('2d');
+            new Chart(ctx, {
+                data: data,
+                type: 'doughnut',
+                options: options
+            });</script>";
+        $div=new Div();
+        $div->setStyle('width:80%');
+        $htmlElement=new htmlcode($ChartHTML);
+        $div->addElement($htmlElement);
+        $Page->addElement($div);
+        $form=new SweetFrom("", "GET", $Page);
+        $form->setClass('form-horizontal');
+        return $form->getHTML();
 	}
 
     /**

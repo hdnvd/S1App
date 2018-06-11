@@ -76,6 +76,7 @@ class twoweeksreport_Design extends FormDesign {
 //            echo $item->getShifttype_fid() . "  --  ";
             $this->row[$rowIndex][$item->getDue_date()][$item->getShifttype_fid()]['exists']=true;
             $this->row[$rowIndex][$item->getDue_date()][$item->getShifttype_fid()]['id']=$item->getId();
+            $this->row[$rowIndex][$item->getDue_date()][$item->getShifttype_fid()]['shifttype']=$this->Data['shifttype'][$i];
         }
 //        print_r($this->row);
     }
@@ -165,48 +166,69 @@ class twoweeksreport_Design extends FormDesign {
             for ($j = 0; $j < $AllCount1; $j++) {
                 $daydiv=new Div();
                 $daydiv->setClass('twoweekreportitem');
+
+
 //                echo $this->Data['starttime']+$daylength*$j . " ";
 
                 if(key_exists($this->Data['starttime']+$daylength*$j,$this->row[$i]))
                 {
                     $shift=$this->row[$i][$this->Data['starttime']+$daylength*$j];
+
+                    $keys=array_keys($shift);
+//                    print_r($keys);
+                    $AllKeysCount1 = count($keys);
+                    for ($KeyIndex = 0; $KeyIndex < $AllKeysCount1; $KeyIndex++) {
+//                        echo $KeyIndex;
+                        $ar=new AppRooter('shift','manageshift');
+                        $ar->addParameter(new UrlParameter('id',$shift[$keys[$KeyIndex]]['id']));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable($shift[$keys[$KeyIndex]]['shifttype']->getAbbreviation()));
+                        $daydiv->addElement($lnk);
+                    }
+
+                    /*
                     if(key_exists(1,$shift)){
                         $ar=new AppRooter('shift','manageshift');
                         $ar->addParameter(new UrlParameter('id',$shift[1]['id']));
-                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/1.png"));
+//                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/1.png"));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable("ص"));
                         $daydiv->addElement($lnk);
                     }
                     if(key_exists(2,$shift)){
                         $ar=new AppRooter('shift','manageshift');
                         $ar->addParameter(new UrlParameter('id',$shift[2]['id']));
-                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/2.png"));
+//                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/2.png"));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable("ع"));
                         $daydiv->addElement($lnk);
                     }
                     if(key_exists(3,$shift)){
                         $ar=new AppRooter('shift','manageshift');
                         $ar->addParameter(new UrlParameter('id',$shift[3]['id']));
-                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/3.png"));
+//                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/3.png"));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable("ش"));
                         $daydiv->addElement($lnk);
                     }
                     if(key_exists(5,$shift)){
                         $ar=new AppRooter('shift','manageshift');
                         $ar->addParameter(new UrlParameter('id',$shift[5]['id']));
-                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/5.png"));
+//                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/5.png"));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable("م"));
                         $daydiv->addElement($lnk);
                     }
                     if(key_exists(6,$shift)){
                         $ar=new AppRooter('shift','manageshift');
                         $ar->addParameter(new UrlParameter('id',$shift[6]['id']));
-                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/6.png"));
+//                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/6.png"));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable("م"));
                         $daydiv->addElement($lnk);
                     }
 
                     if(key_exists(7,$shift)){
                         $ar=new AppRooter('shift','manageshift');
                         $ar->addParameter(new UrlParameter('id',$shift[7]['id']));
-                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/6.png"));
+//                        $lnk=new link($ar->getAbsoluteURL(),new Image(DEFAULT_PUBLICURL . "content/files/img/6.png"));
+                        $lnk=new link($ar->getAbsoluteURL(),new Lable("م"));
                         $daydiv->addElement($lnk);
-                    }
+                    }*/
                 }
                 $Div1->addElement($daydiv);
 

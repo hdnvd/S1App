@@ -65,7 +65,7 @@ class managedoctorplanController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$start_time,$end_time,$doctor_fid,$username,$password)
+	public function BtnSave($ID,$start_time,$end_time,$doctor_fid,$OffPercent,$username,$password)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -77,7 +77,7 @@ class managedoctorplanController extends Controller {
             $UserID=$role_systemuser_fid;
 		$result=array();
 		$doctorplanEntityObject=new ocms_doctorplanEntity($DBAccessor);
-		$this->ValidateFieldArray([$start_time,$end_time,$doctor_fid],[$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$START_TIME),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$END_TIME),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$DOCTOR_FID)]);
+		$this->ValidateFieldArray([$start_time,$end_time,$doctor_fid,$OffPercent],[$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$START_TIME),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$END_TIME),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$DOCTOR_FID),$doctorplanEntityObject->getFieldInfo(ocms_doctorplanEntity::$OFF)]);
 
         $doctorEntityObject=new ocms_doctorEntity($DBAccessor);
         $q=new QueryLogic();
@@ -86,6 +86,7 @@ class managedoctorplanController extends Controller {
 		if($ID==-1){
 			$doctorplanEntityObject->setStart_time($start_time);
 			$doctorplanEntityObject->setEnd_time($end_time);
+            $doctorplanEntityObject->setOff($OffPercent);
 			$doctorplanEntityObject->setDoctor_fid($doctorEntityObject->getId());
 			$doctorplanEntityObject->Save();
 			$ID=$doctorplanEntityObject->getId();
@@ -98,6 +99,7 @@ class managedoctorplanController extends Controller {
 				throw new DataNotFoundException();
 			$doctorplanEntityObject->setStart_time($start_time);
 			$doctorplanEntityObject->setEnd_time($end_time);
+            $doctorplanEntityObject->setOff($OffPercent);
             $doctorplanEntityObject->setDoctor_fid($doctorEntityObject->getId());
 			$doctorplanEntityObject->Save();
 		}

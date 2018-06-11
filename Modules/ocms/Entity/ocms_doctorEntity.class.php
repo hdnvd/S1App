@@ -17,7 +17,7 @@ class ocms_doctorEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("ocms_doctor");
-		$this->setTableTitle("متخصص");
+		$this->setTableTitle("آرایشگاه");
 		$this->setTitleFieldName("family");
 
 		/******** name ********/
@@ -70,7 +70,7 @@ class ocms_doctorEntity extends EntityClass {
 
 		/******** speciality_fid ********/
 		$Speciality_fidInfo=new FieldInfo();
-		$Speciality_fidInfo->setTitle("تخصص");
+		$Speciality_fidInfo->setTitle("گروه");
 		$this->setFieldInfo(ocms_doctorEntity::$SPECIALITY_FID,$Speciality_fidInfo);
 		$this->addTableField('9',ocms_doctorEntity::$SPECIALITY_FID);
 
@@ -82,13 +82,13 @@ class ocms_doctorEntity extends EntityClass {
 
 		/******** matabtel ********/
 		$MatabtelInfo=new FieldInfo();
-		$MatabtelInfo->setTitle("تلفن مطب");
+		$MatabtelInfo->setTitle("تلفن");
 		$this->setFieldInfo(ocms_doctorEntity::$MATABTEL,$MatabtelInfo);
 		$this->addTableField('11',ocms_doctorEntity::$MATABTEL);
 
 		/******** matabaddress ********/
 		$MatabaddressInfo=new FieldInfo();
-		$MatabaddressInfo->setTitle("آدرس مطب");
+		$MatabaddressInfo->setTitle("آدرس");
 		$this->setFieldInfo(ocms_doctorEntity::$MATABADDRESS,$MatabaddressInfo);
 		$this->addTableField('12',ocms_doctorEntity::$MATABADDRESS);
 
@@ -136,7 +136,7 @@ class ocms_doctorEntity extends EntityClass {
 
 		/******** price ********/
 		$PriceInfo=new FieldInfo();
-		$PriceInfo->setTitle("هزینه ویزیت");
+		$PriceInfo->setTitle("هزینه ویزیت(ریال)");
 		$this->setFieldInfo(ocms_doctorEntity::$PRICE,$PriceInfo);
 		$this->addTableField('20',ocms_doctorEntity::$PRICE);
 

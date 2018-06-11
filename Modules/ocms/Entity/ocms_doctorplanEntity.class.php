@@ -36,9 +36,15 @@ class ocms_doctorplanEntity extends EntityClass {
 
 		/******** doctor_fid ********/
 		$Doctor_fidInfo=new FieldInfo();
-		$Doctor_fidInfo->setTitle("doctor_fid");
+		$Doctor_fidInfo->setTitle("متخصص");
 		$this->setFieldInfo(ocms_doctorplanEntity::$DOCTOR_FID,$Doctor_fidInfo);
 		$this->addTableField('3',ocms_doctorplanEntity::$DOCTOR_FID);
+
+        /******** off ********/
+        $OffInfo=new FieldInfo();
+        $OffInfo->setTitle("تخفیف");
+        $this->setFieldInfo(ocms_doctorplanEntity::$OFF,$OffInfo);
+        $this->addTableField('4',ocms_doctorplanEntity::$OFF);
 	}
 	public static $START_TIME="start_time";
 	/**
@@ -79,7 +85,19 @@ class ocms_doctorplanEntity extends EntityClass {
 	public function setDoctor_fid($Doctor_fid){
 		$this->setField(ocms_doctorplanEntity::$DOCTOR_FID,$Doctor_fid);
 	}
-
+    public static $OFF="off";
+    /**
+     * @return mixed
+     */
+    public function getOff(){
+        return $this->getField(ocms_doctorplanEntity::$OFF);
+    }
+    /**
+     * @param mixed $Off
+     */
+    public function setOff($Off){
+        $this->setField(ocms_doctorplanEntity::$OFF,$Off);
+    }
 
 	public function getDoctorFreePlans($DoctorID,$StartTime,$EndTime)
     {
@@ -120,6 +138,26 @@ return $res;
         return false;
     }
 
+    public function getUserReserves($UserID,$Limit,$SelectCount)
+    {
+        $Fields=array("res.id as id","dp.start_time as starttime","pt.id as presencetype_fid",'doc.name as doctorname','doc.family as doctorfamily');
+        if($SelectCount)
+            $Fields=array("count(dp.start_time) as count");
+        $SelectQuery=$this->getDatabase()->Select($Fields)->From(["ocms_doctorplan dp",'ocms_doctorreserve res','ocms_presencetype pt','ocms_doctor doc'])->Where()
+            ->Equal('res.doctorplan_fid',new DBField("dp.id",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('res.role_systemuser_fid',$UserID);
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('res.presencetype_fid',new DBField("pt.id",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.financial_canceltransaction_fid','1');
+        $SelectQuery=$SelectQuery->AndLogic()->Equal('dp.doctor_fid',new DBField("doc.id",false));
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('res.deletetime',"1");
+        $SelectQuery=$SelectQuery->AndLogic()->Smaller('pt.deletetime',"1");
+        $SelectQuery=$SelectQuery->AddOrderBy('dp.start_time',false);
+        if($Limit!=null)
+            $SelectQuery->setLimit($Limit);
+//        echo $SelectQuery->getQueryString();
+        $result=$SelectQuery->ExecuteAssociated();
+        return $result;
+    }
     public function getDoctorReserves($DoctorID,$Limit,$SelectCount)
     {
         $Fields=array("dp.start_time as start_time","us.family as family",'us.mobile mobile');

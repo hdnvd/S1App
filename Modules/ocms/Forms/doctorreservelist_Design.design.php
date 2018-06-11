@@ -182,7 +182,7 @@ class doctorreservelist_Design extends FormDesign {
 			$AllCount1 = count($this->Data['data']);
 			$Result=array();
 			for($i=0;$i<$AllCount1;$i++){
-				$Result[$i]=$this->Data['data'][$i]->GetArray();
+				$Result[$i]=$this->Data['data'][$i];
 			}
 			return json_encode($Result);
 		}

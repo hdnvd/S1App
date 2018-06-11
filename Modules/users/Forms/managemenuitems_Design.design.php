@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -89,7 +89,7 @@ class managemenuitems_Design extends FormDesign {
 		$lnkSearch->setClass('linkbutton btn btn-primary');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchmenuitemlink');
-		$Page->addElement($lnkSearch);
+//		$Page->addElement($lnkSearch);
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
@@ -111,12 +111,22 @@ class managemenuitems_Design extends FormDesign {
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
-			$ViewURL=new AppRooter('users',$this->itemViewPage);
-			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$lbView[$i]=new Lable('مشاهده');
-			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
-			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
-			$lnkView[$i]->setClass('btn btn-primary');
+			$UPURL=new AppRooter('users',$this->listPage);
+			$UPURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+            $UPURL->addParameter(new UrlParameter('moveup',1));
+            $UPURL->addParameter(new UrlParameter('place',$i*1));
+			$lbUP[$i]=new Lable('');
+			$lnkUP[$i]=new link($UPURL->getAbsoluteURL(),$lbUP[$i]);
+			$lnkUP[$i]->setGlyphiconClass('glyphicon glyphicon-chevron-up');
+			$lnkUP[$i]->setClass('btn btn-primary');
+            $DownURL=new AppRooter('users',$this->listPage);
+            $DownURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
+            $DownURL->addParameter(new UrlParameter('movedown',1));
+            $DownURL->addParameter(new UrlParameter('place',$i*1));
+            $lbDown[$i]=new Lable('');
+            $lnkDown[$i]=new link($DownURL->getAbsoluteURL(),$lbDown[$i]);
+            $lnkDown[$i]->setGlyphiconClass('glyphicon glyphicon-chevron-down');
+            $lnkDown[$i]->setClass('btn btn-primary');
 			$delurl=new AppRooter('users',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
@@ -126,7 +136,8 @@ class managemenuitems_Design extends FormDesign {
 			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+			$operationDiv[$i]->addElement($lnkDown[$i]);
+            $operationDiv[$i]->addElement($lnkUP[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");

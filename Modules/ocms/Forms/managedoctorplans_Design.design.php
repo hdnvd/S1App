@@ -78,12 +78,24 @@ class managedoctorplans_Design extends FormDesign {
 		$addUrl=new AppRooter('ocms',$this->itemPage);
         $addUrl->addParameter(new UrlParameter('username',$_GET['username']));
         $addUrl->addParameter(new UrlParameter('password',$_GET['password']));
-		$LblAdd=new Lable('وقت جدید');
+		$LblAdd=new Lable('وقت تکی جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
 		$lnkAdd->setId('adddoctorplanlink');
 		$Page->addElement($lnkAdd);
+
+        $addBatchUrl=new AppRooter('ocms',$this->itemPage);
+        $addBatchUrl->addParameter(new UrlParameter('username',$_GET['username']));
+        $addBatchUrl->addParameter(new UrlParameter('password',$_GET['password']));
+        $addBatchUrl->addParameter(new UrlParameter('batch_mode','1'));
+        $LblBatchAdd=new Lable('مجموعه وقت جدید');
+        $lnkBatchAdd=new link($addBatchUrl->getAbsoluteURL(),$LblBatchAdd);
+        $lnkBatchAdd->setClass('linkbutton btn btn-primary');
+        $lnkBatchAdd->setGlyphiconClass('glyphicon glyphicon-plus');
+        $lnkBatchAdd->setId('adddoctorplanlink');
+        $Page->addElement($lnkBatchAdd);
+
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();

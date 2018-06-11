@@ -3,6 +3,7 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\itsap\Entity\itsap_servicetypegroupEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -11,8 +12,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 17:27
-*@lastUpdate 1396-09-23 - 2017-12-14 17:27
+*@creationDate 1397-01-13 - 2018-04-02 02:04
+*@lastUpdate 1397-01-13 - 2018-04-02 02:04
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -25,6 +26,8 @@ class servicetypelistController extends Controller {
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
+		$servicetypegroupEntityObject=new itsap_servicetypegroupEntity($DBAccessor);
+		$result['servicetypegroup_fid']=$servicetypegroupEntityObject->FindAll(new QueryLogic());
 		if($PageNum<=0)
 			$PageNum=1;        
 		$UserID=null;
@@ -62,7 +65,7 @@ class servicetypelistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function Search($PageNum,$title,$priority,$sortby,$isdesc)
+	public function Search($PageNum,$title,$priority,$servicetypegroup_fid,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();
 		$servicetypeEnt=new itsap_servicetypeEntity($DBAccessor);
@@ -70,6 +73,7 @@ class servicetypelistController extends Controller {
 		$q->addOrderBy("id",true);
 		$q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("priority","%$priority%",LogicalOperator::LIKE));
+		$q->addCondition(new FieldCondition("servicetypegroup_fid","%$servicetypegroup_fid%",LogicalOperator::LIKE));
 		$sortByField=$servicetypeEnt->getTableField($sortby);
 		if($sortByField!=null)
 			$q->addOrderBy($sortByField,$isdesc);

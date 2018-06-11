@@ -126,31 +126,6 @@ class manageshifts_Design extends FormDesign {
             date_default_timezone_set("Asia/Tehran");
             $sweetDate = new SweetDate(false, true, 'Asia/Tehran');
             $Date = $sweetDate->date("l y/m/d", $Date);
-            $Shift=$this->Data['data'][$i]->getShifttype_fid();
-            switch ($Shift)
-            {
-                case 1:
-                    $Shift="صبح";
-                    break;
-                case 2:
-                    $Shift="بعد از ظهر";
-                    break;
-                case 3:
-                    $Shift="شب";
-                    break;
-                case 4:
-                    $Shift="خالی";
-                    break;
-                case 5:
-                    $Shift="مرخصی";
-                    break;
-                case 6:
-                    $Shift=" مرخصی استعلاجی";
-                    break;
-                case 7:
-                    $Shift="مرخصی زایمان";
-                    break;
-            }
 
             if($Title=="")
 				$Title='- بدون نام -';
@@ -185,7 +160,7 @@ class manageshifts_Design extends FormDesign {
             $LTable1->setLastElementClass("listcontent");
             $LTable1->addElement(new Lable($Date));
             $LTable1->setLastElementClass("listcontent");
-            $LTable1->addElement(new Lable($Shift));
+            $LTable1->addElement(new Lable($this->Data['shifttype'][$i]->getTitle()));
             $LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($operationDiv[$i]);
 			$LTable1->setLastElementClass("listcontent");

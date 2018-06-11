@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 17:27
-*@lastUpdate 1396-09-23 - 2017-12-14 17:27
+*@creationDate 1397-01-13 - 2018-04-02 02:04
+*@lastUpdate 1397-01-13 - 2018-04-02 02:04
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */

@@ -11,13 +11,13 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\users\Entity\users_menuitemEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
 class menuitemlistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=30;
 	public function getData($PageNum,QueryLogic $QueryLogic)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -32,6 +32,7 @@ class menuitemlistController extends Controller {
             $UserID=$role_systemuser_fid;
 		if($UserID!=null)
             $QueryLogic->addCondition(new FieldCondition(users_menuitemEntity::$ROLE_SYSTEMUSER_FID,$UserID));
+		$QueryLogic->addOrderBy(users_menuitemEntity::$PRIORITY,true);
 		$menuitemEnt=new users_menuitemEntity($DBAccessor);
 		$result['menuitem']=$menuitemEnt;
 		$allcount=$menuitemEnt->FindAllCount($QueryLogic);
@@ -58,11 +59,11 @@ class menuitemlistController extends Controller {
 		$DBAccessor=new dbaccess();
 		$menuitemEnt=new users_menuitemEntity($DBAccessor);
 		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
+//		$q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function Search($PageNum,$latintitle,$module,$page,$parameters,$sortby,$isdesc)
+	public function Search($PageNum,$latintitle,$module,$page,$parameters,$priority,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();
 		$menuitemEnt=new users_menuitemEntity($DBAccessor);
@@ -72,6 +73,7 @@ class menuitemlistController extends Controller {
 		$q->addCondition(new FieldCondition("module","%$module%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("page","%$page%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("parameters","%$parameters%",LogicalOperator::LIKE));
+		$q->addCondition(new FieldCondition("priority","%$priority%",LogicalOperator::LIKE));
 		$sortByField=$menuitemEnt->getTableField($sortby);
 		if($sortByField!=null)
 			$q->addOrderBy($sortByField,$isdesc);

@@ -3,12 +3,14 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\itsap\Entity\itsap_devicetypeEntity;
 use Modules\itsap\Entity\itsap_employeeEntity;
 use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
 use Modules\itsap\Entity\itsap_topunitEntity;
 use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\users\Entity\roleSystemUserEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -16,8 +18,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\itsap\Entity\itsap_servicerequestEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-29 - 2017-12-20 15:49
-*@lastUpdate 1396-09-29 - 2017-12-20 15:49
+*@creationDate 1397-01-15 - 2018-04-04 01:34
+*@lastUpdate 1397-01-15 - 2018-04-04 01:34
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -47,11 +49,11 @@ class manageservicerequestController extends Controller {
 		$servicerequestEntityObject=new itsap_servicerequestEntity($DBAccessor);
 		$servicetypeEntityObject=new itsap_servicetypeEntity($DBAccessor);
 		$result['servicetype_fid']=$servicetypeEntityObject->FindAll(new QueryLogic());
+		$devicetypeEntityObject=new itsap_devicetypeEntity($DBAccessor);
+		$result['devicetype_fid']=$devicetypeEntityObject->FindAll(new QueryLogic());
 		$RelationLogic=new QueryLogic();
 		$RelationLogic->addCondition(new FieldCondition('servicerequest_fid',$ID));
 		$result['servicerequest']=$servicerequestEntityObject;
-
-
 
         //Get Requester Employee Unit
         $emp=new itsap_employeeEntity($DBAccessor);
@@ -97,7 +99,7 @@ class manageservicerequestController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$title,$servicetype_fid,$description,$file1_flu,$request_date)
+	public function BtnSave($ID,$title,$unit_fid,$servicetype_fid,$description,$priority,$file1_flu,$request_date,$devicetype_fid,$letterfile_flu,$securityacceptor_role_systemuser_fid,$letternumber,$letter_date)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -111,8 +113,10 @@ class manageservicerequestController extends Controller {
 		$file1_fluURL='';
 		if($file1_flu!=null && count($file1_flu)>0)
 			$file1_fluURL=$file1_flu[0]['url'];
-
-		$this->ValidateFieldArray([$title,$servicetype_fid,$description,$file1_fluURL,$request_date],[$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$TITLE),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$SERVICETYPE_FID),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$DESCRIPTION),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$FILE1_FLU),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$REQUEST_DATE)]);
+		$letterfile_fluURL='';
+		if($letterfile_flu!=null && count($letterfile_flu)>0)
+			$letterfile_fluURL=$letterfile_flu[0]['url'];
+		$this->ValidateFieldArray([$title,$unit_fid,$servicetype_fid,$description,$priority,$file1_fluURL,$request_date,$devicetype_fid,$letterfile_fluURL,$securityacceptor_role_systemuser_fid,$letternumber,$letter_date],[$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$TITLE),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$UNIT_FID),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$SERVICETYPE_FID),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$DESCRIPTION),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$PRIORITY),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$FILE1_FLU),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$REQUEST_DATE),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$DEVICETYPE_FID),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$LETTERFILE_FLU),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$LETTERNUMBER),$servicerequestEntityObject->getFieldInfo(itsap_servicerequestEntity::$LETTER_DATE)]);
         //Get Priority By Service Type
         $ServiceTypeEnt=new itsap_servicetypeEntity($DBAccessor);
         $ServiceTypeEnt->setId($servicetype_fid);
@@ -120,7 +124,7 @@ class manageservicerequestController extends Controller {
         $priority=$ServiceTypeEnt->getPriority();
         //EOF Get Priority By Service Type
 		if($ID==-1){
-		    //Get Requester Employee Unit
+            //Get Requester Employee Unit
             $emp=new itsap_employeeEntity($DBAccessor);
             $q1=new QueryLogic();
             $q1->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
@@ -130,24 +134,30 @@ class manageservicerequestController extends Controller {
             $unit->setId($emp->getUnit_fid());
             if($unit==null || $unit->getId()<0) throw new DataNotFoundException();
             //EOF Get Requester Employee Unit
+
 			$servicerequestEntityObject->setTitle($title);
+            $servicerequestEntityObject->setUnit_fid($unit->getId());
 			$servicerequestEntityObject->setServicetype_fid($servicetype_fid);
 			$servicerequestEntityObject->setDescription($description);
 			$servicerequestEntityObject->setPriority($priority);
 			if($file1_fluURL!='')
 			$servicerequestEntityObject->setFile1_flu($file1_fluURL);
 			$servicerequestEntityObject->setRequest_date($request_date);
-			$servicerequestEntityObject->setRole_systemuser_fid($role_systemuser_fid);
-			$servicerequestEntityObject->setUnit_fid($unit->getId());
+            $servicerequestEntityObject->setRole_systemuser_fid($role_systemuser_fid);
+			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
+			if($letterfile_fluURL!='')
+			$servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
+			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($securityacceptor_role_systemuser_fid);
+			$servicerequestEntityObject->setLetternumber($letternumber);
+			$servicerequestEntityObject->setLetter_date($letter_date);
 			$servicerequestEntityObject->Save();
 			$ID=$servicerequestEntityObject->getId();
-			$statusEnt=new itsap_servicerequestservicestatusEntity($DBAccessor);
-			$statusEnt->setServicestatus_fid(1);//Residegi Nashode
+            $statusEnt=new itsap_servicerequestservicestatusEntity($DBAccessor);
+            $statusEnt->setServicestatus_fid(1);//Residegi Nashode
             $statusEnt->setServicerequest_fid($ID);
             $statusEnt->setRole_systemuser_fid($role_systemuser_fid);
             $statusEnt->setStart_date(time());
             $statusEnt->Save();
-
 		}
 		else{
 			$servicerequestEntityObject->setId($ID);
@@ -155,15 +165,22 @@ class manageservicerequestController extends Controller {
 				throw new DataNotFoundException();
 			if($UserID!=null && $servicerequestEntityObject->getRole_systemuser_fid()!=$UserID)
 				throw new DataNotFoundException();
-
             if($ServiceTypeEnt->getId()!=$servicerequestEntityObject->getServicetype_fid())
                 $servicerequestEntityObject->setPriority($priority);
+
 			$servicerequestEntityObject->setTitle($title);
 			$servicerequestEntityObject->setServicetype_fid($servicetype_fid);
 			$servicerequestEntityObject->setDescription($description);
+			$servicerequestEntityObject->setPriority($priority);
 			if($file1_fluURL!='')
 			$servicerequestEntityObject->setFile1_flu($file1_fluURL);
 			$servicerequestEntityObject->setRequest_date($request_date);
+			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
+			if($letterfile_fluURL!='')
+			$servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
+			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($securityacceptor_role_systemuser_fid);
+			$servicerequestEntityObject->setLetternumber($letternumber);
+			$servicerequestEntityObject->setLetter_date($letter_date);
 			$servicerequestEntityObject->Save();
 		}
 		$RelationLogic=new QueryLogic();

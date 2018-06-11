@@ -9,6 +9,8 @@ use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\LogicalOperator;
 use Modules\itsap\Entity\itsap_topunitEntity;
+use Modules\users\PublicClasses\User;
+
 /**
 *@author Hadi AmirNahavandi
 *@creationDate 1396-09-17 - 2017-12-08 09:41
@@ -78,6 +80,8 @@ class managetopunitController extends Controller {
 			$topunitEntityObject->setTitle($title);
 			$topunitEntityObject->Save();
 			$ID=$topunitEntityObject->getId();
+            $UserID=User::addUser("topunit".$ID."security","12345678910",$DBAccessor);
+            User::setUserRole($UserID,9);
 		}
 		else{
 			$topunitEntityObject->setId($ID);

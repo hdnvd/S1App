@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -46,6 +46,7 @@ class managemenuitem_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->module,$this->getFieldCaption('module'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->page,$this->getFieldCaption('page'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->parameters,$this->getFieldCaption('parameters'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -78,6 +79,11 @@ class managemenuitem_Design extends FormDesign {
 			$this->setFieldCaption('parameters',$this->Data['menuitem']->getFieldInfo('parameters')->getTitle());
 			$this->parameters->setFieldInfo($this->Data['menuitem']->getFieldInfo('parameters'));
 
+			/******** priority ********/
+			$this->priority->setValue($this->Data['menuitem']->getPriority());
+			$this->setFieldCaption('priority',$this->Data['menuitem']->getFieldInfo('priority')->getTitle());
+			$this->priority->setFieldInfo($this->Data['menuitem']->getFieldInfo('priority'));
+
 			/******** btnSave ********/
 		}
 	}
@@ -100,6 +106,10 @@ class managemenuitem_Design extends FormDesign {
 		/******* parameters *******/
 		$this->parameters= new textbox("parameters");
 		$this->parameters->setClass("form-control");
+
+		/******* priority *******/
+		$this->priority= new textbox("priority");
+		$this->priority->setClass("form-control");
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
@@ -162,6 +172,15 @@ class managemenuitem_Design extends FormDesign {
 	public function getParameters()
 	{
 		return $this->parameters;
+	}
+	/** @var textbox */
+	private $priority;
+	/**
+	 * @return textbox
+	 */
+	public function getPriority()
+	{
+		return $this->priority;
 	}
 	/** @var SweetButton */
 	private $btnSave;

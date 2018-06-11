@@ -76,7 +76,7 @@ class managedoctors_Design extends FormDesign {
 		$Page->setId("ocms_managedoctors");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['doctor']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('ocms',$this->itemPage);
-		$LblAdd=new Lable('افزودن متخصص جدید');
+		$LblAdd=new Lable('تعریف آرایشگاه جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');

@@ -153,16 +153,22 @@ class User {
 			return null;
 	}
 	public static function setUserRole($userId,$RoleID)
-	{
-        $dbaccess=new dbaccess();
-		$ent=new users_systemuserroleEntity($dbaccess);
-		$ent=$ent->FindOne(new QueryLogic([new FieldCondition(users_systemuserroleEntity::$SYSTEMUSER_FID,$userId)]));
-		if($ent!=null && $ent->getId()>0)
+    {
+        $dbaccess = new dbaccess();
+        $ent = new users_systemuserroleEntity($dbaccess);
+        $ent = $ent->FindOne(new QueryLogic([new FieldCondition(users_systemuserroleEntity::$SYSTEMUSER_FID, $userId)]));
+        if ($ent != null && $ent->getId() > 0) {
+//            echo "ROle" . $RoleID;
+            $ent->setSystemrole_fid($RoleID);
+            $ent->Save();
+        } else
         {
-
+            $ent = new users_systemuserroleEntity($dbaccess);
+            $ent->setSystemuser_fid($userId);
             $ent->setSystemrole_fid($RoleID);
             $ent->Save();
         }
+
         $dbaccess->close_connection();
 	
 	}

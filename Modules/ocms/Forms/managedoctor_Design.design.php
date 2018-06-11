@@ -44,27 +44,31 @@ class managedoctor_Design extends FormDesign {
 		$LTable1->setClass("formtable");
 		$LTable1->addElement($this->getFieldRowCode($this->name,$this->getFieldCaption('name'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->family,$this->getFieldCaption('family'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->nezam_code,$this->getFieldCaption('nezam_code'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->mellicode,$this->getFieldCaption('mellicode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->nezam_code,$this->getFieldCaption('nezam_code'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->mellicode,$this->getFieldCaption('mellicode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->mobile,$this->getFieldCaption('mobile'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->email,$this->getFieldCaption('email'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->tel,$this->getFieldCaption('tel'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->ismale,$this->getFieldCaption('ismale'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		if($this->getAdminMode())
 		$LTable1->addElement($this->getFieldRowCode($this->speciality_fid,$this->getFieldCaption('speciality_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->education,$this->getFieldCaption('education'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->education,$this->getFieldCaption('education'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->matabtel,$this->getFieldCaption('matabtel'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
         $LTable1->addElement($this->getFieldRowCode($this->matabaddress,$this->getFieldCaption('matabaddress'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
         $LTable1->addElement($this->getFieldRowCode($this->price,$this->getFieldCaption('price'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->longitude,$this->getFieldCaption('longitude'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->latitude,$this->getFieldCaption('latitude'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->common_city_fid,$this->getFieldCaption('common_city_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isactiveonphone,$this->getFieldCaption('isactiveonphone'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isactiveonplace,$this->getFieldCaption('isactiveonplace'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isactiveonhome,$this->getFieldCaption('isactiveonhome'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->isactiveonphone,$this->getFieldCaption('isactiveonphone'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->isactiveonplace,$this->getFieldCaption('isactiveonplace'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+//		$LTable1->addElement($this->getFieldRowCode($this->isactiveonhome,$this->getFieldCaption('isactiveonhome'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->photo_flu,$this->getFieldCaption('photo_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-        $LTable1->addElement($this->getFieldRowCode($this->username,'نام کاربری',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-        $LTable1->addElement($this->getFieldRowCode($this->password,'کلمه عبور',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-
+		$LTable1->addElement($this->getFieldRowCode($this->attachment_flu,'فایل ضمیمه',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        if($this->getAdminMode())
+        {
+            $LTable1->addElement($this->getFieldRowCode($this->username,'نام کاربری',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+            $LTable1->addElement($this->getFieldRowCode($this->password,'کلمه عبور',null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        }
         $LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -273,6 +277,10 @@ class managedoctor_Design extends FormDesign {
 		/******* photo_flu *******/
 		$this->photo_flu= new FileUploadBox("photo_flu");
 		$this->photo_flu->setClass("form-control-file");
+
+        /******* attachment_flu *******/
+        $this->attachment_flu= new FileUploadBox("attachment_flu");
+        $this->attachment_flu->setClass("form-control-file");
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
@@ -507,6 +515,15 @@ class managedoctor_Design extends FormDesign {
 	{
 		return $this->photo_flu;
 	}
+    /** @var FileUploadBox */
+    private $attachment_flu;
+    /**
+     * @return FileUploadBox
+     */
+    public function getAttachment_flu()
+    {
+        return $this->attachment_flu;
+    }
 	/** @var SweetButton */
 	private $btnSave;
     public function getJSON()

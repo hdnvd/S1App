@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:16
-*@lastUpdate 1396-11-20 - 2018-02-09 00:16
+*@creationDate 1397-01-17 - 2018-04-06 23:28
+*@lastUpdate 1397-01-17 - 2018-04-06 23:28
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -43,6 +43,12 @@ class users_menuitemEntity extends EntityClass {
 		$ParametersInfo->setTitle("parameters");
 		$this->setFieldInfo(users_menuitemEntity::$PARAMETERS,$ParametersInfo);
 		$this->addTableField('4',users_menuitemEntity::$PARAMETERS);
+
+		/******** priority ********/
+		$PriorityInfo=new FieldInfo();
+		$PriorityInfo->setTitle("priority");
+		$this->setFieldInfo(users_menuitemEntity::$PRIORITY,$PriorityInfo);
+		$this->addTableField('5',users_menuitemEntity::$PRIORITY);
 	}
 	public static $LATINTITLE="latintitle";
 	/**
@@ -95,6 +101,19 @@ class users_menuitemEntity extends EntityClass {
 	 */
 	public function setParameters($Parameters){
 		$this->setField(users_menuitemEntity::$PARAMETERS,$Parameters);
+	}
+	public static $PRIORITY="priority";
+	/**
+	 * @return mixed
+	 */
+	public function getPriority(){
+		return $this->getField(users_menuitemEntity::$PRIORITY);
+	}
+	/**
+	 * @param mixed $Priority
+	 */
+	public function setPriority($Priority){
+		$this->setField(users_menuitemEntity::$PRIORITY,$Priority);
 	}
 }
 ?>

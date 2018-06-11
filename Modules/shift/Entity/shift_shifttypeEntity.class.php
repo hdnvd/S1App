@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-05 - 2018-01-25 00:34
-*@lastUpdate 1396-11-05 - 2018-01-25 00:34
+*@creationDate 1397-01-17 - 2018-04-06 21:17
+*@lastUpdate 1397-01-17 - 2018-04-06 21:17
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -22,9 +22,39 @@ class shift_shifttypeEntity extends EntityClass {
 
 		/******** title ********/
 		$TitleInfo=new FieldInfo();
-		$TitleInfo->setTitle("title");
+		$TitleInfo->setTitle("عنوان");
 		$this->setFieldInfo(shift_shifttypeEntity::$TITLE,$TitleInfo);
 		$this->addTableField('1',shift_shifttypeEntity::$TITLE);
+
+		/******** valueinminutes ********/
+		$ValueinminutesInfo=new FieldInfo();
+		$ValueinminutesInfo->setTitle("valueinminutes");
+		$this->setFieldInfo(shift_shifttypeEntity::$VALUEINMINUTES,$ValueinminutesInfo);
+		$this->addTableField('2',shift_shifttypeEntity::$VALUEINMINUTES);
+
+		/******** abbreviation ********/
+		$AbbreviationInfo=new FieldInfo();
+		$AbbreviationInfo->setTitle("abbreviation");
+		$this->setFieldInfo(shift_shifttypeEntity::$ABBREVIATION,$AbbreviationInfo);
+		$this->addTableField('3',shift_shifttypeEntity::$ABBREVIATION);
+
+		/******** latinabbreviation ********/
+		$LatinabbreviationInfo=new FieldInfo();
+		$LatinabbreviationInfo->setTitle("latinabbreviation");
+		$this->setFieldInfo(shift_shifttypeEntity::$LATINABBREVIATION,$LatinabbreviationInfo);
+		$this->addTableField('4',shift_shifttypeEntity::$LATINABBREVIATION);
+
+		/******** isvisible ********/
+		$IsvisibleInfo=new FieldInfo();
+		$IsvisibleInfo->setTitle("isvisible");
+		$this->setFieldInfo(shift_shifttypeEntity::$ISVISIBLE,$IsvisibleInfo);
+		$this->addTableField('5',shift_shifttypeEntity::$ISVISIBLE);
+
+		/******** holidayfactor ********/
+		$HolidayfactorInfo=new FieldInfo();
+		$HolidayfactorInfo->setTitle("holidayfactor");
+		$this->setFieldInfo(shift_shifttypeEntity::$HOLIDAYFACTOR,$HolidayfactorInfo);
+		$this->addTableField('6',shift_shifttypeEntity::$HOLIDAYFACTOR);
 	}
 	public static $TITLE="title";
 	/**
@@ -38,6 +68,71 @@ class shift_shifttypeEntity extends EntityClass {
 	 */
 	public function setTitle($Title){
 		$this->setField(shift_shifttypeEntity::$TITLE,$Title);
+	}
+	public static $VALUEINMINUTES="valueinminutes";
+	/**
+	 * @return mixed
+	 */
+	public function getValueinminutes(){
+		return $this->getField(shift_shifttypeEntity::$VALUEINMINUTES);
+	}
+	/**
+	 * @param mixed $Valueinminutes
+	 */
+	public function setValueinminutes($Valueinminutes){
+		$this->setField(shift_shifttypeEntity::$VALUEINMINUTES,$Valueinminutes);
+	}
+	public static $ABBREVIATION="abbreviation";
+	/**
+	 * @return mixed
+	 */
+	public function getAbbreviation(){
+		return $this->getField(shift_shifttypeEntity::$ABBREVIATION);
+	}
+	/**
+	 * @param mixed $Abbreviation
+	 */
+	public function setAbbreviation($Abbreviation){
+		$this->setField(shift_shifttypeEntity::$ABBREVIATION,$Abbreviation);
+	}
+	public static $LATINABBREVIATION="latinabbreviation";
+	/**
+	 * @return mixed
+	 */
+	public function getLatinabbreviation(){
+		return $this->getField(shift_shifttypeEntity::$LATINABBREVIATION);
+	}
+	/**
+	 * @param mixed $Latinabbreviation
+	 */
+	public function setLatinabbreviation($Latinabbreviation){
+		$this->setField(shift_shifttypeEntity::$LATINABBREVIATION,$Latinabbreviation);
+	}
+	public static $ISVISIBLE="isvisible";
+	/**
+	 * @return mixed
+	 */
+	public function getIsvisible(){
+		return $this->getField(shift_shifttypeEntity::$ISVISIBLE);
+	}
+	/**
+	 * @param mixed $Isvisible
+	 */
+	public function setIsvisible($Isvisible){
+		$this->setField(shift_shifttypeEntity::$ISVISIBLE,$Isvisible);
+	}
+	public static $HOLIDAYFACTOR="holidayfactor";
+	/**
+	 * @return mixed
+	 */
+	public function getHolidayfactor(){
+		return $this->getField(shift_shifttypeEntity::$HOLIDAYFACTOR);
+	}
+	/**
+	 * @param mixed $Holidayfactor
+	 */
+	public function setHolidayfactor($Holidayfactor){
+		$this->setField(shift_shifttypeEntity::$HOLIDAYFACTOR,$Holidayfactor);
 	}
 }
 ?>

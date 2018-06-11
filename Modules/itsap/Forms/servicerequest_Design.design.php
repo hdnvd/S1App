@@ -27,8 +27,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-29 - 2017-12-20 15:49
-*@lastUpdate 1396-09-29 - 2017-12-20 15:49
+*@creationDate 1397-01-15 - 2018-04-04 20:34
+*@lastUpdate 1397-01-15 - 2018-04-04 20:34
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -44,6 +44,8 @@ class servicerequest_Design extends FormDesign {
 	/** @var lable */
 	private $title;
 	/** @var lable */
+	private $unit_fid;
+	/** @var lable */
 	private $servicetype_fid;
 	/** @var lable */
 	private $description;
@@ -51,10 +53,60 @@ class servicerequest_Design extends FormDesign {
 	private $priority;
 	/** @var Image */
 	private $file1_flu;
-    /** @var lable */
-    private $request_date;
+	/** @var lable */
+	private $request_date;
+	/** @var lable */
+	private $devicetype_fid;
+	/** @var Image */
+	private $letterfile_flu;
+	/** @var lable */
+	private $securityacceptor_role_systemuser_fid;
+	/** @var lable */
+	private $letternumber;
+	/** @var lable */
+	private $letter_date;
     /** @var TextArea */
     private $TxtStatusMessage;
+
+    /**
+     * @return TextArea
+     */
+    public function getTxtStatusMessage()
+    {
+        return $this->TxtStatusMessage;
+    }
+
+    /**
+     * @return TextArea
+     */
+    public function getTxtReferMessage()
+    {
+        return $this->TxtReferMessage;
+    }
+
+    /**
+     * @return TextArea
+     */
+    public function getTxtAssignMessage()
+    {
+        return $this->TxtAssignMessage;
+    }
+
+    /**
+     * @return ComboBox
+     */
+    public function getCmbState()
+    {
+        return $this->CmbState;
+    }
+
+    /**
+     * @return ComboBox
+     */
+    public function getCMBTopUnits()
+    {
+        return $this->CMBTopUnits;
+    }
     /** @var TextArea */
     private $TxtReferMessage;
     /** @var TextArea */
@@ -64,13 +116,28 @@ class servicerequest_Design extends FormDesign {
     /** @var ComboBox */
     private $CMBTopUnits;
 
+    /** @var ComboBox */
+    private $CMBUnitEmployees;
+
+    /** @var ComboBox */
+    private $CMBPriorities;
+
     /**
      * @return ComboBox
      */
-    public function getCMBTopUnits()
+    public function getCMBPriorities()
     {
-        return $this->CMBTopUnits;
+        return $this->CMBPriorities;
     }
+    /** @var SweetButton */
+    private $btnChangeState;
+
+    /** @var SweetButton */
+    private $btnChangePriority;
+    /** @var SweetButton */
+    private $btnRefer;
+    /** @var SweetButton */
+    private $btnAssign;
 
     /**
      * @return ComboBox
@@ -79,19 +146,38 @@ class servicerequest_Design extends FormDesign {
     {
         return $this->CMBUnitEmployees;
     }
-    /** @var ComboBox */
-    private $CMBUnitEmployees;
-    /** @var SweetButton */
-    private $btnChangeState;
-    /** @var SweetButton */
-    private $btnRefer;
-    /** @var SweetButton */
-    private $btnAssign;
+
+    /**
+     * @return SweetButton
+     */
+    public function getBtnChangeState()
+    {
+        return $this->btnChangeState;
+    }
+
+    /**
+     * @return SweetButton
+     */
+    public function getBtnRefer()
+    {
+        return $this->btnRefer;
+    }
+
+    /**
+     * @return SweetButton
+     */
+    public function getBtnAssign()
+    {
+        return $this->btnAssign;
+    }
 	public function __construct()
 	{
 
 		/******* title *******/
 		$this->title= new lable("title");
+
+		/******* unit_fid *******/
+		$this->unit_fid= new lable("unit_fid");
 
 		/******* servicetype_fid *******/
 		$this->servicetype_fid= new lable("servicetype_fid");
@@ -108,9 +194,32 @@ class servicerequest_Design extends FormDesign {
 		/******* request_date *******/
 		$this->request_date= new lable("request_date");
 
-		$this->CmbState=new ComboBox("cmbstate");
-		$this->btnChangeState=new SweetButton(true,"تغییر وضعیت");
-		$this->btnChangeState->setAction("btnChangeState");
+		/******* devicetype_fid *******/
+		$this->devicetype_fid= new lable("devicetype_fid");
+
+		/******* letterfile_flu *******/
+		$this->letterfile_flu= new Image("");
+
+		/******* securityacceptor_role_systemuser_fid *******/
+		$this->securityacceptor_role_systemuser_fid= new lable("securityacceptor_role_systemuser_fid");
+
+		/******* letternumber *******/
+		$this->letternumber= new lable("letternumber");
+
+		/******* letter_date *******/
+		$this->letter_date= new lable("letter_date");
+
+        $this->CMBPriorities=new ComboBox("cmbpriorities");
+        $this->btnChangePriority=new SweetButton(true,"تغییر اولویت");
+        $this->btnChangePriority->setAction("btnChangePriority");
+        $this->btnChangePriority->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
+        $this->btnChangePriority->setClass("btn btn-primary");
+        $this->CMBPriorities->setClass("form-control");
+
+
+        $this->CmbState=new ComboBox("cmbstate");
+        $this->btnChangeState=new SweetButton(true,"تغییر وضعیت");
+        $this->btnChangeState->setAction("btnChangeState");
         $this->btnChangeState->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
         $this->btnChangeState->setClass("btn btn-primary");
         $this->CmbState->setClass("form-control");
@@ -135,16 +244,7 @@ class servicerequest_Design extends FormDesign {
         $this->TxtReferMessage->setClass("form-control");
         $this->TxtAssignMessage=new TextArea('TxtAssignMessage');
         $this->TxtAssignMessage->setClass("form-control");
-
 	}
-
-    /**
-     * @return ComboBox
-     */
-    public function getCmbState()
-    {
-        return $this->CmbState;
-    }
 	public function getBodyHTML($command=null)
 	{
 		$Page=new Div();
@@ -156,20 +256,39 @@ class servicerequest_Design extends FormDesign {
 		if (key_exists("servicerequest", $this->Data)){
 			$this->setFieldCaption('title',$this->Data['servicerequest']->getFieldInfo('title')->getTitle());
 			$this->title->setText($this->Data['servicerequest']->getTitle());
+//			$this->setFieldCaption('unit_fid',$this->Data['servicerequest']->getFieldInfo('unit_fid')->getTitle());
+//			$this->unit_fid->setText($this->Data['unit_fid']->getID());
 			$this->setFieldCaption('servicetype_fid',$this->Data['servicerequest']->getFieldInfo('servicetype_fid')->getTitle());
 			$this->servicetype_fid->setText($this->Data['servicetype_fid']->getTitle());
 			$this->setFieldCaption('description',$this->Data['servicerequest']->getFieldInfo('description')->getTitle());
 			$this->description->setText($this->Data['servicerequest']->getDescription());
 			$this->setFieldCaption('priority',$this->Data['servicerequest']->getFieldInfo('priority')->getTitle());
 			$this->priority->setText($this->Data['servicerequest']->getPriority());
-			$this->setFieldCaption('file1_flu',$this->Data['servicerequest']->getFieldInfo('file1_flu')->getTitle());
-			$this->file1_flu->setUrl(DEFAULT_PUBLICURL . "content/files/img/folder.png");
-			$this->file1_flu->setClass('datarowimage');
-			$FileURL=$this->Data['servicerequest']->getFile1_flu();
+            $this->setFieldCaption('file1_flu',$this->Data['servicerequest']->getFieldInfo('file1_flu')->getTitle());
+            $this->file1_flu->setUrl(DEFAULT_PUBLICURL . "content/files/img/folder.png");
+            $this->file1_flu->setClass('datarowimage');
+            $FileURL=$this->Data['servicerequest']->getFile1_flu();
 			$this->setFieldCaption('request_date',$this->Data['servicerequest']->getFieldInfo('request_date')->getTitle());
 			$request_date_SD=new SweetDate(true, true, 'Asia/Tehran');
 			$request_date_Text=$request_date_SD->date("l d F Y",$this->Data['servicerequest']->getRequest_date());
 			$this->request_date->setText($request_date_Text);
+			$this->setFieldCaption('devicetype_fid',$this->Data['servicerequest']->getFieldInfo('devicetype_fid')->getTitle());
+			$this->devicetype_fid->setText($this->Data['devicetype_fid']->getTitle());
+			$this->setFieldCaption('letterfile_flu',$this->Data['servicerequest']->getFieldInfo('letterfile_flu')->getTitle());
+			$this->letterfile_flu->setUrl(DEFAULT_PUBLICURL . $this->Data['servicerequest']->getLetterfile_flu());
+//			$this->setFieldCaption('securityacceptor_role_systemuser_fid',$this->Data['servicerequest']->getFieldInfo('securityacceptor_role_systemuser_fid')->getTitle());
+//			$this->securityacceptor_role_systemuser_fid->setText($this->Data['securityacceptor_role_systemuser_fid']->getID());
+			$this->setFieldCaption('letternumber',$this->Data['servicerequest']->getFieldInfo('letternumber')->getTitle());
+			$this->letternumber->setText($this->Data['servicerequest']->getLetternumber());
+			$this->setFieldCaption('letter_date',$this->Data['servicerequest']->getFieldInfo('letter_date')->getTitle());
+			$letter_date_SD=new SweetDate(true, true, 'Asia/Tehran');
+			$letter_date_Text=$letter_date_SD->date("l d F Y",$this->Data['servicerequest']->getLetter_date());
+			$this->letter_date->setText($letter_date_Text);
+
+            for ($i = 1; $i < 10; $i++) {
+                $this->CMBPriorities->addOption($i,$i);
+            }
+
             $AllCount1 = count($this->Data['allstatus']);
             $curStatus=null;
             for ($i = 0; $i < $AllCount1; $i++) {
@@ -198,21 +317,37 @@ class servicerequest_Design extends FormDesign {
 
             }
 		}
-		$fileLink=new link(DEFAULT_PUBLICURL . $FileURL,$this->file1_flu);
-		$LTable1=new Div();
+        $fileLink=new link(DEFAULT_PUBLICURL . $FileURL,$this->file1_flu);
+
+        $LTable1=new Div();
 		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('عنوان')));
-		$LTable1->addElement($this->getInfoRowCode($this->servicetype_fid,$this->getFieldCaption('نوع خدمت')));
-		$LTable1->addElement($this->getInfoRowCode($this->description,$this->getFieldCaption('توضیحات')));
-		$LTable1->addElement($this->getInfoRowCode($this->priority,$this->getFieldCaption('اولویت')));
-		$LTable1->addElement($this->getInfoRowCode($fileLink,$this->getFieldCaption('فایل ضمیمه شده')));
-		$LTable1->addElement($this->getInfoRowCode($this->request_date,$this->getFieldCaption('تاریخ درخواست')));
+		$LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('title')));
+//		$LTable1->addElement($this->getInfoRowCode($this->unit_fid,$this->getFieldCaption('unit_fid')));
+		$LTable1->addElement($this->getInfoRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid')));
+		$LTable1->addElement($this->getInfoRowCode($this->description,$this->getFieldCaption('description')));
+		$LTable1->addElement($this->getInfoRowCode($this->priority,$this->getFieldCaption('priority')));
+        $LTable1->addElement($this->getInfoRowCode($fileLink,$this->getFieldCaption('فایل ضمیمه شده')));
+		$LTable1->addElement($this->getInfoRowCode($this->request_date,$this->getFieldCaption('request_date')));
+		$LTable1->addElement($this->getInfoRowCode($this->devicetype_fid,$this->getFieldCaption('devicetype_fid')));
+		$LTable1->addElement($this->getInfoRowCode($this->letterfile_flu,$this->getFieldCaption('letterfile_flu')));
+//		$LTable1->addElement($this->getInfoRowCode($this->securityacceptor_role_systemuser_fid,$this->getFieldCaption('securityacceptor_role_systemuser_fid')));
+		$LTable1->addElement($this->getInfoRowCode($this->letternumber,$this->getFieldCaption('letternumber')));
+		$LTable1->addElement($this->getInfoRowCode($this->letter_date,$this->getFieldCaption('letter_date')));
 		$Page->addElement($LTable1);
+
+        $ChangePriority=new Div();
+        $ChangePriority->setClass("formtable smallform");
+        $lblPriorityTitle=new Lable("تغییر اولویت");
+        $lblPriorityTitle->setClass('smallformtitle');
+        $ChangePriority->addElement($lblPriorityTitle);
+        $ChangePriority->addElement($this->getFieldRowCode($this->CMBPriorities,"اولویت","اولویت "));
+        $ChangePriority->addElement($this->btnChangePriority);
+
 		$ChangeStatus=new Div();
         $ChangeStatus->setClass("formtable smallform");
-		$lblStateTitle=new Lable("تغییر وضعیت");
+        $lblStateTitle=new Lable("تغییر وضعیت");
         $lblStateTitle->setClass('smallformtitle');
-		$ChangeStatus->addElement($lblStateTitle);
+        $ChangeStatus->addElement($lblStateTitle);
         $ChangeStatus->addElement($this->getFieldRowCode($this->CmbState,"وضعیت","وضعیت "));
         $ChangeStatus->addElement($this->getFieldRowCode($this->TxtStatusMessage,"پیام","پیام"));
         $ChangeStatus->addElement($this->btnChangeState);
@@ -238,33 +373,10 @@ class servicerequest_Design extends FormDesign {
         $Assign->addElement($this->getFieldRowCode($this->TxtAssignMessage,"پیام","پیام"));
         $Assign->addElement($this->btnAssign);
         $Page->addElement($Assign);
-		$form=new SweetFrom("", "POST", $Page);
-		return $form->getHTML();
+        $Page->addElement($ChangePriority);
+        $form=new SweetFrom("", "POST", $Page);
+        return $form->getHTML();
 	}
-
-    /**
-     * @return TextArea
-     */
-    public function getTxtStatusMessage()
-    {
-        return $this->TxtStatusMessage;
-    }
-
-    /**
-     * @return TextArea
-     */
-    public function getTxtReferMessage()
-    {
-        return $this->TxtReferMessage;
-    }
-
-    /**
-     * @return TextArea
-     */
-    public function getTxtAssignMessage()
-    {
-        return $this->TxtAssignMessage;
-    }
 	public function getJSON()
 	{
 		parent::getJSON();

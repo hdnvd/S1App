@@ -24,35 +24,47 @@ use Modules\users\PublicClasses\User;
 */
 class doctorreservelistController extends Controller {
 	private $PAGESIZE=30;
-	public function getData($PageNum,QueryLogic $QueryLogic,$username,$password)
-	{
-		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
-		$DBAccessor=new dbaccess();
-		$su=new sessionuser();
-        $role_systemuser_fid=AppUserManager::getUserID($username,$password);
-		$result=array();
-		$doctorplanEntityObject=new ocms_doctorplanEntity($DBAccessor);
-		$result['doctorplan_fid']=$doctorplanEntityObject->FindAll(new QueryLogic());
-		$financial_transactionEntityObject=new finance_transactionEntity($DBAccessor);
-		$result['financial_transaction_fid']=$financial_transactionEntityObject->FindAll(new QueryLogic());
-		$financial_canceltransactionEntityObject=new finance_transactionEntity($DBAccessor);
-		$result['financial_canceltransaction_fid']=$financial_canceltransactionEntityObject->FindAll(new QueryLogic());
-		$presencetypeEntityObject=new ocms_presencetypeEntity($DBAccessor);
-		$result['presencetype_fid']=$presencetypeEntityObject->FindAll(new QueryLogic());
-		if($PageNum<=0)
-			$PageNum=1;        
+	public function getData($PageNum,QueryLogic $QueryLogic,$username,$password,$Service)
+    {
+        $Language_fid = CurrentLanguageManager::getCurrentLanguageID();
+        $DBAccessor = new dbaccess();
+        $su = new sessionuser();
+        $role_systemuser_fid = AppUserManager::getUserID($username, $password);
+        $result = array();
+        $doctorplanEntityObject = new ocms_doctorplanEntity($DBAccessor);
+        $result['doctorplan_fid'] = $doctorplanEntityObject->FindAll(new QueryLogic());
+        $financial_transactionEntityObject = new finance_transactionEntity($DBAccessor);
+        $result['financial_transaction_fid'] = $financial_transactionEntityObject->FindAll(new QueryLogic());
+        $financial_canceltransactionEntityObject = new finance_transactionEntity($DBAccessor);
+        $result['financial_canceltransaction_fid'] = $financial_canceltransactionEntityObject->FindAll(new QueryLogic());
+        $presencetypeEntityObject = new ocms_presencetypeEntity($DBAccessor);
+        $result['presencetype_fid'] = $presencetypeEntityObject->FindAll(new QueryLogic());
+        if ($PageNum <= 0)
+            $PageNum = 1;
 
-		$doctorEnt=new ocms_doctorEntity($DBAccessor);
-		$q=new QueryLogic();
-		$q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid));
-		$doctorEnt=$doctorEnt->FindOne($q);
-		$doctorreserveEnt=new ocms_doctorplanEntity($DBAccessor);
+        if ($Service == "getdoctorreserves") {
+
+            $doctorEnt = new ocms_doctorEntity($DBAccessor);
+            $q = new QueryLogic();
+            $q->addCondition(new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID, $role_systemuser_fid));
+            $doctorEnt = $doctorEnt->FindOne($q);
+            $doctorreserveEnt = new ocms_doctorplanEntity($DBAccessor);
 //		$reserveinfo=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),'0,100');
 //		$result['doctorreserves']=$reserveinfo;
-		$allcount=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),null,true);
-		$result['pagecount']=$this->getPageCount($allcount[0]['count'],$this->PAGESIZE);
-		$Limit=$this->getPageRowsLimit($PageNum,$this->PAGESIZE);
-		$result['data']=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),$Limit,false);
+            $allcount = $doctorreserveEnt->getDoctorReserves($doctorEnt->getId(), null, true);
+            $result['pagecount'] = $this->getPageCount($allcount[0]['count'], $this->PAGESIZE);
+            $Limit = $this->getPageRowsLimit($PageNum, $this->PAGESIZE);
+            $result['data'] = $doctorreserveEnt->getDoctorReserves($doctorEnt->getId(), $Limit, false);
+        } elseif ($Service == 'getuserreserves')
+        {
+            $doctorreserveEnt = new ocms_doctorplanEntity($DBAccessor);
+//		$reserveinfo=$doctorreserveEnt->getDoctorReserves($doctorEnt->getId(),'0,100');
+//		$result['doctorreserves']=$reserveinfo;
+            $allcount = $doctorreserveEnt->getUserReserves($role_systemuser_fid, null, true);
+            $result['pagecount'] = $this->getPageCount($allcount[0]['count'], $this->PAGESIZE);
+            $Limit = $this->getPageRowsLimit($PageNum, $this->PAGESIZE);
+            $result['data'] = $doctorreserveEnt->getUserReserves($role_systemuser_fid, $Limit, false);
+        }
 		$DBAccessor->close_connection();
 		return $result;
 	}
@@ -68,14 +80,14 @@ class doctorreservelistController extends Controller {
     {
         $this->adminMode = $adminMode;
     }
-	public function load($PageNum,$username,$password)
+	public function load($PageNum,$username,$password,$Service)
 	{
 		$DBAccessor=new dbaccess();
 		$doctorreserveEnt=new ocms_doctorreserveEntity($DBAccessor);
 		$q=new QueryLogic();
 		$q->addOrderBy("id",true);
 		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q,$username,$password);
+		return $this->getData($PageNum,$q,$username,$password,$Service);
 	}
 	public function Search($PageNum,$doctorplan_fid,$financial_transaction_fid,$financial_canceltransaction_fid,$presencetype_fid,$reserve_date_from,$reserve_date_to,$sortby,$isdesc)
 	{

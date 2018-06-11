@@ -100,6 +100,7 @@ class shiftlist_Code extends FormCode {
             elseif($ReportType==5)
                 $design=new stat_Design();
             $design->setAdminMode($this->getAdminMode());
+            $cmbNot=$this->getHttpGETparameter('cmbnot','0');
 		$shifttype_fid_ID=$this->getHttpGETparameter('shifttype_fid','');
 		$due_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('due_date_from',''));
 		$due_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('due_date_to',''));
@@ -111,7 +112,7 @@ class shiftlist_Code extends FormCode {
 		$inputfile_fid_ID=$this->getHttpGETparameter('inputfile_fid','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$shiftlistController->Search($this->getHttpGETparameter('pn',-1),$shifttype_fid_ID,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID,$sortby_ID,$isdesc_ID,$ReportType);
+		$Result=$shiftlistController->Search($this->getHttpGETparameter('pn',-1),$shifttype_fid_ID,$due_date_from,$due_date_to,$register_date_from,$register_date_to,$personel_fid_ID,$bakhsh_fid_ID,$role_fid_ID,$inputfile_fid_ID,$sortby_ID,$isdesc_ID,$ReportType,$cmbNot);
 		$design->setData($Result);
         if(key_exists('data',$Result) && ($Result['data']==null || count($Result['data'])==0)){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

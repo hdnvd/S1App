@@ -99,13 +99,14 @@ class recordlist_Code extends FormCode {
                 $recordtypeisbad=null;
 
 		$employeemellicode=$this->getHttpGETparameter('employeemellicode','');
+		$role_fid_ID=$this->getHttpGETparameter('role_fid','');
 		$place_fid_ID=$this->getHttpGETparameter('place_fid','');
 		$registration_time_from=DatePicker::getTimeFromText($this->getHttpGETparameter('registration_time_from',''));
 		$registration_time_to=DatePicker::getTimeFromText($this->getHttpGETparameter('registration_time_to',''));
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
 		$ResultType=$this->getHttpGETparameter('resulttype',0);
-		$Result=$recordlistController->Search($this->getHttpGETparameter('pn',-1),$title,$occurance_date_from,$occurance_date_to,$description,$shifttype_fid_ID,$recordtype_fid_ID,$employeemellicode,$place_fid_ID,$registration_time_from,$registration_time_to,$sortby_ID,$isdesc_ID,$recordtypeisbad,$ResultType);
+		$Result=$recordlistController->Search($this->getHttpGETparameter('pn',-1),$title,$occurance_date_from,$occurance_date_to,$description,$shifttype_fid_ID,$recordtype_fid_ID,$employeemellicode,$place_fid_ID,$registration_time_from,$registration_time_to,$sortby_ID,$isdesc_ID,$recordtypeisbad,$ResultType,$role_fid_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

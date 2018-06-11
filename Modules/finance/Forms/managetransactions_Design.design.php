@@ -81,7 +81,7 @@ class managetransactions_Design extends FormDesign {
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
 		$lnkAdd->setId('addtransactionlink');
-		$Page->addElement($lnkAdd);
+//		$Page->addElement($lnkAdd);
 		$SearchUrl=new AppRooter('finance',$this->listPage);
 		$SearchUrl->addParameter(new URLParameter('search',null));
 		$LblSearch=new Lable('جستجو');
@@ -89,7 +89,7 @@ class managetransactions_Design extends FormDesign {
 		$lnkSearch->setClass('linkbutton btn btn-primary');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchtransactionlink');
-		$Page->addElement($lnkSearch);
+//		$Page->addElement($lnkSearch);
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();

@@ -177,6 +177,7 @@ class doctorplanlist_Design extends FormDesign {
             $Result=array();
             for($i=0;$i<$AllCount1;$i++){
                 $Result[$i]=$this->Data['data'][$i]->GetArray();
+                $Result[$i]['price']=$this->Data['doctor']->getPrice();
             }
             return json_encode($Result);
         }

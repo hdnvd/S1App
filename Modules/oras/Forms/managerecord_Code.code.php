@@ -50,7 +50,7 @@ class managerecord_Code extends FormCode
         $translator = new ModuleTranslator("oras");
         $translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
         try {
-            $Result = $managerecordController->load($this->getID(), $this->getHttpGETparameter('employeeid', -1), $this->getHttpGETparameter('placeid', -1));
+            $Result = $managerecordController->load($this->getID(), $this->getHttpGETparameter('employeeid', -1), $this->getHttpGETparameter('placeid', -1),-1);
             $design = new managerecord_Design();
             $design->setAdminMode($this->adminMode);
             $design->setData($Result);

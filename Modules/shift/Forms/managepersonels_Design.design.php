@@ -137,7 +137,7 @@ class managepersonels_Design extends FormDesign {
 		}
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
-		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"shift",$this->listPage));
+		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"shift",$this->listPage,null,true));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();
 	}    

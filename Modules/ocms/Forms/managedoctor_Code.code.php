@@ -63,7 +63,8 @@ class managedoctor_Code extends FormCode {
 	public function __construct($namespace)
 	{
 		parent::__construct($namespace);
-		$this->setTitle("Manage Doctor");
+		$this->setAdminMode(true);
+		$this->setTitle("Manage Specialist");
 	}
 	public function getID()
 	{
@@ -96,6 +97,9 @@ class managedoctor_Code extends FormCode {
 		$isactiveonphone_ID=$design->getIsactiveonphone()->getSelectedID();
 		$isactiveonplace_ID=$design->getIsactiveonplace()->getSelectedID();
 		$isactiveonhome_ID=$design->getIsactiveonhome()->getSelectedID();
+		    $isactiveonphone_ID=1;
+            $isactiveonplace_ID=1;
+            $isactiveonhome_ID=1;
 		$photo_fluPaths=$design->getPhoto_flu()->getSelectedFilesTempPath();
 		$photo_fluNames=$design->getPhoto_flu()->getSelectedFilesName();
             $user=$design->getUsername()->getValue();
@@ -108,10 +112,12 @@ class managedoctor_Code extends FormCode {
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);
+
+            $design->setAdminMode($this->getAdminMode());
 		if($this->getAdminMode()){
 			$ManageListRooter=new AppRooter("ocms","managedoctors");
+            AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
 		}
-			AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
 		}
 		catch(DataNotFoundException $dnfex){
 			$design=new message_Design();

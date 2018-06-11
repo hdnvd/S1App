@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 17:27
-*@lastUpdate 1396-09-23 - 2017-12-14 17:27
+*@creationDate 1397-01-13 - 2018-04-02 02:02
+*@lastUpdate 1397-01-13 - 2018-04-02 02:02
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -17,7 +17,7 @@ class itsap_servicetypeEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_servicetype");
-		$this->setTableTitle("نوع خدمت");
+		$this->setTableTitle("نوع درخواست");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
@@ -31,6 +31,12 @@ class itsap_servicetypeEntity extends EntityClass {
 		$PriorityInfo->setTitle("اولویت");
 		$this->setFieldInfo(itsap_servicetypeEntity::$PRIORITY,$PriorityInfo);
 		$this->addTableField('2',itsap_servicetypeEntity::$PRIORITY);
+
+		/******** servicetypegroup_fid ********/
+		$Servicetypegroup_fidInfo=new FieldInfo();
+		$Servicetypegroup_fidInfo->setTitle("گروه بندی");
+		$this->setFieldInfo(itsap_servicetypeEntity::$SERVICETYPEGROUP_FID,$Servicetypegroup_fidInfo);
+		$this->addTableField('3',itsap_servicetypeEntity::$SERVICETYPEGROUP_FID);
 	}
 	public static $TITLE="title";
 	/**
@@ -57,6 +63,19 @@ class itsap_servicetypeEntity extends EntityClass {
 	 */
 	public function setPriority($Priority){
 		$this->setField(itsap_servicetypeEntity::$PRIORITY,$Priority);
+	}
+	public static $SERVICETYPEGROUP_FID="servicetypegroup_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getServicetypegroup_fid(){
+		return $this->getField(itsap_servicetypeEntity::$SERVICETYPEGROUP_FID);
+	}
+	/**
+	 * @param mixed $Servicetypegroup_fid
+	 */
+	public function setServicetypegroup_fid($Servicetypegroup_fid){
+		$this->setField(itsap_servicetypeEntity::$SERVICETYPEGROUP_FID,$Servicetypegroup_fid);
 	}
 }
 ?>

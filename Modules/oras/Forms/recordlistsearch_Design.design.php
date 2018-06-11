@@ -120,6 +120,15 @@ class recordlistsearch_Design extends FormDesign {
 	{
 		return $this->place_fid;
 	}
+    /** @var combobox */
+    private $role_fid;
+    /**
+     * @return combobox
+     */
+    public function role_fid()
+    {
+        return $this->role_fid;
+    }
 
     /** @var combobox */
     private $ResultType;
@@ -213,6 +222,10 @@ class recordlistsearch_Design extends FormDesign {
 		$this->place_fid= new combobox("place_fid");
 		$this->place_fid->setClass("form-control");
 
+        /******* role_fid *******/
+        $this->role_fid= new combobox("role_fid");
+        $this->role_fid->setClass("form-control");
+
 		/******* registration_time_from *******/
 		$this->registration_time_from= new DatePicker("registration_time_from");
 		$this->registration_time_from->setClass("form-control");
@@ -257,7 +270,9 @@ class recordlistsearch_Design extends FormDesign {
 		    $LTable1->addElement($this->getFieldRowCode($this->employeemellicode,$this->getFieldCaption('employeemellicode'),null,'',null));
         if(isset($_GET['place_fid']))
             $LTable1->addElement($this->getFieldRowCode($this->place_fid,$this->getFieldCaption('place_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->registration_time_from,$this->getFieldCaption('registration_time_from'),null,'',null));
+        $LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
+
+        $LTable1->addElement($this->getFieldRowCode($this->registration_time_from,$this->getFieldCaption('registration_time_from'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->registration_time_to,$this->getFieldCaption('registration_time_to'),null,'',null));
         $LTable1->addElement($this->getFieldRowCode($this->ResultType,$this->getFieldCaption('resulttype'),null,'',null));
         $LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
@@ -287,14 +302,18 @@ class recordlistsearch_Design extends FormDesign {
 		}
 
 			/******** occurance_date_from ********/
-		if (key_exists("record", $this->Data)){
-			$this->occurance_date_from->setTime($this->Data['record']->getOccurance_date_from());
+        $this->occurance_date_from->setTime(689400000);
+
+        if (key_exists("record", $this->Data)){
+//			$this->occurance_date_from->setTime($this->Data['record']->getOccurance_date_from());
 			$this->setFieldCaption('occurance_date_from',$this->Data['record']->getFieldInfo('occurance_date_from')->getTitle());
 		}
 
 			/******** occurance_date_to ********/
-		if (key_exists("record", $this->Data)){
-			$this->occurance_date_to->setTime($this->Data['record']->getOccurance_date_to());
+        $this->occurance_date_to->setTime(time()+200000);
+
+        if (key_exists("record", $this->Data)){
+//			$this->occurance_date_to->setTime($this->Data['record']->getOccurance_date_to());
 			$this->setFieldCaption('occurance_date_to',$this->Data['record']->getFieldInfo('occurance_date_to')->getTitle());
 			$this->setFieldCaption('occurance_date',$this->Data['record']->getFieldInfo('occurance_date')->getTitle());
 		}
@@ -347,15 +366,27 @@ class recordlistsearch_Design extends FormDesign {
 			$this->setFieldCaption('place_fid',$this->Data['record']->getFieldInfo('place_fid')->getTitle());
 		}
 
+        /******** role_fid ********/
+        $this->role_fid->addOption("", "مهم نیست");
+        foreach ($this->Data['role_fid'] as $item)
+            $this->role_fid->addOption($item->getID(), $item->getTitleField());
+        if (key_exists("record", $this->Data)){
+            $this->role_fid->setSelectedValue($this->Data['record']->getRole_fid());
+            $this->setFieldCaption('role_fid',$this->Data['record']->getFieldInfo('role_fid')->getTitle());
+        }
+
 			/******** registration_time_from ********/
-		if (key_exists("record", $this->Data)){
-			$this->registration_time_from->setTime($this->Data['record']->getRegistration_time_from());
+        $this->registration_time_from->setTime(689400000);
+
+        if (key_exists("record", $this->Data)){
+//			$this->registration_time_from->setTime($this->Data['record']->getRegistration_time_from());
 			$this->setFieldCaption('registration_time_from',$this->Data['record']->getFieldInfo('registration_time_from')->getTitle());
 		}
 
 			/******** registration_time_to ********/
-		if (key_exists("record", $this->Data)){
-			$this->registration_time_to->setTime($this->Data['record']->getRegistration_time_to());
+        $this->registration_time_to->setTime(time()+200000);
+
+        if (key_exists("record", $this->Data)){
 			$this->setFieldCaption('registration_time_to',$this->Data['record']->getFieldInfo('registration_time_to')->getTitle());
 			$this->setFieldCaption('registration_time',$this->Data['record']->getFieldInfo('registration_time')->getTitle());
 		}
@@ -404,6 +435,12 @@ class recordlistsearch_Design extends FormDesign {
             $this->sortby->addOption($this->Data['record']->getTableFieldID('place_fid'),$this->getFieldCaption('place_fid'));
 		if(isset($_GET['place_fid']))
 			$this->place_fid->setSelectedValue($_GET['place_fid']);
+
+        /******** place_fid ********/
+        if(!isset($_GET['employeemellicode']))
+            $this->sortby->addOption($this->Data['record']->getTableFieldID('role_fid'),$this->getFieldCaption('role_fid'));
+        if(isset($_GET['role_fid']))
+            $this->role_fid->setSelectedValue($_GET['role_fid']);
 
 		/******** registration_time_from ********/
 

@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 17:27
-*@lastUpdate 1396-09-23 - 2017-12-14 17:27
+*@creationDate 1397-01-13 - 2018-04-02 02:04
+*@lastUpdate 1397-01-13 - 2018-04-02 02:04
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -56,6 +56,15 @@ class servicetypelistsearch_Design extends FormDesign {
 	public function getPriority()
 	{
 		return $this->priority;
+	}
+	/** @var combobox */
+	private $servicetypegroup_fid;
+	/**
+	 * @return combobox
+	 */
+	public function getServicetypegroup_fid()
+	{
+		return $this->servicetypegroup_fid;
 	}
 	/** @var combobox */
 	private $sortby;
@@ -89,6 +98,10 @@ class servicetypelistsearch_Design extends FormDesign {
 		$this->priority= new textbox("priority");
 		$this->priority->setClass("form-control");
 
+		/******* servicetypegroup_fid *******/
+		$this->servicetypegroup_fid= new combobox("servicetypegroup_fid");
+		$this->servicetypegroup_fid->setClass("form-control");
+
 		/******* sortby *******/
 		$this->sortby= new combobox("sortby");
 		$this->sortby->setClass("form-control");
@@ -116,6 +129,7 @@ class servicetypelistsearch_Design extends FormDesign {
 		$LTable1->setClass("searchtable");
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->servicetypegroup_fid,$this->getFieldCaption('servicetypegroup_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
@@ -126,6 +140,9 @@ class servicetypelistsearch_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
+			$this->servicetypegroup_fid->addOption("", "مهم نیست");
+		foreach ($this->Data['servicetypegroup_fid'] as $item)
+			$this->servicetypegroup_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("servicetype", $this->Data)){
 
 			/******** title ********/
@@ -135,6 +152,10 @@ class servicetypelistsearch_Design extends FormDesign {
 			/******** priority ********/
 			$this->priority->setValue($this->Data['servicetype']->getPriority());
 			$this->setFieldCaption('priority',$this->Data['servicetype']->getFieldInfo('priority')->getTitle());
+
+			/******** servicetypegroup_fid ********/
+			$this->servicetypegroup_fid->setSelectedValue($this->Data['servicetype']->getServicetypegroup_fid());
+			$this->setFieldCaption('servicetypegroup_fid',$this->Data['servicetype']->getFieldInfo('servicetypegroup_fid')->getTitle());
 
 			/******** sortby ********/
 
@@ -154,6 +175,11 @@ class servicetypelistsearch_Design extends FormDesign {
 		$this->sortby->addOption($this->Data['servicetype']->getTableFieldID('priority'),$this->getFieldCaption('priority'));
 		if(isset($_GET['priority']))
 			$this->priority->setValue($_GET['priority']);
+
+		/******** servicetypegroup_fid ********/
+		$this->sortby->addOption($this->Data['servicetype']->getTableFieldID('servicetypegroup_fid'),$this->getFieldCaption('servicetypegroup_fid'));
+		if(isset($_GET['servicetypegroup_fid']))
+			$this->servicetypegroup_fid->setSelectedValue($_GET['servicetypegroup_fid']);
 
 		/******** sortby ********/
 		if(isset($_GET['sortby']))

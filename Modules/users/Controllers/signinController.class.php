@@ -10,6 +10,7 @@ use Modules\users\Entity\roleSystemUserEntity;
 use Modules\parameters\PublicClasses\ParameterManager;
 use Modules\users\Entity\users_systemroleEntity;
 use Modules\users\Entity\users_systemuserroleEntity;
+use Modules\users\Exceptions\UserHasNoRoleException;
 
 /**
  *
@@ -43,7 +44,10 @@ class signinController extends Controller {
         $DBAccessor=new dbaccess();
 		$ent1=new users_systemuserroleEntity($DBAccessor);
         $ent1=$ent1->FindOne(new QueryLogic([new FieldCondition(users_systemuserroleEntity::$SYSTEMUSER_FID,$SystemUserID)]));
-		$RoleID=$ent1->getSystemrole_fid();
+        if($ent1!=null)
+		    $RoleID=$ent1->getSystemrole_fid();
+        else
+            throw new UserHasNoRoleException();
 		$ent=new users_systemroleEntity($DBAccessor);
 		//print_r($Userrole);
         $ent->setId($RoleID);

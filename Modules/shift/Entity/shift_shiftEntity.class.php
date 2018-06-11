@@ -1,5 +1,7 @@
 <?php
 namespace Modules\shift\Entity;
+use core\CoreClasses\db\DBField;
+use core\CoreClasses\db\LogicalOperator;
 use core\CoreClasses\services\EntityClass;
 use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
@@ -153,5 +155,46 @@ class shift_shiftEntity extends EntityClass {
 	public function setInputfile_fid($Inputfile_fid){
 		$this->setField(shift_shiftEntity::$INPUTFILE_FID,$Inputfile_fid);
 	}
+
+    public function GetBakhshReport($BakhshID,$StartTime,$EndTime,$RoleID,$Isnotrole,$LoadOnlyCount)
+    {
+        if($LoadOnlyCount)
+            $sq=$this->getDatabase()->Select("count(DISTINCT sh.id) allcount");
+        else
+            $sq=$this->getDatabase()->Select("sh.*");
+
+        $sq=$sq->From(array('shift_shift sh','shift_personel p'))->Where()->Equal(new DBField('p.id',false),new DBField('sh.personel_fid',false));
+        $sq=$sq->AndLogic()->Equal(new DBField('sh.bakhsh_fid',false),$BakhshID);
+        $sq=$sq->AndLogic()->Bigger(new DBField('sh.due_date',false),$StartTime);
+        $sq=$sq->AndLogic()->Smaller(new DBField('sh.due_date',false),$EndTime);
+        if($Isnotrole==0)
+            $sq=$sq->AndLogic()->Equal(new DBField('sh.role_fid',false),$RoleID);
+        else
+            $sq=$sq->AndLogic()->NotEqual(new DBField('sh.role_fid',false),$RoleID);
+        $sq=$sq->AddOrderBy(new DBField('p.priority',false),true);
+
+
+        if(!$LoadOnlyCount)
+        {
+
+            $sq->AddGroupBy('sh.id');
+            $res= $sq->ExecuteAssociated();
+            $AllCount1 = count($res);
+            $result=array();
+            for ($i = 0; $i < $AllCount1; $i++) {
+                $item=$res[$i];
+                $obj=new shift_shiftEntity($this->getDatabase()->getDBAccessor());
+                $obj->loadFromArray($res[$i]);
+                $result[$i]=$obj;
+            }
+        }
+        else
+        {
+            $result= $sq->ExecuteAssociated();
+        }
+//        echo $sq->getQueryString();
+        $this->getDatabase()->getDBAccessor()->close_connection();
+        return $result;
+    }
 }
 ?>

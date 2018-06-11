@@ -11,8 +11,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\users\Entity\users_menuitemEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -55,7 +55,7 @@ class managemenuitemController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$latintitle,$module,$page,$parameters)
+	public function BtnSave($ID,$latintitle,$module,$page,$parameters,$priority)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
@@ -66,12 +66,13 @@ class managemenuitemController extends Controller {
             $UserID=$role_systemuser_fid;
 		$result=array();
 		$menuitemEntityObject=new users_menuitemEntity($DBAccessor);
-		$this->ValidateFieldArray([$latintitle,$module,$page,$parameters],[$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$LATINTITLE),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$MODULE),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$PAGE),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$PARAMETERS)]);
+		$this->ValidateFieldArray([$latintitle,$module,$page,$parameters,$priority],[$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$LATINTITLE),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$MODULE),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$PAGE),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$PARAMETERS),$menuitemEntityObject->getFieldInfo(users_menuitemEntity::$PRIORITY)]);
 		if($ID==-1){
 			$menuitemEntityObject->setLatintitle($latintitle);
 			$menuitemEntityObject->setModule($module);
 			$menuitemEntityObject->setPage($page);
 			$menuitemEntityObject->setParameters($parameters);
+			$menuitemEntityObject->setPriority($priority);
 			$menuitemEntityObject->Save();
 			$ID=$menuitemEntityObject->getId();
 		}
@@ -85,6 +86,7 @@ class managemenuitemController extends Controller {
 			$menuitemEntityObject->setModule($module);
 			$menuitemEntityObject->setPage($page);
 			$menuitemEntityObject->setParameters($parameters);
+			$menuitemEntityObject->setPriority($priority);
 			$menuitemEntityObject->Save();
 		}
 		$RelationLogic=new QueryLogic();

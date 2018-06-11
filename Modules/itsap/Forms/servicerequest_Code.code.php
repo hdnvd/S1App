@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-29 - 2017-12-20 15:49
-*@lastUpdate 1396-09-29 - 2017-12-20 15:49
+*@creationDate 1397-01-15 - 2018-04-04 20:33
+*@lastUpdate 1397-01-15 - 2018-04-04 20:33
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -54,7 +54,30 @@ class servicerequest_Code extends FormCode {
 	{
 		return $this->getHttpGETparameter('id',-1);
 	}
-	public function btnChangeState_Click()
+    public function btnChangePriority_Click()
+    {
+        $design=new servicerequest_Design();
+        $message=$design->getTxtStatusMessage();
+        $state=$design->getCMBPriorities();
+        $servicerequestController=new servicerequestController();
+        try{
+            $Result=$servicerequestController->ChangePriority($this->getID(),$state->getSelectedID());
+            $design->setData($Result);
+            $design->setMessage("اولویت جدید با موفقیت ثبت شد");
+        }
+        catch(DataNotFoundException $dnfex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("آیتم مورد نظر پیدا نشد");
+        }
+        catch(\Exception $uex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
+        return $design->getBodyHTML();
+    }
+    public function btnChangeState_Click()
     {
         $design=new servicerequest_Design();
         $message=$design->getTxtStatusMessage();

@@ -61,22 +61,43 @@ class $ModuleName" . "_" . "$FormName extends Model
         $this->SaveFile($DesignFile, $C);
     }
 
-    protected function makeLaravelRoutes($formInfo)
+    protected function makeLaravelAPIRoutes($formInfo)
     {
 
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
-        $C = "\nRoute::get('$ModuleName/$FormNames', 'API\\$FormName" . "Controller@list');";
-        $C .= "\nRoute::post('$ModuleName/$FormNames', 'API\\$FormName" . "Controller@add');";
-        $C .= "\nRoute::get('$ModuleName/$FormNames/{id}', 'API\\$FormName" . "Controller@get');";
-        $C .= "\nRoute::put('$ModuleName/$FormNames/{id}', 'API\\$FormName" . "Controller@update');";
-        $C .= "\nRoute::delete('$ModuleName/$FormNames/{id}', 'API\\$FormName" . "Controller@delete');";
+        $C = "\nRoute::get('$ModuleName/$FormNames', '$ModuleName\\\\API\\\\$FormName" . "Controller@list');";
+        $C .= "\nRoute::post('$ModuleName/$FormNames', '$ModuleName\\\\API\\\\$FormName" . "Controller@add');";
+        $C .= "\nRoute::get('$ModuleName/$FormNames/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@get');";
+        $C .= "\nRoute::put('$ModuleName/$FormNames/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@update');";
+        $C .= "\nRoute::delete('$ModuleName/$FormNames/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@delete');";
 
         $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/$FormName" . ".php";
         $this->SaveFile($DesignFile, $C);
     }
 
+    protected function makeLaravelWebRoutes($formInfo)
+    {
+
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $C = "\nRoute::get('$ModuleName/management/$FormNames', '$ModuleName\\\\Web\\\\$FormName" . "Controller@managelist')->name('$FormName" . "manlist');";
+        $C .= "\nRoute::post('$ModuleName/management/$FormNames/manage', '$ModuleName\\\\Web\\\\$FormName" . "Controller@managesave');";
+        $C .= "\nRoute::get('$ModuleName/management/$FormNames/manage', '$ModuleName\\\\Web\\\\$FormName" . "Controller@manageload')->name('$FormName" . "manlist');";
+        $C .= "\nRoute::get('$ModuleName/management/$FormNames/delete', '$ModuleName\\\\Web\\\\$FormName" . "Controller@delete');";
+
+
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/$FormName" . "-web.php";
+        $this->SaveFile($DesignFile, $C);
+    }
+    protected function makeLaravelRoutes($formInfo)
+    {
+
+        $this->makeLaravelAPIRoutes($formInfo);
+        $this->makeLaravelWebRoutes($formInfo);
+    }
     protected function makeLaravelAPIController($formInfo)
     {
 

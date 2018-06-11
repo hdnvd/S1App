@@ -37,10 +37,18 @@ class managedoctorController extends Controller {
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
-		$role_systemuser_fid=$su->getSystemUserID();        
+		$role_systemuser_fid=$su->getSystemUserID();
 		$UserID=null;
         if(!$this->getAdminMode())
+        {
             $UserID=$role_systemuser_fid;
+            $doct=new ocms_doctorEntity($DBAccessor);
+            $doct=$doct->FindOne(new QueryLogic([new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid)]));
+            if($doct==null || $doct->getId()<=0)
+                throw new DataNotFoundException();
+            $ID=$doct->getId();
+        }
+
 		$result=array();
 		$doctorEntityObject=new ocms_doctorEntity($DBAccessor);
 		$specialityEntityObject=new ocms_specialityEntity($DBAccessor);
@@ -70,8 +78,16 @@ class managedoctorController extends Controller {
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();        
 		$UserID=null;
+
         if(!$this->getAdminMode())
+        {
             $UserID=$role_systemuser_fid;
+            $doct=new ocms_doctorEntity($DBAccessor);
+            $doct=$doct->FindOne(new QueryLogic([new FieldCondition(ocms_doctorEntity::$ROLE_SYSTEMUSER_FID,$role_systemuser_fid)]));
+            if($doct==null || $doct->getId()<=0)
+                throw new DataNotFoundException();
+            $ID=$doct->getId();
+        }
 		$result=array();
 		$doctorEntityObject=new ocms_doctorEntity($DBAccessor);
 		$photo_fluURL='';
@@ -125,6 +141,7 @@ class managedoctorController extends Controller {
 			$doctorEntityObject->setEmail($email);
 			$doctorEntityObject->setTel($tel);
 			$doctorEntityObject->setIsmale($ismale);
+			if($speciality_fid>0)
 			$doctorEntityObject->setSpeciality_fid($speciality_fid);
 			$doctorEntityObject->setEducation($education);
 			$doctorEntityObject->setMatabtel($matabtel);

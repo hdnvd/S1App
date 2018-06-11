@@ -89,7 +89,15 @@ class managebakhshs_Design extends FormDesign {
 		$lnkSearch->setClass('linkbutton btn btn-primary');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchbakhshlink');
-		$Page->addElement($lnkSearch);
+
+//        $Page->addElement($lnkSearch);
+
+        $ViewURLAll=new AppRooter('shift','makesampleinput');
+        $lbViewAll=new Lable('فایل اکسل کامل');
+        $lnkViewAll=new link($ViewURLAll->getAbsoluteURL(),$lbViewAll);
+        $lnkViewAll->setGlyphiconClass('glyphicon glyphicon-eye-open');
+        $lnkViewAll->setClass('linkbutton btn btn-primary');
+        $Page->addElement($lnkViewAll);
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
@@ -117,6 +125,13 @@ class managebakhshs_Design extends FormDesign {
 			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
 			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
 			$lnkView[$i]->setClass('btn btn-primary');
+            $GetWorkTimeURL=new AppRooter('shift','getworktime');
+            $GetWorkTimeURL->addParameter(new UrlParameter('bakhshid',$this->Data['data'][$i]->getID()));
+            $lbGetWorkTime[$i]=new Lable('استخراج اضافه کاری');
+            $lnkGetWorkTime[$i]=new link($GetWorkTimeURL->getAbsoluteURL(),$lbGetWorkTime[$i]);
+            $lnkGetWorkTime[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
+            $lnkGetWorkTime[$i]->setClass('btn btn-primary');
+
 			$delurl=new AppRooter('shift',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
@@ -127,6 +142,7 @@ class managebakhshs_Design extends FormDesign {
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
 			$operationDiv[$i]->addElement($lnkView[$i]);
+            $operationDiv[$i]->addElement($lnkGetWorkTime[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");

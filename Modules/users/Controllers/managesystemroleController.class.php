@@ -4,6 +4,7 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\sfman\Entity\sfman_moduleEntity;
 use Modules\users\Entity\users_systemroletaskEntity;
 use Modules\users\Entity\users_systemtaskEntity;
 use Modules\users\PublicClasses\sessionuser;
@@ -45,8 +46,13 @@ class managesystemroleController extends Controller {
 		$RelationLogic=new QueryLogic();
 		$RelationLogic->addCondition(new FieldCondition('systemrole_fid',$ID));
 		$SystemtaskListEntityObject=new users_systemtaskEntity($DBAccessor);
-
-		$result['systemtasks']=$SystemtaskListEntityObject->FindAll(new QueryLogic([],[users_systemtaskEntity::$MODULE],[false]));
+        $moduleEnt=new sfman_moduleEntity($DBAccessor);
+        $EnabledModules=$moduleEnt->FindAll(new QueryLogic([new FieldCondition("isenabled","1")]));
+        $AllCount1 = count($EnabledModules);
+        for ($i = 0; $i < $AllCount1; $i++) {
+            $EnabledModuleIDs[$i]=$EnabledModules[$i]->getName();
+        }
+		$result['systemtasks']=$SystemtaskListEntityObject->FindAll(new QueryLogic([new FieldCondition(users_systemtaskEntity::$MODULE,$EnabledModuleIDs,LogicalOperator::IN)],[users_systemtaskEntity::$MODULE],[false]));
 		$result['systemrole']=$systemroleEntityObject;
 		if($ID!=-1){
 			$systemroleEntityObject->setId($ID);

@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-23 - 2017-12-14 17:27
-*@lastUpdate 1396-09-23 - 2017-12-14 17:27
+*@creationDate 1397-01-13 - 2018-04-02 02:04
+*@lastUpdate 1397-01-13 - 2018-04-02 02:04
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -87,9 +87,10 @@ class servicetypelist_Code extends FormCode {
 		$servicetypelistController->setAdminMode($this->getAdminMode());
 		$title=$this->getHttpGETparameter('title','');
 		$priority=$this->getHttpGETparameter('priority','');
+		$servicetypegroup_fid_ID=$this->getHttpGETparameter('servicetypegroup_fid','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$servicetypelistController->Search($this->getHttpGETparameter('pn',-1),$title,$priority,$sortby_ID,$isdesc_ID);
+		$Result=$servicetypelistController->Search($this->getHttpGETparameter('pn',-1),$title,$priority,$servicetypegroup_fid_ID,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

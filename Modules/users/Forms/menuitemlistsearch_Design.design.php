@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -75,6 +75,15 @@ class menuitemlistsearch_Design extends FormDesign {
 	{
 		return $this->parameters;
 	}
+	/** @var textbox */
+	private $priority;
+	/**
+	 * @return textbox
+	 */
+	public function getPriority()
+	{
+		return $this->priority;
+	}
 	/** @var combobox */
 	private $sortby;
 	/**
@@ -115,6 +124,10 @@ class menuitemlistsearch_Design extends FormDesign {
 		$this->parameters= new textbox("parameters");
 		$this->parameters->setClass("form-control");
 
+		/******* priority *******/
+		$this->priority= new textbox("priority");
+		$this->priority->setClass("form-control");
+
 		/******* sortby *******/
 		$this->sortby= new combobox("sortby");
 		$this->sortby->setClass("form-control");
@@ -144,6 +157,7 @@ class menuitemlistsearch_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->module,$this->getFieldCaption('module'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->page,$this->getFieldCaption('page'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->parameters,$this->getFieldCaption('parameters'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
@@ -171,6 +185,10 @@ class menuitemlistsearch_Design extends FormDesign {
 			/******** parameters ********/
 			$this->parameters->setValue($this->Data['menuitem']->getParameters());
 			$this->setFieldCaption('parameters',$this->Data['menuitem']->getFieldInfo('parameters')->getTitle());
+
+			/******** priority ********/
+			$this->priority->setValue($this->Data['menuitem']->getPriority());
+			$this->setFieldCaption('priority',$this->Data['menuitem']->getFieldInfo('priority')->getTitle());
 
 			/******** sortby ********/
 
@@ -200,6 +218,11 @@ class menuitemlistsearch_Design extends FormDesign {
 		$this->sortby->addOption($this->Data['menuitem']->getTableFieldID('parameters'),$this->getFieldCaption('parameters'));
 		if(isset($_GET['parameters']))
 			$this->parameters->setValue($_GET['parameters']);
+
+		/******** priority ********/
+		$this->sortby->addOption($this->Data['menuitem']->getTableFieldID('priority'),$this->getFieldCaption('priority'));
+		if(isset($_GET['priority']))
+			$this->priority->setValue($_GET['priority']);
 
 		/******** sortby ********/
 		if(isset($_GET['sortby']))

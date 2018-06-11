@@ -19,6 +19,15 @@ use Modules\common\Forms\message_Design;
 */
 class doctorreservelist_Code extends FormCode {
 	private $searchForm='doctorreservelist';
+	private $ServiceName='getdoctorreserves';
+
+    /**
+     * @param string $ServiceName
+     */
+    public function setServiceName($ServiceName)
+    {
+        $this->ServiceName = $ServiceName;
+    }
 	protected function setSearchForm($searchForm){
 		$this->searchForm=$searchForm;
 	}    
@@ -52,7 +61,7 @@ class doctorreservelist_Code extends FormCode {
 			}
 			else
 			{
-				$Result=$doctorreservelistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1));
+				$Result=$doctorreservelistController->load($this->getHttpGETparameter('pn',-1),$this->getHttpGETparameter('username',-1),$this->getHttpGETparameter('password',-1),$this->ServiceName);
 			if(isset($_GET['search']))
 					$design=new doctorreservelistsearch_Design();
 				$design->setData($Result);

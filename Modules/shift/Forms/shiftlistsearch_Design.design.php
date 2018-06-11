@@ -138,6 +138,17 @@ class shiftlistsearch_Design extends FormDesign {
 	{
 		return $this->sortby;
 	}
+
+    /** @var combobox */
+    private $cmbNot;
+
+    /**
+     * @return ComboBox
+     */
+    public function getCmbNot()
+    {
+        return $this->cmbNot;
+    }
 	/** @var combobox */
 	private $isdesc;
 	/**
@@ -196,6 +207,9 @@ class shiftlistsearch_Design extends FormDesign {
 		/******* isdesc *******/
 		$this->isdesc= new combobox("isdesc");
 		$this->isdesc->setClass("form-control");
+        /******* cmbNot *******/
+        $this->cmbNot= new combobox("cmbnot");
+        $this->cmbNot->setClass("form-control");
 
 		/******* search *******/
 		$this->search= new SweetButton(true,"جستجو");
@@ -229,7 +243,8 @@ class shiftlistsearch_Design extends FormDesign {
         {
             $LTable1->addElement($this->getFieldRowCode($this->due_date_from,'تاریخ شروع',null,'',null));
           $LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'',null));
-            $LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->cmbNot,$this->getFieldCaption('role_fid'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->role_fid,"",null,'',null));
         }
         elseif($this->reportType==3)//Daily
         {
@@ -258,12 +273,14 @@ class shiftlistsearch_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
+	    $this->cmbNot->addOption('0','فقط');
+        $this->cmbNot->addOption('1','همه به جز');
 //			$this->shifttype_fid->addOption("", "همه");
 		foreach ($this->Data['shifttype_fid'] as $item)
 			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
 			$this->personel_fid->addOption("", "همه");
 		foreach ($this->Data['personel_fid'] as $item)
-			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getPersonelcode());
+			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getId());
 //			$this->bakhsh_fid->addOption("", "همه");
 		foreach ($this->Data['bakhsh_fid'] as $item)
 			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
@@ -280,7 +297,9 @@ class shiftlistsearch_Design extends FormDesign {
 			$this->setFieldCaption('shifttype_fid',$this->Data['shift']->getFieldInfo('shifttype_fid')->getTitle());
 
 			/******** due_date_from ********/
-			$this->due_date_from->setTime($this->Data['shift']->getDue_date_from());
+			$this->due_date_from->setTime(time()-30*84600);
+
+//            $this->due_date_from->setTime("1523215800");
 			$this->setFieldCaption('due_date_from',$this->Data['shift']->getFieldInfo('due_date_from')->getTitle());
 
 			/******** due_date_to ********/

@@ -59,47 +59,54 @@ class oras_recordEntity extends EntityClass {
 		$this->setFieldInfo(oras_recordEntity::$EMPLOYEE_FID,$Employee_fidInfo);
 		$this->addTableField('6',oras_recordEntity::$EMPLOYEE_FID);
 
+
+        /******** role_fid ********/
+        $Role_fidInfo=new FieldInfo();
+        $Role_fidInfo->setTitle("پست سازمانی");
+        $this->setFieldInfo(oras_recordEntity::$ROLE_FID,$Role_fidInfo);
+        $this->addTableField('7',oras_recordEntity::$ROLE_FID);
+
 		/******** place_fid ********/
 		$Place_fidInfo=new FieldInfo();
 		$Place_fidInfo->setTitle("بخش");
 		$this->setFieldInfo(oras_recordEntity::$PLACE_FID,$Place_fidInfo);
-		$this->addTableField('7',oras_recordEntity::$PLACE_FID);
+		$this->addTableField('8',oras_recordEntity::$PLACE_FID);
 
 		/******** registration_time ********/
 		$Registration_timeInfo=new FieldInfo();
 		$Registration_timeInfo->setTitle("تاریخ ثبت در سیستم");
 		$this->setFieldInfo(oras_recordEntity::$REGISTRATION_TIME,$Registration_timeInfo);
-		$this->addTableField('8',oras_recordEntity::$REGISTRATION_TIME);
+		$this->addTableField('9',oras_recordEntity::$REGISTRATION_TIME);
 
 		/******** file1_flu ********/
 		$File1_fluInfo=new FieldInfo();
 		$File1_fluInfo->setTitle("سند 1");
 		$this->setFieldInfo(oras_recordEntity::$FILE1_FLU,$File1_fluInfo);
-		$this->addTableField('9',oras_recordEntity::$FILE1_FLU);
+		$this->addTableField('10',oras_recordEntity::$FILE1_FLU);
 
 		/******** file2_flu ********/
 		$File2_fluInfo=new FieldInfo();
 		$File2_fluInfo->setTitle("سند 2");
 		$this->setFieldInfo(oras_recordEntity::$FILE2_FLU,$File2_fluInfo);
-		$this->addTableField('10',oras_recordEntity::$FILE2_FLU);
+		$this->addTableField('11',oras_recordEntity::$FILE2_FLU);
 
 		/******** file3_flu ********/
 		$File3_fluInfo=new FieldInfo();
 		$File3_fluInfo->setTitle("سند 3");
 		$this->setFieldInfo(oras_recordEntity::$FILE3_FLU,$File3_fluInfo);
-		$this->addTableField('11',oras_recordEntity::$FILE3_FLU);
+		$this->addTableField('12',oras_recordEntity::$FILE3_FLU);
 
 		/******** file4_flu ********/
 		$File4_fluInfo=new FieldInfo();
 		$File4_fluInfo->setTitle("سند 4");
 		$this->setFieldInfo(oras_recordEntity::$FILE4_FLU,$File4_fluInfo);
-		$this->addTableField('12',oras_recordEntity::$FILE4_FLU);
+		$this->addTableField('13',oras_recordEntity::$FILE4_FLU);
 
 		/******** role_systemuser_fid ********/
 		$Role_systemuser_fidInfo=new FieldInfo();
 		$Role_systemuser_fidInfo->setTitle("کاربر ثبت کننده");
 		$this->setFieldInfo(oras_recordEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
-		$this->addTableField('13',oras_recordEntity::$ROLE_SYSTEMUSER_FID);
+		$this->addTableField('14',oras_recordEntity::$ROLE_SYSTEMUSER_FID);
 	}
 	public static $TITLE="title";
 	/**
@@ -179,6 +186,22 @@ class oras_recordEntity extends EntityClass {
 	public function setEmployee_fid($Employee_fid){
 		$this->setField(oras_recordEntity::$EMPLOYEE_FID,$Employee_fid);
 	}
+	public static $ROLE_FID="role_fid";
+
+    /**
+     * @return string
+     */
+    public function getRole_fid()
+    {
+        return $this->getField(oras_recordEntity::$ROLE_FID);
+    }
+
+    /**
+     * @param mixed $Role_fid
+     */
+    public function setRole_fid($Role_fid){
+        $this->setField(oras_recordEntity::$ROLE_FID,$Role_fid);
+    }
 	public static $PLACE_FID="place_fid";
 	/**
 	 * @return mixed

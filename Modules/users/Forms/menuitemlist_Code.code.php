@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -89,9 +89,10 @@ class menuitemlist_Code extends FormCode {
 		$module=$this->getHttpGETparameter('module','');
 		$page=$this->getHttpGETparameter('page','');
 		$parameters=$this->getHttpGETparameter('parameters','');
+		$priority=$this->getHttpGETparameter('priority','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$menuitemlistController->Search($this->getHttpGETparameter('pn',-1),$latintitle,$module,$page,$parameters,$sortby_ID,$isdesc_ID);
+		$Result=$menuitemlistController->Search($this->getHttpGETparameter('pn',-1),$latintitle,$module,$page,$parameters,$priority,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

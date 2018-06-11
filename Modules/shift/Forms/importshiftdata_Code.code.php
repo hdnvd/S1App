@@ -67,17 +67,17 @@ class importshiftdata_Code extends FormCode {
         try {
             $Result = $importshiftdataController->Btnsave($this->getID(), $inputfileURLs, $datatypeid);
             $design->setData($Result);
-            $design->setMessage("اطلاعات با موفقیت وارد سیستم شدند!");
+            $design->setMessage("اطلاعات با موفقیت وارد سیستم شدند!"+"\n"+"تعداد خانه های اضافه شده:"+$Result['shiftsadded']);
         }
         catch(DataNotFoundException $dnfex){
                 $design=new message_Design();
                 $design->setMessageType(MessageType::$ERROR);
-                $design->setMessage("اطلاعات یک یا چند نفر از کارکنان از پایگاه داده پیدا نشد،لطفا این افراد را از طریق بخش تعریف کارکنان به سیستم اظافه نموده و دوباره تلاش کنید");
+                $design->setMessage("اطلاعات یک یا چند نفر از کارکنان از پایگاه داده پیدا نشد،لطفا این افراد را از طریق بخش تعریف کارکنان به سیستم اظافه نموده و دوباره تلاش کنید"."\n".$dnfex->getMessage());
             }
 		catch(ShiftExistsException $shex){
                 $design=new message_Design();
                 $design->setMessageType(MessageType::$ERROR);
-                $design->setMessage("برخی از روزهای موجود در این فایل از قبل در پایگاه داده برای این بخش موجود است،لطفا اطلاعات را بررسی نمایید.");
+                $design->setMessage("برخی از روزهای موجود در این فایل از قبل در پایگاه داده برای این بخش موجود است،لطفا اطلاعات را بررسی نمایید."."\n".$shex->getMessage());
             }
         catch(\Exception $uex){
             $design=new message_Design();

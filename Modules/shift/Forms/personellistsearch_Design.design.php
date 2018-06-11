@@ -499,7 +499,7 @@ class personellistsearch_Design extends FormDesign {
 			$this->setFieldCaption('priority',$this->Data['personel']->getFieldInfo('priority')->getTitle());
 
 			/******** employment_date_from ********/
-			$this->employment_date_from->setTime($this->Data['personel']->getEmployment_date_from());
+			$this->employment_date_from->setTime("-142659000");
 			$this->setFieldCaption('employment_date_from',$this->Data['personel']->getFieldInfo('employment_date_from')->getTitle());
 
 			/******** employment_date_to ********/
@@ -540,7 +540,7 @@ class personellistsearch_Design extends FormDesign {
 			$this->setFieldCaption('tel',$this->Data['personel']->getFieldInfo('tel')->getTitle());
 
 			/******** born_date_from ********/
-			$this->born_date_from->setTime($this->Data['personel']->getBorn_date_from());
+			$this->born_date_from->setTime("-1404962744");
 			$this->setFieldCaption('born_date_from',$this->Data['personel']->getFieldInfo('born_date_from')->getTitle());
 
 			/******** born_date_to ********/

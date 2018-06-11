@@ -2,6 +2,7 @@
 namespace Modules\users\Forms;
 use core\CoreClasses\html\FormLabel;
 use core\CoreClasses\html\GRecaptcha;
+use core\CoreClasses\html\htmlcode;
 use core\CoreClasses\html\TextBox;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\PasswordBox;
@@ -51,9 +52,11 @@ class asignin_Design extends FormDesign
 		{
 
 			$usernameField=new TextBox("username");
-            $usernameField->setClass("form-control usernamefield input");
+            $usernameField->setClass("usernamefield input input100");
+            $usernameField->SetAttribute('placeholder','نام کاربری');
 			$passwordField=new PasswordBox("password");
-            $passwordField->setClass("form-control passwordfield input");
+            $passwordField->setClass("passwordfield input input100");
+            $passwordField->SetAttribute('placeholder','رمز عبور');
 			$lbl1=new FormLabel($this->lbl1);
             $lbl1->setClass('label');
 			$lbl1->SetAttribute("for",$usernameField);
@@ -61,14 +64,27 @@ class asignin_Design extends FormDesign
 			$lbl2->setClass('label');
             $lbl2->SetAttribute("for",$passwordField);
             $UserRow=new Div();
-            $UserRow->setClass('group');
+            $UserRow->setClass('group wrap-input100 validate-input');
             $UserRow->addElement($lbl1);
             $UserRow->addElement($usernameField);
+            $lable=new Lable('');
+            $lable->setClass('focus-input100');
+            $span2=new htmlcode("<span class=\"symbol-input100\">
+							<i class=\"fa fa-envelope\" aria-hidden=\"true\"></i>
+						</span>");
+            $UserRow->addElement($lable);
+            $UserRow->addElement($span2);
 
             $PassRow=new Div();
-            $PassRow->setClass('group');
+            $PassRow->setClass('group wrap-input100 validate-input');
             $PassRow->addElement($lbl2);
             $PassRow->addElement($passwordField);
+
+            $span3=new htmlcode("<span class=\"symbol-input100\">
+							<i class=\"fa fa-lock\" aria-hidden=\"true\"></i>
+						</span>");
+            $PassRow->addElement($lable);
+            $PassRow->addElement($span3);
 
 
             $RecaptchaRow=new Div();
@@ -82,7 +98,7 @@ class asignin_Design extends FormDesign
             $table->addElement($PassRow,2);
             $table->addElement($RecaptchaRow,2);
 			$btn=new SweetButton(true,$this->btn);
-			$btn->setClass('button');
+			$btn->setClass('login100-form-btn');
 			$btn->setAction("login");
 
             $ButtonRow=new Div();

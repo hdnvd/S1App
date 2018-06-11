@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -81,7 +81,8 @@ class managemenuitem_Code extends FormCode {
 		$module=$design->getModule()->getValue();
 		$page=$design->getPage()->getValue();
 		$parameters=$design->getParameters()->getValue();
-		$Result=$managemenuitemController->BtnSave($this->getID(),$latintitle,$module,$page,$parameters);
+		$priority=$design->getPriority()->getValue();
+		$Result=$managemenuitemController->BtnSave($this->getID(),$latintitle,$module,$page,$parameters,$priority);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

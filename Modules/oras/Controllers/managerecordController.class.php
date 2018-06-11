@@ -7,6 +7,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\oras\Entity\oras_employeeroleEntity;
+use Modules\oras\Entity\oras_roleEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -45,7 +46,7 @@ class managerecordController extends Controller
         $this->adminMode = $adminMode;
     }
 
-    public function load($ID, $EmployeeID, $PlaceID)
+    public function load($ID, $EmployeeID, $PlaceID,$RoleID)
     {
         $Language_fid = CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor = new dbaccess();
@@ -72,12 +73,19 @@ class managerecordController extends Controller
                 throw new DataNotFoundException();
             $result['record'] = $recordEntityObject;
             $EmployeeID=$recordEntityObject->getEmployee_fid();
+            $RoleID=$recordEntityObject->getRole_fid();
             $PlaceID=$recordEntityObject->getPlace_fid();
         }
         if ($EmployeeID > 0) {
             $employeeEntityObject = new oras_employeeEntity($DBAccessor);
             $employeeEntityObject->setId($EmployeeID);
             $result['employee_fid'] = $employeeEntityObject;
+        }
+
+        if ($RoleID > 0) {
+            $roleEntityObject = new oras_roleEntity($DBAccessor);
+            $roleEntityObject->setId($RoleID);
+            $result['role_fid'] = $roleEntityObject;
         }
         if ($PlaceID > 0) {
             $placeEntityObject = new oras_placeEntity($DBAccessor);
@@ -109,11 +117,13 @@ class managerecordController extends Controller
         $registration_time=time();
         $Language_fid = CurrentLanguageManager::getCurrentLanguageID();
         $DBAccessor = new dbaccess();
-        if($employee_fid>0 && $place_fid<=0)
-        {
-            $place=$this->getEmployeeLastRole($employee_fid,$DBAccessor);
-            if($place!=null)
-                $place_fid=$place->getPlace_fid();
+        $Role_fid=-1;
+        if($employee_fid>0 && $place_fid<=0) {
+            $Role = $this->getEmployeeLastRole($employee_fid, $DBAccessor);
+            if ($Role != null){
+                $place_fid = $Role->getPlace_fid();
+                $Role_fid = $Role->getRole_fid();
+            }
         }
 
         $su = new sessionuser();
@@ -150,6 +160,7 @@ class managerecordController extends Controller
             $recordEntityObject->setFile3_flu($file3_fluURL);
             $recordEntityObject->setFile4_flu($file4_fluURL);
             $recordEntityObject->setRole_systemuser_fid($role_systemuser_fid);
+            $recordEntityObject->setRole_fid($Role_fid);
             $recordEntityObject->Save();
         } else {
             $recordEntityObject->setId($ID);
@@ -175,7 +186,7 @@ class managerecordController extends Controller
                 $recordEntityObject->setFile4_flu($file4_fluURL);
             $recordEntityObject->Save();
         }
-        $result = $this->load($ID,$employee_fid,$place_fid);
+        $result = $this->load($ID,$employee_fid,$place_fid,$Role_fid);
         $result['param1'] = "";
         $DBAccessor->close_connection();
         return $result;

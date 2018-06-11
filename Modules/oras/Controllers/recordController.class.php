@@ -59,8 +59,8 @@ class recordController extends Controller {
 			$result['place_fid']=$placeEntityObject;
 			$result['user']['sysid']=$result['record']->getRole_systemuser_fid();
 			$us=new User($result['user']['sysid']);
-            $result['user']['name']=$us->getUserInfo('name');
-            $result['user']['family']=$us->getUserInfo('family');
+            $result['user']['name']=$us->getUser('name')->getName();
+            $result['user']['family']=$us->getUser('family')->getFamily();
 
 		}
 		$result['param1']="";

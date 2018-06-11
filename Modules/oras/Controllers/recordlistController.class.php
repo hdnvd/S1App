@@ -4,6 +4,7 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\oras\Entity\oras_roleEntity;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\FieldCondition;
@@ -55,6 +56,10 @@ class recordlistController extends Controller {
             $placeEntityObject->setId($PlaceID);
             $result['place'] = $placeEntityObject;
         }
+
+        $roleEntityObject=new oras_roleEntity($DBAccessor);
+        $result['role_fid']=$roleEntityObject->FindAll(new QueryLogic());
+
 
 		if($PageNum<=0)
 			$PageNum=1;        
@@ -150,7 +155,7 @@ class recordlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q,$EmployeeID,$PlaceID);
 	}
-	public function Search($PageNum,$title,$occurance_date_from,$occurance_date_to,$description,$shifttype_fid,$recordtype_fid,$employeeMelliCode,$place_fid,$registration_time_from,$registration_time_to,$sortby,$isdesc,$recordtypeisbad,$ResultType)
+	public function Search($PageNum,$title,$occurance_date_from,$occurance_date_to,$description,$shifttype_fid,$recordtype_fid,$employeeMelliCode,$place_fid,$registration_time_from,$registration_time_to,$sortby,$isdesc,$recordtypeisbad,$ResultType,$role_fid)
 	{
 		$DBAccessor=new dbaccess();
 		$recordEnt=new oras_recordEntity($DBAccessor);
@@ -194,6 +199,7 @@ class recordlistController extends Controller {
             $q->addCondition(new FieldCondition("employee_fid","0",LogicalOperator::Bigger));
         $q->addCondition(new FieldCondition("employee_fid","%$employee_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("place_fid","%$place_fid%",LogicalOperator::LIKE));
+		$q->addCondition(new FieldCondition("role_fid","%$role_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("registration_time",$registration_time_from,LogicalOperator::Bigger));
 		$q->addCondition(new FieldCondition("registration_time",$registration_time_to,LogicalOperator::Smaller));
 		$sortByField=$recordEnt->getTableField($sortby);

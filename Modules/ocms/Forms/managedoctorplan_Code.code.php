@@ -54,6 +54,8 @@ class managedoctorplan_Code extends FormCode
             $Result = $managedoctorplanController->load($this->getID());
             $design = new managedoctorplan_Design();
             $design->setAdminMode($this->adminMode);
+            if(isset($_GET['batch_mode']))
+                $Result['batch_mode']=true;
             $design->setData($Result);
             $design->setMessage("");
         } catch (DataNotFoundException $dnfex) {
@@ -89,20 +91,47 @@ class managedoctorplan_Code extends FormCode
             $design = new managedoctorplan_Design();
             $start_time = $design->getStart_time()->getAllMinutes();
             $end_time = $design->getEnd_time()->getAllMinutes();
+
+
             $datePicker = $design->getDate();
+            $datePicker->setHour((int)($end_time / 60));
+                $datePicker->setMinute($end_time % 60);
+                $end_time=$datePicker->getTime();
+
+
             $datePicker->setHour((int)($start_time / 60));
             $datePicker->setMinute($start_time % 60);
             $start_time=$datePicker->getTime();
 
-
-            $datePicker->setHour((int)($end_time / 60));
-            $datePicker->setMinute($end_time % 60);
-            $end_time=$datePicker->getTime();
-
+            $Duration=$design->getDuration()->getValue();
 
             $doctor_fid_ID = $design->getDoctor_fid()->getSelectedID();
-            $Result = $managedoctorplanController->BtnSave($this->getID(), $start_time, $end_time, $doctor_fid_ID,$this->getHttpGETparameter('username', -1),$this->getHttpGETparameter('password', -1));
-            $design->setData($Result);
+            $Off = $design->getOff()->getSelectedID();
+            if($Duration>0)
+            {
+                for($start=$start_time;$start<$end_time;$start+=$Duration*60) {
+//                $datePicker = $design->getDate();
+//                $datePicker->setHour((int)($start / 60));
+//                $datePicker->setMinute($start % 60);
+//                $start=$datePicker->getTime();
+
+
+//                $datePicker->setHour((int)($end_time / 60));
+//                $datePicker->setMinute($end_time % 60);
+//                $end_time=$datePicker->getTime();
+
+                    $end = $start + $Duration * 60;
+//                    echo $start . "-" . $end;
+                    $Result = $managedoctorplanController->BtnSave($this->getID(), $start, $end, $doctor_fid_ID, $Off, $this->getHttpGETparameter('username', -1), $this->getHttpGETparameter('password', -1));
+                    $design->setData($Result);
+                }
+            }
+            else
+            {
+                $Result = $managedoctorplanController->BtnSave($this->getID(), $start_time, $end_time, $doctor_fid_ID, $Off, $this->getHttpGETparameter('username', -1), $this->getHttpGETparameter('password', -1));
+                $design->setData($Result);
+            }
+
             $design->setMessage("اطلاعات با موفقیت ذخیره شد.");
             $design->setMessageType(MessageType::$SUCCESS);
             if ($this->getAdminMode()) {

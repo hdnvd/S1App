@@ -23,7 +23,7 @@ class usermenuController extends Controller {
 			$SystemRoleID=$SystemRoleIDs[0];
 		$roleMenuE=new users_menuitemEntity($dbaccess);
 		
-		$result['menuitems']=$roleMenuE->FindAll(new QueryLogic());
+		$result['menuitems']=$roleMenuE->FindAll(new QueryLogic([],[users_menuitemEntity::$PRIORITY],[true]));
         $dbaccess->close_connection();
 		return $result;
 	}

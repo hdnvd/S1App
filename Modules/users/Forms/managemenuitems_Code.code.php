@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-11-20 - 2018-02-09 00:17
-*@lastUpdate 1396-11-20 - 2018-02-09 00:17
+*@creationDate 1397-01-17 - 2018-04-06 23:29
+*@lastUpdate 1397-01-17 - 2018-04-06 23:29
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -33,7 +33,11 @@ class managemenuitems_Code extends menuitemlist_Code {
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
 				$Result=$managemenuitemsController->DeleteItem($this->getID());
-			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
+			}elseif(isset($_GET['moveup'])){
+                $Result=$managemenuitemsController->Move($this->getID(),$this->getHttpGETparameter('place',-1),true);
+            }elseif(isset($_GET['movedown'])){
+                $Result=$managemenuitemsController->Move($this->getID(),$this->getHttpGETparameter('place',-1),false);
+            }elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
 			}else{

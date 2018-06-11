@@ -46,6 +46,9 @@ class managedoctorplan_Design extends FormDesign {
         $LTable1->addElement($this->getFieldRowCode($this->date,$this->getFieldCaption('date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
         $LTable1->addElement($this->getFieldRowCode($this->start_time,$this->getFieldCaption('start_time'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->end_time,$this->getFieldCaption('end_time'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		if(key_exists('batch_mode',$this->Data) && $this->Data['batch_mode']==true)
+		    $LTable1->addElement($this->getFieldRowCode($this->duration,"مدت زمان هر وقت(دقیقه)",null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->off,$this->getFieldCaption('off'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->doctor_fid,$this->getFieldCaption('doctor_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 //		$Page->addElement(new TextBox('password',$_GET['password'],false));
@@ -81,6 +84,12 @@ class managedoctorplan_Design extends FormDesign {
 			/******** doctor_fid ********/
 			$this->doctor_fid->setSelectedValue($this->Data['doctorplan']->getDoctor_fid());
 			$this->setFieldCaption('doctor_fid',$this->Data['doctorplan']->getFieldInfo('doctor_fid')->getTitle());
+            for ($i = 0; $i < 75; $i+=5) {
+                $this->off->addOption($i,$i."%");
+            }
+/******** Off ********/
+			$this->off->setSelectedValue($this->Data['doctorplan']->getOff());
+			$this->setFieldCaption('off',$this->Data['doctorplan']->getFieldInfo('off')->getTitle());
 
 			/******** btnSave ********/
 		}
@@ -94,13 +103,21 @@ class managedoctorplan_Design extends FormDesign {
         $this->date->setClass("form-control");
 
 
+        /******* duration *******/
+        $this->duration= new TextBox("duration");
+        $this->duration->setClass("form-control");
+
 		/******* start_time *******/
 		$this->start_time= new TimePicker("start_time");
 		$this->start_time->setClass("form-control");
 
-		/******* end_time *******/
-		$this->end_time= new TimePicker("end_time");
-		$this->end_time->setClass("form-control");
+        /******* end_time *******/
+        $this->end_time= new TimePicker("end_time");
+        $this->end_time->setClass("form-control");
+
+        /******* $Off *******/
+        $this->off= new ComboBox("off");
+        $this->off->setClass("form-control");
 
 		/******* doctor_fid *******/
 		$this->doctor_fid= new combobox("doctor_fid");
@@ -150,6 +167,15 @@ class managedoctorplan_Design extends FormDesign {
 	{
 		return $this->start_time;
 	}
+    /** @var TextBox */
+    private $duration;
+    /**
+     * @return TextBox
+     */
+    public function getDuration()
+    {
+        return $this->duration;
+    }
 	/** @var TimePicker */
 	private $end_time;
 	/**
@@ -168,6 +194,15 @@ class managedoctorplan_Design extends FormDesign {
 	{
 		return $this->doctor_fid;
 	}
+    /** @var combobox */
+    private $off;
+    /**
+     * @return combobox
+     */
+    public function getOff()
+    {
+        return $this->off;
+    }
 	/** @var SweetButton */
 	private $btnSave;
     public function getJSON()
