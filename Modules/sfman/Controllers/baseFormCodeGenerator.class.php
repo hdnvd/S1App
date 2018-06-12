@@ -296,6 +296,7 @@ EOT;
         $E=$formInfo['elements'][$ElementIndex];
         $ElementTypeIndex=$this->getTypeIndex($formInfo['elementtypes'],$E['type_fid']);
         $EType=$formInfo['elementtypes'][$ElementTypeIndex]['name'];
+        $FieldType=FieldType::getFieldType($E['name']);
         $C = "\n\n\t\t/******* " . $E['name'] ." *******/";
         $C .= "\n\t\t\$this->" . $E['name'] . "= new " . $EType . "(";
         if($E['type_fid']==1)//Label
@@ -311,12 +312,15 @@ EOT;
         else if($E['type_fid']==3)//ComboBox
         {
             $C.="\"" . $E['name'] . "\");";
-            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control selectpicker\");";
+            if($FieldType==FieldType::$FID)
+                $C .= "\n\t\t\$this->" . $E['name'] . "->SetAttribute(\"data-live-search\",true);";
         }
         else if($E['type_fid']==4)//DataComboBox
         {
             $C.="\$this->Data['" . $E['name'] . "'],\"" . $E['name'] . "\");";
-            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->setClass(\"form-control selectpicker\");";
+            $C .= "\n\t\t\$this->" . $E['name'] . "->SetAttribute(\"data-live-search\",true);";
         }
         else if($E['type_fid']==5)//CheckBox
         {
