@@ -102,6 +102,32 @@ class makeEntityController extends Controller {
             $FieldTitle='کد ملی';
         elseif(strtolower($FieldTitle)=='shsh')
             $FieldTitle='شماره شناسنامه';
+        elseif(strtolower($FieldTitle)=='url')
+            $FieldTitle='آدرس';
+        elseif(strtolower($FieldTitle)=='content')
+            $FieldTitle='محتوا';
+        elseif(strtolower($FieldTitle)=='updated_at')
+            $FieldTitle='تاریخ بروزرسانی';
+        elseif(strtolower($FieldTitle)=='created_at')
+            $FieldTitle='تاریخ ایجاد';
+        elseif(strtolower($FieldTitle)=='words')
+            $FieldTitle='کلمات';
+        elseif(strtolower($FieldTitle)=='word')
+            $FieldTitle='کلمه';
+        elseif(strtolower($FieldTitle)=='description')
+            $FieldTitle='توضیحات';
+        elseif(strtolower($FieldTitle)=='count')
+            $FieldTitle='تعداد';
+        elseif(strtolower($FieldTitle)=='latintitle')
+            $FieldTitle='عنوان لاتین';
+        elseif(strtolower($FieldTitle)=='file_flu')
+            $FieldTitle='فایل';
+        elseif(strtolower($FieldTitle)=='img_flu')
+            $FieldTitle='تصویر';
+        elseif(strtolower($FieldTitle)=='photo_flu')
+            $FieldTitle='تصویر';
+        elseif(strtolower($FieldTitle)=='context')
+            $FieldTitle='متن';
         $Info="\n\n\t\t/******** $FieldName ********/";
         $Info.="\n\t\t$FieldNameInfoVar=new FieldInfo();";
         $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldTitle\");";
