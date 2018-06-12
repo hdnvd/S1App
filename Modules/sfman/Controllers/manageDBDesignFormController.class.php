@@ -374,7 +374,7 @@ EOT;
         $C .="\n\t{";
         $C .=$this->getDesignTopPartCode(false);
         $C .="\n\t\t\$addUrl=new AppRooter('$ModuleName',\$this->itemPage);";
-        $C .="\n\t\t\$LblAdd=new Lable('افزودن آیتم جدید');";
+        $C .="\n\t\t\$LblAdd=new Lable('ثبت ". "' . \$this->Data['" . $TableName . "']->getTableTitle() . '"." جدید');";
         $C .="\n\t\t\$lnkAdd=new link(\$addUrl->getAbsoluteURL(),\$LblAdd);";
         $C .="\n\t\t\$lnkAdd->setClass('linkbutton btn btn-primary');";
         $C .="\n\t\t\$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');";

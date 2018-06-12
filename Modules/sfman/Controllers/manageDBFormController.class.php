@@ -193,7 +193,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
         $formInfo2['elements'][$i - $skippedCollumns]['caption'] = "ذخیره";
         $formInfo2['elements'][$i - $skippedCollumns]['type_fid'] = 7;
         $i++;
-        $this->setFormCaption("مدیریت " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \"");
+        $this->setFormCaption("تعریف " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \"");
         if ($this->getIsItemSelected($FormsToGenerate, "manage_item_controller"))
             $this->makeTableItemManageController($formInfo2);
         if ($this->getIsItemSelected($FormsToGenerate, "manage_item_code")) {
@@ -218,7 +218,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
         $formInfo['form']['caption'] = "Manage " . ucfirst($TableName) . "s";
         $formInfo['form']['listname'] = $TableName . "list";
         $this->setFormName($formInfo['form']['name']);
-        $this->setFormCaption("مدیریت " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \" ها");
+        $this->setFormCaption(" " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \" ها");
         if ($this->getIsItemSelected($FormsToGenerate, "manage_list_controller"))
             $this->makeTableManageListController($formInfo);
         if ($this->getIsItemSelected($FormsToGenerate, "manage_list_code")) {
@@ -238,7 +238,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
         $formInfo['form']['name'] = $TableName;
         $formInfo['form']['caption'] = ucfirst($TableName) . " Information";
         $this->setFormName($formInfo['form']['name']);
-        $this->setFormCaption("اطلاعات " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \"");
+        $this->setFormCaption(" " . "\" . \$this->Data['" . $TableName . "']->getTableTitle() . \"");
         if ($this->getIsItemSelected($FormsToGenerate, "item_display_controller"))
             $this->makeTableItemController($formInfo);
         if ($this->getIsItemSelected($FormsToGenerate, "item_display_code")) {
