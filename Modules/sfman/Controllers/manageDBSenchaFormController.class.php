@@ -301,7 +301,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
 ";
 
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $UCField = trim(strtolower($UCField));
                 $PersianField = $trans->getPersian($UCField,$UCField);
@@ -400,7 +400,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         },
         ";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $UCField = trim(strtolower($UCField));
                     $ModelCode .= "\n{
@@ -449,7 +449,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         \n{";
         $ModelCode.="\n\"id\": 1,";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
                 $UCField = trim(strtolower($UCField));
                     $ModelCode .= "\n\"$UCField\": \"$UCField" . "TestData\",";

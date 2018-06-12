@@ -163,7 +163,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
         for ($i = 0; $i < $FieldCount; $i++) {
             $E = $CurTableFields[$i];
             $FT = FieldType::getFieldType($E);
-            if ($FT == FieldType::$METAINF || $FT == FieldType::$ID)
+            if ($FT == FieldType::$METAINF || $FT == FieldType::$LARAVELMETAINF || $FT == FieldType::$ID)
                 $skippedCollumns++;
             else {
                 $formInfo['elements'][$i - $skippedCollumns]['name'] = $E;

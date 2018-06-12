@@ -27,7 +27,7 @@ abstract class manageDBControllerFormController extends manageDBFormController
     {
         $InsertCode = "";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF &&  FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
 
                 if ($isInsert || trim(strtolower($UCField)) != "role_systemuser_fid") {
@@ -41,6 +41,10 @@ abstract class manageDBControllerFormController extends manageDBFormController
             }
         }
 
+        if($isInsert)
+            $InsertCode .= "\n\t\t\t$ObjectName" . "->setCreated_at(time());";
+        else
+            $InsertCode .= "\n\t\t\t$ObjectName" . "->setUpdated_at(time());";
         return $InsertCode;
     }
 
@@ -59,7 +63,7 @@ abstract class manageDBControllerFormController extends manageDBFormController
         }
         $ValidateCode .= "\n\t\t\$this->ValidateFieldArray([";
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
                 $UCField = $this->getCurrentTableFields()[$i];
 
                 if (trim(strtolower($UCField)) != "role_systemuser_fid") {

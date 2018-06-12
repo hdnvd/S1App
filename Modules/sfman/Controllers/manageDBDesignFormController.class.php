@@ -47,7 +47,7 @@ abstract class manageDBDesignFormController extends manageDBCodeFormController {
 
             $FieldFillCode .= "\r\n\r\n\t\t\t/******** $Ename" . " ********/";
             $FT=FieldType::getFieldType($Ename);
-            if($FT!=FieldType::$METAINF && $FT!=FieldType::$ID && $Ename!="sortby" && $Ename!="isdesc") {
+            if($FT!=FieldType::$METAINF && $FT!=FieldType::$LARAVELMETAINF && $FT!=FieldType::$ID && $Ename!="sortby" && $Ename!="isdesc") {
                 if($formInfo['elements'][$i]['type_fid']==3) {
                     if($AddEmptyOption)
                         $FieldBeforeIFFillCode .= "\r\n\t\t\t\$this->$Ename" . "->addOption(\"\", \"مهم نیست\");";
