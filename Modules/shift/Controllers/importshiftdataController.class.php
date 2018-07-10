@@ -9,6 +9,7 @@ use Modules\shift\Entity\shift_inputfileEntity;
 use Modules\shift\Entity\shift_personelEntity;
 use Modules\shift\Entity\shift_shiftEntity;
 use Modules\shift\Entity\shift_shifttypeEntity;
+use Modules\shift\Exceptions\MultipleBakhshException;
 use Modules\shift\Exceptions\ShiftExistsException;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -142,6 +143,7 @@ class importshiftdataController extends Controller {
      */
     public function ImportShiftData($ID, $inputfile)
     {
+        $this->AddedShifts=0;
         $MetaDataColCount=2;
 //        $HelpMetaDataRowCount=8;
 
@@ -166,10 +168,10 @@ class importshiftdataController extends Controller {
         if ($exel->success())
         {
             $sheetdata=$exel->rows();
-            echo "Row Count:" . count($sheetdata);
+//            echo "Row Count:" . count($sheetdata);
             $firstrow=$sheetdata[0];
             $AllCount2 = count($firstrow);
-            echo "<br>Collumn Count:" . $AllCount2;
+//            echo "<br>Collumn Count:" . $AllCount2;
             $day=array();
             for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
                 $day[$collumnNumber]=$firstrow[$collumnNumber];
@@ -196,6 +198,7 @@ class importshiftdataController extends Controller {
                 }
             }
 
+            $BakhshID=-1;
             /************************Check if other record exists for this day and bakhsh in db  **********************/
             if(count($data)>0)
             {
@@ -206,6 +209,7 @@ class importshiftdataController extends Controller {
                 if($Pent==null || $Pent->getId()<=0)
                     throw new DataNotFoundException("ردیف:1,کد ملی:".$data[0]['personid']);
                 $PersonCurrentBakhshID=$Pent->getBakhsh_fid();
+                $BakhshID=$PersonCurrentBakhshID;
                 $AllCount1 = count($day);
                 for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
                     $shift=new shift_shiftEntity($DBAccessor);
@@ -217,14 +221,22 @@ class importshiftdataController extends Controller {
 
             /************************Check if other record exists for this day and bakhsh in db  **********************/
 
+
+            /************************Check if all persons are in same Bakhsh*********************/
+            $AllCount3 = count($data);
+            for ($i = 0; $i < $AllCount3; $i++) {
+                $personid=$data[$i]['personid'];
+                $ErrorMessage="ردیف:".($i+1).",کد ملی:$personid";
+                $Pent=$this->getPersonEnt($DBAccessor,$personid,$ErrorMessage);
+                if($Pent->getBakhsh_fid()!=$BakhshID)
+                    throw new MultipleBakhshException($ErrorMessage);
+            }
+            /************************Check if all persons are in same Bakhsh*********************/
             $AllCount3 = count($data);
             for ($i = 0; $i < $AllCount3; $i++) {
                 $item=$data[$i];
                 $personid=$item['personid'];
-                $Pent=new shift_personelEntity($DBAccessor);
-                $Pent=$Pent->FindOne(new QueryLogic([new FieldCondition(shift_personelEntity::$MELLICODE,$personid)],[],[]));
-                if($Pent==null || $Pent->getId()<=0)
-                    throw new DataNotFoundException("ردیف:".($i+1).",کد ملی:$personid");
+                $Pent=$this->getPersonEnt($DBAccessor,$personid,"");
                 $PersonID=$Pent->getId();
                 $PersonCurrentBakhshID=$Pent->getBakhsh_fid();
                 $PersonCurrentRoleID=$Pent->getRole_fid();
@@ -250,8 +262,17 @@ class importshiftdataController extends Controller {
         $DBAccessor->close_connection();
         return $result;
     }
+    private function getPersonEnt($DBAccessor,$PersonMelliCode,$Message)
+    {
+        $Pent=new shift_personelEntity($DBAccessor);
+        $Pent=$Pent->FindOne(new QueryLogic([new FieldCondition(shift_personelEntity::$MELLICODE,$PersonMelliCode)],[],[]));
+        if($Pent==null || $Pent->getId()<=0)
+            throw new DataNotFoundException($Message);
+        return $Pent;
+    }
     private function AddNewShiftFromShiftTitle($TransactionDBAccessor,$allShiftTypes,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,$pShiftInfo,$InputFileID)
     {
+//        echo "Adding";
         $ifAddedOne=false;
         $AllCount1 = count($allShiftTypes);
         for ($i = 0; $i < $AllCount1; $i++) {

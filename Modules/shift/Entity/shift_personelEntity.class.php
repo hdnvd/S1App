@@ -58,7 +58,9 @@ class shift_personelEntity extends EntityClass {
 
 		/******** sanavat ********/
 		$SanavatInfo=new FieldInfo();
-		$SanavatInfo->setTitle("سنوات");
+		$SanavatInfo->setTitle("سابقه به سال");
+        $SanavatInfo->setRequired(true);
+        $SanavatInfo->setType(FieldType::$INTEGER);
 		$this->setFieldInfo(shift_personelEntity::$SANAVAT,$SanavatInfo);
 		$this->addTableField('7',shift_personelEntity::$SANAVAT);
 

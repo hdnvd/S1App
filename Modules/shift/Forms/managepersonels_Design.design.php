@@ -71,10 +71,24 @@ class managepersonels_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("shift_managepersonels");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['personel']->getTableTitle() . " ها"));
+
+
+        if($this->getMessage()!="")
+            $Page->addElement($this->getMessagePart());
+
+		$IncreaseYearsURL=new AppRooter('shift',$this->listPage);
+        $IncreaseYearsURL->addParameter(new UrlParameter('increaseyears','1'));
+        $LblIncreaseYears=new Lable('افزایش سابقه کارکنان');
+        $lnkIncreaseYears=new link($IncreaseYearsURL->getAbsoluteURL(),$LblIncreaseYears);
+        $lnkIncreaseYears->setClass('linkbutton btn btn-danger');
+        $lnkIncreaseYears->setGlyphiconClass('glyphicon glyphicon-calendar');
+        $Page->addElement($lnkIncreaseYears);
+
 		$addUrl=new AppRooter('shift',$this->itemPage);
 		$LblAdd=new Lable('تعریف شخص جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
@@ -94,13 +108,17 @@ class managepersonels_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
 		$TableDiv->setClass('table-responsive');
-		$LTable1=new ListTable(3);
+		$LTable1=new ListTable(4);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped table-hover managelist");
 		$LTable1->addElement(new Lable('#'));
 		$LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('نام'));
 		$LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('کد ملی'));
+        $LTable1->setLastElementClass("listtitle");
+//        $LTable1->addElement(new Lable('بخش'));
+//        $LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عملیات'));
 		$LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
@@ -108,7 +126,7 @@ class managepersonels_Design extends FormDesign {
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$Title=$this->Data['data'][$i]->getName() . " " . $this->Data['data'][$i]->getFamily();
 			if($Title=="")
-				$Title='- بدون عنوان -';
+				$Title='- بدون نام -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('shift',$this->itemViewPage);
@@ -132,6 +150,8 @@ class managepersonels_Design extends FormDesign {
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
 			$LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($this->Data['data'][$i]->getMelliCode()));
+            $LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($operationDiv[$i]);
 			$LTable1->setLastElementClass("listcontent");
 		}

@@ -37,5 +37,29 @@ class managepersonelsController extends personellistController {
 		$DBAccessor->close_connection();
 		return $this->load(-1);
 	}
+    public function IncreaseAllYears()
+    {
+        $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
+        $DBAccessor=new dbaccess();
+        $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $UserID=null;
+        if(!$this->getAdminMode())
+            $UserID=$role_systemuser_fid;
+        $personelEnt=new shift_personelEntity($DBAccessor);
+        $ALLPersonel=$personelEnt->FindAll(new QueryLogic());
+        for($i=0;$i<count($ALLPersonel);$i++)
+        {
+            $tmppersonelEnt=$ALLPersonel[$i];
+//            $tmppersonelEnt=$personelEnt;
+            $tmppersonelEnt->setSanavat((int)$tmppersonelEnt->getSanavat()+1);
+            $tmppersonelEnt->Save();
+        }
+
+
+//        $personelEnt->Remove();
+        $DBAccessor->close_connection();
+        return $this->load(-1);
+    }
 }
 ?>

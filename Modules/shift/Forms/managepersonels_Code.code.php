@@ -30,10 +30,17 @@ class managepersonels_Code extends personellist_Code {
 		$translator=new ModuleTranslator("shift");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 			$design=new managepersonels_Design();
+
+            $design->setMessage("");
 			$design->setAdminMode($this->getAdminMode());
 			if(isset($_GET['delete'])){
 				$Result=$managepersonelsController->DeleteItem($this->getID());
-			}elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
+			}if(isset($_GET['increaseyears'])){
+                $Result=$managepersonelsController->IncreaseAllYears();
+                $design->setMessage("سابقه تمام کارکنان به مقدار یک سال افزایش پیدا کرد");
+                $ManageListRooter=new AppRooter("shift","managepersonels");
+                AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
+            }elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
 			}else{
@@ -42,7 +49,6 @@ class managepersonels_Code extends personellist_Code {
 					$design=new personellistsearch_Design();
 			}
 			$design->setData($Result);
-			$design->setMessage("");
 		}
 		catch(DataNotFoundException $dnfex){
 			$design=new message_Design();

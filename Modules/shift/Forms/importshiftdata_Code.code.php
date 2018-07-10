@@ -10,6 +10,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use Modules\shift\Controllers\importshiftdataController;
 use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
+use Modules\shift\Exceptions\MultipleBakhshException;
 use Modules\shift\Exceptions\ShiftExistsException;
 
 /**
@@ -79,6 +80,11 @@ class importshiftdata_Code extends FormCode {
                 $design->setMessageType(MessageType::$ERROR);
                 $design->setMessage("برخی از روزهای موجود در این فایل از قبل در پایگاه داده برای این بخش موجود است،لطفا اطلاعات را بررسی نمایید."."\n".$shex->getMessage());
             }
+        catch(MultipleBakhshException $mbex){
+            $design=new message_Design();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("تمام افراد وارد شده باید در یک بخش باشند."."\n".$mbex->getMessage());
+        }
         catch(\Exception $uex){
             $design=new message_Design();
             $design->setMessageType(MessageType::$ERROR);
