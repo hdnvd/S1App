@@ -41,8 +41,11 @@ abstract class manageDBControllerFormController extends manageDBFormController
             }
         }
 
-        if($isInsert)
+        if($isInsert){
+
             $InsertCode .= "\n\t\t\t$ObjectName" . "->setCreated_at(time());";
+            $InsertCode .= "\n\t\t\t$ObjectName" . "->setUpdated_at(-1);";
+        }
         else
             $InsertCode .= "\n\t\t\t$ObjectName" . "->setUpdated_at(time());";
         return $InsertCode;
