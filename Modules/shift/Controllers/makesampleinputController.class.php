@@ -65,7 +65,7 @@ class makesampleinputController extends Controller {
         $Bakhsh->setId($BakhshID);
         $ex=new \XLSXWriter();
         $ex->setTitle('اطلاعات شیفت های بخش' . $Bakhsh->getTitleField());
-        $title=['نام و نام خانوادگی','کد نرم افزاری'];
+        $title=['نام و نام خانوادگی','کد ملی'];
         $titleStyle=['fill'=>'#2c8182',"color"=>'#ffffff','font'=>"B Homa"];
         $ItemStyle=['fill'=>'#428BCA',"color"=>'#ffffff','font'=>"B Homa"];
         $HelpStyle=['fill'=>'#2c8182',"color"=>'#ffffff','font'=>"B Homa"];
@@ -85,7 +85,7 @@ class makesampleinputController extends Controller {
         for ($i = 0; $i < $AllCount1; $i++) {
             $item=$allPersonel[$i];
             $name=$item->getName() . " " . $item->getFamily();
-            $PersonCode=$item->getId();
+            $PersonCode=$item->getMellicode();
             $ex->writeSheetRow('اطلاعات شیفت ها',[$name,$PersonCode],[$ItemStyle,$ItemStyle]);
         }
         $ex->writeSheetRow('اطلاعات شیفت ها',['بخش',$Bakhsh->getTitleField()],[$HelpStyle,$HelpStyle]);

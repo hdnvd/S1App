@@ -83,12 +83,16 @@ class shift_personelEntity extends EntityClass {
 		/******** name ********/
 		$NameInfo=new FieldInfo();
 		$NameInfo->setTitle("نام");
+		$NameInfo->setRequired(true);
+		$NameInfo->setMinLength(2);
 		$this->setFieldInfo(shift_personelEntity::$NAME,$NameInfo);
 		$this->addTableField('11',shift_personelEntity::$NAME);
 
 		/******** family ********/
 		$FamilyInfo=new FieldInfo();
 		$FamilyInfo->setTitle("نام خانوادگی");
+        $FamilyInfo->setRequired(true);
+        $FamilyInfo->setMinLength(2);
 		$this->setFieldInfo(shift_personelEntity::$FAMILY,$FamilyInfo);
 		$this->addTableField('12',shift_personelEntity::$FAMILY);
 
@@ -155,6 +159,8 @@ class shift_personelEntity extends EntityClass {
 		/******** mellicode ********/
 		$MellicodeInfo=new FieldInfo();
 		$MellicodeInfo->setTitle("کد ملی");
+        $MellicodeInfo->setRequired(true);
+        $MellicodeInfo->setType(FieldType::$MELLICODE);
 		$this->setFieldInfo(shift_personelEntity::$MELLICODE,$MellicodeInfo);
 		$this->addTableField('23',shift_personelEntity::$MELLICODE);
 

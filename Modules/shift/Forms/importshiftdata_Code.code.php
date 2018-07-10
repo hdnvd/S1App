@@ -67,7 +67,7 @@ class importshiftdata_Code extends FormCode {
         try {
             $Result = $importshiftdataController->Btnsave($this->getID(), $inputfileURLs, $datatypeid);
             $design->setData($Result);
-            $design->setMessage("اطلاعات با موفقیت وارد سیستم شدند!"+"\n"+"تعداد خانه های اضافه شده:"+$Result['shiftsadded']);
+            $design->setMessage("اطلاعات با موفقیت وارد سیستم شدند!"."\n"."تعداد خانه های اضافه شده:".$Result['shiftsadded']);
         }
         catch(DataNotFoundException $dnfex){
                 $design=new message_Design();

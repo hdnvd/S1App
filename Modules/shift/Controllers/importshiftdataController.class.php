@@ -161,11 +161,15 @@ class importshiftdataController extends Controller {
         $InputFileEnt->setUpload_time(time());
         $InputFileEnt->Save();
         $exel=new \SimpleXLSX($inputfile[0]['path']);
+//        $exel=\SimpleXLSX::parse($inputfile[0]['path']);
+//        echo $inputfile[0]['path'];
         if ($exel->success())
         {
             $sheetdata=$exel->rows();
+            echo "Row Count:" . count($sheetdata);
             $firstrow=$sheetdata[0];
             $AllCount2 = count($firstrow);
+            echo "<br>Collumn Count:" . $AllCount2;
             $day=array();
             for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
                 $day[$collumnNumber]=$firstrow[$collumnNumber];
@@ -176,6 +180,7 @@ class importshiftdataController extends Controller {
                 $day[$collumnNumber]=SweetDate::getTimeFromDateText($day[$collumnNumber],0,0,'/');
             }
             $AllCount1 = count($sheetdata);
+//            echo $AllCount1;
             for ($RowNumber = 1; $RowNumber < ($AllCount1-$HelpMetaDataRowCount); $RowNumber++) {
                 $row=$sheetdata[$RowNumber];
                 $row[0]=$this->removeExtraCharsAndNormalize($row[0]);
@@ -196,9 +201,10 @@ class importshiftdataController extends Controller {
             {
 
                 $Pent=new shift_personelEntity($DBAccessor);
-                $Pent->setId($data[0]['personid']);
+                $Pent=$Pent->FindOne(new QueryLogic([new FieldCondition(shift_personelEntity::$MELLICODE,$data[0]['personid'])],[],[]));
+//                $Pent->setId($data[0]['personid']);
                 if($Pent==null || $Pent->getId()<=0)
-                    throw new DataNotFoundException("ردیف:1,کد نرم افزاری:".$data[0]['personid']);
+                    throw new DataNotFoundException("ردیف:1,کد ملی:".$data[0]['personid']);
                 $PersonCurrentBakhshID=$Pent->getBakhsh_fid();
                 $AllCount1 = count($day);
                 for ($collumnNumber = $MetaDataColCount; $collumnNumber < $AllCount2; $collumnNumber++) {
@@ -216,14 +222,15 @@ class importshiftdataController extends Controller {
                 $item=$data[$i];
                 $personid=$item['personid'];
                 $Pent=new shift_personelEntity($DBAccessor);
-                $Pent->setId($personid);
+                $Pent=$Pent->FindOne(new QueryLogic([new FieldCondition(shift_personelEntity::$MELLICODE,$personid)],[],[]));
                 if($Pent==null || $Pent->getId()<=0)
-                    throw new DataNotFoundException("ردیف:".($i+1).",کد نرم افزاری:$personid");
+                    throw new DataNotFoundException("ردیف:".($i+1).",کد ملی:$personid");
                 $PersonID=$Pent->getId();
                 $PersonCurrentBakhshID=$Pent->getBakhsh_fid();
                 $PersonCurrentRoleID=$Pent->getRole_fid();
 
                 $AllCount4 = count($item['time']);
+
                 for ($PersonTimeNum = 0; $PersonTimeNum < $AllCount4; $PersonTimeNum++) {
                     $pTime=$item['time'][$PersonTimeNum];
                     $pShiftInfo=$item['presenceinfo'][$PersonTimeNum];
@@ -259,20 +266,6 @@ class importshiftdataController extends Controller {
         }
         if($ifAddedOne)
             $this->AddedShifts++;
-//        if(strpos('m',$pShiftInfo)!==false)
-//            $this->AddNewShift($TransactionDBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,1,$InputFileID);
-//        if(strpos('a',$pShiftInfo)!==false)
-//            $this->AddNewShift($TransactionDBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,2,$InputFileID);
-//        if(strpos('n',$pShiftInfo)!==false)
-//            $this->AddNewShift($TransactionDBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,3,$InputFileID);
-////                    if(strpos('f',$pShiftInfo)!==false)
-////                        $this->AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,4);
-//        if(strpos('v',$pShiftInfo)!==false)
-//            $this->AddNewShift($TransactionDBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,5,$InputFileID);
-//        if(strpos('c',$pShiftInfo)!==false)
-//            $this->AddNewShift($TransactionDBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,6,$InputFileID);
-//        if(strpos('p',$pShiftInfo)!==false)
-//            $this->AddNewShift($TransactionDBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,7,$InputFileID);
 
     }
     private function AddNewShift($DBAccessor,$pTime,$PersonID,$PersonCurrentBakhshID,$PersonCurrentRoleID,$ShiftTypeID,$FileID)
