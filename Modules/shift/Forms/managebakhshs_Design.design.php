@@ -95,7 +95,7 @@ class managebakhshs_Design extends FormDesign {
         $ViewURLAll=new AppRooter('shift','makesampleinput');
         $lbViewAll=new Lable('فایل اکسل کامل');
         $lnkViewAll=new link($ViewURLAll->getAbsoluteURL(),$lbViewAll);
-        $lnkViewAll->setGlyphiconClass('glyphicon glyphicon-eye-open');
+        $lnkViewAll->setGlyphiconClass('glyphicon glyphicon-export');
         $lnkViewAll->setClass('linkbutton btn btn-primary');
         $Page->addElement($lnkViewAll);
 		if($this->getMessage()!="")
@@ -123,13 +123,13 @@ class managebakhshs_Design extends FormDesign {
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$lbView[$i]=new Lable('دریافت فایل اکسل نمونه');
 			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
-			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
+			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-export');
 			$lnkView[$i]->setClass('btn btn-primary');
             $GetWorkTimeURL=new AppRooter('shift','getworktime');
             $GetWorkTimeURL->addParameter(new UrlParameter('bakhshid',$this->Data['data'][$i]->getID()));
             $lbGetWorkTime[$i]=new Lable('استخراج اضافه کاری');
             $lnkGetWorkTime[$i]=new link($GetWorkTimeURL->getAbsoluteURL(),$lbGetWorkTime[$i]);
-            $lnkGetWorkTime[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
+            $lnkGetWorkTime[$i]->setGlyphiconClass('glyphicon glyphicon-time');
             $lnkGetWorkTime[$i]->setClass('btn btn-primary');
 
 			$delurl=new AppRooter('shift',$this->listPage);

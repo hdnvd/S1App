@@ -75,7 +75,7 @@ class managepersonels_Design extends FormDesign {
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("shift_managepersonels");
-		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['personel']->getTableTitle() . " ها"));
+		$Page->addElement($this->getPageTitlePart(" " . $this->Data['personel']->getTableTitle() . " ها"));
 
 
         if($this->getMessage()!="")
@@ -131,9 +131,9 @@ class managepersonels_Design extends FormDesign {
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('shift',$this->itemViewPage);
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$lbView[$i]=new Lable('مشاهده');
-			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
-			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
+			$lbView[$i]=new Lable('اصلاح');
+			$lnkView[$i]=new link($url->getAbsoluteURL(),$lbView[$i]);
+			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-pencil');
 			$lnkView[$i]->setClass('btn btn-primary');
 			$delurl=new AppRooter('shift',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));

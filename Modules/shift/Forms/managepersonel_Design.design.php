@@ -42,30 +42,31 @@ class managepersonel_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("formtable");
+        $LTable1->addElement($this->getFieldRowCode($this->name,$this->getFieldCaption('name'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->family,$this->getFieldCaption('family'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->mellicode,$this->getFieldCaption('mellicode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->eshteghal_fid,$this->getFieldCaption('eshteghal_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->is_married,$this->getFieldCaption('is_married'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->is_male,$this->getFieldCaption('is_male'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->sanavat,$this->getFieldCaption('sanavat'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->madrak_fid,$this->getFieldCaption('madrak_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+
 //		$LTable1->addElement($this->getFieldRowCode($this->childcount,$this->getFieldCaption('childcount'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->address,$this->getFieldCaption('address'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->fathername,$this->getFieldCaption('fathername'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->employment_date,$this->getFieldCaption('employment_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->personelcode,$this->getFieldCaption('personelcode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sanavat,$this->getFieldCaption('sanavat'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->shhesab,$this->getFieldCaption('shhesab'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->bakhsh_fid,$this->getFieldCaption('bakhsh_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->madrak_fid,$this->getFieldCaption('madrak_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->name,$this->getFieldCaption('name'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->family,$this->getFieldCaption('family'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->tel,$this->getFieldCaption('tel'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->born_date,$this->getFieldCaption('born_date'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->is_male,$this->getFieldCaption('is_male'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->extrasanavat,$this->getFieldCaption('extrasanavat'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->monthsanavat,$this->getFieldCaption('monthsanavat'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->eshteghal_fid,$this->getFieldCaption('eshteghal_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->zarib,$this->getFieldCaption('zarib'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->role_fid,$this->getFieldCaption('role_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->shsh,$this->getFieldCaption('shsh'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->computercode,$this->getFieldCaption('computercode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->mellicode,$this->getFieldCaption('mellicode'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->is_married,$this->getFieldCaption('is_married'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -80,14 +81,14 @@ class managepersonel_Design extends FormDesign {
 			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['madrak_fid'] as $item)
 			$this->madrak_fid->addOption($item->getID(), $item->getTitleField());
-			$this->is_male->addOption(1,'بله');
-			$this->is_male->addOption(0,'خیر');
+			$this->is_male->addOption(1,'مرد');
+			$this->is_male->addOption(0,'زن');
 		foreach ($this->Data['eshteghal_fid'] as $item)
 			$this->eshteghal_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['role_fid'] as $item)
 			$this->role_fid->addOption($item->getID(), $item->getTitleField());
-			$this->is_married->addOption(1,'بله');
-			$this->is_married->addOption(0,'خیر');
+			$this->is_married->addOption(1,'متاهل');
+			$this->is_married->addOption(0,'مجرد');
 		if (key_exists("personel", $this->Data)){
 
 			/******** childcount ********/
@@ -245,7 +246,8 @@ class managepersonel_Design extends FormDesign {
 
 		/******* bakhsh_fid *******/
 		$this->bakhsh_fid= new combobox("bakhsh_fid");
-		$this->bakhsh_fid->setClass("form-control");
+        $this->bakhsh_fid->setClass("form-control selectpicker");
+        $this->bakhsh_fid->SetAttribute("data-live-search",true);
 
 		/******* madrak_fid *******/
 		$this->madrak_fid= new combobox("madrak_fid");
@@ -289,7 +291,8 @@ class managepersonel_Design extends FormDesign {
 
 		/******* role_fid *******/
 		$this->role_fid= new combobox("role_fid");
-		$this->role_fid->setClass("form-control");
+        $this->role_fid->setClass("form-control selectpicker");
+        $this->role_fid->SetAttribute("data-live-search",true);
 
 		/******* shsh *******/
 		$this->shsh= new textbox("shsh");

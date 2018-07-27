@@ -62,7 +62,7 @@ class manageshift_Design extends FormDesign {
 		foreach ($this->Data['shifttype_fid'] as $item)
 			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
 		foreach ($this->Data['personel_fid'] as $item)
-			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getPersonelCode());
+			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getMelliCode());
 		if (key_exists("shift", $this->Data)){
 
 			/******** shifttype_fid ********/
@@ -95,7 +95,8 @@ class manageshift_Design extends FormDesign {
 
 		/******* personel_fid *******/
 		$this->personel_fid= new combobox("personel_fid");
-		$this->personel_fid->setClass("form-control");
+        $this->personel_fid->setClass("form-control selectpicker");
+        $this->personel_fid->SetAttribute("data-live-search",true);
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");

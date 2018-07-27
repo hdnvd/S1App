@@ -186,15 +186,18 @@ class shiftlistsearch_Design extends FormDesign {
 
 		/******* personel_fid *******/
 		$this->personel_fid= new combobox("personel_fid");
-		$this->personel_fid->setClass("form-control");
+        $this->personel_fid->setClass("form-control selectpicker");
+        $this->personel_fid->SetAttribute("data-live-search",true);
 
 		/******* bakhsh_fid *******/
 		$this->bakhsh_fid= new combobox("bakhsh_fid");
-		$this->bakhsh_fid->setClass("form-control");
+        $this->bakhsh_fid->setClass("form-control selectpicker");
+        $this->bakhsh_fid->SetAttribute("data-live-search",true);
 
 		/******* role_fid *******/
 		$this->role_fid= new combobox("role_fid");
-		$this->role_fid->setClass("form-control");
+        $this->role_fid->setClass("form-control selectpicker");
+        $this->role_fid->SetAttribute("data-live-search",true);
 
 		/******* inputfile_fid *******/
 		$this->inputfile_fid= new combobox("inputfile_fid");
@@ -280,7 +283,7 @@ class shiftlistsearch_Design extends FormDesign {
 			$this->shifttype_fid->addOption($item->getID(), $item->getTitleField());
 			$this->personel_fid->addOption("", "همه");
 		foreach ($this->Data['personel_fid'] as $item)
-			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getId());
+			$this->personel_fid->addOption($item->getID(), $item->getName() . " " . $item->getFamily() . " : " . $item->getMellicode());
 //			$this->bakhsh_fid->addOption("", "همه");
 		foreach ($this->Data['bakhsh_fid'] as $item)
 			$this->bakhsh_fid->addOption($item->getID(), $item->getTitleField());
