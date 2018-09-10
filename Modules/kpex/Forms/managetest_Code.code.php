@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-03-24 - 2018-06-14 03:29
-*@lastUpdate 1397-03-24 - 2018-06-14 03:29
+*@creationDate 1397-06-17 - 2018-09-08 05:13
+*@lastUpdate 1397-06-17 - 2018-09-08 05:13
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -81,13 +81,20 @@ class managetest_Code extends FormCode {
 		$nounoutinfluence=$design->getNounoutinfluence()->getValue();
 		$adjectiveinfluence=$design->getAdjectiveinfluence()->getValue();
 		$adjectiveoutinfluence=$design->getAdjectiveoutinfluence()->getValue();
+		$similarity_threshold=$design->getSimilarity_threshold()->getValue();
+		$similarity_influence=$design->getSimilarity_influence()->getValue();
 		$resultcount=$design->getResultcount()->getValue();
 		$context_fid_ID=$design->getContext_fid()->getSelectedID();
 		$description=$design->getDescription()->getValue();
 		$words=$design->getWords()->getValue();
 		$is_postaged_ID=$design->getIs_postaged()->getSelectedID();
+		$is_similarityedgeweighed_ID=$design->getIs_similarityedgeweighed()->getSelectedID();
 		$method_fid_ID=$design->getMethod_fid()->getSelectedID();
-		$Result=$managetestController->BtnSave($this->getID(),$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$resultcount,$context_fid_ID,$description,$words,$is_postaged_ID,$method_fid_ID);
+		$apprate=$design->getApprate()->getValue();
+		$precisionrate=$design->getPrecisionrate()->getValue();
+		$recall=$design->getRecall()->getValue();
+		$fscore=$design->getFscore()->getValue();
+		$Result=$managetestController->BtnSave($this->getID(),$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$similarity_threshold,$similarity_influence,$resultcount,$context_fid_ID,$description,$words,$is_postaged_ID,$is_similarityedgeweighed_ID,$method_fid_ID,$apprate,$precisionrate,$recall,$fscore);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

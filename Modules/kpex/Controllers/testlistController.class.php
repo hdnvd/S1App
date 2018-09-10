@@ -19,7 +19,7 @@ use Modules\kpex\Entity\kpex_testEntity;
 *@SweetFrameworkVersion 2.004
 */
 class testlistController extends Controller {
-	private $PAGESIZE=10;
+	private $PAGESIZE=30;
 	public function getData($PageNum,QueryLogic $QueryLogic)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();

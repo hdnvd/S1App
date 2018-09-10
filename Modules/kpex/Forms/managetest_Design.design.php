@@ -1,6 +1,5 @@
 <?php
 namespace Modules\kpex\Forms;
-use core\CoreClasses\html\TextArea;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -26,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-03-24 - 2018-06-14 03:29
-*@lastUpdate 1397-03-24 - 2018-06-14 03:29
+*@creationDate 1397-06-17 - 2018-09-08 05:13
+*@lastUpdate 1397-06-17 - 2018-09-08 05:13
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -47,12 +46,19 @@ class managetest_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->nounoutinfluence,$this->getFieldCaption('nounoutinfluence'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->adjectiveinfluence,$this->getFieldCaption('adjectiveinfluence'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->adjectiveoutinfluence,$this->getFieldCaption('adjectiveoutinfluence'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->similarity_threshold,$this->getFieldCaption('similarity_threshold'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->similarity_influence,$this->getFieldCaption('similarity_influence'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->resultcount,$this->getFieldCaption('resultcount'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->context_fid,$this->getFieldCaption('context_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->words,$this->getFieldCaption('words'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->is_postaged,$this->getFieldCaption('is_postaged'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->is_similarityedgeweighed,$this->getFieldCaption('is_similarityedgeweighed'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->method_fid,$this->getFieldCaption('method_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->apprate,$this->getFieldCaption('apprate'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->precisionrate,$this->getFieldCaption('precisionrate'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->recall,$this->getFieldCaption('recall'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->fscore,$this->getFieldCaption('fscore'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -63,48 +69,47 @@ class managetest_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
-        $this->nouninfluence->setValue("1");
-        $this->nounoutinfluence->setValue(0.8);
-        $this->adjectiveinfluence->setValue(1);
-        $this->adjectiveoutinfluence->setValue(0.9);
-        $this->resultcount->setValue(50);
-
-
-
-
-        foreach ($this->Data['context_fid'] as $item)
+		foreach ($this->Data['context_fid'] as $item)
 			$this->context_fid->addOption($item->getID(), $item->getTitleField());
 			$this->is_postaged->addOption(1,'بله');
 			$this->is_postaged->addOption(0,'خیر');
+			$this->is_similarityedgeweighed->addOption(1,'بله');
+			$this->is_similarityedgeweighed->addOption(0,'خیر');
 		foreach ($this->Data['method_fid'] as $item)
 			$this->method_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("test", $this->Data)){
+
 			/******** nouninfluence ********/
-			if($this->Data['test']->getNouninfluence()!="")
 			$this->nouninfluence->setValue($this->Data['test']->getNouninfluence());
 			$this->setFieldCaption('nouninfluence',$this->Data['test']->getFieldInfo('nouninfluence')->getTitle());
 			$this->nouninfluence->setFieldInfo($this->Data['test']->getFieldInfo('nouninfluence'));
 
 			/******** nounoutinfluence ********/
-            if($this->Data['test']->getNounoutinfluence()!="")
 			$this->nounoutinfluence->setValue($this->Data['test']->getNounoutinfluence());
 			$this->setFieldCaption('nounoutinfluence',$this->Data['test']->getFieldInfo('nounoutinfluence')->getTitle());
 			$this->nounoutinfluence->setFieldInfo($this->Data['test']->getFieldInfo('nounoutinfluence'));
 
 			/******** adjectiveinfluence ********/
-            if($this->Data['test']->getAdjectiveinfluence()!="")
 			$this->adjectiveinfluence->setValue($this->Data['test']->getAdjectiveinfluence());
 			$this->setFieldCaption('adjectiveinfluence',$this->Data['test']->getFieldInfo('adjectiveinfluence')->getTitle());
 			$this->adjectiveinfluence->setFieldInfo($this->Data['test']->getFieldInfo('adjectiveinfluence'));
 
 			/******** adjectiveoutinfluence ********/
-            if($this->Data['test']->getAdjectiveoutinfluence()!="")
 			$this->adjectiveoutinfluence->setValue($this->Data['test']->getAdjectiveoutinfluence());
 			$this->setFieldCaption('adjectiveoutinfluence',$this->Data['test']->getFieldInfo('adjectiveoutinfluence')->getTitle());
 			$this->adjectiveoutinfluence->setFieldInfo($this->Data['test']->getFieldInfo('adjectiveoutinfluence'));
 
+			/******** similarity_threshold ********/
+			$this->similarity_threshold->setValue($this->Data['test']->getSimilarity_threshold());
+			$this->setFieldCaption('similarity_threshold',$this->Data['test']->getFieldInfo('similarity_threshold')->getTitle());
+			$this->similarity_threshold->setFieldInfo($this->Data['test']->getFieldInfo('similarity_threshold'));
+
+			/******** similarity_influence ********/
+			$this->similarity_influence->setValue($this->Data['test']->getSimilarity_influence());
+			$this->setFieldCaption('similarity_influence',$this->Data['test']->getFieldInfo('similarity_influence')->getTitle());
+			$this->similarity_influence->setFieldInfo($this->Data['test']->getFieldInfo('similarity_influence'));
+
 			/******** resultcount ********/
-            if($this->Data['test']->getResultcount()!="")
 			$this->resultcount->setValue($this->Data['test']->getResultcount());
 			$this->setFieldCaption('resultcount',$this->Data['test']->getFieldInfo('resultcount')->getTitle());
 			$this->resultcount->setFieldInfo($this->Data['test']->getFieldInfo('resultcount'));
@@ -121,18 +126,55 @@ class managetest_Design extends FormDesign {
 			/******** words ********/
 			$this->words->setValue($this->Data['test']->getWords());
 			$this->setFieldCaption('words',$this->Data['test']->getFieldInfo('words')->getTitle());
-//			$this->words->setFieldInfo($this->Data['test']->getFieldInfo('words'));
+			$this->words->setFieldInfo($this->Data['test']->getFieldInfo('words'));
 
 			/******** is_postaged ********/
 			$this->is_postaged->setSelectedValue($this->Data['test']->getIs_postaged());
 			$this->setFieldCaption('is_postaged',$this->Data['test']->getFieldInfo('is_postaged')->getTitle());
 
+			/******** is_similarityedgeweighed ********/
+			$this->is_similarityedgeweighed->setSelectedValue($this->Data['test']->getIs_similarityedgeweighed());
+			$this->setFieldCaption('is_similarityedgeweighed',$this->Data['test']->getFieldInfo('is_similarityedgeweighed')->getTitle());
+
 			/******** method_fid ********/
 			$this->method_fid->setSelectedValue($this->Data['test']->getMethod_fid());
 			$this->setFieldCaption('method_fid',$this->Data['test']->getFieldInfo('method_fid')->getTitle());
 
+			/******** apprate ********/
+			$this->apprate->setValue($this->Data['test']->getApprate());
+			$this->setFieldCaption('apprate',$this->Data['test']->getFieldInfo('apprate')->getTitle());
+			$this->apprate->setFieldInfo($this->Data['test']->getFieldInfo('apprate'));
+
+			/******** precisionrate ********/
+			$this->precisionrate->setValue($this->Data['test']->getPrecisionrate());
+			$this->setFieldCaption('precisionrate',$this->Data['test']->getFieldInfo('precisionrate')->getTitle());
+			$this->precisionrate->setFieldInfo($this->Data['test']->getFieldInfo('precisionrate'));
+
+			/******** recall ********/
+			$this->recall->setValue($this->Data['test']->getRecall());
+			$this->setFieldCaption('recall',$this->Data['test']->getFieldInfo('recall')->getTitle());
+			$this->recall->setFieldInfo($this->Data['test']->getFieldInfo('recall'));
+
+			/******** fscore ********/
+			$this->fscore->setValue($this->Data['test']->getFscore());
+			$this->setFieldCaption('fscore',$this->Data['test']->getFieldInfo('fscore')->getTitle());
+			$this->fscore->setFieldInfo($this->Data['test']->getFieldInfo('fscore'));
+
 			/******** btnSave ********/
 		}
+
+        if($this->Data['test']->getNouninfluence()=="")
+        {
+
+            $this->nouninfluence->setValue("1");
+            $this->nounoutinfluence->setValue("1");
+            $this->adjectiveinfluence->setValue("1");
+            $this->adjectiveoutinfluence->setValue("1");
+            $this->similarity_threshold->setValue("1000");
+            $this->similarity_influence->setValue("0");
+            $this->resultcount->setValue("10");
+            $this->apprate->setValue("0");
+        }
 	}
 	public function __construct()
 	{
@@ -154,6 +196,14 @@ class managetest_Design extends FormDesign {
 		$this->adjectiveoutinfluence= new textbox("adjectiveoutinfluence");
 		$this->adjectiveoutinfluence->setClass("form-control");
 
+		/******* similarity_threshold *******/
+		$this->similarity_threshold= new textbox("similarity_threshold");
+		$this->similarity_threshold->setClass("form-control");
+
+		/******* similarity_influence *******/
+		$this->similarity_influence= new textbox("similarity_influence");
+		$this->similarity_influence->setClass("form-control");
+
 		/******* resultcount *******/
 		$this->resultcount= new textbox("resultcount");
 		$this->resultcount->setClass("form-control");
@@ -168,17 +218,37 @@ class managetest_Design extends FormDesign {
 		$this->description->setClass("form-control");
 
 		/******* words *******/
-		$this->words= new TextArea("words");
+		$this->words= new textbox("words");
 		$this->words->setClass("form-control");
 
 		/******* is_postaged *******/
 		$this->is_postaged= new combobox("is_postaged");
 		$this->is_postaged->setClass("form-control selectpicker");
 
+		/******* is_similarityedgeweighed *******/
+		$this->is_similarityedgeweighed= new combobox("is_similarityedgeweighed");
+		$this->is_similarityedgeweighed->setClass("form-control selectpicker");
+
 		/******* method_fid *******/
 		$this->method_fid= new combobox("method_fid");
 		$this->method_fid->setClass("form-control selectpicker");
 		$this->method_fid->SetAttribute("data-live-search",true);
+
+		/******* apprate *******/
+		$this->apprate= new textbox("apprate");
+		$this->apprate->setClass("form-control");
+
+		/******* precisionrate *******/
+		$this->precisionrate= new textbox("precisionrate");
+		$this->precisionrate->setClass("form-control");
+
+		/******* recall *******/
+		$this->recall= new textbox("recall");
+		$this->recall->setClass("form-control");
+
+		/******* fscore *******/
+		$this->fscore= new textbox("fscore");
+		$this->fscore->setClass("form-control");
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
@@ -243,6 +313,24 @@ class managetest_Design extends FormDesign {
 		return $this->adjectiveoutinfluence;
 	}
 	/** @var textbox */
+	private $similarity_threshold;
+	/**
+	 * @return textbox
+	 */
+	public function getSimilarity_threshold()
+	{
+		return $this->similarity_threshold;
+	}
+	/** @var textbox */
+	private $similarity_influence;
+	/**
+	 * @return textbox
+	 */
+	public function getSimilarity_influence()
+	{
+		return $this->similarity_influence;
+	}
+	/** @var textbox */
 	private $resultcount;
 	/**
 	 * @return textbox
@@ -269,10 +357,10 @@ class managetest_Design extends FormDesign {
 	{
 		return $this->description;
 	}
-	/** @var TextArea */
+	/** @var textbox */
 	private $words;
 	/**
-	 * @return TextArea
+	 * @return textbox
 	 */
 	public function getWords()
 	{
@@ -288,6 +376,15 @@ class managetest_Design extends FormDesign {
 		return $this->is_postaged;
 	}
 	/** @var combobox */
+	private $is_similarityedgeweighed;
+	/**
+	 * @return combobox
+	 */
+	public function getIs_similarityedgeweighed()
+	{
+		return $this->is_similarityedgeweighed;
+	}
+	/** @var combobox */
 	private $method_fid;
 	/**
 	 * @return combobox
@@ -295,6 +392,42 @@ class managetest_Design extends FormDesign {
 	public function getMethod_fid()
 	{
 		return $this->method_fid;
+	}
+	/** @var textbox */
+	private $apprate;
+	/**
+	 * @return textbox
+	 */
+	public function getApprate()
+	{
+		return $this->apprate;
+	}
+	/** @var textbox */
+	private $precisionrate;
+	/**
+	 * @return textbox
+	 */
+	public function getPrecisionrate()
+	{
+		return $this->precisionrate;
+	}
+	/** @var textbox */
+	private $recall;
+	/**
+	 * @return textbox
+	 */
+	public function getRecall()
+	{
+		return $this->recall;
+	}
+	/** @var textbox */
+	private $fscore;
+	/**
+	 * @return textbox
+	 */
+	public function getFscore()
+	{
+		return $this->fscore;
 	}
 	/** @var SweetButton */
 	private $btnSave;

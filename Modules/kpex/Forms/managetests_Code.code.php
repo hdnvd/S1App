@@ -35,15 +35,21 @@ class managetests_Code extends testlist_Code {
 				$Result=$managetestsController->DeleteItem($this->getID());
 			}
             elseif(isset($_GET['run'])){
-                $Result=$managetestsController->Run($this->getID());
+                $Result=$managetestsController->Run($this->getID(),$this->getHttpGETparameter('pn',-1));
             }
 			elseif(isset($_GET['action']) && $_GET['action']=="search_Click"){
 				$this->setSearchForm($design);
 				return $this->search_Click();
-			}else{
+
+			}elseif(isset($_GET['hulth'])){
+
+                $Result=$managetestsController->makeHulthCSV($this->getHttpGETparameter('pn',-1));
+            }
+			else{
 				$Result=$managetestsController->load($this->getHttpGETparameter('pn',-1));
 				if(isset($_GET['search']))
 					$design=new testlistsearch_Design();
+
 			}
 			$design->setData($Result);
 			$design->setMessage("");

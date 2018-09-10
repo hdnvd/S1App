@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-03-29 - 2018-06-19 14:15
-*@lastUpdate 1397-03-29 - 2018-06-19 14:15
+*@creationDate 1397-06-17 - 2018-09-08 05:12
+*@lastUpdate 1397-06-17 - 2018-09-08 05:12
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -17,7 +17,7 @@ class kpex_testEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("kpex_test");
-		$this->setTableTitle("تست");
+		$this->setTableTitle("kpex_test");
 		$this->setTitleFieldName("id");
 
 		/******** created_at ********/
@@ -56,47 +56,83 @@ class kpex_testEntity extends EntityClass {
 		$this->setFieldInfo(kpex_testEntity::$ADJECTIVEOUTINFLUENCE,$AdjectiveoutinfluenceInfo);
 		$this->addTableField('6',kpex_testEntity::$ADJECTIVEOUTINFLUENCE);
 
+		/******** similarity_threshold ********/
+		$Similarity_thresholdInfo=new FieldInfo();
+		$Similarity_thresholdInfo->setTitle("similarity_threshold");
+		$this->setFieldInfo(kpex_testEntity::$SIMILARITY_THRESHOLD,$Similarity_thresholdInfo);
+		$this->addTableField('7',kpex_testEntity::$SIMILARITY_THRESHOLD);
+
+		/******** similarity_influence ********/
+		$Similarity_influenceInfo=new FieldInfo();
+		$Similarity_influenceInfo->setTitle("similarity_influence");
+		$this->setFieldInfo(kpex_testEntity::$SIMILARITY_INFLUENCE,$Similarity_influenceInfo);
+		$this->addTableField('8',kpex_testEntity::$SIMILARITY_INFLUENCE);
+
 		/******** resultcount ********/
 		$ResultcountInfo=new FieldInfo();
 		$ResultcountInfo->setTitle("resultcount");
 		$this->setFieldInfo(kpex_testEntity::$RESULTCOUNT,$ResultcountInfo);
-		$this->addTableField('7',kpex_testEntity::$RESULTCOUNT);
+		$this->addTableField('9',kpex_testEntity::$RESULTCOUNT);
 
 		/******** context_fid ********/
 		$Context_fidInfo=new FieldInfo();
 		$Context_fidInfo->setTitle("context_fid");
 		$this->setFieldInfo(kpex_testEntity::$CONTEXT_FID,$Context_fidInfo);
-		$this->addTableField('8',kpex_testEntity::$CONTEXT_FID);
+		$this->addTableField('10',kpex_testEntity::$CONTEXT_FID);
 
 		/******** description ********/
 		$DescriptionInfo=new FieldInfo();
 		$DescriptionInfo->setTitle("توضیحات");
 		$this->setFieldInfo(kpex_testEntity::$DESCRIPTION,$DescriptionInfo);
-		$this->addTableField('9',kpex_testEntity::$DESCRIPTION);
+		$this->addTableField('11',kpex_testEntity::$DESCRIPTION);
 
 		/******** words ********/
 		$WordsInfo=new FieldInfo();
 		$WordsInfo->setTitle("کلمات");
 		$this->setFieldInfo(kpex_testEntity::$WORDS,$WordsInfo);
-		$this->addTableField('10',kpex_testEntity::$WORDS);
+		$this->addTableField('12',kpex_testEntity::$WORDS);
 
 		/******** is_postaged ********/
 		$Is_postagedInfo=new FieldInfo();
 		$Is_postagedInfo->setTitle("is_postaged");
 		$this->setFieldInfo(kpex_testEntity::$IS_POSTAGED,$Is_postagedInfo);
-		$this->addTableField('11',kpex_testEntity::$IS_POSTAGED);
+		$this->addTableField('13',kpex_testEntity::$IS_POSTAGED);
+
+		/******** is_similarityedgeweighed ********/
+		$Is_similarityedgeweighedInfo=new FieldInfo();
+		$Is_similarityedgeweighedInfo->setTitle("is_similarityedgeweighed");
+		$this->setFieldInfo(kpex_testEntity::$IS_SIMILARITYEDGEWEIGHED,$Is_similarityedgeweighedInfo);
+		$this->addTableField('14',kpex_testEntity::$IS_SIMILARITYEDGEWEIGHED);
 
 		/******** method_fid ********/
 		$Method_fidInfo=new FieldInfo();
 		$Method_fidInfo->setTitle("method_fid");
 		$this->setFieldInfo(kpex_testEntity::$METHOD_FID,$Method_fidInfo);
-		$this->addTableField('12',kpex_testEntity::$METHOD_FID);
+		$this->addTableField('15',kpex_testEntity::$METHOD_FID);
 
 		/******** apprate ********/
 		$ApprateInfo=new FieldInfo();
-		$ApprateInfo->setTitle("امتیاز نرم افزار");
+		$ApprateInfo->setTitle("apprate");
 		$this->setFieldInfo(kpex_testEntity::$APPRATE,$ApprateInfo);
-		$this->addTableField('13',kpex_testEntity::$APPRATE);
+		$this->addTableField('16',kpex_testEntity::$APPRATE);
+
+		/******** precisionrate ********/
+		$PrecisionrateInfo=new FieldInfo();
+		$PrecisionrateInfo->setTitle("precisionrate");
+		$this->setFieldInfo(kpex_testEntity::$PRECISIONRATE,$PrecisionrateInfo);
+		$this->addTableField('17',kpex_testEntity::$PRECISIONRATE);
+
+		/******** recall ********/
+		$RecallInfo=new FieldInfo();
+		$RecallInfo->setTitle("recall");
+		$this->setFieldInfo(kpex_testEntity::$RECALL,$RecallInfo);
+		$this->addTableField('18',kpex_testEntity::$RECALL);
+
+		/******** fscore ********/
+		$FscoreInfo=new FieldInfo();
+		$FscoreInfo->setTitle("fscore");
+		$this->setFieldInfo(kpex_testEntity::$FSCORE,$FscoreInfo);
+		$this->addTableField('19',kpex_testEntity::$FSCORE);
 	}
 	public static $CREATED_AT="created_at";
 	/**
@@ -176,6 +212,32 @@ class kpex_testEntity extends EntityClass {
 	public function setAdjectiveoutinfluence($Adjectiveoutinfluence){
 		$this->setField(kpex_testEntity::$ADJECTIVEOUTINFLUENCE,$Adjectiveoutinfluence);
 	}
+	public static $SIMILARITY_THRESHOLD="similarity_threshold";
+	/**
+	 * @return mixed
+	 */
+	public function getSimilarity_threshold(){
+		return $this->getField(kpex_testEntity::$SIMILARITY_THRESHOLD);
+	}
+	/**
+	 * @param mixed $Similarity_threshold
+	 */
+	public function setSimilarity_threshold($Similarity_threshold){
+		$this->setField(kpex_testEntity::$SIMILARITY_THRESHOLD,$Similarity_threshold);
+	}
+	public static $SIMILARITY_INFLUENCE="similarity_influence";
+	/**
+	 * @return mixed
+	 */
+	public function getSimilarity_influence(){
+		return $this->getField(kpex_testEntity::$SIMILARITY_INFLUENCE);
+	}
+	/**
+	 * @param mixed $Similarity_influence
+	 */
+	public function setSimilarity_influence($Similarity_influence){
+		$this->setField(kpex_testEntity::$SIMILARITY_INFLUENCE,$Similarity_influence);
+	}
 	public static $RESULTCOUNT="resultcount";
 	/**
 	 * @return mixed
@@ -241,6 +303,19 @@ class kpex_testEntity extends EntityClass {
 	public function setIs_postaged($Is_postaged){
 		$this->setField(kpex_testEntity::$IS_POSTAGED,$Is_postaged);
 	}
+	public static $IS_SIMILARITYEDGEWEIGHED="is_similarityedgeweighed";
+	/**
+	 * @return mixed
+	 */
+	public function getIs_similarityedgeweighed(){
+		return $this->getField(kpex_testEntity::$IS_SIMILARITYEDGEWEIGHED);
+	}
+	/**
+	 * @param mixed $Is_similarityedgeweighed
+	 */
+	public function setIs_similarityedgeweighed($Is_similarityedgeweighed){
+		$this->setField(kpex_testEntity::$IS_SIMILARITYEDGEWEIGHED,$Is_similarityedgeweighed);
+	}
 	public static $METHOD_FID="method_fid";
 	/**
 	 * @return mixed
@@ -266,6 +341,45 @@ class kpex_testEntity extends EntityClass {
 	 */
 	public function setApprate($Apprate){
 		$this->setField(kpex_testEntity::$APPRATE,$Apprate);
+	}
+	public static $PRECISIONRATE="precisionrate";
+	/**
+	 * @return mixed
+	 */
+	public function getPrecisionrate(){
+		return $this->getField(kpex_testEntity::$PRECISIONRATE);
+	}
+	/**
+	 * @param mixed $Precisionrate
+	 */
+	public function setPrecisionrate($Precisionrate){
+		$this->setField(kpex_testEntity::$PRECISIONRATE,$Precisionrate);
+	}
+	public static $RECALL="recall";
+	/**
+	 * @return mixed
+	 */
+	public function getRecall(){
+		return $this->getField(kpex_testEntity::$RECALL);
+	}
+	/**
+	 * @param mixed $Recall
+	 */
+	public function setRecall($Recall){
+		$this->setField(kpex_testEntity::$RECALL,$Recall);
+	}
+	public static $FSCORE="fscore";
+	/**
+	 * @return mixed
+	 */
+	public function getFscore(){
+		return $this->getField(kpex_testEntity::$FSCORE);
+	}
+	/**
+	 * @param mixed $Fscore
+	 */
+	public function setFscore($Fscore){
+		$this->setField(kpex_testEntity::$FSCORE,$Fscore);
 	}
 }
 ?>
