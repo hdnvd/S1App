@@ -1,5 +1,6 @@
 <?php
 namespace Modules\kpex\Entity;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\EntityClass;
 use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
@@ -7,17 +8,33 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-06-17 - 2018-09-08 05:12
-*@lastUpdate 1397-06-17 - 2018-09-08 05:12
+*@creationDate 1397-06-19 - 2018-09-10 10:43
+*@lastUpdate 1397-06-19 - 2018-09-10 10:43
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
 class kpex_testEntity extends EntityClass {
+    /**
+     * @param QueryLogic $QueryObject
+     * @return EntityClass[]
+     */
+    public function getAverageRates(QueryLogic $QueryObject)
+    {
+        $resFields="*";
+        $SelectQuery=$this->getDatabase()->Select(["AVG(apprate) as apprate","AVG(precisionrate) as precisionrate","AVG(recall) as recall","AVG(fscore) as fscore"])->From($this->getTableName())->Where()->Smaller("deletetime", "1");
+        $this->setSelectQuery($SelectQuery);
+        $this->fillSelectParams($QueryObject);
+
+//        echo $this->getSelectQuery()->getQueryString() . "\n<br>";
+//        die();
+        $results= $this->getSelectQuery()->ExecuteAssociated();
+        return $results;
+    }
 	public function __construct(dbaccess $DBAccessor)
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("kpex_test");
-		$this->setTableTitle("kpex_test");
+		$this->setTableTitle("تست");
 		$this->setTitleFieldName("id");
 
 		/******** created_at ********/
@@ -133,6 +150,18 @@ class kpex_testEntity extends EntityClass {
 		$FscoreInfo->setTitle("fscore");
 		$this->setFieldInfo(kpex_testEntity::$FSCORE,$FscoreInfo);
 		$this->addTableField('19',kpex_testEntity::$FSCORE);
+
+		/******** start_time ********/
+		$Start_timeInfo=new FieldInfo();
+		$Start_timeInfo->setTitle("start_time");
+		$this->setFieldInfo(kpex_testEntity::$START_TIME,$Start_timeInfo);
+		$this->addTableField('20',kpex_testEntity::$START_TIME);
+
+		/******** end_time ********/
+		$End_timeInfo=new FieldInfo();
+		$End_timeInfo->setTitle("end_time");
+		$this->setFieldInfo(kpex_testEntity::$END_TIME,$End_timeInfo);
+		$this->addTableField('21',kpex_testEntity::$END_TIME);
 	}
 	public static $CREATED_AT="created_at";
 	/**
@@ -380,6 +409,32 @@ class kpex_testEntity extends EntityClass {
 	 */
 	public function setFscore($Fscore){
 		$this->setField(kpex_testEntity::$FSCORE,$Fscore);
+	}
+	public static $START_TIME="start_time";
+	/**
+	 * @return mixed
+	 */
+	public function getStart_time(){
+		return $this->getField(kpex_testEntity::$START_TIME);
+	}
+	/**
+	 * @param mixed $Start_time
+	 */
+	public function setStart_time($Start_time){
+		$this->setField(kpex_testEntity::$START_TIME,$Start_time);
+	}
+	public static $END_TIME="end_time";
+	/**
+	 * @return mixed
+	 */
+	public function getEnd_time(){
+		return $this->getField(kpex_testEntity::$END_TIME);
+	}
+	/**
+	 * @param mixed $End_time
+	 */
+	public function setEnd_time($End_time){
+		$this->setField(kpex_testEntity::$END_TIME,$End_time);
 	}
 }
 ?>

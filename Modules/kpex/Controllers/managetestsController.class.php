@@ -52,7 +52,7 @@ class managetestsController extends testlistController {
                 $Text=fread($textFile,filesize($textFileName));
 //                echo "1:\n" . $Text;
                 $Text=str_replace("\n	"," ",$Text);
-                $Text=strtolower($Text);
+//                $Text=strtolower($Text);
 //                echo "2:\n" . $Text;
                 $Text=explode("\n",$Text);
                 $Title=$Text[0];
@@ -112,6 +112,7 @@ class managetestsController extends testlistController {
         set_time_limit( 0 );
 //        echo exec('whoami');
 //        $ShellResult="";
+        $StartTime=time();
         $ShellResult=(shell_exec("bash /home/hduser/env.sh $ID 2>&1"));
         $ShellResult=str_replace("\n","<br>",$ShellResult);
         $KeywordsFilePath=DEFAULT_PUBLICPATH.'/content/files/kpex/results/keywords'.$ID.".txt";
@@ -124,10 +125,14 @@ class managetestsController extends testlistController {
 //        $testEnt->setApprate(substr($RateStr[0],5));
         try
         {
+
+            $EndTime=time();
         $testEnt->setApprate($RateStr[2]);
         $testEnt->setPrecisionrate($PrecisionStr[2]);
         $testEnt->setRecall($RecallStr[2]);
         $testEnt->setFscore($FScoreStr[2]);
+        $testEnt->setStart_time($StartTime);
+        $testEnt->setEnd_time($EndTime);
         $KeywordsStr=$Keywords[17];
         for($i=18;$i<count($Keywords);$i++)
         {
@@ -140,6 +145,7 @@ class managetestsController extends testlistController {
         {
             echo "Can't Update Score";
         }
+
         $DBAccessor->close_connection();
         $Result= $this->load($PageNum);
         $Result['shellscript']=$ShellResult;

@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-03-24 - 2018-06-14 03:29
-*@lastUpdate 1397-03-24 - 2018-06-14 03:29
+*@creationDate 1397-06-19 - 2018-09-10 10:26
+*@lastUpdate 1397-06-19 - 2018-09-10 10:26
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -89,15 +89,24 @@ class testlist_Code extends FormCode {
 		$nounoutinfluence=$this->getHttpGETparameter('nounoutinfluence','');
 		$adjectiveinfluence=$this->getHttpGETparameter('adjectiveinfluence','');
 		$adjectiveoutinfluence=$this->getHttpGETparameter('adjectiveoutinfluence','');
+		$similarity_threshold=$this->getHttpGETparameter('similarity_threshold','');
+		$similarity_influence=$this->getHttpGETparameter('similarity_influence','');
 		$resultcount=$this->getHttpGETparameter('resultcount','');
 		$context_fid_ID=$this->getHttpGETparameter('context_fid','');
 		$description=$this->getHttpGETparameter('description','');
 		$words=$this->getHttpGETparameter('words','');
 		$is_postaged_ID=$this->getHttpGETparameter('is_postaged','');
+		$is_similarityedgeweighed_ID=$this->getHttpGETparameter('is_similarityedgeweighed','');
 		$method_fid_ID=$this->getHttpGETparameter('method_fid','');
+		$apprate=$this->getHttpGETparameter('apprate','');
+		$precisionrate=$this->getHttpGETparameter('precisionrate','');
+		$recall=$this->getHttpGETparameter('recall','');
+		$fscore=$this->getHttpGETparameter('fscore','');
+		$idfrom=$this->getHttpGETparameter('idfrom','');
+		$idto=$this->getHttpGETparameter('idto','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$testlistController->Search($this->getHttpGETparameter('pn',-1),$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$resultcount,$context_fid_ID,$description,$words,$is_postaged_ID,$method_fid_ID,$sortby_ID,$isdesc_ID);
+		$Result=$testlistController->Search($this->getHttpGETparameter('pn',-1),$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$similarity_threshold,$similarity_influence,$resultcount,$context_fid_ID,$description,$words,$is_postaged_ID,$is_similarityedgeweighed_ID,$method_fid_ID,$apprate,$precisionrate,$recall,$fscore,$idfrom,$idto,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

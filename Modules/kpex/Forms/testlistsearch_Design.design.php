@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-03-24 - 2018-06-14 03:29
-*@lastUpdate 1397-03-24 - 2018-06-14 03:29
+*@creationDate 1397-06-19 - 2018-09-10 10:22
+*@lastUpdate 1397-06-19 - 2018-09-10 10:22
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -76,6 +76,24 @@ class testlistsearch_Design extends FormDesign {
 		return $this->adjectiveoutinfluence;
 	}
 	/** @var textbox */
+	private $similarity_threshold;
+	/**
+	 * @return textbox
+	 */
+	public function getSimilarity_threshold()
+	{
+		return $this->similarity_threshold;
+	}
+	/** @var textbox */
+	private $similarity_influence;
+	/**
+	 * @return textbox
+	 */
+	public function getSimilarity_influence()
+	{
+		return $this->similarity_influence;
+	}
+	/** @var textbox */
 	private $resultcount;
 	/**
 	 * @return textbox
@@ -111,6 +129,27 @@ class testlistsearch_Design extends FormDesign {
 	{
 		return $this->words;
 	}
+    /** @var textbox */
+    private $IDFrom;
+
+    /** @var textbox */
+    private $IDTo;
+
+    /**
+     * @return TextBox
+     */
+    public function getIDFrom()
+    {
+        return $this->IDFrom;
+    }
+
+    /**
+     * @return TextBox
+     */
+    public function getIDTo()
+    {
+        return $this->IDTo;
+    }
 	/** @var combobox */
 	private $is_postaged;
 	/**
@@ -121,6 +160,15 @@ class testlistsearch_Design extends FormDesign {
 		return $this->is_postaged;
 	}
 	/** @var combobox */
+	private $is_similarityedgeweighed;
+	/**
+	 * @return combobox
+	 */
+	public function getIs_similarityedgeweighed()
+	{
+		return $this->is_similarityedgeweighed;
+	}
+	/** @var combobox */
 	private $method_fid;
 	/**
 	 * @return combobox
@@ -128,6 +176,42 @@ class testlistsearch_Design extends FormDesign {
 	public function getMethod_fid()
 	{
 		return $this->method_fid;
+	}
+	/** @var textbox */
+	private $apprate;
+	/**
+	 * @return textbox
+	 */
+	public function getApprate()
+	{
+		return $this->apprate;
+	}
+	/** @var textbox */
+	private $precisionrate;
+	/**
+	 * @return textbox
+	 */
+	public function getPrecisionrate()
+	{
+		return $this->precisionrate;
+	}
+	/** @var textbox */
+	private $recall;
+	/**
+	 * @return textbox
+	 */
+	public function getRecall()
+	{
+		return $this->recall;
+	}
+	/** @var textbox */
+	private $fscore;
+	/**
+	 * @return textbox
+	 */
+	public function getFscore()
+	{
+		return $this->fscore;
 	}
 	/** @var combobox */
 	private $sortby;
@@ -169,6 +253,14 @@ class testlistsearch_Design extends FormDesign {
 		$this->adjectiveoutinfluence= new textbox("adjectiveoutinfluence");
 		$this->adjectiveoutinfluence->setClass("form-control");
 
+		/******* similarity_threshold *******/
+		$this->similarity_threshold= new textbox("similarity_threshold");
+		$this->similarity_threshold->setClass("form-control");
+
+		/******* similarity_influence *******/
+		$this->similarity_influence= new textbox("similarity_influence");
+		$this->similarity_influence->setClass("form-control");
+
 		/******* resultcount *******/
 		$this->resultcount= new textbox("resultcount");
 		$this->resultcount->setClass("form-control");
@@ -186,14 +278,43 @@ class testlistsearch_Design extends FormDesign {
 		$this->words= new textbox("words");
 		$this->words->setClass("form-control");
 
+        /******* words *******/
+        $this->IDFrom= new textbox("idfrom");
+        $this->IDFrom->setClass("form-control");
+
+
+        /******* words *******/
+        $this->IDTo= new textbox("idto");
+        $this->IDTo->setClass("form-control");
+
 		/******* is_postaged *******/
 		$this->is_postaged= new combobox("is_postaged");
 		$this->is_postaged->setClass("form-control selectpicker");
+
+		/******* is_similarityedgeweighed *******/
+		$this->is_similarityedgeweighed= new combobox("is_similarityedgeweighed");
+		$this->is_similarityedgeweighed->setClass("form-control selectpicker");
 
 		/******* method_fid *******/
 		$this->method_fid= new combobox("method_fid");
 		$this->method_fid->setClass("form-control selectpicker");
 		$this->method_fid->SetAttribute("data-live-search",true);
+
+		/******* apprate *******/
+		$this->apprate= new textbox("apprate");
+		$this->apprate->setClass("form-control");
+
+		/******* precisionrate *******/
+		$this->precisionrate= new textbox("precisionrate");
+		$this->precisionrate->setClass("form-control");
+
+		/******* recall *******/
+		$this->recall= new textbox("recall");
+		$this->recall->setClass("form-control");
+
+		/******* fscore *******/
+		$this->fscore= new textbox("fscore");
+		$this->fscore->setClass("form-control");
 
 		/******* sortby *******/
 		$this->sortby= new combobox("sortby");
@@ -224,12 +345,21 @@ class testlistsearch_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->nounoutinfluence,$this->getFieldCaption('nounoutinfluence'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->adjectiveinfluence,$this->getFieldCaption('adjectiveinfluence'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->adjectiveoutinfluence,$this->getFieldCaption('adjectiveoutinfluence'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->similarity_threshold,$this->getFieldCaption('similarity_threshold'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->similarity_influence,$this->getFieldCaption('similarity_influence'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->resultcount,$this->getFieldCaption('resultcount'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->context_fid,$this->getFieldCaption('context_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->words,$this->getFieldCaption('words'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->is_postaged,$this->getFieldCaption('is_postaged'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->is_similarityedgeweighed,$this->getFieldCaption('is_similarityedgeweighed'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->method_fid,$this->getFieldCaption('method_fid'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->apprate,$this->getFieldCaption('apprate'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->precisionrate,$this->getFieldCaption('precisionrate'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->recall,$this->getFieldCaption('recall'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->fscore,$this->getFieldCaption('fscore'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->IDFrom,$this->getFieldCaption('idfrom'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->IDTo,$this->getFieldCaption('idto'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
@@ -246,6 +376,9 @@ class testlistsearch_Design extends FormDesign {
 			$this->is_postaged->addOption("", "مهم نیست");
 			$this->is_postaged->addOption(1,'بله');
 			$this->is_postaged->addOption(0,'خیر');
+			$this->is_similarityedgeweighed->addOption("", "مهم نیست");
+			$this->is_similarityedgeweighed->addOption(1,'بله');
+			$this->is_similarityedgeweighed->addOption(0,'خیر');
 			$this->method_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['method_fid'] as $item)
 			$this->method_fid->addOption($item->getID(), $item->getTitleField());
@@ -267,6 +400,14 @@ class testlistsearch_Design extends FormDesign {
 			$this->adjectiveoutinfluence->setValue($this->Data['test']->getAdjectiveoutinfluence());
 			$this->setFieldCaption('adjectiveoutinfluence',$this->Data['test']->getFieldInfo('adjectiveoutinfluence')->getTitle());
 
+			/******** similarity_threshold ********/
+			$this->similarity_threshold->setValue($this->Data['test']->getSimilarity_threshold());
+			$this->setFieldCaption('similarity_threshold',$this->Data['test']->getFieldInfo('similarity_threshold')->getTitle());
+
+			/******** similarity_influence ********/
+			$this->similarity_influence->setValue($this->Data['test']->getSimilarity_influence());
+			$this->setFieldCaption('similarity_influence',$this->Data['test']->getFieldInfo('similarity_influence')->getTitle());
+
 			/******** resultcount ********/
 			$this->resultcount->setValue($this->Data['test']->getResultcount());
 			$this->setFieldCaption('resultcount',$this->Data['test']->getFieldInfo('resultcount')->getTitle());
@@ -287,9 +428,29 @@ class testlistsearch_Design extends FormDesign {
 			$this->is_postaged->setSelectedValue($this->Data['test']->getIs_postaged());
 			$this->setFieldCaption('is_postaged',$this->Data['test']->getFieldInfo('is_postaged')->getTitle());
 
+			/******** is_similarityedgeweighed ********/
+			$this->is_similarityedgeweighed->setSelectedValue($this->Data['test']->getIs_similarityedgeweighed());
+			$this->setFieldCaption('is_similarityedgeweighed',$this->Data['test']->getFieldInfo('is_similarityedgeweighed')->getTitle());
+
 			/******** method_fid ********/
 			$this->method_fid->setSelectedValue($this->Data['test']->getMethod_fid());
 			$this->setFieldCaption('method_fid',$this->Data['test']->getFieldInfo('method_fid')->getTitle());
+
+			/******** apprate ********/
+			$this->apprate->setValue($this->Data['test']->getApprate());
+			$this->setFieldCaption('apprate',$this->Data['test']->getFieldInfo('apprate')->getTitle());
+
+			/******** precisionrate ********/
+			$this->precisionrate->setValue($this->Data['test']->getPrecisionrate());
+			$this->setFieldCaption('precisionrate',$this->Data['test']->getFieldInfo('precisionrate')->getTitle());
+
+			/******** recall ********/
+			$this->recall->setValue($this->Data['test']->getRecall());
+			$this->setFieldCaption('recall',$this->Data['test']->getFieldInfo('recall')->getTitle());
+
+			/******** fscore ********/
+			$this->fscore->setValue($this->Data['test']->getFscore());
+			$this->setFieldCaption('fscore',$this->Data['test']->getFieldInfo('fscore')->getTitle());
 
 			/******** sortby ********/
 
@@ -320,6 +481,16 @@ class testlistsearch_Design extends FormDesign {
 		if(isset($_GET['adjectiveoutinfluence']))
 			$this->adjectiveoutinfluence->setValue($_GET['adjectiveoutinfluence']);
 
+		/******** similarity_threshold ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('similarity_threshold'),$this->getFieldCaption('similarity_threshold'));
+		if(isset($_GET['similarity_threshold']))
+			$this->similarity_threshold->setValue($_GET['similarity_threshold']);
+
+		/******** similarity_influence ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('similarity_influence'),$this->getFieldCaption('similarity_influence'));
+		if(isset($_GET['similarity_influence']))
+			$this->similarity_influence->setValue($_GET['similarity_influence']);
+
 		/******** resultcount ********/
 		$this->sortby->addOption($this->Data['test']->getTableFieldID('resultcount'),$this->getFieldCaption('resultcount'));
 		if(isset($_GET['resultcount']))
@@ -345,10 +516,35 @@ class testlistsearch_Design extends FormDesign {
 		if(isset($_GET['is_postaged']))
 			$this->is_postaged->setSelectedValue($_GET['is_postaged']);
 
+		/******** is_similarityedgeweighed ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('is_similarityedgeweighed'),$this->getFieldCaption('is_similarityedgeweighed'));
+		if(isset($_GET['is_similarityedgeweighed']))
+			$this->is_similarityedgeweighed->setSelectedValue($_GET['is_similarityedgeweighed']);
+
 		/******** method_fid ********/
 		$this->sortby->addOption($this->Data['test']->getTableFieldID('method_fid'),$this->getFieldCaption('method_fid'));
 		if(isset($_GET['method_fid']))
 			$this->method_fid->setSelectedValue($_GET['method_fid']);
+
+		/******** apprate ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('apprate'),$this->getFieldCaption('apprate'));
+		if(isset($_GET['apprate']))
+			$this->apprate->setValue($_GET['apprate']);
+
+		/******** precisionrate ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('precisionrate'),$this->getFieldCaption('precisionrate'));
+		if(isset($_GET['precisionrate']))
+			$this->precisionrate->setValue($_GET['precisionrate']);
+
+		/******** recall ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('recall'),$this->getFieldCaption('recall'));
+		if(isset($_GET['recall']))
+			$this->recall->setValue($_GET['recall']);
+
+		/******** fscore ********/
+		$this->sortby->addOption($this->Data['test']->getTableFieldID('fscore'),$this->getFieldCaption('fscore'));
+		if(isset($_GET['fscore']))
+			$this->fscore->setValue($_GET['fscore']);
 
 		/******** sortby ********/
 		if(isset($_GET['sortby']))
