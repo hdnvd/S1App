@@ -8,15 +8,14 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-06-19 - 2018-09-10 10:43
-*@lastUpdate 1397-06-19 - 2018-09-10 10:43
+*@creationDate 1397-07-08 - 2018-09-30 19:33
+*@lastUpdate 1397-07-08 - 2018-09-30 19:33
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
 class kpex_testEntity extends EntityClass {
     /**
      * @param QueryLogic $QueryObject
-     * @return EntityClass[]
      */
     public function getAverageRates(QueryLogic $QueryObject)
     {
@@ -34,7 +33,7 @@ class kpex_testEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("kpex_test");
-		$this->setTableTitle("تست");
+		$this->setTableTitle("kpex_test");
 		$this->setTitleFieldName("id");
 
 		/******** created_at ********/
@@ -162,6 +161,12 @@ class kpex_testEntity extends EntityClass {
 		$End_timeInfo->setTitle("end_time");
 		$this->setFieldInfo(kpex_testEntity::$END_TIME,$End_timeInfo);
 		$this->addTableField('21',kpex_testEntity::$END_TIME);
+
+		/******** testgroup_fid ********/
+		$Testgroup_fidInfo=new FieldInfo();
+		$Testgroup_fidInfo->setTitle("testgroup_fid");
+		$this->setFieldInfo(kpex_testEntity::$TESTGROUP_FID,$Testgroup_fidInfo);
+		$this->addTableField('22',kpex_testEntity::$TESTGROUP_FID);
 	}
 	public static $CREATED_AT="created_at";
 	/**
@@ -435,6 +440,19 @@ class kpex_testEntity extends EntityClass {
 	 */
 	public function setEnd_time($End_time){
 		$this->setField(kpex_testEntity::$END_TIME,$End_time);
+	}
+	public static $TESTGROUP_FID="testgroup_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getTestgroup_fid(){
+		return $this->getField(kpex_testEntity::$TESTGROUP_FID);
+	}
+	/**
+	 * @param mixed $Testgroup_fid
+	 */
+	public function setTestgroup_fid($Testgroup_fid){
+		$this->setField(kpex_testEntity::$TESTGROUP_FID,$Testgroup_fid);
 	}
 }
 ?>
