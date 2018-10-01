@@ -114,6 +114,28 @@ class managetestsController extends testlistController {
 //        $ShellResult="";
         $StartTime=time();
         $ShellResult=(shell_exec("bash /home/hduser/env.sh $ID 2>&1"));
+        $ShellResult=str_replace("Adding annotator tokenize\n","",$ShellResult);
+        $ShellResult=str_replace("Adding annotator ssplit\n","",$ShellResult);
+        $ShellResult=str_replace("Adding annotator pos\n","",$ShellResult);
+        $ShellResult=str_replace("Adding annotator lemma\n","",$ShellResult);
+        $ShellResult=str_replace("zip warning: name not matched: META-INF/*.SF\n","",$ShellResult);
+        $ShellResult=str_replace("zip warning: name not matched: META-INF/*.DSA\n","",$ShellResult);
+        $ShellResult=str_replace("zip warning: name not matched: META-INF/*.RSA\n","",$ShellResult);
+        $ShellResult=str_replace("deleting: META-INF/DUMMY.SF\n","",$ShellResult);
+        $ShellResult=str_replace("deleting: META-INF/DUMMY.DSA\n","",$ShellResult);
+        $ShellResult=str_replace("deleting: META-INF/BCKEY.SF\n","",$ShellResult);
+        $ShellResult=str_replace("deleting: META-INF/BCKEY.DSA\n","",$ShellResult);
+        $ShellResult=str_replace("deleting: META-INF/DEV.SF\n","",$ShellResult);
+        $ShellResult=str_replace("deleting: META-INF/DEV.DSA\n","",$ShellResult);
+        $ShellResult=str_replace("WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable\n","",$ShellResult);
+        $ShellResult=str_replace("INFO fs.TrashPolicyDefault: Namenode trash configuration: Deletion interval = 0 minutes, Emptier interval = 0 minutes.\n","",$ShellResult);
+        $ShellResult=str_replace("WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n","",$ShellResult);
+        $initStart=strpos($ShellResult,"/Initiating...");
+        $initEnd=strpos($ShellResult,"/Initiation Completed");
+        if($initStart>=0 && $initEnd>0)
+        {
+            $ShellResult=substr($ShellResult,$initStart);
+        }
         $ShellResult=str_replace("\n","<br>",$ShellResult);
         $KeywordsFilePath=DEFAULT_PUBLICPATH.'/content/files/kpex/results/keywords'.$ID.".txt";
         $Keywords=$this->readCSV($KeywordsFilePath);

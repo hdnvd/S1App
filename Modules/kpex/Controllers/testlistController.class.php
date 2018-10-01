@@ -5,6 +5,7 @@ use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\kpex\Entity\kpex_contextEntity;
 use Modules\kpex\Entity\kpex_methodEntity;
+use Modules\kpex\Entity\kpex_testgroupEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
 use core\CoreClasses\db\QueryLogic;
@@ -19,7 +20,7 @@ use Modules\kpex\Entity\kpex_testEntity;
 *@SweetFrameworkVersion 2.004
 */
 class testlistController extends Controller {
-	private $PAGESIZE=50;
+	private $PAGESIZE=5;
 	public function getData($PageNum,QueryLogic $QueryLogic)
 	{
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -31,6 +32,8 @@ class testlistController extends Controller {
 		$result['context_fid']=$contextEntityObject->FindAll(new QueryLogic());
 		$methodEntityObject=new kpex_methodEntity($DBAccessor);
 		$result['method_fid']=$methodEntityObject->FindAll(new QueryLogic());
+        $testgroupEntityObject=new kpex_testgroupEntity($DBAccessor);
+        $result['testgroup_fid']=$testgroupEntityObject->FindAll(new QueryLogic());
 		if($PageNum<=0)
 			$PageNum=1;        
 		$UserID=null;
@@ -50,6 +53,10 @@ class testlistController extends Controller {
             $methods=new kpex_methodEntity($DBAccessor);
             $methods->setId($result['data'][$i]->getMethod_fid());
             $result['methods'][$i]=$methods;
+
+            $testgroups=new kpex_testgroupEntity($DBAccessor);
+            $testgroups->setId($result['data'][$i]->getTestgroup_fid());
+            $result['testgroups'][$i]=$testgroups;
         }
 		$DBAccessor->close_connection();
 		return $result;
@@ -75,7 +82,7 @@ class testlistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function Search($PageNum,$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$similarity_threshold,$similarity_influence,$resultcount,$context_fid,$description,$words,$is_postaged,$is_similarityedgeweighed,$method_fid,$apprate,$precisionrate,$recall,$fscore,$idfrom,$idto,$sortby,$isdesc)
+	public function Search($PageNum,$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$similarity_threshold,$similarity_influence,$resultcount,$context_fid,$description,$words,$is_postaged,$is_similarityedgeweighed,$method_fid,$apprate,$precisionrate,$recall,$fscore,$idfrom,$idto,$testgroup_fid,$sortby,$isdesc)
 	{
 
 		$DBAccessor=new dbaccess();
@@ -95,6 +102,7 @@ class testlistController extends Controller {
 		$q->addCondition(new FieldCondition("is_postaged","%$is_postaged%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("is_similarityedgeweighed","%$is_similarityedgeweighed%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("method_fid","%$method_fid%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("testgroup_fid","%$testgroup_fid%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("apprate","%$apprate%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("precisionrate","%$precisionrate%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("recall","%$recall%",LogicalOperator::LIKE));

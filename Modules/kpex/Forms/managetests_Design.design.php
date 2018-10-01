@@ -188,10 +188,24 @@ PlaySound('boom');
 			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
 			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$lnkDel[$i]->setClass('btn btn-danger');
+
+
+            $lbViewGraph[$i]=new Lable('Graph');
+            $lnkViewGraph[$i]=new link(DEFAULT_PUBLICURL . "content/files/kpex/results/graphs/graph".$this->Data['data'][$i]->getID().".html",$lbViewGraph[$i]);
+            $lnkViewGraph[$i]->setGlyphiconClass('glyphicon glyphicon-grain');
+            $lnkViewGraph[$i]->setClass('btn btn-primary');
+
+            $lbViewKeywords[$i]=new Lable('Keywords');
+            $lnkViewKeywords[$i]=new link(DEFAULT_PUBLICURL . "content/files/kpex/results/keywords".$this->Data['data'][$i]->getID().".txt",$lbViewKeywords[$i]);
+            $lnkViewKeywords[$i]->setGlyphiconClass('glyphicon glyphicon-check');
+            $lnkViewKeywords[$i]->setClass('btn btn-primary');
+
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
 			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
+			$operationDiv[$i]->addElement($lnkViewGraph[$i]);
+			$operationDiv[$i]->addElement($lnkViewKeywords[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);

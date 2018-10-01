@@ -98,6 +98,7 @@ class testlist_Code extends FormCode {
 		$is_postaged_ID=$this->getHttpGETparameter('is_postaged','');
 		$is_similarityedgeweighed_ID=$this->getHttpGETparameter('is_similarityedgeweighed','');
 		$method_fid_ID=$this->getHttpGETparameter('method_fid','');
+		$testgroup_fid_ID=$this->getHttpGETparameter('testgroup_fid','');
 		$apprate=$this->getHttpGETparameter('apprate','');
 		$precisionrate=$this->getHttpGETparameter('precisionrate','');
 		$recall=$this->getHttpGETparameter('recall','');
@@ -106,7 +107,7 @@ class testlist_Code extends FormCode {
 		$idto=$this->getHttpGETparameter('idto','');
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$testlistController->Search($this->getHttpGETparameter('pn',-1),$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$similarity_threshold,$similarity_influence,$resultcount,$context_fid_ID,$description,$words,$is_postaged_ID,$is_similarityedgeweighed_ID,$method_fid_ID,$apprate,$precisionrate,$recall,$fscore,$idfrom,$idto,$sortby_ID,$isdesc_ID);
+		$Result=$testlistController->Search($this->getHttpGETparameter('pn',-1),$nouninfluence,$nounoutinfluence,$adjectiveinfluence,$adjectiveoutinfluence,$similarity_threshold,$similarity_influence,$resultcount,$context_fid_ID,$description,$words,$is_postaged_ID,$is_similarityedgeweighed_ID,$method_fid_ID,$apprate,$precisionrate,$recall,$fscore,$idfrom,$idto,$testgroup_fid_ID,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

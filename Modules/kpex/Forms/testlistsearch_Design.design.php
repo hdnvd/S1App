@@ -177,6 +177,16 @@ class testlistsearch_Design extends FormDesign {
 	{
 		return $this->method_fid;
 	}
+
+    /** @var combobox */
+    private $testgroup_fid;
+    /**
+     * @return combobox
+     */
+    public function getTestgroup_fid()
+    {
+        return $this->testgroup_fid;
+    }
 	/** @var textbox */
 	private $apprate;
 	/**
@@ -299,6 +309,10 @@ class testlistsearch_Design extends FormDesign {
 		$this->method_fid= new combobox("method_fid");
 		$this->method_fid->setClass("form-control selectpicker");
 		$this->method_fid->SetAttribute("data-live-search",true);
+        /******* method_fid *******/
+        $this->testgroup_fid= new combobox("testgroup_fid");
+        $this->testgroup_fid->setClass("form-control selectpicker");
+        $this->testgroup_fid->SetAttribute("data-live-search",true);
 
 		/******* apprate *******/
 		$this->apprate= new textbox("apprate");
@@ -354,6 +368,7 @@ class testlistsearch_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->is_postaged,$this->getFieldCaption('is_postaged'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->is_similarityedgeweighed,$this->getFieldCaption('is_similarityedgeweighed'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->method_fid,$this->getFieldCaption('method_fid'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->testgroup_fid,$this->getFieldCaption('testgroup_fid'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->apprate,$this->getFieldCaption('apprate'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->precisionrate,$this->getFieldCaption('precisionrate'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->recall,$this->getFieldCaption('recall'),null,'',null));
@@ -382,6 +397,9 @@ class testlistsearch_Design extends FormDesign {
 			$this->method_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['method_fid'] as $item)
 			$this->method_fid->addOption($item->getID(), $item->getTitleField());
+        $this->testgroup_fid->addOption("", "مهم نیست");
+        foreach ($this->Data['testgroup_fid'] as $item)
+            $this->testgroup_fid->addOption($item->getID(), $item->getTitleField());
 		if (key_exists("test", $this->Data)){
 
 			/******** nouninfluence ********/
@@ -435,6 +453,9 @@ class testlistsearch_Design extends FormDesign {
 			/******** method_fid ********/
 			$this->method_fid->setSelectedValue($this->Data['test']->getMethod_fid());
 			$this->setFieldCaption('method_fid',$this->Data['test']->getFieldInfo('method_fid')->getTitle());
+            /******** method_fid ********/
+            $this->testgroup_fid->setSelectedValue($this->Data['test']->getTestgroup_fid());
+            $this->setFieldCaption('testgroup_fid',$this->Data['test']->getFieldInfo('testgroup_fid')->getTitle());
 
 			/******** apprate ********/
 			$this->apprate->setValue($this->Data['test']->getApprate());
