@@ -155,6 +155,7 @@ class managetestsController extends testlistController {
         $testEnt->setFscore($FScoreStr[2]);
         $testEnt->setStart_time($StartTime);
         $testEnt->setEnd_time($EndTime);
+
         $KeywordsStr=$Keywords[17];
         for($i=18;$i<count($Keywords);$i++)
         {
@@ -170,6 +171,7 @@ class managetestsController extends testlistController {
 
         $DBAccessor->close_connection();
         $Result= $this->load($PageNum);
+        $Result['precision']=$testEnt->getPrecisionrate();
         $Result['shellscript']=$ShellResult;
         return $Result;
     }

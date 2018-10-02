@@ -1,6 +1,7 @@
 <?php
 namespace Modules\kpex\Forms;
 use core\CoreClasses\html\htmlcode;
+use core\CoreClasses\html\JavascriptLink;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -21,6 +22,7 @@ use core\CoreClasses\html\RadioBox;
 use core\CoreClasses\html\SweetFrom;
 use core\CoreClasses\html\ComboBox;
 use core\CoreClasses\html\FileUploadBox;
+use Modules\common\PublicClasses\AppJSLink;
 use Modules\common\PublicClasses\AppRooter;
 use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
@@ -68,19 +70,73 @@ class managetests_Design extends FormDesign {
             $this->listPage = 'manageusertests';
         }
     }
+    /** @var textbox */
+    private $IDFrom;
+
+    /** @var textbox */
+    private $IDTo;
+
+    /**
+     * @return TextBox
+     */
+    public function getIDFrom()
+    {
+        return $this->IDFrom;
+    }
+
+    /**
+     * @return TextBox
+     */
+    public function getIDTo()
+    {
+        return $this->IDTo;
+    }
+    /** @var ComboBox */
+    private $testgroup_fid;
+    /**
+     * @return ComboBox
+     */
+    public function getTestgroup_fid()
+    {
+        return $this->testgroup_fid;
+    }
 	public function __construct()
 	{
 		parent::__construct();
+        /******* words *******/
+        $this->IDFrom= new textbox("idfrom");
+        $this->IDFrom->setClass("form-control");
+        $this->IDFrom->setValue($_GET['idfrom']);
+
+
+        /******* words *******/
+        $this->IDTo= new textbox("idto");
+        $this->IDTo->setClass("form-control");
+        $this->IDTo->setValue($_GET['idto']);
+        /******* method_fid *******/
+        $this->testgroup_fid= new combobox("testgroup_fid");
+        $this->testgroup_fid->setClass("form-control selectpicker");
+        $this->testgroup_fid->SetAttribute("data-live-search",true);
 	}
 	public function getBodyHTML($command=null)
 	{
+        $this->testgroup_fid->addOption("", "مهم نیست");
+        foreach ($this->Data['testgroup_fid'] as $item)
+            $this->testgroup_fid->addOption($item->getID(), $item->getTitleField());
+        $this->testgroup_fid->setSelectedValue($_GET['testgroup_fid']);
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("kpex_managetests");
 		$Page->addElement($this->getPageTitlePart(" " . $this->Data['test']->getTableTitle() . " ها"));
 
+        $Page->addElement($this->IDFrom);
+        $Page->addElement($this->IDTo);
+        $Page->addElement($this->testgroup_fid);
 
-
+        $LogBox=new Div();
+//        $LogBox->setClass('logbox');
+        $LogBox->setId('logbox');
+        $Page->addElement($LogBox);
 		if(key_exists('shellscript',$this->Data))
         {
             $Terminal=new Div();
@@ -100,6 +156,7 @@ PlaySound('boom');
    <source src=\"".DEFAULT_PUBLICURL."content/files/1.mp3\" type=\"audio/wav\">
   </audio>"));
         }
+
 		$addUrl=new AppRooter('kpex',$this->itemPage);
 		$LblAdd=new Lable('ثبت ' . $this->Data['test']->getTableTitle() . ' جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
@@ -116,6 +173,13 @@ PlaySound('boom');
         $lnkmakeHulthCSV->setId('addtestlink');
         $Page->addElement($lnkmakeHulthCSV);
 
+        $LblRunInRange=new Lable('اجرای دسته جمعی' );
+        $lnkRunInRange=new link("javascript:RunTests($('#idfrom').val(),$('#idto').val())",$LblRunInRange);
+        $lnkRunInRange->setClass('linkbutton btn btn-primary');
+        $lnkRunInRange->setGlyphiconClass('glyphicon glyphicon-plus');
+        $lnkRunInRange->setId('addtestlink');
+        $Page->addElement($lnkRunInRange);
+
 		$SearchUrl=new AppRooter('kpex',$this->listPage);
 		$SearchUrl->addParameter(new URLParameter('search',null));
 		$LblSearch=new Lable('جستجو');
@@ -124,6 +188,8 @@ PlaySound('boom');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchtestlink');
 		$Page->addElement($lnkSearch);
+
+        $Page->addElement(new JavascriptLink((new AppJSLink("kpex","ajaxrunner"))->getAbsoluteURL()));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
@@ -285,13 +351,13 @@ PlaySound('boom');
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
 		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"kpex",$this->listPage));
-		$form=new SweetFrom("", "POST", $Page);
+		$form=new SweetFrom("", "GET", $Page);
 		return $form->getHTML();
 	}    
     public function getJSON()
     {
        parent::getJSON();
-       $Result=['message'=>$this->getMessage(),'messagetype'=>$this->getMessageType()];
+       $Result=['message'=>$this->getMessage(),'precision'=>$this->Data['precision'],'messagetype'=>$this->getMessageType()];
        return json_encode($Result);
     }
 }
