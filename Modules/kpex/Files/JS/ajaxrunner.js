@@ -6,6 +6,38 @@ let Progress=0;
 let PrecisionSum=0;
 let StartTime=0;
 let EndTime=0;
+var circle;
+$(document).ready(function () {
+circle = new ProgressBar.Circle('#progress', {
+    color: '#aaa',
+    // This has to be the same size as the maximum width to
+    // prevent clipping
+    strokeWidth: 4,
+    trailWidth: 1,
+    easing: 'easeInOut',
+    duration: 1400,
+    text: {
+        autoStyleContainer: false
+    },
+    from: { color: '#37aa7c', width:2 },
+    to: { color: '#AA291B', width: 2 },
+    step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * 100);
+        if (value === 0) {
+            circle.setText('0%');
+        } else {
+            circle.setText(value+"%");
+        }
+
+    }
+});
+    circle.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    circle.text.style.fontSize = '2rem';
+    circle.animate(0.0);
+});
 function getTime() {
     const dt = new Date();
     const theTime = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
@@ -24,6 +56,7 @@ function RunTests(testidFrom,testidTo) {
     Progress=0;
     PrecisionSum=0;
     $("#logbox").addClass('logbox');
+    $("#progress").addClass('progressbarvisible');
     AddMessage(Message);
     StartService();
     RunTest(Number(testidFrom));
@@ -39,6 +72,8 @@ function RefreshMessage() {
 
     let thePercentage=Math.round((Progress/AllCount) * 100);
     let theAveragePrecision=Math.round((PrecisionSum/Progress) * 1000)/1000;
+
+    circle.animate(thePercentage/100);
     let Info="<p>"+" Progress:"+Progress+"/"+AllCount+" ("+thePercentage+"%) AveragePrecision:"+theAveragePrecision;
     let ElapsedSeconds=Number(Number(getTimeInSeconds())-Number(StartTime));
     let ElapsedHours=Math.floor(ElapsedSeconds/3600);
@@ -74,4 +109,7 @@ function RunTest(testid) {
         }, "json");
 
 
+
+
 }
+

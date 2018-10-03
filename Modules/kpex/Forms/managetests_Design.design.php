@@ -133,6 +133,11 @@ class managetests_Design extends FormDesign {
         $Page->addElement($this->IDTo);
         $Page->addElement($this->testgroup_fid);
 
+        $Progress=new Div();
+        $Progress->setId('progress');
+        $Progress->setClass("progressbar");
+        $Page->addElement($Progress);
+
         $LogBox=new Div();
 //        $LogBox->setClass('logbox');
         $LogBox->setId('logbox');
