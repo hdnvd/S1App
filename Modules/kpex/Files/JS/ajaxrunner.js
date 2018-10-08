@@ -67,6 +67,14 @@ function AddMessage(Text) {
     Message = Message +"<p>"+getTime()+"&nbsp;"+Text+"</p>";
     RefreshMessage();
 }
+function secondsToTimeString(ElapsedSeconds)
+{
+    let ElapsedHours=Math.floor(ElapsedSeconds/3600);
+    ElapsedSeconds=ElapsedSeconds-ElapsedHours*3600;
+    let ElapsedMinutes=Math.floor(ElapsedSeconds/60);
+    ElapsedSeconds=ElapsedSeconds-ElapsedMinutes*60;
+    return ElapsedHours+":"+ElapsedMinutes+":"+ElapsedSeconds;
+}
 function RefreshMessage() {
 
 
@@ -76,11 +84,12 @@ function RefreshMessage() {
     circle.animate(thePercentage/100);
     let Info="<p>"+" Progress:"+Progress+"/"+AllCount+" ("+thePercentage+"%) AveragePrecision:"+theAveragePrecision;
     let ElapsedSeconds=Number(Number(getTimeInSeconds())-Number(StartTime));
-    let ElapsedHours=Math.floor(ElapsedSeconds/3600);
-    ElapsedSeconds=ElapsedSeconds-ElapsedHours*3600;
-    let ElapsedMinutes=Math.floor(ElapsedSeconds/60);
-    ElapsedSeconds=ElapsedSeconds-ElapsedMinutes*60;
-    Info=Info+" ElapsedTime: "+ ElapsedHours+":"+ElapsedMinutes+":"+ElapsedSeconds;
+    let AverageSeconds=ElapsedSeconds/Progress;
+    let RemainingSeconds=AverageSeconds*(AllCount-Progress);
+    Info=Info+" ElapsedTime: "+ secondsToTimeString(ElapsedSeconds);
+    Info=Info+" Average Time For Each Item: "+ AverageSeconds;
+    Info=Info+" Remaining Time: "+ secondsToTimeString(RemainingSeconds);
+    Info=Info+" All tasks will complete at : "+ secondsToTimeString(RemainingSeconds+Number(getTimeInSeconds()));
     Info=Info+"</p>";
 
     $("#logbox").html(Info+Message);
