@@ -90,6 +90,8 @@ class manageservicerequest_Code extends FormCode {
 		}
 		$request_date=time();
 		$devicetype_fid_ID=$design->getDevicetype_fid()->getSelectedID();
+		if($devicetype_fid_ID=="")
+            $devicetype_fid_ID=0;
 		$letterfile_fluPaths=$design->getLetterfile_flu()->getSelectedFilesTempPath();
 		$letterfile_fluNames=$design->getLetterfile_flu()->getSelectedFilesName();
 		$letterfile_fluURLs=array();
@@ -122,11 +124,11 @@ class manageservicerequest_Code extends FormCode {
             $design->setMessageType(MessageType::$ERROR);
             $design->setMessage("حجم فایل آپلود شده بیشتر از حد تعیین شده است.");
         }
-        catch(\Exception $uex){
-            $design=$this->getLoadDesign();
-            $design->setMessageType(MessageType::$ERROR);
-            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-        }
+//        catch(\Exception $uex){
+//            $design=$this->getLoadDesign();
+//            $design->setMessageType(MessageType::$ERROR);
+//            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//        }
         return $design->getResponse();
 	}
 }

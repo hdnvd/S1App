@@ -33,7 +33,7 @@ use core\CoreClasses\SweetDate;
 *@SweetFrameworkVersion 2.004
 */
 class servicerequest_Design extends FormDesign {
-	private $Data;
+	protected $Data;
 	/**
 	 * @param mixed $Data
 	 */
@@ -51,6 +51,8 @@ class servicerequest_Design extends FormDesign {
 	private $description;
 	/** @var lable */
 	private $priority;
+    /** @var Div */
+    private $priorityImages;
 	/** @var Image */
 	private $file1_flu;
 	/** @var lable */
@@ -199,6 +201,7 @@ class servicerequest_Design extends FormDesign {
 
 		/******* letterfile_flu *******/
 		$this->letterfile_flu= new Image("");
+		$this->letterfile_flu->setClass('letterimage');
 
 		/******* securityacceptor_role_systemuser_fid *******/
 		$this->securityacceptor_role_systemuser_fid= new lable("securityacceptor_role_systemuser_fid");
@@ -208,6 +211,9 @@ class servicerequest_Design extends FormDesign {
 
 		/******* letter_date *******/
 		$this->letter_date= new lable("letter_date");
+
+        $this->priorityImages=new Div();
+        $this->priorityImages->setClass('priorityimagesbox');
 
         $this->CMBPriorities=new ComboBox("cmbpriorities");
         $this->btnChangePriority=new SweetButton(true,"تغییر اولویت");
@@ -244,147 +250,104 @@ class servicerequest_Design extends FormDesign {
         $this->TxtReferMessage->setClass("form-control");
         $this->TxtAssignMessage=new TextArea('TxtAssignMessage');
         $this->TxtAssignMessage->setClass("form-control");
+
+
 	}
-	public function getBodyHTML($command=null)
-	{
-		$Page=new Div();
-		$Page->setClass("sweet_formtitle");
-		$Page->setId("itsap_servicerequest");
-		$Page->addElement($this->getPageTitlePart("اطلاعات " . $this->Data['servicerequest']->getTableTitle() . ""));
-		if($this->getMessage()!="")
-			$Page->addElement($this->getMessagePart());
-		if (key_exists("servicerequest", $this->Data)){
-			$this->setFieldCaption('title',$this->Data['servicerequest']->getFieldInfo('title')->getTitle());
-			$this->title->setText($this->Data['servicerequest']->getTitle());
-//			$this->setFieldCaption('unit_fid',$this->Data['servicerequest']->getFieldInfo('unit_fid')->getTitle());
-//			$this->unit_fid->setText($this->Data['unit_fid']->getID());
-			$this->setFieldCaption('servicetype_fid',$this->Data['servicerequest']->getFieldInfo('servicetype_fid')->getTitle());
-			$this->servicetype_fid->setText($this->Data['servicetype_fid']->getTitle());
-			$this->setFieldCaption('description',$this->Data['servicerequest']->getFieldInfo('description')->getTitle());
-			$this->description->setText($this->Data['servicerequest']->getDescription());
-			$this->setFieldCaption('priority',$this->Data['servicerequest']->getFieldInfo('priority')->getTitle());
-			$this->priority->setText($this->Data['servicerequest']->getPriority());
+	protected function getInfoPart()
+    {
+        $Page=new Div();
+        $Page->setClass("sweet_formtitle");
+        $Page->setId("itsap_servicerequest");
+        $Page->addElement($this->getPageTitlePart("اطلاعات " . $this->Data['servicerequest']->getTableTitle() . ""));
+        if($this->getMessage()!="")
+            $Page->addElement($this->getMessagePart());
+        if (key_exists("servicerequest", $this->Data)){
+            $this->setFieldCaption('title',$this->Data['servicerequest']->getFieldInfo('title')->getTitle());
+            $this->title->setText($this->Data['servicerequest']->getTitle());
+            $this->setFieldCaption('servicetype_fid',$this->Data['servicerequest']->getFieldInfo('servicetype_fid')->getTitle());
+            $this->servicetype_fid->setText($this->Data['servicetype_fid']->getTitle());
+            $this->setFieldCaption('description',$this->Data['servicerequest']->getFieldInfo('description')->getTitle());
+            $this->description->setText($this->Data['servicerequest']->getDescription());
+            $this->setFieldCaption('priority',$this->Data['servicerequest']->getFieldInfo('priority')->getTitle());
+            $this->priority->setText($this->Data['servicerequest']->getPriority());
+            for($starindex=0;$starindex<$this->Data['servicerequest']->getPriority();$starindex++)
+            {
+                $img=new Image(DEFAULT_PUBLICURL . "content/files/img/star.png");
+                $this->priorityImages->addElement($img);
+            }
             $this->setFieldCaption('file1_flu',$this->Data['servicerequest']->getFieldInfo('file1_flu')->getTitle());
             $this->file1_flu->setUrl(DEFAULT_PUBLICURL . "content/files/img/folder.png");
             $this->file1_flu->setClass('datarowimage');
             $FileURL=$this->Data['servicerequest']->getFile1_flu();
-			$this->setFieldCaption('request_date',$this->Data['servicerequest']->getFieldInfo('request_date')->getTitle());
-			$request_date_SD=new SweetDate(true, true, 'Asia/Tehran');
-			$request_date_Text=$request_date_SD->date("l d F Y",$this->Data['servicerequest']->getRequest_date());
-			$this->request_date->setText($request_date_Text);
-			$this->setFieldCaption('devicetype_fid',$this->Data['servicerequest']->getFieldInfo('devicetype_fid')->getTitle());
-			$this->devicetype_fid->setText($this->Data['devicetype_fid']->getTitle());
-			$this->setFieldCaption('letterfile_flu',$this->Data['servicerequest']->getFieldInfo('letterfile_flu')->getTitle());
-			$this->letterfile_flu->setUrl(DEFAULT_PUBLICURL . $this->Data['servicerequest']->getLetterfile_flu());
-//			$this->setFieldCaption('securityacceptor_role_systemuser_fid',$this->Data['servicerequest']->getFieldInfo('securityacceptor_role_systemuser_fid')->getTitle());
-//			$this->securityacceptor_role_systemuser_fid->setText($this->Data['securityacceptor_role_systemuser_fid']->getID());
-			$this->setFieldCaption('letternumber',$this->Data['servicerequest']->getFieldInfo('letternumber')->getTitle());
-			$this->letternumber->setText($this->Data['servicerequest']->getLetternumber());
-			$this->setFieldCaption('letter_date',$this->Data['servicerequest']->getFieldInfo('letter_date')->getTitle());
-			$letter_date_SD=new SweetDate(true, true, 'Asia/Tehran');
-			$letter_date_Text=$letter_date_SD->date("l d F Y",$this->Data['servicerequest']->getLetter_date());
-			$this->letter_date->setText($letter_date_Text);
+            $this->setFieldCaption('request_date',$this->Data['servicerequest']->getFieldInfo('request_date')->getTitle());
+            $request_date_SD=new SweetDate(true, true, 'Asia/Tehran');
+            $request_date_Text=$request_date_SD->date("l d F Y",$this->Data['servicerequest']->getRequest_date());
+            $this->request_date->setText($request_date_Text);
+            $this->setFieldCaption('devicetype_fid',$this->Data['servicerequest']->getFieldInfo('devicetype_fid')->getTitle());
+            $this->devicetype_fid->setText($this->Data['devicetype_fid']->getTitle());
+            $this->setFieldCaption('letterfile_flu',$this->Data['servicerequest']->getFieldInfo('letterfile_flu')->getTitle());
+            $this->letterfile_flu->setUrl(DEFAULT_PUBLICURL . $this->Data['servicerequest']->getLetterfile_flu());
+            $this->setFieldCaption('letternumber',$this->Data['servicerequest']->getFieldInfo('letternumber')->getTitle());
+            $this->letternumber->setText($this->Data['servicerequest']->getLetternumber());
+            $this->setFieldCaption('letter_date',$this->Data['servicerequest']->getFieldInfo('letter_date')->getTitle());
+            $letter_date_SD=new SweetDate(true, true, 'Asia/Tehran');
+            $letter_date_Text=$letter_date_SD->date("l d F Y",$this->Data['servicerequest']->getLetter_date());
+            $this->letter_date->setText($letter_date_Text);
 
-            for ($i = 1; $i < 10; $i++) {
-                $this->CMBPriorities->addOption($i,$i);
-            }
-
-            $AllCount1 = count($this->Data['allstatus']);
-            $curStatus=null;
-            for ($i = 0; $i < $AllCount1; $i++) {
-                $item=$this->Data['allstatus'][$i];
-                $this->CmbState->addOption($item->getID(),$item->getTitle());
-                if($item->getID()==$this->Data['currentstatusinfo']->getServicestatus_fid())
-                {
-                    $this->CmbState->setSelectedValue($item->getID());
-                    $curStatus=$item;
-                }
-            }
-
-            $topunits=$this->Data['topunits'];
-            $AllCount2 = count($topunits);
-            for ($i = 0; $i < $AllCount2; $i++) {
-                $item=$topunits[$i];
-                $this->CMBTopUnits->addOption($item->getID(),$item->getTitle());
-            }
-
-
-            $unitEmps=$this->Data['unitemployees'];
-            $AllCount3 = count($unitEmps);
-            for ($i = 0; $i < $AllCount3; $i++) {
-                $item=$unitEmps[$i];
-                $this->CMBUnitEmployees->addOption($item->getID(),$item->getName() . " " . $item->getFamily());
-
-            }
-		}
+        }
         $fileLink=new link(DEFAULT_PUBLICURL . $FileURL,$this->file1_flu);
 
         $LTable1=new Div();
-		$LTable1->setClass("formtable");
-		$LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('title')));
+        $LTable1->setClass("formtable");
+        $LTable1->addElement($this->getInfoRowCode($this->title,$this->getFieldCaption('title')));
 //		$LTable1->addElement($this->getInfoRowCode($this->unit_fid,$this->getFieldCaption('unit_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->description,$this->getFieldCaption('description')));
-		$LTable1->addElement($this->getInfoRowCode($this->priority,$this->getFieldCaption('priority')));
+        $LTable1->addElement($this->getInfoRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid')));
+        $LTable1->addElement($this->getInfoRowCode($this->description,$this->getFieldCaption('description')));
+        $LTable1->addElement($this->getInfoRowCode($this->priorityImages,$this->getFieldCaption('priority')));
         $LTable1->addElement($this->getInfoRowCode($fileLink,$this->getFieldCaption('فایل ضمیمه شده')));
-		$LTable1->addElement($this->getInfoRowCode($this->request_date,$this->getFieldCaption('request_date')));
-		$LTable1->addElement($this->getInfoRowCode($this->devicetype_fid,$this->getFieldCaption('devicetype_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->letterfile_flu,$this->getFieldCaption('letterfile_flu')));
+        $LTable1->addElement($this->getInfoRowCode($this->request_date,$this->getFieldCaption('request_date')));
+        if(trim($this->devicetype_fid->getText())!="")
+            $LTable1->addElement($this->getInfoRowCode($this->devicetype_fid,$this->getFieldCaption('devicetype_fid')));
+        $LTable1->addElement($this->getInfoRowCode($this->letterfile_flu,$this->getFieldCaption('letterfile_flu')));
 //		$LTable1->addElement($this->getInfoRowCode($this->securityacceptor_role_systemuser_fid,$this->getFieldCaption('securityacceptor_role_systemuser_fid')));
-		$LTable1->addElement($this->getInfoRowCode($this->letternumber,$this->getFieldCaption('letternumber')));
-		$LTable1->addElement($this->getInfoRowCode($this->letter_date,$this->getFieldCaption('letter_date')));
-		$Page->addElement($LTable1);
+        $LTable1->addElement($this->getInfoRowCode($this->letternumber,$this->getFieldCaption('letternumber')));
+        $LTable1->addElement($this->getInfoRowCode($this->letter_date,$this->getFieldCaption('letter_date')));
+        $Page->addElement($LTable1);
 
-        $ChangePriority=new Div();
-        $ChangePriority->setClass("formtable smallform");
-        $lblPriorityTitle=new Lable("تغییر اولویت");
-        $lblPriorityTitle->setClass('smallformtitle');
-        $ChangePriority->addElement($lblPriorityTitle);
-        $ChangePriority->addElement($this->getFieldRowCode($this->CMBPriorities,"اولویت","اولویت "));
-        $ChangePriority->addElement($this->btnChangePriority);
+        $Page->addElement($this->getStatusBox('ثبت درخواست',$this->Data['servicerequest']->getRequest_date(),$this->Data['requesteremployee']->getName()." ".$this->Data['requesteremployee']->getFamily()));
 
-		$ChangeStatus=new Div();
-        $ChangeStatus->setClass("formtable smallform");
-        $lblStateTitle=new Lable("تغییر وضعیت");
-        $lblStateTitle->setClass('smallformtitle');
-        $ChangeStatus->addElement($lblStateTitle);
-        $ChangeStatus->addElement($this->getFieldRowCode($this->CmbState,"وضعیت","وضعیت "));
-        $ChangeStatus->addElement($this->getFieldRowCode($this->TxtStatusMessage,"پیام","پیام"));
-        $ChangeStatus->addElement($this->btnChangeState);
-        $Page->addElement($ChangeStatus);
+        for($statIndex=1;$statIndex<count($this->Data['allstatusesinfo']);$statIndex++)
+        {
+            $Page->addElement($this->getStatusBox('تغییر وضعیت به '.$this->Data['allstatusesinfo'][$statIndex]->getTitle(),$this->Data['allstatuses'][$statIndex]->getStart_date(),$this->Data['allstatusesemployee'][$statIndex]->getName()." ".$this->Data['allstatusesemployee'][$statIndex]->getFamily()));
+        }
+        return $Page;
+    }
+	public function getBodyHTML($command=null)
+	{
 
 
-        $Refer=new Div();
-        $Refer->setClass("formtable smallform");
-        $lblReferTitle=new Lable("ارجاع به یگان دیگر");
-        $lblReferTitle->setClass('smallformtitle');
-        $Refer->addElement($lblReferTitle);
-        $Refer->addElement($this->getFieldRowCode($this->CMBTopUnits,"یگان","یگان"));
-        $Refer->addElement($this->getFieldRowCode($this->TxtReferMessage,"پیام","پیام"));
-        $Refer->addElement($this->btnRefer);
-        $Page->addElement($Refer);
-
-        $Assign=new Div();
-        $Assign->setClass("formtable smallform");
-        $lblAssignTitle=new Lable("تخصیص به کارکنان");
-        $lblAssignTitle->setClass('smallformtitle');
-        $Assign->addElement($lblAssignTitle);
-        $Assign->addElement($this->getFieldRowCode($this->CMBUnitEmployees,"تخصیص به ","تخصیص به "));
-        $Assign->addElement($this->getFieldRowCode($this->TxtAssignMessage,"پیام","پیام"));
-        $Assign->addElement($this->btnAssign);
-        $Page->addElement($Assign);
-        $Page->addElement($ChangePriority);
+	    $Page=$this->getInfoPart();
         $form=new SweetFrom("", "POST", $Page);
         return $form->getHTML();
 	}
-	public function getJSON()
-	{
-		parent::getJSON();
-		if (key_exists("servicerequest", $this->Data)){
-			$Result=$this->Data['servicerequest']->GetArray();
-			return json_encode($Result);
-		}
-		return json_encode(array());
-	}
+	private function getStatusBox($Title,$Date,$Person)
+    {
+
+        $DateSD=new SweetDate(true, true, 'Asia/Tehran');
+        $Date=$DateSD->date("H:i l d F Y ",$Date);
+
+        $Box=new Div();
+        $Box->setClass('servicerequeststatusbox');
+        $lblTitle=new Lable($Title);
+        $lblTitle->setClass('servicerequeststatustitle');
+        $lblDate=new Lable($Date);
+        $lblDate->setClass('servicerequeststatusdate');
+        $lblPerson=new Lable($Person);
+        $lblPerson->setClass('servicerequeststatusperson');
+        $Box->addElement($lblDate);
+        $Box->addElement($lblTitle);
+        $Box->addElement($lblPerson);
+        return $Box;
+    }
 }
 ?>

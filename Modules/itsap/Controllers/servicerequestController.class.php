@@ -71,12 +71,34 @@ class servicerequestController extends Controller {
 
             $States=new itsap_servicestatusEntity($DBAccessor);
             $result['allstatus']=$States->FindAll(new QueryLogic());
-            $CurrentStatus=new itsap_servicerequestservicestatusEntity($DBAccessor);
+            $StatusesObject=new itsap_servicerequestservicestatusEntity($DBAccessor);
             $q=new QueryLogic();
             $q->addCondition(new FieldCondition(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$ID));
             $q->addOrderBy(itsap_servicerequestservicestatusEntity::$START_DATE,true);
-            $CurrentStatus=$CurrentStatus->FindOne($q);
+            $CurrentStatus=$StatusesObject->FindOne($q);
             $result['currentstatusinfo']=$CurrentStatus;
+
+            $q=new QueryLogic();
+            $q->addCondition(new FieldCondition(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$ID));
+            $q->addOrderBy(itsap_servicerequestservicestatusEntity::$START_DATE,false);
+            $AllStatus=$StatusesObject->FindAll($q);
+//            print_r($AllStatus);
+            $result['allstatuses']=$AllStatus;
+            for($stat=0;$stat<count($AllStatus);$stat++)
+            {
+                $statusInfo=new itsap_servicestatusEntity($DBAccessor);
+                $statusInfo->setId($result['allstatuses'][$stat]->getServicestatus_fid());
+                $result['allstatusesinfo'][$stat]=$statusInfo;
+                $TheEmp=new itsap_employeeEntity($DBAccessor);
+                $TheQEmp1=new QueryLogic();
+                $TheQEmp1->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$result['allstatuses'][$stat]->getRole_systemuser_fid()));
+                $result['allstatusesemployee'][$stat]=$TheEmp->FindOne($TheQEmp1);
+            }
+
+            $emp=new itsap_employeeEntity($DBAccessor);
+            $qEmp1=new QueryLogic();
+            $qEmp1->addCondition(new FieldCondition(itsap_employeeEntity::$ROLE_SYSTEMUSER_FID,$servicerequestEntityObject->getRole_systemuser_fid()));
+            $result['requesteremployee']=$emp->FindOne($qEmp1);
 
         }
 		$result['param1']="";

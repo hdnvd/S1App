@@ -1,5 +1,6 @@
 <?php
 namespace Modules\itsap\Forms;
+use core\CoreClasses\html\Image;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\services\baseHTMLElement;
@@ -53,10 +54,10 @@ class manageservicerequests_Design extends FormDesign {
     public function setAdminMode($adminMode)
     {
         $this->adminMode = $adminMode;
-        $this->itemViewPage = 'servicerequest';
+        $this->itemViewPage = 'servicerequestmanagement';
         if($adminMode==true)
         {
-            $this->itemPage = 'servicerequest';
+            $this->itemPage = 'servicerequestmanagement';
             $this->listPage = 'manageservicerequests';
         }
         else
@@ -75,13 +76,13 @@ class manageservicerequests_Design extends FormDesign {
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageservicerequests");
 		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['servicerequest']->getTableTitle() . " ها"));
-		$addUrl=new AppRooter('itsap','manageservicerequest');
-		$LblAdd=new Lable('افزودن آیتم جدید');
-		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
-		$lnkAdd->setClass('linkbutton btn btn-primary');
-		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
-		$lnkAdd->setId('addservicerequestlink');
-		$Page->addElement($lnkAdd);
+//		$addUrl=new AppRooter('itsap','manageservicerequest');
+//		$LblAdd=new Lable('افزودن آیتم جدید');
+//		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
+//		$lnkAdd->setClass('linkbutton btn btn-primary');
+//		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
+//		$lnkAdd->setId('addservicerequestlink');
+//		$Page->addElement($lnkAdd);
 		$SearchUrl=new AppRooter('itsap',$this->listPage);
 		$SearchUrl->addParameter(new URLParameter('search',null));
 		$LblSearch=new Lable('جستجو');
@@ -94,7 +95,7 @@ class manageservicerequests_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
 		$TableDiv->setClass('table-responsive');
-		$LTable1=new ListTable(7);
+		$LTable1=new ListTable(8);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped table-hover managelist");
 		$LTable1->addElement(new Lable('#'));
@@ -106,6 +107,8 @@ class manageservicerequests_Design extends FormDesign {
         $LTable1->addElement(new Lable('یگان درخواست کننده'));
         $LTable1->setLastElementClass("listtitle");
         $LTable1->addElement(new Lable('تاریخ درخواست'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('وضعیت'));
         $LTable1->setLastElementClass("listtitle");
         $LTable1->addElement(new Lable('اولویت'));
         $LTable1->setLastElementClass("listtitle");
@@ -128,14 +131,14 @@ class manageservicerequests_Design extends FormDesign {
 			$delurl=new AppRooter('itsap',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-			$lbDel[$i]=new Lable('حذف');
-			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
-			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
-			$lnkDel[$i]->setClass('btn btn-danger');
+//			$lbDel[$i]=new Lable('حذف');
+//			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
+//			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
+//			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
 			$operationDiv[$i]->addElement($lnkView[$i]);
-			$operationDiv[$i]->addElement($lnkDel[$i]);
+//			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
@@ -149,7 +152,18 @@ class manageservicerequests_Design extends FormDesign {
             $request_date_Text=$request_date_SD->date("l d F Y",$this->Data['data'][$i]->getRequest_date());
             $LTable1->addElement(new Lable($request_date_Text));
             $LTable1->setLastElementClass("listcontent");
-            $LTable1->addElement(new Lable($this->Data['data'][$i]->getPriority()));
+            $LTable1->addElement(new Lable($this->Data['currentstatusinfo'][$i]->getTitle()));
+            $LTable1->setLastElementClass("listcontent");
+            $priorityImages=new Div();
+            $priorityImages->setClass('priorityimagesbox');
+            for($starindex=0;$starindex<$this->Data['data'][$i]->getPriority();$starindex++)
+            {
+                $img=new Image(DEFAULT_PUBLICURL . "content/files/img/star.png");
+                $priorityImages->addElement($img);
+            }
+            $LTable1->addElement($priorityImages);
+
+//            $LTable1->addElement(new Lable($this->Data['data'][$i]->getPriority()));
             $LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($operationDiv[$i]);
 			$LTable1->setLastElementClass("listcontent");

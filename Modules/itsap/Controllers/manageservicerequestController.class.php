@@ -140,12 +140,11 @@ class manageservicerequestController extends Controller {
 			$servicerequestEntityObject->setServicetype_fid($servicetype_fid);
 			$servicerequestEntityObject->setDescription($description);
 			$servicerequestEntityObject->setPriority($priority);
-			if($file1_fluURL!='')
 			$servicerequestEntityObject->setFile1_flu($file1_fluURL);
 			$servicerequestEntityObject->setRequest_date($request_date);
             $servicerequestEntityObject->setRole_systemuser_fid($role_systemuser_fid);
 			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
-			if($letterfile_fluURL!='')
+			$servicerequestEntityObject->set($devicetype_fid);
 			$servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
 			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($securityacceptor_role_systemuser_fid);
 			$servicerequestEntityObject->setLetternumber($letternumber);
@@ -155,6 +154,7 @@ class manageservicerequestController extends Controller {
             $statusEnt=new itsap_servicerequestservicestatusEntity($DBAccessor);
             $statusEnt->setServicestatus_fid(1);//Residegi Nashode
             $statusEnt->setServicerequest_fid($ID);
+            $statusEnt->setMessage('');
             $statusEnt->setRole_systemuser_fid($role_systemuser_fid);
             $statusEnt->setStart_date(time());
             $statusEnt->Save();

@@ -4,6 +4,8 @@ use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
 use Modules\itsap\Entity\itsap_employeeEntity;
+use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
+use Modules\itsap\Entity\itsap_servicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
 use Modules\itsap\Entity\itsap_topunitEntity;
 use Modules\itsap\Entity\itsap_unitEntity;
@@ -94,6 +96,15 @@ class outboxController extends Controller {
             $result['requesters'][$i]['employee']=$emp;
             $result['requesters'][$i]['unit']=$unit;
             $result['requesters'][$i]['topunit']=$topUnit;
+
+            $StatusesObject=new itsap_servicerequestservicestatusEntity($DBAccessor);
+            $myq=new QueryLogic();
+            $myq->addCondition(new FieldCondition(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$data[$i]->getId()));
+            $myq->addOrderBy(itsap_servicerequestservicestatusEntity::$START_DATE,true);
+            $CurrentStatus=$StatusesObject->FindOne($myq);
+            $StatusEnt=new itsap_servicestatusEntity($DBAccessor);
+            $StatusEnt->setId($CurrentStatus->getServicestatus_fid());
+            $result['currentstatusinfo'][$i]=$StatusEnt;
 
         }
 		$DBAccessor->close_connection();
