@@ -111,7 +111,7 @@ class manageservicerequest_Code extends FormCode {
 		if($Result['needdevice']==1)
         {
 
-            $ManageListRooter=new AppRooter("itsap","manageservicerequestdevice");
+            $ManageListRooter=new AppRooter("itsap","manageservicerequestdevices");
             $ManageListRooter->addParameter(new UrlParameter('srid',$Result['id']));
         }
 
