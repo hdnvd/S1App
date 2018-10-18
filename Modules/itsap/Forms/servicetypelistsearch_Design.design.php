@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:04
-*@lastUpdate 1397-01-13 - 2018-04-02 02:04
+*@creationDate 1397-07-26 - 2018-10-18 17:12
+*@lastUpdate 1397-07-26 - 2018-10-18 17:12
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -67,6 +67,15 @@ class servicetypelistsearch_Design extends FormDesign {
 		return $this->servicetypegroup_fid;
 	}
 	/** @var combobox */
+	private $is_needdevice;
+	/**
+	 * @return combobox
+	 */
+	public function getIs_needdevice()
+	{
+		return $this->is_needdevice;
+	}
+	/** @var combobox */
 	private $sortby;
 	/**
 	 * @return combobox
@@ -100,15 +109,20 @@ class servicetypelistsearch_Design extends FormDesign {
 
 		/******* servicetypegroup_fid *******/
 		$this->servicetypegroup_fid= new combobox("servicetypegroup_fid");
-		$this->servicetypegroup_fid->setClass("form-control");
+		$this->servicetypegroup_fid->setClass("form-control selectpicker");
+		$this->servicetypegroup_fid->SetAttribute("data-live-search",true);
+
+		/******* is_needdevice *******/
+		$this->is_needdevice= new combobox("is_needdevice");
+		$this->is_needdevice->setClass("form-control selectpicker");
 
 		/******* sortby *******/
 		$this->sortby= new combobox("sortby");
-		$this->sortby->setClass("form-control");
+		$this->sortby->setClass("form-control selectpicker");
 
 		/******* isdesc *******/
 		$this->isdesc= new combobox("isdesc");
-		$this->isdesc->setClass("form-control");
+		$this->isdesc->setClass("form-control selectpicker");
 
 		/******* search *******/
 		$this->search= new SweetButton(true,"جستجو");
@@ -130,6 +144,7 @@ class servicetypelistsearch_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->servicetypegroup_fid,$this->getFieldCaption('servicetypegroup_fid'),null,'',null));
+		$LTable1->addElement($this->getFieldRowCode($this->is_needdevice,$this->getFieldCaption('is_needdevice'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
@@ -143,6 +158,9 @@ class servicetypelistsearch_Design extends FormDesign {
 			$this->servicetypegroup_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['servicetypegroup_fid'] as $item)
 			$this->servicetypegroup_fid->addOption($item->getID(), $item->getTitleField());
+			$this->is_needdevice->addOption("", "مهم نیست");
+			$this->is_needdevice->addOption(1,'بله');
+			$this->is_needdevice->addOption(0,'خیر');
 		if (key_exists("servicetype", $this->Data)){
 
 			/******** title ********/
@@ -156,6 +174,10 @@ class servicetypelistsearch_Design extends FormDesign {
 			/******** servicetypegroup_fid ********/
 			$this->servicetypegroup_fid->setSelectedValue($this->Data['servicetype']->getServicetypegroup_fid());
 			$this->setFieldCaption('servicetypegroup_fid',$this->Data['servicetype']->getFieldInfo('servicetypegroup_fid')->getTitle());
+
+			/******** is_needdevice ********/
+			$this->is_needdevice->setSelectedValue($this->Data['servicetype']->getIs_needdevice());
+			$this->setFieldCaption('is_needdevice',$this->Data['servicetype']->getFieldInfo('is_needdevice')->getTitle());
 
 			/******** sortby ********/
 
@@ -180,6 +202,11 @@ class servicetypelistsearch_Design extends FormDesign {
 		$this->sortby->addOption($this->Data['servicetype']->getTableFieldID('servicetypegroup_fid'),$this->getFieldCaption('servicetypegroup_fid'));
 		if(isset($_GET['servicetypegroup_fid']))
 			$this->servicetypegroup_fid->setSelectedValue($_GET['servicetypegroup_fid']);
+
+		/******** is_needdevice ********/
+		$this->sortby->addOption($this->Data['servicetype']->getTableFieldID('is_needdevice'),$this->getFieldCaption('is_needdevice'));
+		if(isset($_GET['is_needdevice']))
+			$this->is_needdevice->setSelectedValue($_GET['is_needdevice']);
 
 		/******** sortby ********/
 		if(isset($_GET['sortby']))

@@ -7,6 +7,7 @@ use Modules\itsap\Entity\itsap_devicetypeEntity;
 use Modules\itsap\Entity\itsap_employeeEntity;
 use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
+use Modules\itsap\Entity\itsap_servicetypegroupEntity;
 use Modules\itsap\Entity\itsap_topunitEntity;
 use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
@@ -49,6 +50,10 @@ class manageservicerequestController extends Controller {
 		$servicerequestEntityObject=new itsap_servicerequestEntity($DBAccessor);
 		$servicetypeEntityObject=new itsap_servicetypeEntity($DBAccessor);
 		$result['servicetype_fid']=$servicetypeEntityObject->FindAll(new QueryLogic());
+
+        $servicetypegroupEntityObject=new itsap_servicetypegroupEntity($DBAccessor);
+        $result['servicetypegroup_fid']=$servicetypegroupEntityObject->FindAll(new QueryLogic());
+
 		$devicetypeEntityObject=new itsap_devicetypeEntity($DBAccessor);
 		$result['devicetype_fid']=$devicetypeEntityObject->FindAll(new QueryLogic());
 		$RelationLogic=new QueryLogic();
@@ -123,6 +128,9 @@ class manageservicerequestController extends Controller {
         if($ServiceTypeEnt==null || $ServiceTypeEnt->getId()<0) throw new DataNotFoundException();
         $priority=$ServiceTypeEnt->getPriority();
         //EOF Get Priority By Service Type
+
+        $servicetypeGroupEnt=new itsap_servicetypegroupEntity($DBAccessor);
+        $servicetypeGroupEnt->setId($ServiceTypeEnt->getServicetypegroup_fid());
 		if($ID==-1){
             //Get Requester Employee Unit
             $emp=new itsap_employeeEntity($DBAccessor);
@@ -143,8 +151,8 @@ class manageservicerequestController extends Controller {
 			$servicerequestEntityObject->setFile1_flu($file1_fluURL);
 			$servicerequestEntityObject->setRequest_date($request_date);
             $servicerequestEntityObject->setRole_systemuser_fid($role_systemuser_fid);
-			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
-			$servicerequestEntityObject->set($devicetype_fid);
+//			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
+//			$servicerequestEntityObject->set($devicetype_fid);
 			$servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
 			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($securityacceptor_role_systemuser_fid);
 			$servicerequestEntityObject->setLetternumber($letternumber);
@@ -173,11 +181,11 @@ class manageservicerequestController extends Controller {
 			$servicerequestEntityObject->setDescription($description);
 			$servicerequestEntityObject->setPriority($priority);
 			if($file1_fluURL!='')
-			$servicerequestEntityObject->setFile1_flu($file1_fluURL);
+			    $servicerequestEntityObject->setFile1_flu($file1_fluURL);
 			$servicerequestEntityObject->setRequest_date($request_date);
 			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
 			if($letterfile_fluURL!='')
-			$servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
+			    $servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
 			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($securityacceptor_role_systemuser_fid);
 			$servicerequestEntityObject->setLetternumber($letternumber);
 			$servicerequestEntityObject->setLetter_date($letter_date);
@@ -186,6 +194,8 @@ class manageservicerequestController extends Controller {
 		$RelationLogic=new QueryLogic();
 		$RelationLogic->addCondition(new FieldCondition('servicerequest_fid',$ID));
 		$result=$this->load($ID);
+		$result['needdevice']=$ServiceTypeEnt->getIs_needdevice();
+        $result['id']=$ID;
 		$result['param1']="";
 		$DBAccessor->close_connection();
 		return $result;

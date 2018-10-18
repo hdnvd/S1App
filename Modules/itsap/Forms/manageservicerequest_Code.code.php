@@ -4,6 +4,7 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\common\PublicClasses\UrlParameter;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -106,12 +107,14 @@ class manageservicerequest_Code extends FormCode {
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);
-            if($this->getAdminMode()){
-                $ManageListRooter=new AppRooter("itsap","outbox");
-            }
-            else{
-                $ManageListRooter=new AppRooter("itsap","outbox");
-            }
+            $ManageListRooter=new AppRooter("itsap","outbox");
+		if($Result['needdevice']==1)
+        {
+
+            $ManageListRooter=new AppRooter("itsap","manageservicerequestdevice");
+            $ManageListRooter->addParameter(new UrlParameter('srid',$Result['id']));
+        }
+
             AppRooter::redirect($ManageListRooter->getAbsoluteURL(),DEFAULT_PAGESAVEREDIRECTTIME);
         }
         catch(DataNotFoundException $dnfex){
@@ -124,11 +127,11 @@ class manageservicerequest_Code extends FormCode {
             $design->setMessageType(MessageType::$ERROR);
             $design->setMessage("حجم فایل آپلود شده بیشتر از حد تعیین شده است.");
         }
-//        catch(\Exception $uex){
-//            $design=$this->getLoadDesign();
-//            $design->setMessageType(MessageType::$ERROR);
-//            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-//        }
+        catch(\Exception $uex){
+            $design=$this->getLoadDesign();
+            $design->setMessageType(MessageType::$ERROR);
+            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+        }
         return $design->getResponse();
 	}
 }

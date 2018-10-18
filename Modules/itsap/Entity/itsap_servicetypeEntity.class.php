@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:02
-*@lastUpdate 1397-01-13 - 2018-04-02 02:02
+*@creationDate 1397-07-26 - 2018-10-18 17:11
+*@lastUpdate 1397-07-26 - 2018-10-18 17:11
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -17,7 +17,7 @@ class itsap_servicetypeEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_servicetype");
-		$this->setTableTitle("نوع درخواست");
+		$this->setTableTitle("خدمت");
 		$this->setTitleFieldName("title");
 
 		/******** title ********/
@@ -37,6 +37,12 @@ class itsap_servicetypeEntity extends EntityClass {
 		$Servicetypegroup_fidInfo->setTitle("گروه بندی");
 		$this->setFieldInfo(itsap_servicetypeEntity::$SERVICETYPEGROUP_FID,$Servicetypegroup_fidInfo);
 		$this->addTableField('3',itsap_servicetypeEntity::$SERVICETYPEGROUP_FID);
+
+		/******** is_needdevice ********/
+		$Is_needdeviceInfo=new FieldInfo();
+		$Is_needdeviceInfo->setTitle("دارای قطعه");
+		$this->setFieldInfo(itsap_servicetypeEntity::$IS_NEEDDEVICE,$Is_needdeviceInfo);
+		$this->addTableField('4',itsap_servicetypeEntity::$IS_NEEDDEVICE);
 	}
 	public static $TITLE="title";
 	/**
@@ -76,6 +82,19 @@ class itsap_servicetypeEntity extends EntityClass {
 	 */
 	public function setServicetypegroup_fid($Servicetypegroup_fid){
 		$this->setField(itsap_servicetypeEntity::$SERVICETYPEGROUP_FID,$Servicetypegroup_fid);
+	}
+	public static $IS_NEEDDEVICE="is_needdevice";
+	/**
+	 * @return mixed
+	 */
+	public function getIs_needdevice(){
+		return $this->getField(itsap_servicetypeEntity::$IS_NEEDDEVICE);
+	}
+	/**
+	 * @param mixed $Is_needdevice
+	 */
+	public function setIs_needdevice($Is_needdevice){
+		$this->setField(itsap_servicetypeEntity::$IS_NEEDDEVICE,$Is_needdevice);
 	}
 }
 ?>

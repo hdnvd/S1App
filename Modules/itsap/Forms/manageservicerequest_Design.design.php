@@ -48,7 +48,9 @@ class manageservicerequest_Design extends FormDesign {
 
         $LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->unit_fid,$this->getFieldCaption('unit_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
-		$LTable1->addElement($this->getFieldRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+        $LTable1->addElement($this->getFieldRowCode($this->servicetypegroup_fid,"نوع خدمت",null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+
+        $LTable1->addElement($this->getFieldRowCode($this->servicetype_fid,"خدمت",null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 //		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->file1_flu,$this->getFieldCaption('file1_flu'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
@@ -70,8 +72,12 @@ class manageservicerequest_Design extends FormDesign {
 	{
 //		foreach ($this->Data['unit_fid'] as $item)
 //			$this->unit_fid->addOption($item->getID(), $item->getTitleField());
-		foreach ($this->Data['servicetype_fid'] as $item)
-			$this->servicetype_fid->addOption($item->getID(), $item->getTitleField());
+        foreach ($this->Data['servicetypegroup_fid'] as $item)
+            $this->servicetypegroup_fid->addOption($item->getID(), $item->getTitleField());
+        $this->servicetype_fid->addOption(0, 'انتخاب کنید');
+		foreach ($this->Data['servicetype_fid'] as $item){
+            $this->servicetype_fid->addGroupedOption($item->getServicetypegroup_fid(),$item->getID(), $item->getTitleField());
+        }
 //		foreach ($this->Data['devicetype_fid'] as $item)
 //			$this->devicetype_fid->addOption($item->getID(), $item->getTitleField());
 //		foreach ($this->Data['securityacceptor_role_systemuser_fid'] as $item)
@@ -145,9 +151,15 @@ class manageservicerequest_Design extends FormDesign {
 		$this->unit_fid= new combobox("unit_fid");
 		$this->unit_fid->setClass("form-control");
 
-		/******* servicetype_fid *******/
-		$this->servicetype_fid= new combobox("servicetype_fid");
-		$this->servicetype_fid->setClass("form-control");
+
+        /******* servicetype_fid *******/
+        $this->servicetypegroup_fid= new combobox("servicetypegroup_fid");
+        $this->servicetypegroup_fid->setClass("form-control");
+
+        /******* servicetype_fid *******/
+        $this->servicetype_fid= new combobox("servicetype_fid");
+        $this->servicetype_fid->setClass("form-control");
+        $this->servicetype_fid->setMotherComboboxName($this->servicetypegroup_fid->getId());
 
 		/******* description *******/
 		$this->description= new textbox("description");
@@ -238,6 +250,19 @@ class manageservicerequest_Design extends FormDesign {
 	{
 		return $this->servicetype_fid;
 	}
+
+
+    /** @var combobox */
+    private $servicetypegroup_fid;
+    /**
+     * @return combobox
+     */
+    public function getServicetypegroup_fid()
+    {
+        return $this->servicetypegroup_fid;
+    }
+
+
 	/** @var textbox */
 	private $description;
 	/**

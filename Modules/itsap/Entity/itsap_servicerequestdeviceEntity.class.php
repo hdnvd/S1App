@@ -17,30 +17,30 @@ class itsap_servicerequestdeviceEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_servicerequestdevice");
-		$this->setTableTitle("itsap_servicerequestdevice");
-		$this->setTitleFieldName("id");
+		$this->setTableTitle("قطعات درخواست");
+		$this->setTitleFieldName("code");
 
 		/******** code ********/
 		$CodeInfo=new FieldInfo();
-		$CodeInfo->setTitle("code");
+		$CodeInfo->setTitle("کد");
 		$this->setFieldInfo(itsap_servicerequestdeviceEntity::$CODE,$CodeInfo);
 		$this->addTableField('1',itsap_servicerequestdeviceEntity::$CODE);
 
 		/******** devicetype_fid ********/
 		$Devicetype_fidInfo=new FieldInfo();
-		$Devicetype_fidInfo->setTitle("devicetype_fid");
+		$Devicetype_fidInfo->setTitle("نوع قطعه");
 		$this->setFieldInfo(itsap_servicerequestdeviceEntity::$DEVICETYPE_FID,$Devicetype_fidInfo);
 		$this->addTableField('2',itsap_servicerequestdeviceEntity::$DEVICETYPE_FID);
 
 		/******** servicerequest_fid ********/
 		$Servicerequest_fidInfo=new FieldInfo();
-		$Servicerequest_fidInfo->setTitle("servicerequest_fid");
+		$Servicerequest_fidInfo->setTitle("درخواست");
 		$this->setFieldInfo(itsap_servicerequestdeviceEntity::$SERVICEREQUEST_FID,$Servicerequest_fidInfo);
 		$this->addTableField('3',itsap_servicerequestdeviceEntity::$SERVICEREQUEST_FID);
 
 		/******** description ********/
 		$DescriptionInfo=new FieldInfo();
-		$DescriptionInfo->setTitle("description");
+		$DescriptionInfo->setTitle("توضیحات");
 		$this->setFieldInfo(itsap_servicerequestdeviceEntity::$DESCRIPTION,$DescriptionInfo);
 		$this->addTableField('4',itsap_servicerequestdeviceEntity::$DESCRIPTION);
 	}

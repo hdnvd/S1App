@@ -12,8 +12,8 @@ use core\CoreClasses\db\LogicalOperator;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:04
-*@lastUpdate 1397-01-13 - 2018-04-02 02:04
+*@creationDate 1397-07-26 - 2018-10-18 17:12
+*@lastUpdate 1397-07-26 - 2018-10-18 17:12
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -65,7 +65,7 @@ class servicetypelistController extends Controller {
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function Search($PageNum,$title,$priority,$servicetypegroup_fid,$sortby,$isdesc)
+	public function Search($PageNum,$title,$priority,$servicetypegroup_fid,$is_needdevice,$sortby,$isdesc)
 	{
 		$DBAccessor=new dbaccess();
 		$servicetypeEnt=new itsap_servicetypeEntity($DBAccessor);
@@ -74,6 +74,7 @@ class servicetypelistController extends Controller {
 		$q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("priority","%$priority%",LogicalOperator::LIKE));
 		$q->addCondition(new FieldCondition("servicetypegroup_fid","%$servicetypegroup_fid%",LogicalOperator::LIKE));
+		$q->addCondition(new FieldCondition("is_needdevice","%$is_needdevice%",LogicalOperator::LIKE));
 		$sortByField=$servicetypeEnt->getTableField($sortby);
 		if($sortByField!=null)
 			$q->addOrderBy($sortByField,$isdesc);

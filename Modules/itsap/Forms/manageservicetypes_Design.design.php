@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:04
-*@lastUpdate 1397-01-13 - 2018-04-02 02:04
+*@creationDate 1397-07-26 - 2018-10-18 17:12
+*@lastUpdate 1397-07-26 - 2018-10-18 17:12
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -74,9 +74,9 @@ class manageservicetypes_Design extends FormDesign {
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageservicetypes");
-		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['servicetype']->getTableTitle() . " ها"));
+		$Page->addElement($this->getPageTitlePart(" " . $this->Data['servicetype']->getTableTitle() . " ها"));
 		$addUrl=new AppRooter('itsap',$this->itemPage);
-		$LblAdd=new Lable('افزودن آیتم جدید');
+		$LblAdd=new Lable('ثبت ' . $this->Data['servicetype']->getTableTitle() . ' جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');

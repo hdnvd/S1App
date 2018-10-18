@@ -12,8 +12,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:04
-*@lastUpdate 1397-01-13 - 2018-04-02 02:04
+*@creationDate 1397-07-26 - 2018-10-18 17:12
+*@lastUpdate 1397-07-26 - 2018-10-18 17:12
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -80,7 +80,8 @@ class manageservicetype_Code extends FormCode {
 		$title=$design->getTitle()->getValue();
 		$priority=$design->getPriority()->getValue();
 		$servicetypegroup_fid_ID=$design->getServicetypegroup_fid()->getSelectedID();
-		$Result=$manageservicetypeController->BtnSave($this->getID(),$title,$priority,$servicetypegroup_fid_ID);
+		$is_needdevice_ID=$design->getIs_needdevice()->getSelectedID();
+		$Result=$manageservicetypeController->BtnSave($this->getID(),$title,$priority,$servicetypegroup_fid_ID,$is_needdevice_ID);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

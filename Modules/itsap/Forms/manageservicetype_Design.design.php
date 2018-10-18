@@ -25,8 +25,8 @@ use Modules\common\PublicClasses\UrlParameter;
 use core\CoreClasses\SweetDate;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:04
-*@lastUpdate 1397-01-13 - 2018-04-02 02:04
+*@creationDate 1397-07-26 - 2018-10-18 17:12
+*@lastUpdate 1397-07-26 - 2018-10-18 17:12
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -37,7 +37,7 @@ class manageservicetype_Design extends FormDesign {
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageservicetype");
-		$Page->addElement($this->getPageTitlePart("مدیریت " . $this->Data['servicetype']->getTableTitle() . ""));
+		$Page->addElement($this->getPageTitlePart("تعریف " . $this->Data['servicetype']->getTableTitle() . ""));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
@@ -45,6 +45,7 @@ class manageservicetype_Design extends FormDesign {
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->servicetypegroup_fid,$this->getFieldCaption('servicetypegroup_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->is_needdevice,$this->getFieldCaption('is_needdevice'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -57,6 +58,8 @@ class manageservicetype_Design extends FormDesign {
 	{
 		foreach ($this->Data['servicetypegroup_fid'] as $item)
 			$this->servicetypegroup_fid->addOption($item->getID(), $item->getTitleField());
+			$this->is_needdevice->addOption(1,'بله');
+			$this->is_needdevice->addOption(0,'خیر');
 		if (key_exists("servicetype", $this->Data)){
 
 			/******** title ********/
@@ -72,6 +75,10 @@ class manageservicetype_Design extends FormDesign {
 			/******** servicetypegroup_fid ********/
 			$this->servicetypegroup_fid->setSelectedValue($this->Data['servicetype']->getServicetypegroup_fid());
 			$this->setFieldCaption('servicetypegroup_fid',$this->Data['servicetype']->getFieldInfo('servicetypegroup_fid')->getTitle());
+
+			/******** is_needdevice ********/
+			$this->is_needdevice->setSelectedValue($this->Data['servicetype']->getIs_needdevice());
+			$this->setFieldCaption('is_needdevice',$this->Data['servicetype']->getFieldInfo('is_needdevice')->getTitle());
 
 			/******** btnSave ********/
 		}
@@ -90,7 +97,12 @@ class manageservicetype_Design extends FormDesign {
 
 		/******* servicetypegroup_fid *******/
 		$this->servicetypegroup_fid= new combobox("servicetypegroup_fid");
-		$this->servicetypegroup_fid->setClass("form-control");
+		$this->servicetypegroup_fid->setClass("form-control selectpicker");
+		$this->servicetypegroup_fid->SetAttribute("data-live-search",true);
+
+		/******* is_needdevice *******/
+		$this->is_needdevice= new combobox("is_needdevice");
+		$this->is_needdevice->setClass("form-control selectpicker");
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
@@ -144,6 +156,15 @@ class manageservicetype_Design extends FormDesign {
 	public function getServicetypegroup_fid()
 	{
 		return $this->servicetypegroup_fid;
+	}
+	/** @var combobox */
+	private $is_needdevice;
+	/**
+	 * @return combobox
+	 */
+	public function getIs_needdevice()
+	{
+		return $this->is_needdevice;
 	}
 	/** @var SweetButton */
 	private $btnSave;
