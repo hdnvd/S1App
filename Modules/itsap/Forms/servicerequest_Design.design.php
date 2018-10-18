@@ -67,111 +67,7 @@ class servicerequest_Design extends FormDesign {
 	private $letternumber;
 	/** @var lable */
 	private $letter_date;
-    /** @var TextArea */
-    private $TxtStatusMessage;
 
-    /**
-     * @return TextArea
-     */
-    public function getTxtStatusMessage()
-    {
-        return $this->TxtStatusMessage;
-    }
-
-    /**
-     * @return TextArea
-     */
-    public function getTxtReferMessage()
-    {
-        return $this->TxtReferMessage;
-    }
-
-    /**
-     * @return TextArea
-     */
-    public function getTxtAssignMessage()
-    {
-        return $this->TxtAssignMessage;
-    }
-
-    /**
-     * @return ComboBox
-     */
-    public function getCmbState()
-    {
-        return $this->CmbState;
-    }
-
-    /**
-     * @return ComboBox
-     */
-    public function getCMBTopUnits()
-    {
-        return $this->CMBTopUnits;
-    }
-    /** @var TextArea */
-    private $TxtReferMessage;
-    /** @var TextArea */
-    private $TxtAssignMessage;
-    /** @var ComboBox */
-    private $CmbState;
-    /** @var ComboBox */
-    private $CMBTopUnits;
-
-    /** @var ComboBox */
-    private $CMBUnitEmployees;
-
-    /** @var ComboBox */
-    private $CMBPriorities;
-
-    /**
-     * @return ComboBox
-     */
-    public function getCMBPriorities()
-    {
-        return $this->CMBPriorities;
-    }
-    /** @var SweetButton */
-    private $btnChangeState;
-
-    /** @var SweetButton */
-    private $btnChangePriority;
-    /** @var SweetButton */
-    private $btnRefer;
-    /** @var SweetButton */
-    private $btnAssign;
-
-    /**
-     * @return ComboBox
-     */
-    public function getCMBUnitEmployees()
-    {
-        return $this->CMBUnitEmployees;
-    }
-
-    /**
-     * @return SweetButton
-     */
-    public function getBtnChangeState()
-    {
-        return $this->btnChangeState;
-    }
-
-    /**
-     * @return SweetButton
-     */
-    public function getBtnRefer()
-    {
-        return $this->btnRefer;
-    }
-
-    /**
-     * @return SweetButton
-     */
-    public function getBtnAssign()
-    {
-        return $this->btnAssign;
-    }
 	public function __construct()
 	{
 
@@ -278,6 +174,30 @@ class servicerequest_Design extends FormDesign {
         $LTable1->addElement($this->getInfoRowCode($this->letter_date,$this->getFieldCaption('letter_date')));
         $Page->addElement($LTable1);
 
+        if($this->Data['devices']!="" && count($this->Data['devices'])>0)
+        {
+            $DevicesListTitleBox=new Div();
+            $DevicesListTitleBox->setId("devicelisttitle");
+            $DevicesListTitleBox->addElement(new Lable("فهرست قطعات"));
+            $Page->addElement($DevicesListTitleBox);
+            $DevicesList=new ListTable(4);
+            $DevicesList->setId("devicelist");
+            $DevicesList->setClass("table table-inverse");
+            $DevicesList->setHeaderRowCount(1);
+            $DevicesList->addElement(new Lable('#'));
+            $DevicesList->addElement(new Lable('نوع'));
+            $DevicesList->addElement(new Lable('کد'));
+            $DevicesList->addElement(new Lable('توضیحات'));
+            for($devIndex=0;$this->Data['devices']!="" && $devIndex<count($this->Data['devices']);$devIndex++)
+            {
+
+                $DevicesList->addElement(new Lable($devIndex+1));
+                $DevicesList->addElement(new Lable($this->Data['devicetypes'][$devIndex]->getTitle()));
+                $DevicesList->addElement(new Lable($this->Data['devices'][$devIndex]->getCode()));
+                $DevicesList->addElement(new Lable($this->Data['devices'][$devIndex]->getDescription()));
+            }
+            $Page->addElement($DevicesList);
+        }
         $Page->addElement($this->getStatusBox('ثبت درخواست',$this->Data['servicerequest']->getRequest_date(),$this->Data['requesteremployee']->getName()." ".$this->Data['requesteremployee']->getFamily()));
 
         for($statIndex=1;$statIndex<count($this->Data['allstatusesinfo']);$statIndex++)

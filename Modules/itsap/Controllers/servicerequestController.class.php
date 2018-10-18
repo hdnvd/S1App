@@ -3,9 +3,11 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\itsap\Entity\itsap_degreeEntity;
 use Modules\itsap\Entity\itsap_devicetypeEntity;
 use Modules\itsap\Entity\itsap_employeeEntity;
 use Modules\itsap\Entity\itsap_referenceEntity;
+use Modules\itsap\Entity\itsap_servicerequestdeviceEntity;
 use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
 use Modules\itsap\Entity\itsap_servicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
@@ -68,6 +70,17 @@ class servicerequestController extends Controller {
 //			if($devicetypeEntityObject->getId()==-1)
 //				throw new DataNotFoundException();
 			$result['devicetype_fid']=$devicetypeEntityObject;
+
+            $DeviceesObject=new itsap_servicerequestdeviceEntity($DBAccessor);
+            $q=new QueryLogic();
+            $q->addCondition(new FieldCondition(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$ID));
+            $result['devices']=$DeviceesObject->FindAll($q);
+            for($devIndex=0;$result['devices']!="" && $devIndex<count($result['devices']);$devIndex++)
+            {
+                $devType=new itsap_devicetypeEntity($DBAccessor);
+                $devType->setId($result['devices'][$devIndex]->getDevicetype_fid());
+                $result['devicetypes'][$devIndex]=$devType;
+            }
 
             $States=new itsap_servicestatusEntity($DBAccessor);
             $result['allstatus']=$States->FindAll(new QueryLogic());

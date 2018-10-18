@@ -44,6 +44,7 @@ class itsap_servicerequestdeviceEntity extends EntityClass {
 		$this->setFieldInfo(itsap_servicerequestdeviceEntity::$DESCRIPTION,$DescriptionInfo);
 		$this->addTableField('4',itsap_servicerequestdeviceEntity::$DESCRIPTION);
 	}
+
 	public static $CODE="code";
 	/**
 	 * @return mixed
