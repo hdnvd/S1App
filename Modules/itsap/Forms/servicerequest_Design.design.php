@@ -215,42 +215,6 @@ class servicerequest_Design extends FormDesign {
         $this->priorityImages=new Div();
         $this->priorityImages->setClass('priorityimagesbox');
 
-        $this->CMBPriorities=new ComboBox("cmbpriorities");
-        $this->btnChangePriority=new SweetButton(true,"تغییر اولویت");
-        $this->btnChangePriority->setAction("btnChangePriority");
-        $this->btnChangePriority->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
-        $this->btnChangePriority->setClass("btn btn-primary");
-        $this->CMBPriorities->setClass("form-control");
-
-
-        $this->CmbState=new ComboBox("cmbstate");
-        $this->btnChangeState=new SweetButton(true,"تغییر وضعیت");
-        $this->btnChangeState->setAction("btnChangeState");
-        $this->btnChangeState->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
-        $this->btnChangeState->setClass("btn btn-primary");
-        $this->CmbState->setClass("form-control");
-
-        $this->CMBTopUnits=new ComboBox("cmbtopunits");
-        $this->btnRefer=new SweetButton(true,"ارجاع");
-        $this->btnRefer->setAction("btnRefer");
-        $this->btnRefer->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
-        $this->btnRefer->setClass("btn btn-primary");
-        $this->CMBTopUnits->setClass("form-control");
-
-        $this->CMBUnitEmployees=new ComboBox("CMBUnitEmployees");
-        $this->btnAssign=new SweetButton(true,"تخصیص");
-        $this->btnAssign->setAction("btnAssign");
-        $this->btnAssign->setDisplayMode(Button::$DISPLAYMODE_BUTTON);
-        $this->btnAssign->setClass("btn btn-primary");
-        $this->CMBUnitEmployees->setClass("form-control");
-
-        $this->TxtStatusMessage=new TextArea('TxtStatusMessage');
-        $this->TxtStatusMessage->setClass("form-control");
-        $this->TxtReferMessage=new TextArea('txtrefermessage');
-        $this->TxtReferMessage->setClass("form-control");
-        $this->TxtAssignMessage=new TextArea('TxtAssignMessage');
-        $this->TxtAssignMessage->setClass("form-control");
-
 
 	}
 	protected function getInfoPart()
