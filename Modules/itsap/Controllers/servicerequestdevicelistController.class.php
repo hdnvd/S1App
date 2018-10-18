@@ -44,6 +44,13 @@ class servicerequestdevicelistController extends Controller {
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
 		$QueryLogic->setLimit($this->getPageRowsLimit($PageNum,$this->PAGESIZE));
 		$result['data']=$servicerequestdeviceEnt->FindAll($QueryLogic);
+		for($i=0;$i<count($result['data']);$i++)
+        {
+            $DevType=new itsap_devicetypeEntity($DBAccessor);
+            $DevType->setId($result['data'][$i]->getDevicetype_fid());
+            $result['devicetypes'][$i]=$DevType;
+
+        }
 		$DBAccessor->close_connection();
 		return $result;
 	}

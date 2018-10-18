@@ -95,29 +95,27 @@ class manageservicerequestdevices_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$TableDiv=new Div();
 		$TableDiv->setClass('table-responsive');
-		$LTable1=new ListTable(3);
+		$LTable1=new ListTable(5);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped table-hover managelist");
 		$LTable1->addElement(new Lable('#'));
 		$LTable1->setLastElementClass("listtitle");
-		$LTable1->addElement(new Lable('عنوان'));
+		$LTable1->addElement(new Lable('نوع قطعه'));
 		$LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('کد'));
+        $LTable1->setLastElementClass("listtitle");
+        $LTable1->addElement(new Lable('توضیحات'));
+        $LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عملیات'));
 		$LTable1->setLastElementClass("listtitle");
 		for($i=0;$i<count($this->Data['data']);$i++){
 			$url=new AppRooter('itsap',$this->itemPage);
 			$url->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-			$Title=$this->Data['data'][$i]->getTitleField();
+			$Title=$this->Data['devicetypes'][$i]->getTitleField();
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
-//			$ViewURL=new AppRooter('itsap',$this->itemViewPage);
-//			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
-//			$lbView[$i]=new Lable('مشاهده');
-//			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
-//			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
-//			$lnkView[$i]->setClass('btn btn-primary');
 			$delurl=new AppRooter('itsap',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
@@ -133,6 +131,10 @@ class manageservicerequestdevices_Design extends FormDesign {
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
 			$LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($this->Data['data'][$i]->getCode()));
+            $LTable1->setLastElementClass("listcontent");
+            $LTable1->addElement(new Lable($this->Data['data'][$i]->getDescription()));
+            $LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($operationDiv[$i]);
 			$LTable1->setLastElementClass("listcontent");
 		}
