@@ -8,8 +8,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-01-13 - 2018-04-02 02:31
-*@lastUpdate 1397-01-13 - 2018-04-02 02:31
+*@creationDate 1397-07-27 - 2018-10-19 14:13
+*@lastUpdate 1397-07-27 - 2018-10-19 14:13
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -69,36 +69,36 @@ class itsap_servicerequestEntity extends EntityClass {
         $this->setFieldInfo(itsap_servicerequestEntity::$REQUEST_DATE,$Request_dateInfo);
         $this->addTableField('8',itsap_servicerequestEntity::$REQUEST_DATE);
 
-        /******** devicetype_fid ********/
-        $Devicetype_fidInfo=new FieldInfo();
-        $Devicetype_fidInfo->setTitle("نوع قطعه");
-        $this->setFieldInfo(itsap_servicerequestEntity::$DEVICETYPE_FID,$Devicetype_fidInfo);
-        $this->addTableField('9',itsap_servicerequestEntity::$DEVICETYPE_FID);
-
 
         /******** letterfile_flu ********/
-		$Letterfile_fluInfo=new FieldInfo();
-		$Letterfile_fluInfo->setTitle("عکس حکم کار");
-		$this->setFieldInfo(itsap_servicerequestEntity::$LETTERFILE_FLU,$Letterfile_fluInfo);
-		$this->addTableField('10',itsap_servicerequestEntity::$LETTERFILE_FLU);
+        $Letterfile_fluInfo=new FieldInfo();
+        $Letterfile_fluInfo->setTitle("عکس حکم کار");
+        $this->setFieldInfo(itsap_servicerequestEntity::$LETTERFILE_FLU,$Letterfile_fluInfo);
+        $this->addTableField('9',itsap_servicerequestEntity::$LETTERFILE_FLU);
 
 		/******** securityacceptor_role_systemuser_fid ********/
 		$Securityacceptor_role_systemuser_fidInfo=new FieldInfo();
-		$Securityacceptor_role_systemuser_fidInfo->setTitle("securityacceptor_role_systemuser_fid");
+		$Securityacceptor_role_systemuser_fidInfo->setTitle("تایید کننده");
 		$this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID,$Securityacceptor_role_systemuser_fidInfo);
-		$this->addTableField('11',itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID);
+		$this->addTableField('10',itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID);
 
-		/******** letternumber ********/
-		$LetternumberInfo=new FieldInfo();
-		$LetternumberInfo->setTitle("شماره نامه");
-		$this->setFieldInfo(itsap_servicerequestEntity::$LETTERNUMBER,$LetternumberInfo);
-		$this->addTableField('12',itsap_servicerequestEntity::$LETTERNUMBER);
+		/******** is_securityaccepted ********/
+		$Is_securityacceptedInfo=new FieldInfo();
+		$Is_securityacceptedInfo->setTitle("تایید شده توسط حراست");
+		$this->setFieldInfo(itsap_servicerequestEntity::$IS_SECURITYACCEPTED,$Is_securityacceptedInfo);
+		$this->addTableField('11',itsap_servicerequestEntity::$IS_SECURITYACCEPTED);
 
-		/******** letter_date ********/
-		$Letter_dateInfo=new FieldInfo();
-		$Letter_dateInfo->setTitle("تاریخ نامه");
-		$this->setFieldInfo(itsap_servicerequestEntity::$LETTER_DATE,$Letter_dateInfo);
-		$this->addTableField('13',itsap_servicerequestEntity::$LETTER_DATE);
+        /******** letternumber ********/
+        $LetternumberInfo=new FieldInfo();
+        $LetternumberInfo->setTitle("شماره نامه");
+        $this->setFieldInfo(itsap_servicerequestEntity::$LETTERNUMBER,$LetternumberInfo);
+        $this->addTableField('12',itsap_servicerequestEntity::$LETTERNUMBER);
+
+        /******** letter_date ********/
+        $Letter_dateInfo=new FieldInfo();
+        $Letter_dateInfo->setTitle("تاریخ نامه");
+        $this->setFieldInfo(itsap_servicerequestEntity::$LETTER_DATE,$Letter_dateInfo);
+        $this->addTableField('13',itsap_servicerequestEntity::$LETTER_DATE);
 	}
 	public static $TITLE="title";
 	/**
@@ -204,19 +204,6 @@ class itsap_servicerequestEntity extends EntityClass {
 	public function setRequest_date($Request_date){
 		$this->setField(itsap_servicerequestEntity::$REQUEST_DATE,$Request_date);
 	}
-	public static $DEVICETYPE_FID="devicetype_fid";
-	/**
-	 * @return mixed
-	 */
-	public function getDevicetype_fid(){
-		return $this->getField(itsap_servicerequestEntity::$DEVICETYPE_FID);
-	}
-	/**
-	 * @param mixed $Devicetype_fid
-	 */
-	public function setDevicetype_fid($Devicetype_fid){
-		$this->setField(itsap_servicerequestEntity::$DEVICETYPE_FID,$Devicetype_fid);
-	}
 	public static $LETTERFILE_FLU="letterfile_flu";
 	/**
 	 * @return mixed
@@ -242,6 +229,19 @@ class itsap_servicerequestEntity extends EntityClass {
 	 */
 	public function setSecurityacceptor_role_systemuser_fid($Securityacceptor_role_systemuser_fid){
 		$this->setField(itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID,$Securityacceptor_role_systemuser_fid);
+	}
+	public static $IS_SECURITYACCEPTED="is_securityaccepted";
+	/**
+	 * @return mixed
+	 */
+	public function getIs_securityaccepted(){
+		return $this->getField(itsap_servicerequestEntity::$IS_SECURITYACCEPTED);
+	}
+	/**
+	 * @param mixed $Is_securityaccepted
+	 */
+	public function setIs_securityaccepted($Is_securityaccepted){
+		$this->setField(itsap_servicerequestEntity::$IS_SECURITYACCEPTED,$Is_securityaccepted);
 	}
 	public static $LETTERNUMBER="letternumber";
 	/**
@@ -269,6 +269,7 @@ class itsap_servicerequestEntity extends EntityClass {
 	public function setLetter_date($Letter_date){
 		$this->setField(itsap_servicerequestEntity::$LETTER_DATE,$Letter_date);
 	}
+
 
     public function getRequests($IsFava,$IsAdmin,$EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
     {

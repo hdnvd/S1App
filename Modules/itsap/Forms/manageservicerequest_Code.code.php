@@ -103,7 +103,7 @@ class manageservicerequest_Code extends FormCode {
 		$letternumber=$design->getLetternumber()->getValue();
 		$letter_date=$design->getLetter_date()->getTime();
             $priority=1;
-		$Result=$manageservicerequestController->BtnSave($this->getID(),$title,$unit_fid_ID,$servicetype_fid_ID,$description,$priority,$file1_fluURLs,$request_date,$devicetype_fid_ID,$letterfile_fluURLs,$securityacceptor_role_systemuser_fid_ID,$letternumber,$letter_date);
+		$Result=$manageservicerequestController->BtnSave($this->getID(),$title,$unit_fid_ID,$servicetype_fid_ID,$description,$priority,$file1_fluURLs,$request_date,$letterfile_fluURLs,$securityacceptor_role_systemuser_fid_ID,$letternumber,$letter_date);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);
@@ -127,11 +127,11 @@ class manageservicerequest_Code extends FormCode {
             $design->setMessageType(MessageType::$ERROR);
             $design->setMessage("حجم فایل آپلود شده بیشتر از حد تعیین شده است.");
         }
-        catch(\Exception $uex){
-            $design=$this->getLoadDesign();
-            $design->setMessageType(MessageType::$ERROR);
-            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-        }
+//        catch(\Exception $uex){
+//            $design=$this->getLoadDesign();
+//            $design->setMessageType(MessageType::$ERROR);
+//            $design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//        }
         return $design->getResponse();
 	}
 }
