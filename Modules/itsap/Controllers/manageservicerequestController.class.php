@@ -150,10 +150,11 @@ class manageservicerequestController extends Controller {
 			$servicerequestEntityObject->setFile1_flu($file1_fluURL);
 			$servicerequestEntityObject->setRequest_date($request_date);
             $servicerequestEntityObject->setRole_systemuser_fid($role_systemuser_fid);
-//			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
 			$servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
 			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid(-1);
 			$servicerequestEntityObject->setIs_securityaccepted(0);
+			$servicerequestEntityObject->setSecurityacceptancemessage("");
+            $servicerequestEntityObject->setSecurityacceptance_date(-1);
 			$servicerequestEntityObject->setLetternumber($letternumber);
 			$servicerequestEntityObject->setLetter_date($letter_date);
 			$servicerequestEntityObject->Save();
@@ -166,6 +167,7 @@ class manageservicerequestController extends Controller {
             $statusEnt->setStart_date(time());
             $statusEnt->Save();
 		}
+		/*
 		else{
 			$servicerequestEntityObject->setId($ID);
 			if($servicerequestEntityObject->getId()==-1)
@@ -189,7 +191,7 @@ class manageservicerequestController extends Controller {
 			$servicerequestEntityObject->setLetternumber($letternumber);
 			$servicerequestEntityObject->setLetter_date($letter_date);
 			$servicerequestEntityObject->Save();
-		}
+		}*/
 		$RelationLogic=new QueryLogic();
 		$RelationLogic->addCondition(new FieldCondition('servicerequest_fid',$ID));
 		$result=$this->load($ID);

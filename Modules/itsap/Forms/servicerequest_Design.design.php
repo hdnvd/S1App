@@ -200,6 +200,20 @@ class servicerequest_Design extends FormDesign {
         }
         $Page->addElement($this->getStatusBox('ثبت درخواست',$this->Data['servicerequest']->getRequest_date(),$this->Data['requesteremployee']->getName()." ".$this->Data['requesteremployee']->getFamily()));
 
+        if($this->Data['servicerequest']->getSecurityacceptor_role_systemuser_fid()>0)//Security Status is Set
+        {
+            $SecurityMessage="حراست";
+            if($this->Data['servicerequest']->getIs_securityaccepted())
+                $Page->addElement($this->getStatusBox('تایید توسط حراست',$this->Data['servicerequest']->getSecurityacceptance_date(),$SecurityMessage));
+            else
+            {
+
+                if($this->Data['servicerequest']->getSecurityacceptancemessage()!="")
+                    $SecurityMessage=$this->Data['servicerequest']->getSecurityacceptancemessage();
+                $Page->addElement($this->getStatusBox('رد توسط حراست',$this->Data['servicerequest']->getSecurityacceptance_date(),$SecurityMessage));
+            }
+
+        }
         for($statIndex=1;$statIndex<count($this->Data['allstatusesinfo']);$statIndex++)
         {
             $Page->addElement($this->getStatusBox('تغییر وضعیت به '.$this->Data['allstatusesinfo'][$statIndex]->getTitle(),$this->Data['allstatuses'][$statIndex]->getStart_date(),$this->Data['allstatusesemployee'][$statIndex]->getName()." ".$this->Data['allstatusesemployee'][$statIndex]->getFamily()));

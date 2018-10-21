@@ -8,8 +8,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-07-27 - 2018-10-19 14:13
-*@lastUpdate 1397-07-27 - 2018-10-19 14:13
+*@creationDate 1397-07-27 - 2018-10-19 23:58
+*@lastUpdate 1397-07-27 - 2018-10-19 23:58
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -29,7 +29,7 @@ class itsap_servicerequestEntity extends EntityClass {
 
         /******** role_systemuser_fid ********/
         $Role_systemuser_fidInfo=new FieldInfo();
-        $Role_systemuser_fidInfo->setTitle("role_systemuser_fid");
+        $Role_systemuser_fidInfo->setTitle("ثبت کننده");
         $this->setFieldInfo(itsap_servicerequestEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
         $this->addTableField('2',itsap_servicerequestEntity::$ROLE_SYSTEMUSER_FID);
 
@@ -76,29 +76,40 @@ class itsap_servicerequestEntity extends EntityClass {
         $this->setFieldInfo(itsap_servicerequestEntity::$LETTERFILE_FLU,$Letterfile_fluInfo);
         $this->addTableField('9',itsap_servicerequestEntity::$LETTERFILE_FLU);
 
-		/******** securityacceptor_role_systemuser_fid ********/
-		$Securityacceptor_role_systemuser_fidInfo=new FieldInfo();
-		$Securityacceptor_role_systemuser_fidInfo->setTitle("تایید کننده");
-		$this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID,$Securityacceptor_role_systemuser_fidInfo);
-		$this->addTableField('10',itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID);
+        /******** securityacceptor_role_systemuser_fid ********/
+        $Securityacceptor_role_systemuser_fidInfo=new FieldInfo();
+        $Securityacceptor_role_systemuser_fidInfo->setTitle("تایید کننده");
+        $this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID,$Securityacceptor_role_systemuser_fidInfo);
+        $this->addTableField('10',itsap_servicerequestEntity::$SECURITYACCEPTOR_ROLE_SYSTEMUSER_FID);
 
-		/******** is_securityaccepted ********/
-		$Is_securityacceptedInfo=new FieldInfo();
-		$Is_securityacceptedInfo->setTitle("تایید شده توسط حراست");
-		$this->setFieldInfo(itsap_servicerequestEntity::$IS_SECURITYACCEPTED,$Is_securityacceptedInfo);
-		$this->addTableField('11',itsap_servicerequestEntity::$IS_SECURITYACCEPTED);
+        /******** is_securityaccepted ********/
+        $Is_securityacceptedInfo=new FieldInfo();
+        $Is_securityacceptedInfo->setTitle("تایید شده توسط حراست");
+        $this->setFieldInfo(itsap_servicerequestEntity::$IS_SECURITYACCEPTED,$Is_securityacceptedInfo);
+        $this->addTableField('11',itsap_servicerequestEntity::$IS_SECURITYACCEPTED);
+
+        /******** securityacceptancemessage ********/
+        $SecurityacceptancemessageInfo=new FieldInfo();
+        $SecurityacceptancemessageInfo->setTitle("پیام حراست");
+        $this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTANCEMESSAGE,$SecurityacceptancemessageInfo);
+        $this->addTableField('12',itsap_servicerequestEntity::$SECURITYACCEPTANCEMESSAGE);
+		/******** securityacceptance_date ********/
+		$Securityacceptance_dateInfo=new FieldInfo();
+		$Securityacceptance_dateInfo->setTitle("تاریخ بررسی توسط حراست");
+		$this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE,$Securityacceptance_dateInfo);
+		$this->addTableField('13',itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE);
 
         /******** letternumber ********/
         $LetternumberInfo=new FieldInfo();
         $LetternumberInfo->setTitle("شماره نامه");
         $this->setFieldInfo(itsap_servicerequestEntity::$LETTERNUMBER,$LetternumberInfo);
-        $this->addTableField('12',itsap_servicerequestEntity::$LETTERNUMBER);
+        $this->addTableField('14',itsap_servicerequestEntity::$LETTERNUMBER);
 
         /******** letter_date ********/
         $Letter_dateInfo=new FieldInfo();
         $Letter_dateInfo->setTitle("تاریخ نامه");
         $this->setFieldInfo(itsap_servicerequestEntity::$LETTER_DATE,$Letter_dateInfo);
-        $this->addTableField('13',itsap_servicerequestEntity::$LETTER_DATE);
+        $this->addTableField('15',itsap_servicerequestEntity::$LETTER_DATE);
 	}
 	public static $TITLE="title";
 	/**
@@ -243,6 +254,32 @@ class itsap_servicerequestEntity extends EntityClass {
 	public function setIs_securityaccepted($Is_securityaccepted){
 		$this->setField(itsap_servicerequestEntity::$IS_SECURITYACCEPTED,$Is_securityaccepted);
 	}
+	public static $SECURITYACCEPTANCEMESSAGE="securityacceptancemessage";
+	/**
+	 * @return mixed
+	 */
+	public function getSecurityacceptancemessage(){
+		return $this->getField(itsap_servicerequestEntity::$SECURITYACCEPTANCEMESSAGE);
+	}
+	/**
+	 * @param mixed $Securityacceptancemessage
+	 */
+	public function setSecurityacceptancemessage($Securityacceptancemessage){
+		$this->setField(itsap_servicerequestEntity::$SECURITYACCEPTANCEMESSAGE,$Securityacceptancemessage);
+	}
+	public static $SECURITYACCEPTANCE_DATE="securityacceptance_date";
+	/**
+	 * @return mixed
+	 */
+	public function getSecurityacceptance_date(){
+		return $this->getField(itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE);
+	}
+	/**
+	 * @param mixed $Securityacceptance_date
+	 */
+	public function setSecurityacceptance_date($Securityacceptance_date){
+		$this->setField(itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE,$Securityacceptance_date);
+	}
 	public static $LETTERNUMBER="letternumber";
 	/**
 	 * @return mixed
@@ -270,12 +307,14 @@ class itsap_servicerequestEntity extends EntityClass {
 		$this->setField(itsap_servicerequestEntity::$LETTER_DATE,$Letter_date);
 	}
 
-
-    public function getRequests($IsFava,$IsAdmin,$EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    public function getRequests($isSecurity,$IsFava,$IsAdmin,$EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
     {
+        if($isSecurity)
+        {
+            return $this->getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount);
+        }
         if($IsFava)
         {
-
             if($IsAdmin)
                 return $this->getITAdminRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount);
             else
@@ -358,6 +397,16 @@ class itsap_servicerequestEntity extends EntityClass {
     private function getITAdminRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
     {
 
+        return $this->getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,true,$Limit,$LoadOnlyCount);
+    }
+    private function getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    {
+
+        return $this->getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,false,$Limit,$LoadOnlyCount);
+    }
+    private function getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,$LoadOnlySecurityAccepted,$Limit,$LoadOnlyCount)
+    {
+
         if($LoadOnlyCount)
             $sq=$this->getDatabase()->Select("count(DISTINCT sr.id) allcount");
         else
@@ -369,6 +418,8 @@ class itsap_servicerequestEntity extends EntityClass {
         $sq=$sq->OrLogic()->Equal(new DBField('ref.employee_fid',false),$EmployeeID)->CloseParenthesis()->CloseParenthesis();
         $sq=$sq->OrLogic()->OpenParenthesis()->Equal(new DBField('sr.unit_fid',false),new DBField('u.id',false));
         $sq=$sq->AndLogic()->Equal(new DBField('u.topunit_fid',false),$TopUnitID)->CloseParenthesis();
+        if($LoadOnlySecurityAccepted)
+            $sq=$sq->AndLogic()->Equal(new DBField('sr.is_securityaccepted',false),1);
 
         if($Limit!=null)
             $sq=$sq->setLimit($Limit);

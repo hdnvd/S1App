@@ -45,6 +45,7 @@ class manageunit_Design extends FormDesign {
 //		$LTable1->addElement($this->getFieldRowCode($this->topunit_fid,$this->getFieldCaption('topunit_fid'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getFieldRowCode($this->isfava,$this->getFieldCaption('isfava'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
+		$LTable1->addElement($this->getFieldRowCode($this->issecurity,$this->getFieldCaption('issecurity'),null,'لطفا این فیلد را به طور صحیح وارد کنید',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->btnSave));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "POST", $Page);
@@ -59,6 +60,8 @@ class manageunit_Design extends FormDesign {
 			$this->topunit_fid->addOption($item->getID(), $item->getTitleField());
 			$this->isfava->addOption(1,'بله');
 			$this->isfava->addOption(0,'خیر');
+        $this->issecurity->addOption(1,'بله');
+        $this->issecurity->addOption(0,'خیر');
 		if (key_exists("unit", $this->Data)){
 
 			/******** topunit_fid ********/
@@ -73,6 +76,10 @@ class manageunit_Design extends FormDesign {
 			/******** isfava ********/
 			$this->isfava->setSelectedValue($this->Data['unit']->getIsfava());
 			$this->setFieldCaption('isfava',$this->Data['unit']->getFieldInfo('isfava')->getTitle());
+
+            /******** issecurity ********/
+            $this->issecurity->setSelectedValue($this->Data['unit']->getIssecurity());
+            $this->setFieldCaption('issecurity',$this->Data['unit']->getFieldInfo('issecurity')->getTitle());
 
 			/******** btnSave ********/
 		}
@@ -92,6 +99,10 @@ class manageunit_Design extends FormDesign {
 		/******* isfava *******/
 		$this->isfava= new combobox("isfava");
 		$this->isfava->setClass("form-control");
+
+        /******* issecurity *******/
+        $this->issecurity= new combobox("issecurity");
+        $this->issecurity->setClass("form-control");
 
 		/******* btnSave *******/
 		$this->btnSave= new SweetButton(true,"ذخیره");
@@ -146,6 +157,15 @@ class manageunit_Design extends FormDesign {
 	{
 		return $this->isfava;
 	}
+    /** @var combobox */
+    private $issecurity;
+    /**
+     * @return combobox
+     */
+    public function getIssecurity()
+    {
+        return $this->issecurity;
+    }
 	/** @var SweetButton */
 	private $btnSave;
     public function getJSON()

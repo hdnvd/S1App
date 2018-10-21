@@ -131,6 +131,7 @@ class manageemployeeController extends Controller {
             if($Unit->getId()<=0 || $Unit->getTopunit_fid()!=$TopUnitID)
                 throw new DataNotFoundException();
         }
+
 		$this->ValidateFieldArray([$unit_fid,$emp_code,$mellicode,$name,$family,$mobile,$degree_fid],[$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$UNIT_FID),$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$EMP_CODE),$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$MELLICODE),$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$NAME),$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$FAMILY),$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$MOBILE),$employeeEntityObject->getFieldInfo(itsap_employeeEntity::$DEGREE_FID)]);
 
 		$role=5;//normal
@@ -143,7 +144,13 @@ class manageemployeeController extends Controller {
 //            echo $role;
         }
 
+        if($Unit->getIssecurity())
+        {
+            $role=9;
+        }
+        $DBAccessor->close_connection();
 		if($ID==-1){
+            $DBAccessor=new dbaccess();
             $DBAccessor->beginTransaction();
             $id=User::addUser($mellicode,$mellicode);
             User::setUserRole($id,$role);

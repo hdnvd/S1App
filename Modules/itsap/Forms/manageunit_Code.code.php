@@ -81,7 +81,8 @@ class manageunit_Code extends FormCode {
 		$topunit_fid_ID=$this->getHttpGETparameter('tuid',-1);
 		$title=$design->getTitle()->getValue();
 		$isfava_ID=$design->getIsfava()->getSelectedID();
-		$Result=$manageunitController->BtnSave($this->getID(),$topunit_fid_ID,$title,$isfava_ID);
+		$issecurity_ID=$design->getIssecurity()->getSelectedID();
+		$Result=$manageunitController->BtnSave($this->getID(),$topunit_fid_ID,$title,$isfava_ID,$issecurity_ID);
 		$design->setData($Result);
 		$design->setMessage("اطلاعات با موفقیت ذخیره شد.");
 		$design->setMessageType(MessageType::$SUCCESS);

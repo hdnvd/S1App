@@ -138,6 +138,30 @@ class servicerequestController extends Controller {
         $DBAccessor->close_connection();
         return $this->load($ID);
     }
+
+    public function setAcceptanceStatus($ID,$Message,$IsAccepted)
+    {
+        $Language_fid=CurrentLanguageManager::getCurrentLanguageID();
+        $DBAccessor=new dbaccess();
+        $su=new sessionuser();
+        $role_systemuser_fid=$su->getSystemUserID();
+        $result=array();
+        $servicerequestEntityObject=new itsap_servicerequestEntity($DBAccessor);
+        $result['servicerequest']=$servicerequestEntityObject;
+        if($ID!=-1){
+            $servicerequestEntityObject->setId($ID);
+            if($servicerequestEntityObject->getId()==-1)
+                throw new DataNotFoundException();
+            $servicerequestEntityObject->setIs_securityaccepted($IsAccepted);
+            $servicerequestEntityObject->setSecurityacceptancemessage($Message);
+            $servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($role_systemuser_fid);
+            $servicerequestEntityObject->setSecurityacceptance_date(time());
+            $servicerequestEntityObject->Save();
+        }
+        $result['param1']="";
+        $DBAccessor->close_connection();
+        return $this->load($ID);
+    }
     public function ChangeState($ID,$StateID,$message)
     {
         $Language_fid=CurrentLanguageManager::getCurrentLanguageID();

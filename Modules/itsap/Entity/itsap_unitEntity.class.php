@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-21 - 2018-01-11 19:00
-*@lastUpdate 1396-10-21 - 2018-01-11 19:00
+*@creationDate 1397-07-27 - 2018-10-19 14:41
+*@lastUpdate 1397-07-27 - 2018-10-19 14:41
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -17,7 +17,7 @@ class itsap_unitEntity extends EntityClass {
 	{
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_unit");
-		$this->setTableTitle("بخش");
+		$this->setTableTitle("یگان");
 		$this->setTitleFieldName("title");
 
 		/******** topunit_fid ********/
@@ -38,11 +38,17 @@ class itsap_unitEntity extends EntityClass {
 		$this->setFieldInfo(itsap_unitEntity::$ISFAVA,$IsfavaInfo);
 		$this->addTableField('3',itsap_unitEntity::$ISFAVA);
 
+		/******** issecurity ********/
+		$IssecurityInfo=new FieldInfo();
+		$IssecurityInfo->setTitle("یگان حراست");
+		$this->setFieldInfo(itsap_unitEntity::$ISSECURITY,$IssecurityInfo);
+		$this->addTableField('4',itsap_unitEntity::$ISSECURITY);
+
 		/******** admin_employee_fid ********/
 		$Admin_employee_fidInfo=new FieldInfo();
-		$Admin_employee_fidInfo->setTitle("مدیر بخش");
+		$Admin_employee_fidInfo->setTitle("مدیر");
 		$this->setFieldInfo(itsap_unitEntity::$ADMIN_EMPLOYEE_FID,$Admin_employee_fidInfo);
-		$this->addTableField('4',itsap_unitEntity::$ADMIN_EMPLOYEE_FID);
+		$this->addTableField('5',itsap_unitEntity::$ADMIN_EMPLOYEE_FID);
 	}
 	public static $TOPUNIT_FID="topunit_fid";
 	/**
@@ -82,6 +88,19 @@ class itsap_unitEntity extends EntityClass {
 	 */
 	public function setIsfava($Isfava){
 		$this->setField(itsap_unitEntity::$ISFAVA,$Isfava);
+	}
+	public static $ISSECURITY="issecurity";
+	/**
+	 * @return mixed
+	 */
+	public function getIssecurity(){
+		return $this->getField(itsap_unitEntity::$ISSECURITY);
+	}
+	/**
+	 * @param mixed $Issecurity
+	 */
+	public function setIssecurity($Issecurity){
+		$this->setField(itsap_unitEntity::$ISSECURITY,$Issecurity);
 	}
 	public static $ADMIN_EMPLOYEE_FID="admin_employee_fid";
 	/**

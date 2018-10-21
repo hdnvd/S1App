@@ -68,7 +68,7 @@ class manageunitController extends Controller {
 		$DBAccessor->close_connection();
 		return $result;
 	}
-	public function BtnSave($ID,$TopUnitID,$title,$isfava)
+	public function BtnSave($ID,$TopUnitID,$title,$isfava,$issecurity)
 	{
 
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
@@ -85,11 +85,12 @@ class manageunitController extends Controller {
             $UserID=$role_systemuser_fid;
 		$result=array();
 		$unitEntityObject=new itsap_unitEntity($DBAccessor);
-		$this->ValidateFieldArray([$TopUnitID,$title,$isfava],[$unitEntityObject->getFieldInfo(itsap_unitEntity::$TOPUNIT_FID),$unitEntityObject->getFieldInfo(itsap_unitEntity::$TITLE),$unitEntityObject->getFieldInfo(itsap_unitEntity::$ISFAVA)]);
+		$this->ValidateFieldArray([$TopUnitID,$title,$isfava,$issecurity],[$unitEntityObject->getFieldInfo(itsap_unitEntity::$TOPUNIT_FID),$unitEntityObject->getFieldInfo(itsap_unitEntity::$TITLE),$unitEntityObject->getFieldInfo(itsap_unitEntity::$ISFAVA),$unitEntityObject->getFieldInfo(itsap_unitEntity::$ISSECURITY)]);
 		if($ID==-1){
 			$unitEntityObject->setTopunit_fid($TopUnitID);
 			$unitEntityObject->setTitle($title);
 			$unitEntityObject->setIsfava($isfava);
+			$unitEntityObject->setIssecurity($issecurity);
 			$unitEntityObject->Save();
 			$ID=$unitEntityObject->getId();
 		}
@@ -104,6 +105,7 @@ class manageunitController extends Controller {
 			$unitEntityObject->setTopunit_fid($TopUnitID);
 			$unitEntityObject->setTitle($title);
 			$unitEntityObject->setIsfava($isfava);
+            $unitEntityObject->setIssecurity($issecurity);
 			$unitEntityObject->Save();
 		}
 		$RelationLogic=new QueryLogic();

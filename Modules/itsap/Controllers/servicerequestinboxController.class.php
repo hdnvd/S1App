@@ -51,6 +51,7 @@ class servicerequestinboxController extends Controller {
         $unit->setId($emp->getUnit_fid());
 
         $isFava=$unit->getIsfava();
+        $isSecurity=$unit->getIssecurity();
         $isAdmin=false;
         if($unit->getAdmin_employee_fid()==$emp->getId())
             $isAdmin=true;
@@ -58,13 +59,15 @@ class servicerequestinboxController extends Controller {
         $topUnit->setId($unit->getTopunit_fid());
 
         $servicerequestEnt1=new itsap_servicerequestEntity($DBAccessor);
-        $count=$servicerequestEnt1->getRequests($isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),null,true);
-
+        $count=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),null,true);
+        $result['isfave']=$isFava;
+        $result['isadmin']=$isAdmin;
+        $result['issecurity']=$isSecurity;
         $servicerequestEnt=new itsap_viewservicerequesthandlerEntity($DBAccessor);
 		$result['servicerequest']=$servicerequestEnt;
         $allcount=$count[0]['allcount'];
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-        $res=$servicerequestEnt1->getRequests($isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$this->getPageRowsLimit($PageNum,$this->PAGESIZE),false);
+        $res=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$this->getPageRowsLimit($PageNum,$this->PAGESIZE),false);
         $result['data']=$res;
 		$data=$result['data'];
         $AllCount1 = count($data);

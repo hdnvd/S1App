@@ -72,6 +72,14 @@ class manageservicerequests_Design extends FormDesign {
 	}
 	public function getBodyHTML($command=null)
 	{
+	    if($this->Data['issecurity'])
+            $this->itemViewPage = 'servicerequestchecking';
+        elseif($this->Data['isfave'])
+            $this->itemViewPage = 'servicerequestmanagement';
+        elseif($this->Data['isadmin'])
+            $this->itemViewPage = 'servicerequestmanagement';
+        else
+            $this->itemViewPage = 'manageuserservicerequests';
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("itsap_manageservicerequests");
