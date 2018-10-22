@@ -1,6 +1,7 @@
 <?php
 namespace Modules\itsap\Entity;
 use core\CoreClasses\db\DBField;
+use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\services\EntityClass;
 use core\CoreClasses\services\FieldInfo;
 use core\CoreClasses\db\dbquery;
@@ -307,25 +308,25 @@ class itsap_servicerequestEntity extends EntityClass {
 		$this->setField(itsap_servicerequestEntity::$LETTER_DATE,$Letter_date);
 	}
 
-    public function getRequests($isSecurity,$IsFava,$IsAdmin,$EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    public function getRequests($isSecurity,$IsFava,$IsAdmin,$EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$Limit,$LoadOnlyCount)
     {
         if($isSecurity)
         {
-            return $this->getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount);
+            return $this->getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount,$AdditionalQuery);
         }
         if($IsFava)
         {
             if($IsAdmin)
-                return $this->getITAdminRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount);
+                return $this->getITAdminRequests($EmployeeID,$TopUnitID,$UnitID,$AdditionalQuery,$Limit,$LoadOnlyCount);
             else
-                return $this->getITUserRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount);
+                return $this->getITUserRequests($EmployeeID,$TopUnitID,$UnitID,$AdditionalQuery,$Limit,$LoadOnlyCount);
         }
         else
         {
-            return $this->getNonITUserRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount);
+            return $this->getNonITUserRequests($EmployeeID,$TopUnitID,$UnitID,$AdditionalQuery,$Limit,$LoadOnlyCount);
         }
     }
-    private function getNonITUserRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    private function getNonITUserRequests($EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$Limit,$LoadOnlyCount)
     {
 
         if($LoadOnlyCount)
@@ -358,7 +359,7 @@ class itsap_servicerequestEntity extends EntityClass {
         $this->getDatabase()->getDBAccessor()->close_connection();
         return $result;
     }
-    private function getITUserRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    private function getITUserRequests($EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$Limit,$LoadOnlyCount)
     {
 
         if($LoadOnlyCount)
@@ -394,17 +395,17 @@ class itsap_servicerequestEntity extends EntityClass {
         $this->getDatabase()->getDBAccessor()->close_connection();
         return $result;
     }
-    private function getITAdminRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    private function getITAdminRequests($EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$Limit,$LoadOnlyCount)
     {
 
-        return $this->getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,true,$Limit,$LoadOnlyCount);
+        return $this->getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,$AdditionalQuery,true,$Limit,$LoadOnlyCount);
     }
-    private function getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount)
+    private function getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$Limit,$LoadOnlyCount)
     {
 
-        return $this->getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,false,$Limit,$LoadOnlyCount);
+        return $this->getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,$AdditionalQuery,false,$Limit,$LoadOnlyCount);
     }
-    private function getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,$LoadOnlySecurityAccepted,$Limit,$LoadOnlyCount)
+    private function getTopUnitRequests($EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$LoadOnlySecurityAccepted,$Limit,$LoadOnlyCount)
     {
 
         if($LoadOnlyCount)
@@ -412,15 +413,17 @@ class itsap_servicerequestEntity extends EntityClass {
         else
             $sq=$this->getDatabase()->Select("sr.*");
 
-        $sq=$sq->From(array('itsap_servicerequest sr','itsap_reference ref','itsap_unit u'))->Where()->OpenParenthesis()->Equal(new DBField('sr.id',false),new DBField('ref.servicerequest_fid',false));
+        $sq=$sq->From(array('itsap_servicerequest sr','itsap_reference ref','itsap_unit u','itsap_servicerequestdevice device','itsap_servicerequestservicestatus status'))->Where()->OpenParenthesis()->Equal(new DBField('sr.id',false),new DBField('ref.servicerequest_fid',false));
 
         $sq=$sq->AndLogic()->OpenParenthesis()->Equal(new DBField('ref.unit_fid',false),$UnitID);
         $sq=$sq->OrLogic()->Equal(new DBField('ref.employee_fid',false),$EmployeeID)->CloseParenthesis()->CloseParenthesis();
         $sq=$sq->OrLogic()->OpenParenthesis()->Equal(new DBField('sr.unit_fid',false),new DBField('u.id',false));
         $sq=$sq->AndLogic()->Equal(new DBField('u.topunit_fid',false),$TopUnitID)->CloseParenthesis();
+        $sq=$sq->AndLogic()->Equal(new DBField('sr.id',false),new DBField('status.servicerequest_fid',false));
+        $sq=$sq->AndLogic()->Equal(new DBField('sr.id',false),new DBField('device.servicerequest_fid',false));
         if($LoadOnlySecurityAccepted)
             $sq=$sq->AndLogic()->Equal(new DBField('sr.is_securityaccepted',false),1);
-
+        $sq=$this->AddSelectParamsToQuery($sq,$AdditionalQuery);
         if($Limit!=null)
             $sq=$sq->setLimit($Limit);
 

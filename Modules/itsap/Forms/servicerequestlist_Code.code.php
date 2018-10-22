@@ -4,6 +4,8 @@ use core\CoreClasses\services\FormCode;
 use core\CoreClasses\services\MessageType;
 use core\CoreClasses\html\DatePicker;
 use Modules\common\PublicClasses\AppRooter;
+use Modules\itsap\Controllers\manageservicerequestsController;
+use Modules\itsap\Controllers\servicerequestinboxController;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\Exception\DataNotFoundException;
@@ -12,8 +14,8 @@ use Modules\files\PublicClasses\uploadHelper;
 use Modules\common\Forms\message_Design;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-09-29 - 2017-12-20 15:49
-*@lastUpdate 1396-09-29 - 2017-12-20 15:49
+*@creationDate 1397-07-29 - 2018-10-21 15:46
+*@lastUpdate 1397-07-29 - 2018-10-21 15:46
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
@@ -41,7 +43,7 @@ class servicerequestlist_Code extends FormCode {
 	}
 	public function getLoadDesign()
 	{
-		$servicerequestlistController=new servicerequestlistController();
+		$servicerequestlistController=new manageservicerequestsController();
 		$translator=new ModuleTranslator("itsap");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
@@ -78,7 +80,7 @@ class servicerequestlist_Code extends FormCode {
 	}
 	public function search_Click()
 	{
-		$servicerequestlistController=new servicerequestlistController();
+		$servicerequestlistController=new manageservicerequestsController();
 		$translator=new ModuleTranslator("itsap");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
@@ -86,14 +88,23 @@ class servicerequestlist_Code extends FormCode {
 		$design->setAdminMode($this->getAdminMode());
 		$servicerequestlistController->setAdminMode($this->getAdminMode());
 		$title=$this->getHttpGETparameter('title','');
+		$unit_fid_ID=$this->getHttpGETparameter('unit_fid','');
 		$servicetype_fid_ID=$this->getHttpGETparameter('servicetype_fid','');
 		$description=$this->getHttpGETparameter('description','');
 		$priority=$this->getHttpGETparameter('priority','');
 		$request_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('request_date_from',''));
 		$request_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('request_date_to',''));
+		$securityacceptor_role_systemuser_fid_ID=$this->getHttpGETparameter('securityacceptor_role_systemuser_fid','');
+		$is_securityaccepted_ID=$this->getHttpGETparameter('is_securityaccepted','');
+		$securityacceptancemessage=$this->getHttpGETparameter('securityacceptancemessage','');
+		$securityacceptance_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('securityacceptance_date_from',''));
+		$securityacceptance_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('securityacceptance_date_to',''));
+		$letternumber=$this->getHttpGETparameter('letternumber','');
+		$letter_date_from=DatePicker::getTimeFromText($this->getHttpGETparameter('letter_date_from',''));
+		$letter_date_to=DatePicker::getTimeFromText($this->getHttpGETparameter('letter_date_to',''));
 		$sortby_ID=$this->getHttpGETparameter('sortby','');
 		$isdesc_ID=$this->getHttpGETparameter('isdesc','');
-		$Result=$servicerequestlistController->Search($this->getHttpGETparameter('pn',-1),$title,$servicetype_fid_ID,$description,$priority,$request_date_from,$request_date_to,$sortby_ID,$isdesc_ID);
+		$Result=$servicerequestlistController->Search($this->getHttpGETparameter('pn',-1),$title,$unit_fid_ID,$servicetype_fid_ID,$description,$priority,$request_date_from,$request_date_to,$securityacceptor_role_systemuser_fid_ID,$is_securityaccepted_ID,$securityacceptancemessage,$securityacceptance_date_from,$securityacceptance_date_to,$letternumber,$letter_date_from,$letter_date_to,$sortby_ID,$isdesc_ID);
 		$design->setData($Result);
 		if($Result['data']==null || count($Result['data'])==0){
 			$design->setMessage("متاسفانه هیچ نتیجه ای برای این جستجو پیدا نشد.");

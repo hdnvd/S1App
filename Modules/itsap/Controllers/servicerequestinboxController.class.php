@@ -57,9 +57,14 @@ class servicerequestinboxController extends Controller {
             $isAdmin=true;
         $topUnit=new itsap_topunitEntity($DBAccessor);
         $topUnit->setId($unit->getTopunit_fid());
+        $unitEntityObject=new itsap_unitEntity($DBAccessor);
+        $result['unit_fid']=$unitEntityObject->FindAll(new QueryLogic());
+
+        $servicetypeEntityObject=new itsap_servicetypeEntity($DBAccessor);
+        $result['servicetype_fid']=$servicetypeEntityObject->FindAll(new QueryLogic());
 
         $servicerequestEnt1=new itsap_servicerequestEntity($DBAccessor);
-        $count=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),null,true);
+        $count=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$QueryLogic,null,true);
         $result['isfave']=$isFava;
         $result['isadmin']=$isAdmin;
         $result['issecurity']=$isSecurity;
@@ -67,7 +72,7 @@ class servicerequestinboxController extends Controller {
 		$result['servicerequest']=$servicerequestEnt;
         $allcount=$count[0]['allcount'];
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
-        $res=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$this->getPageRowsLimit($PageNum,$this->PAGESIZE),false);
+        $res=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$QueryLogic,$this->getPageRowsLimit($PageNum,$this->PAGESIZE),false);
         $result['data']=$res;
 		$data=$result['data'];
         $AllCount1 = count($data);
@@ -116,27 +121,61 @@ class servicerequestinboxController extends Controller {
 		$DBAccessor=new dbaccess();
 		$servicerequestEnt=new itsap_servicerequestEntity($DBAccessor);
 		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
+		$q->addOrderBy("sr.id",true);
 		$DBAccessor->close_connection();
 		return $this->getData($PageNum,$q);
 	}
-	public function Search($PageNum,$title,$servicetype_fid,$description,$priority,$request_date_from,$request_date_to,$sortby,$isdesc)
-	{
-		$DBAccessor=new dbaccess();
-		$servicerequestEnt=new itsap_servicerequestEntity($DBAccessor);
-		$q=new QueryLogic();
-		$q->addOrderBy("id",true);
-		$q->addCondition(new FieldCondition("title","%$title%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("servicetype_fid","%$servicetype_fid%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("description","%$description%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("priority","%$priority%",LogicalOperator::LIKE));
-		$q->addCondition(new FieldCondition("request_date",$request_date_from,LogicalOperator::Bigger));
-		$q->addCondition(new FieldCondition("request_date",$request_date_to,LogicalOperator::Smaller));
-		$sortByField=$servicerequestEnt->getTableField($sortby);
-		if($sortByField!=null)
-			$q->addOrderBy($sortByField,$isdesc);
-		$DBAccessor->close_connection();
-		return $this->getData($PageNum,$q);
-	}
+    public function Search($PageNum,$title,$unit_fid,$servicetype_fid,$description,$priority,$request_date_from,$request_date_to,$SecurityAcceptor_EmployeeId,$is_securityaccepted,$securityacceptancemessage,$securityacceptance_date_from,$securityacceptance_date_to,$letternumber,$letter_date_from,$letter_date_to,$topunit_fid,$devicetype_fid,$deviceCode,$Requester_EmployeeId,$Handler_EmployeeId,$servicetypegroup_fid,$latestStatus,$sortby,$isdesc)
+    {
+        $DBAccessor=new dbaccess();
+        $servicerequestEnt=new itsap_servicerequestEntity($DBAccessor);
+        $emp=new itsap_employeeEntity($DBAccessor);
+        $emp->setId($Requester_EmployeeId);
+        $Requester_SysUserID=$emp->getRole_systemuser_fid();
+
+        $HandlerEmp=new itsap_employeeEntity($DBAccessor);
+        $HandlerEmp->setId($Handler_EmployeeId);
+        $Handler_SysUserID=$HandlerEmp->getRole_systemuser_fid();
+
+        $SecurityEmp=new itsap_employeeEntity($DBAccessor);
+        $SecurityEmp->setId($SecurityAcceptor_EmployeeId);
+        $securityacceptor_role_systemuser_fid=$SecurityEmp->getRole_systemuser_fid();
+
+
+        $q=new QueryLogic();
+        $q->addOrderBy("sr.id",true);
+        $q->addCondition(new FieldCondition("sr.title","%$title%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.unit_fid","%$unit_fid%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.servicetype_fid","%$servicetype_fid%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.description","%$description%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.priority","%$priority%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.request_date",$request_date_from,LogicalOperator::Bigger));
+        $q->addCondition(new FieldCondition("sr.request_date",$request_date_to,LogicalOperator::Smaller));
+        $q->addCondition(new FieldCondition("sr.is_securityaccepted","%$is_securityaccepted%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.securityacceptancemessage","%$securityacceptancemessage%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.securityacceptance_date",$securityacceptance_date_from,LogicalOperator::Bigger));
+        $q->addCondition(new FieldCondition("sr.securityacceptance_date",$securityacceptance_date_to,LogicalOperator::Smaller));
+        $q->addCondition(new FieldCondition("sr.letternumber","%$letternumber%",LogicalOperator::LIKE));
+        $q->addCondition(new FieldCondition("sr.letter_date",$letter_date_from,LogicalOperator::Bigger));
+        $q->addCondition(new FieldCondition("sr.letter_date",$letter_date_to,LogicalOperator::Smaller));
+        $q->addCondition(new FieldCondition("device.code","%$deviceCode%",LogicalOperator::LIKE));
+        if($topunit_fid>0)
+            $q->addCondition(new FieldCondition("u.topunit_fid",$topunit_fid,LogicalOperator::Equal));
+        if($devicetype_fid>0)
+            $q->addCondition(new FieldCondition("device.devicetype_fid",$devicetype_fid,LogicalOperator::Equal));
+        if($servicetypegroup_fid>0)
+            $q->addCondition(new FieldCondition("stg.id",$servicetypegroup_fid,LogicalOperator::Equal));
+        if($latestStatus>0)
+            $q->addCondition(new FieldCondition("status.servicestatus_fid",$latestStatus,LogicalOperator::Equal));
+        if($securityacceptor_role_systemuser_fid>0)
+            $q->addCondition(new FieldCondition("sr.securityacceptor_role_systemuser_fid",$securityacceptor_role_systemuser_fid,LogicalOperator::Equal));
+        if($Requester_SysUserID>0)
+            $q->addCondition(new FieldCondition("sr.role_systemuser_fid",$Requester_SysUserID,LogicalOperator::Equal));
+        $sortByField=$servicerequestEnt->getTableField($sortby);
+        if($sortByField!=null)
+            $q->addOrderBy($sortByField,$isdesc);
+        $DBAccessor->close_connection();
+        return $this->getData($PageNum,$q);
+    }
 }
 ?>
