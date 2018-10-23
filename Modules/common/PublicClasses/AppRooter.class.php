@@ -66,13 +66,15 @@ class AppRooter extends RooterLink {
 		    if($items[$i]!="language" && $items[$i]!="module" && $items[$i]!="page")
 			    $this->addParameter(new UrlParameter($items[$i],$_GET[$items[$i]]));
 	}
-	public function __construct($Module,$Page)
+	public function __construct($Module,$Page,array $URLParameters=[])
 	{
 		$this->FileFormat=".jsp";
 		$this->setAdditionalPath("");
 		$this->setModule($Module);
 		$this->setPage($Page);
-		$this->Parameters=array();
+		$this->Parameters=[];
+		foreach ($URLParameters as $parameter)
+			$this->addParameter($parameter);
 		$this->Language=CurrentLanguageManager::getCurrentLanguageName();
 	}
     /**
