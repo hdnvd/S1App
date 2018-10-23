@@ -90,7 +90,12 @@ class AppRooter extends RooterLink {
             $this->addCurrentParameters();
 		return $this->getLink($this->Module, $this->Page,$this->Language,$this->Parameters,$this->ResponseMode,true,$this->FileFormat,$this->AdditionalPath);
 	}
-	public function getRelativeURL()
+	public function __toString()
+    {
+       return $this->getAbsoluteURL();
+    }
+
+    public function getRelativeURL()
 	{
 		return $this->getLink($this->Module, $this->Page,$this->Language,$this->Parameters,$this->ResponseMode,false,$this->FileFormat,$this->AdditionalPath);
 	}
