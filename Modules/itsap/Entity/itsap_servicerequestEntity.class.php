@@ -9,8 +9,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1397-07-27 - 2018-10-19 23:58
-*@lastUpdate 1397-07-27 - 2018-10-19 23:58
+*@creationDate 1397-08-01 - 2018-10-23 03:04
+*@lastUpdate 1397-08-01 - 2018-10-23 03:04
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -94,11 +94,11 @@ class itsap_servicerequestEntity extends EntityClass {
         $SecurityacceptancemessageInfo->setTitle("پیام حراست");
         $this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTANCEMESSAGE,$SecurityacceptancemessageInfo);
         $this->addTableField('12',itsap_servicerequestEntity::$SECURITYACCEPTANCEMESSAGE);
-		/******** securityacceptance_date ********/
-		$Securityacceptance_dateInfo=new FieldInfo();
-		$Securityacceptance_dateInfo->setTitle("تاریخ بررسی توسط حراست");
-		$this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE,$Securityacceptance_dateInfo);
-		$this->addTableField('13',itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE);
+        /******** securityacceptance_date ********/
+        $Securityacceptance_dateInfo=new FieldInfo();
+        $Securityacceptance_dateInfo->setTitle("تاریخ بررسی توسط حراست");
+        $this->setFieldInfo(itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE,$Securityacceptance_dateInfo);
+        $this->addTableField('13',itsap_servicerequestEntity::$SECURITYACCEPTANCE_DATE);
 
         /******** letternumber ********/
         $LetternumberInfo=new FieldInfo();
@@ -111,6 +111,11 @@ class itsap_servicerequestEntity extends EntityClass {
         $Letter_dateInfo->setTitle("تاریخ نامه");
         $this->setFieldInfo(itsap_servicerequestEntity::$LETTER_DATE,$Letter_dateInfo);
         $this->addTableField('15',itsap_servicerequestEntity::$LETTER_DATE);
+		/******** last_servicestatus_fid ********/
+		$Last_servicestatus_fidInfo=new FieldInfo();
+		$Last_servicestatus_fidInfo->setTitle("آخرین وضعیت");
+		$this->setFieldInfo(itsap_servicerequestEntity::$LAST_SERVICESTATUS_FID,$Last_servicestatus_fidInfo);
+		$this->addTableField('16',itsap_servicerequestEntity::$LAST_SERVICESTATUS_FID);
 	}
 	public static $TITLE="title";
 	/**
@@ -307,6 +312,20 @@ class itsap_servicerequestEntity extends EntityClass {
 	public function setLetter_date($Letter_date){
 		$this->setField(itsap_servicerequestEntity::$LETTER_DATE,$Letter_date);
 	}
+	public static $LAST_SERVICESTATUS_FID="last_servicestatus_fid";
+	/**
+	 * @return mixed
+	 */
+	public function getLast_servicestatus_fid(){
+		return $this->getField(itsap_servicerequestEntity::$LAST_SERVICESTATUS_FID);
+	}
+	/**
+	 * @param mixed $Last_servicestatus_fid
+	 */
+	public function setLast_servicestatus_fid($Last_servicestatus_fid){
+		$this->setField(itsap_servicerequestEntity::$LAST_SERVICESTATUS_FID,$Last_servicestatus_fid);
+	}
+
 
     public function getRequests($isSecurity,$IsFava,$IsAdmin,$EmployeeID,$TopUnitID,$UnitID,QueryLogic $AdditionalQuery,$Limit,$LoadOnlyCount)
     {
@@ -413,14 +432,16 @@ class itsap_servicerequestEntity extends EntityClass {
         else
             $sq=$this->getDatabase()->Select("sr.*");
 
-        $sq=$sq->From(array('itsap_servicerequest sr','itsap_reference ref','itsap_unit u','itsap_servicerequestdevice device','itsap_servicerequestservicestatus status'))->Where()->OpenParenthesis()->Equal(new DBField('sr.id',false),new DBField('ref.servicerequest_fid',false));
+        $sq=$sq->From(array('itsap_servicerequest sr','itsap_reference ref','itsap_unit u','itsap_servicerequestdevice device','itsap_servicerequestservicestatus thestatus','itsap_servicetype st'))->Where()->OpenParenthesis()->Equal(new DBField('sr.id',false),new DBField('ref.servicerequest_fid',false));
 
         $sq=$sq->AndLogic()->OpenParenthesis()->Equal(new DBField('ref.unit_fid',false),$UnitID);
         $sq=$sq->OrLogic()->Equal(new DBField('ref.employee_fid',false),$EmployeeID)->CloseParenthesis()->CloseParenthesis();
         $sq=$sq->OrLogic()->OpenParenthesis()->Equal(new DBField('sr.unit_fid',false),new DBField('u.id',false));
         $sq=$sq->AndLogic()->Equal(new DBField('u.topunit_fid',false),$TopUnitID)->CloseParenthesis();
-        $sq=$sq->AndLogic()->Equal(new DBField('sr.id',false),new DBField('status.servicerequest_fid',false));
-        $sq=$sq->AndLogic()->Equal(new DBField('sr.id',false),new DBField('device.servicerequest_fid',false));
+        $sq=$sq->AndLogic()->Equal(new DBField('sr.last_servicestatus_fid',false),new DBField('thestatus.id',false));
+        $sq=$sq->AndLogic()->Equal(new DBField('sr.servicetype_fid',false),new DBField('st.id',false));
+        if($AdditionalQuery!=null && ($AdditionalQuery->isFieldInConditions("device.code") || $AdditionalQuery->isFieldInConditions("device.devicetype_fid")))
+            $sq=$sq->AndLogic()->Equal(new DBField('sr.id',false),new DBField('device.servicerequest_fid',false));
         if($LoadOnlySecurityAccepted)
             $sq=$sq->AndLogic()->Equal(new DBField('sr.is_securityaccepted',false),1);
         $sq=$this->AddSelectParamsToQuery($sq,$AdditionalQuery);
