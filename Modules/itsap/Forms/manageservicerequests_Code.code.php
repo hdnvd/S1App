@@ -18,7 +18,9 @@ use Modules\common\Forms\message_Design;
 *@SweetFrameworkVersion 2.004
 */
 class manageservicerequests_Code extends servicerequestlist_Code {
-	public function load()
+
+
+    public function load()
 	{
 		return $this->getLoadDesign()->getResponse();
 	}
@@ -38,8 +40,11 @@ class manageservicerequests_Code extends servicerequestlist_Code {
 				return $this->search_Click();
 			}else{
 				$Result=$manageservicerequestsController->load($this->getHttpGETparameter('pn',-1));
-				if(isset($_GET['search']))
-					$design=new servicerequestlistsearch_Design();
+				if(isset($_GET['search']) || $this->isSearchForm())
+                {
+                    $design=new servicerequestlistsearch_Design();
+                    $design->setVisibleFields($this->getVisibleFields());
+                }
 			}
 			$design->setData($Result);
 			$design->setMessage("");
@@ -49,11 +54,11 @@ class manageservicerequests_Code extends servicerequestlist_Code {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
-//		catch(\Exception $uex){
-//			$design=new message_Design();
-//			$design->setMessageType(MessageType::$ERROR);
-//			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-//		}
+		catch(\Exception $uex){
+			$design=new message_Design();
+			$design->setMessageType(MessageType::$ERROR);
+			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+		}
 		return $design;
 	}
 	public function __construct($namespace)

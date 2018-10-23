@@ -129,38 +129,38 @@ class manageservicerequests_Design extends FormDesign {
 			if($Title=="")
 				$Title='- بدون عنوان -';
 			$lbTit[$i]=new Lable($Title);
-			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
+			$liTit[$i]=new link($url,$lbTit[$i]);
 			$ViewURL=new AppRooter('itsap',$this->itemViewPage);
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$lbView[$i]=new Lable('مشاهده');
-			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
+			$lnkView[$i]=new link($ViewURL,$lbView[$i]);
 			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
 			$lnkView[$i]->setClass('btn btn-primary');
 			$delurl=new AppRooter('itsap',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
-//			$lbDel[$i]=new Lable('حذف');
-//			$lnkDel[$i]=new link($delurl->getAbsoluteURL(),$lbDel[$i]);
-//			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
-//			$lnkDel[$i]->setClass('btn btn-danger');
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
 			$operationDiv[$i]->addElement($lnkView[$i]);
+
+            $SearchByUnitURL=new AppRooter('itsap',$this->listPage,[new UrlParameter('action',"search_Click"),new UrlParameter('unit_fid',$this->Data['data'][$i]->getUnit_fid())]);
+            $SearchByStatusURL=new AppRooter('itsap',$this->listPage,[new UrlParameter('action',"search_Click"),new UrlParameter('servicestatus',$this->Data['currentstatusinfo'][$i]->getId())]);
+            $SearchByRequesterURL=new AppRooter('itsap',$this->listPage,[new UrlParameter('action',"search_Click"),new UrlParameter('requester',$this->Data['requesters'][$i]['employee']->getId())]);
 //			$operationDiv[$i]->addElement($lnkDel[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);
 			$LTable1->setLastElementClass("listcontent");
-            $LTable1->addElement(new Lable($this->Data['requesters'][$i]['employee']->getName() . " " . $this->Data['requesters'][$i]['employee']->getFamily()));
+            $LTable1->addElement(new link($SearchByRequesterURL,new Lable($this->Data['requesters'][$i]['employee']->getName() . " " . $this->Data['requesters'][$i]['employee']->getFamily())));
             $LTable1->setLastElementClass("listcontent");
-            $LTable1->addElement(new Lable($this->Data['requesters'][$i]['unit']->getTitle() . " - " . $this->Data['requesters'][$i]['topunit']->getTitle()));
+            $LTable1->addElement(new link($SearchByUnitURL,new Lable($this->Data['requesters'][$i]['unit']->getTitle() . " - " . $this->Data['requesters'][$i]['topunit']->getTitle())));
             $LTable1->setLastElementClass("listcontent");
 
             $request_date_SD=new SweetDate(true, true, 'Asia/Tehran');
             $request_date_Text=$request_date_SD->date("l d F Y",$this->Data['data'][$i]->getRequest_date());
             $LTable1->addElement(new Lable($request_date_Text));
             $LTable1->setLastElementClass("listcontent");
-            $LTable1->addElement(new Lable($this->Data['currentstatusinfo'][$i]->getTitle()));
+            $LTable1->addElement(new link($SearchByStatusURL,new Lable($this->Data['currentstatusinfo'][$i]->getTitle())));
             $LTable1->setLastElementClass("listcontent");
             $priorityImages=new Div();
             $priorityImages->setClass('priorityimagesbox');

@@ -3,10 +3,12 @@ namespace Modules\itsap\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\itsap\Entity\itsap_devicetypeEntity;
 use Modules\itsap\Entity\itsap_employeeEntity;
 use Modules\itsap\Entity\itsap_servicerequestservicestatusEntity;
 use Modules\itsap\Entity\itsap_servicestatusEntity;
 use Modules\itsap\Entity\itsap_servicetypeEntity;
+use Modules\itsap\Entity\itsap_servicetypegroupEntity;
 use Modules\itsap\Entity\itsap_topunitEntity;
 use Modules\itsap\Entity\itsap_unitEntity;
 use Modules\itsap\Entity\itsap_viewservicerequesthandlerEntity;
@@ -59,6 +61,10 @@ class servicerequestinboxController extends Controller {
         $topUnit->setId($unit->getTopunit_fid());
         $unitEntityObject=new itsap_unitEntity($DBAccessor);
         $result['unit_fid']=$unitEntityObject->FindAll(new QueryLogic());
+        $result['topunit_fid']=(new itsap_topunitEntity($DBAccessor))->FindAll(new QueryLogic());
+        $result['devicetype_fid']=(new itsap_devicetypeEntity($DBAccessor))->FindAll(new QueryLogic());
+        $result['servicetypegroup_fid']=(new itsap_servicetypegroupEntity($DBAccessor))->FindAll(new QueryLogic());
+        $result['servicestatus_fid']=(new itsap_servicestatusEntity($DBAccessor))->FindAll(new QueryLogic());
 
         $servicetypeEntityObject=new itsap_servicetypeEntity($DBAccessor);
         $result['servicetype_fid']=$servicetypeEntityObject->FindAll(new QueryLogic());
@@ -158,15 +164,16 @@ class servicerequestinboxController extends Controller {
         $q->addCondition(new FieldCondition("sr.letternumber","%$letternumber%",LogicalOperator::LIKE));
         $q->addCondition(new FieldCondition("sr.letter_date",$letter_date_from,LogicalOperator::Bigger));
         $q->addCondition(new FieldCondition("sr.letter_date",$letter_date_to,LogicalOperator::Smaller));
+        if($deviceCode!="")
         $q->addCondition(new FieldCondition("device.code","%$deviceCode%",LogicalOperator::LIKE));
         if($topunit_fid>0)
             $q->addCondition(new FieldCondition("u.topunit_fid",$topunit_fid,LogicalOperator::Equal));
         if($devicetype_fid>0)
             $q->addCondition(new FieldCondition("device.devicetype_fid",$devicetype_fid,LogicalOperator::Equal));
         if($servicetypegroup_fid>0)
-            $q->addCondition(new FieldCondition("stg.id",$servicetypegroup_fid,LogicalOperator::Equal));
+            $q->addCondition(new FieldCondition("st.servicetypegroup_fid",$servicetypegroup_fid,LogicalOperator::Equal));
         if($latestStatus>0)
-            $q->addCondition(new FieldCondition("status.servicestatus_fid",$latestStatus,LogicalOperator::Equal));
+            $q->addCondition(new FieldCondition("thestatus.servicestatus_fid",$latestStatus,LogicalOperator::Equal));
         if($securityacceptor_role_systemuser_fid>0)
             $q->addCondition(new FieldCondition("sr.securityacceptor_role_systemuser_fid",$securityacceptor_role_systemuser_fid,LogicalOperator::Equal));
         if($Requester_SysUserID>0)

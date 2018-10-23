@@ -75,7 +75,63 @@ class servicerequestlistsearch_Design extends FormDesign {
 	{
 		return $this->description;
 	}
-	/** @var textbox */
+    /** @var textbox */
+    private $deviceCode;
+    /**
+     * @return textbox
+     */
+    public function getDeviceCode()
+    {
+        return $this->deviceCode;
+    }
+
+    /** @var combobox */
+    private $devicetype;
+    /**
+     * @return combobox
+     */
+    public function getDevicetype()
+    {
+        return $this->devicetype;
+    }
+
+
+    /** @var combobox */
+    private $servicetypegroup;
+    /**
+     * @return combobox
+     */
+    public function getServicetypegroup()
+    {
+        return $this->servicetypegroup;
+    }
+
+
+
+    /** @var combobox */
+    private $topunit;
+    /**
+     * @return combobox
+     */
+    public function getTopunit()
+    {
+        return $this->topunit;
+    }
+
+
+
+    /** @var combobox */
+    private $servicestatus;
+    /**
+     * @return combobox
+     */
+    public function getServicestatus()
+    {
+        return $this->servicestatus;
+    }
+
+
+    /** @var textbox */
 	private $priority;
 	/**
 	 * @return textbox
@@ -194,6 +250,21 @@ class servicerequestlistsearch_Design extends FormDesign {
 	}
 	/** @var SweetButton */
 	private $search;
+	private $VisibleFields;
+
+    /**
+     * @param array $VisibleFields
+     */
+    public function setVisibleFields(array $VisibleFields)
+    {
+        $this->VisibleFields = $VisibleFields;
+    }
+
+    protected function getIsFieldEnabled($FieldName)
+    {
+        $result= array_search($FieldName,$this->VisibleFields);
+        return $result!==false;
+    }
 	public function __construct()
 	{
 		parent::__construct();
@@ -211,6 +282,30 @@ class servicerequestlistsearch_Design extends FormDesign {
 		$this->servicetype_fid= new combobox("servicetype_fid");
 		$this->servicetype_fid->setClass("form-control selectpicker");
 		$this->servicetype_fid->SetAttribute("data-live-search",true);
+
+        /******* topunit *******/
+        $this->topunit= new combobox("topunit");
+        $this->topunit->setClass("form-control selectpicker");
+        $this->topunit->SetAttribute("data-live-search",true);
+
+
+        /******* devicetype *******/
+        $this->devicetype= new combobox("devicetype");
+        $this->devicetype->setClass("form-control selectpicker");
+        $this->devicetype->SetAttribute("data-live-search",true);
+
+
+        /******* servicetypegroup *******/
+        $this->servicetypegroup= new combobox("servicetypegroup");
+        $this->servicetype_fid->setClass("form-control selectpicker");
+        $this->servicetype_fid->SetAttribute("data-live-search",true);
+
+
+        /******* servicestatus *******/
+        $this->servicestatus= new combobox("servicestatus");
+        $this->servicestatus->setClass("form-control selectpicker");
+        $this->servicestatus->SetAttribute("data-live-search",true);
+
 
 		/******* description *******/
 		$this->description= new textbox("description");
@@ -253,6 +348,10 @@ class servicerequestlistsearch_Design extends FormDesign {
 		$this->letternumber= new textbox("letternumber");
 		$this->letternumber->setClass("form-control");
 
+        /******* deviceCode *******/
+        $this->deviceCode= new textbox("devicecode");
+        $this->deviceCode->setClass("form-control");
+
 		/******* letter_date_from *******/
 		$this->letter_date_from= new DatePicker("letter_date_from");
 		$this->letter_date_from->setClass("form-control");
@@ -286,23 +385,50 @@ class servicerequestlistsearch_Design extends FormDesign {
 			$Page->addElement($this->getMessagePart());
 		$LTable1=new Div();
 		$LTable1->setClass("searchtable");
-		$LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->unit_fid,$this->getFieldCaption('unit_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->servicetype_fid,$this->getFieldCaption('servicetype_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->request_date_from,$this->getFieldCaption('request_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->request_date_to,$this->getFieldCaption('request_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->securityacceptor_role_systemuser_fid,$this->getFieldCaption('securityacceptor_role_systemuser_fid'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->is_securityaccepted,$this->getFieldCaption('is_securityaccepted'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->securityacceptancemessage,$this->getFieldCaption('securityacceptancemessage'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->securityacceptance_date_from,$this->getFieldCaption('securityacceptance_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->securityacceptance_date_to,$this->getFieldCaption('securityacceptance_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->letternumber,$this->getFieldCaption('letternumber'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->letter_date_from,$this->getFieldCaption('letter_date_from'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->letter_date_to,$this->getFieldCaption('letter_date_to'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
-		$LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
+		if($this->getIsFieldEnabled('title'))
+		    $LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
+        if($this->getIsFieldEnabled('topunit'))
+            $LTable1->addElement($this->getFieldRowCode($this->topunit,"یگان مادر",null,'',null));
+        if($this->getIsFieldEnabled('unit_fid'))
+            $LTable1->addElement($this->getFieldRowCode($this->unit_fid,$this->getFieldCaption('unit_fid'),null,'',null));
+        if($this->getIsFieldEnabled('servicetypegroup'))
+            $LTable1->addElement($this->getFieldRowCode($this->servicetypegroup,"نوع خدمت",null,'',null));
+        if($this->getIsFieldEnabled('servicetype_fid'))
+            $LTable1->addElement($this->getFieldRowCode($this->servicetype_fid,"خدمت",null,'',null));
+        if($this->getIsFieldEnabled('devicetype'))
+            $LTable1->addElement($this->getFieldRowCode($this->devicetype,"نوع قطعه",null,'',null));
+        if($this->getIsFieldEnabled('devicecode'))
+            $LTable1->addElement($this->getFieldRowCode($this->deviceCode,"کد قطعه",null,'',null));
+        if($this->getIsFieldEnabled('servicestatus'))
+            $LTable1->addElement($this->getFieldRowCode($this->servicestatus,"وضعیت",null,'',null));
+        if($this->getIsFieldEnabled('description'))
+            $LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'',null));
+        if($this->getIsFieldEnabled('priority'))
+            $LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'',null));
+        if($this->getIsFieldEnabled('request_date_from'))
+            $LTable1->addElement($this->getFieldRowCode($this->request_date_from,$this->getFieldCaption('request_date_from'),null,'',null));
+        if($this->getIsFieldEnabled('request_date_to'))
+            $LTable1->addElement($this->getFieldRowCode($this->request_date_to,$this->getFieldCaption('request_date_to'),null,'',null));
+        if($this->getIsFieldEnabled('securityacceptor_role_systemuser_fid'))
+            $LTable1->addElement($this->getFieldRowCode($this->securityacceptor_role_systemuser_fid,$this->getFieldCaption('securityacceptor_role_systemuser_fid'),null,'',null));
+        if($this->getIsFieldEnabled('is_securityaccepted'))
+            $LTable1->addElement($this->getFieldRowCode($this->is_securityaccepted,$this->getFieldCaption('is_securityaccepted'),null,'',null));
+        if($this->getIsFieldEnabled('securityacceptancemessage'))
+            $LTable1->addElement($this->getFieldRowCode($this->securityacceptancemessage,$this->getFieldCaption('securityacceptancemessage'),null,'',null));
+        if($this->getIsFieldEnabled('securityacceptance_date_from'))
+            $LTable1->addElement($this->getFieldRowCode($this->securityacceptance_date_from,$this->getFieldCaption('securityacceptance_date_from'),null,'',null));
+        if($this->getIsFieldEnabled('securityacceptance_date_to'))
+            $LTable1->addElement($this->getFieldRowCode($this->securityacceptance_date_to,$this->getFieldCaption('securityacceptance_date_to'),null,'',null));
+        if($this->getIsFieldEnabled('letternumber'))
+            $LTable1->addElement($this->getFieldRowCode($this->letternumber,$this->getFieldCaption('letternumber'),null,'',null));
+        if($this->getIsFieldEnabled('letter_date_from'))
+            $LTable1->addElement($this->getFieldRowCode($this->letter_date_from,$this->getFieldCaption('letter_date_from'),null,'',null));
+        if($this->getIsFieldEnabled('letter_date_to'))
+            $LTable1->addElement($this->getFieldRowCode($this->letter_date_to,$this->getFieldCaption('letter_date_to'),null,'',null));
+        if($this->getIsFieldEnabled('sortby'))
+            $LTable1->addElement($this->getFieldRowCode($this->sortby,$this->getFieldCaption('sortby'),null,'',null));
+        if($this->getIsFieldEnabled('isdesc'))
+            $LTable1->addElement($this->getFieldRowCode($this->isdesc,$this->getFieldCaption('isdesc'),null,'',null));
 		$LTable1->addElement($this->getSingleFieldRowCode($this->search));
 		$Page->addElement($LTable1);
 		$form=new SweetFrom("", "GET", $Page);
@@ -311,12 +437,42 @@ class servicerequestlistsearch_Design extends FormDesign {
 	}
 	public function FillItems()
 	{
-			$this->unit_fid->addOption("", "مهم نیست");
-		foreach ($this->Data['unit_fid'] as $item)
-			$this->unit_fid->addOption($item->getID(), $item->getTitleField());
+
+
+        $this->topunit->addOption("", "مهم نیست");
+        foreach ($this->Data['topunit_fid'] as $item)
+            $this->topunit->addOption($item->getID(), $item->getTitleField());
+
+        $this->unit_fid->addOption("", "مهم نیست");
+        foreach ($this->Data['unit_fid'] as $item)
+            $this->unit_fid->addGroupedOption($item->getTopunit_fid(),$item->getID(), $item->getTitleField());
+        $this->unit_fid->setMotherComboboxName($this->topunit->getName());
+
+        $this->devicetype->addOption("", "مهم نیست");
+        foreach ($this->Data['devicetype_fid'] as $item)
+            $this->devicetype->addOption($item->getID(), $item->getTitleField());
+
+
+        $this->servicetypegroup->addOption("", "مهم نیست");
+        foreach ($this->Data['servicetypegroup_fid'] as $item)
+            $this->servicetypegroup->addOption($item->getID(), $item->getTitleField());
+
+
+        $this->servicestatus->addOption("", "مهم نیست");
+        foreach ($this->Data['servicestatus_fid'] as $item)
+            $this->servicestatus->addOption($item->getID(), $item->getTitleField());
+
+
+//        $this->unit_fid->addOption("", "مهم نیست");
+//        foreach ($this->Data['unit_fid'] as $item)
+//            $this->unit_fid->addOption($item->getID(), $item->getTitleField());
+
+
+
 			$this->servicetype_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['servicetype_fid'] as $item)
-			$this->servicetype_fid->addOption($item->getID(), $item->getTitleField());
+			$this->servicetype_fid->addGroupedOption($item->getServicetypegroup_fid(),$item->getID(), $item->getTitleField());
+        $this->servicetype_fid->setMotherComboboxName($this->servicetypegroup->getName());
 			$this->securityacceptor_role_systemuser_fid->addOption("", "مهم نیست");
 		foreach ($this->Data['securityacceptor_role_systemuser_fid'] as $item)
 			$this->securityacceptor_role_systemuser_fid->addOption($item->getID(), $item->getTitleField());
@@ -466,6 +622,11 @@ class servicerequestlistsearch_Design extends FormDesign {
 			$this->isdesc->setSelectedValue($_GET['isdesc']);
 
 		/******** search ********/
+
+        $dateStart=time()-12*30*24*60*60;
+        $this->letter_date_from->setTime($dateStart);
+        $this->securityacceptance_date_from->setTime($dateStart);
+        $this->request_date_from->setTime($dateStart);
 	}
 }
 ?>

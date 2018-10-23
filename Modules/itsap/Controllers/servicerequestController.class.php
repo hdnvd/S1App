@@ -180,12 +180,7 @@ class servicerequestController extends Controller {
             if($statusEnt->getId()==-1)
                 throw new DataNotFoundException();
 
-            $reqstatusEnt=new itsap_servicerequestservicestatusEntity($DBAccessor);
-            $q=new QueryLogic();
-            $q->addCondition(new FieldCondition(itsap_servicerequestservicestatusEntity::$SERVICEREQUEST_FID,$ID));
-            $q->addOrderBy(itsap_servicerequestservicestatusEntity::$START_DATE,true);
-            $reqstatusEnt=$reqstatusEnt->FindOne($q);
-            $LastStatus=$reqstatusEnt->getServicestatus_fid();
+            $LastStatus=$servicerequestEntityObject->getLast_servicestatus_fid();
             if($LastStatus!=$StateID)
             {
                 $reqstatusEnt=new itsap_servicerequestservicestatusEntity($DBAccessor);
@@ -195,7 +190,10 @@ class servicerequestController extends Controller {
                 $reqstatusEnt->setServicestatus_fid($StateID);
                 $reqstatusEnt->setMessage($message);
                 $reqstatusEnt->Save();
+                $servicerequestEntityObject->setLast_servicestatus_fid($reqstatusEnt->getId());
+                $servicerequestEntityObject->Save();
             }
+
         }
         $result['param1']="";
         $DBAccessor->close_connection();

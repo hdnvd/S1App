@@ -166,32 +166,9 @@ class manageservicerequestController extends Controller {
             $statusEnt->setRole_systemuser_fid($role_systemuser_fid);
             $statusEnt->setStart_date(time());
             $statusEnt->Save();
+            $servicerequestEntityObject->setLast_servicestatus_fid($statusEnt->getId());
+            $servicerequestEntityObject->Save();
 		}
-		/*
-		else{
-			$servicerequestEntityObject->setId($ID);
-			if($servicerequestEntityObject->getId()==-1)
-				throw new DataNotFoundException();
-			if($UserID!=null && $servicerequestEntityObject->getRole_systemuser_fid()!=$UserID)
-				throw new DataNotFoundException();
-            if($ServiceTypeEnt->getId()!=$servicerequestEntityObject->getServicetype_fid())
-                $servicerequestEntityObject->setPriority($priority);
-
-			$servicerequestEntityObject->setTitle($title);
-			$servicerequestEntityObject->setServicetype_fid($servicetype_fid);
-			$servicerequestEntityObject->setDescription($description);
-			$servicerequestEntityObject->setPriority($priority);
-			if($file1_fluURL!='')
-			    $servicerequestEntityObject->setFile1_flu($file1_fluURL);
-			$servicerequestEntityObject->setRequest_date($request_date);
-//			$servicerequestEntityObject->setDevicetype_fid($devicetype_fid);
-			if($letterfile_fluURL!='')
-			    $servicerequestEntityObject->setLetterfile_flu($letterfile_fluURL);
-			$servicerequestEntityObject->setSecurityacceptor_role_systemuser_fid($securityacceptor_role_systemuser_fid);
-			$servicerequestEntityObject->setLetternumber($letternumber);
-			$servicerequestEntityObject->setLetter_date($letter_date);
-			$servicerequestEntityObject->Save();
-		}*/
 		$RelationLogic=new QueryLogic();
 		$RelationLogic->addCondition(new FieldCondition('servicerequest_fid',$ID));
 		$result=$this->load($ID);
