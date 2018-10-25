@@ -7,8 +7,8 @@ use core\CoreClasses\db\dbaccess;
 use core\CoreClasses\services\FieldType;
 /**
 *@author Hadi AmirNahavandi
-*@creationDate 1396-10-02 - 2017-12-23 00:54
-*@lastUpdate 1396-10-02 - 2017-12-23 00:54
+*@creationDate 1397-08-04 - 2018-10-26 00:59
+*@lastUpdate 1397-08-04 - 2018-10-26 00:59
 *@SweetFrameworkHelperVersion 2.014
 *@SweetFrameworkVersion 1.018
 */
@@ -18,11 +18,11 @@ class itsap_referenceEntity extends EntityClass {
 		$this->setDatabase(new dbquery($DBAccessor));
 		$this->setTableName("itsap_reference");
 		$this->setTableTitle("ارجاع");
-		$this->setTitleFieldName("id");
+		$this->setTitleFieldName("message");
 
 		/******** servicerequest_fid ********/
 		$Servicerequest_fidInfo=new FieldInfo();
-		$Servicerequest_fidInfo->setTitle("servicerequest_fid");
+		$Servicerequest_fidInfo->setTitle("درخواست");
 		$this->setFieldInfo(itsap_referenceEntity::$SERVICEREQUEST_FID,$Servicerequest_fidInfo);
 		$this->addTableField('1',itsap_referenceEntity::$SERVICEREQUEST_FID);
 
@@ -32,11 +32,11 @@ class itsap_referenceEntity extends EntityClass {
 		$this->setFieldInfo(itsap_referenceEntity::$MESSAGE,$MessageInfo);
 		$this->addTableField('2',itsap_referenceEntity::$MESSAGE);
 
-		/******** systemuser_fid ********/
-		$Systemuser_fidInfo=new FieldInfo();
-		$Systemuser_fidInfo->setTitle("systemuser_fid");
-		$this->setFieldInfo(itsap_referenceEntity::$SYSTEMUSER_FID,$Systemuser_fidInfo);
-		$this->addTableField('3',itsap_referenceEntity::$SYSTEMUSER_FID);
+		/******** role_systemuser_fid ********/
+		$Role_systemuser_fidInfo=new FieldInfo();
+		$Role_systemuser_fidInfo->setTitle("کاربر");
+		$this->setFieldInfo(itsap_referenceEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fidInfo);
+		$this->addTableField('3',itsap_referenceEntity::$ROLE_SYSTEMUSER_FID);
 
 		/******** unit_fid ********/
 		$Unit_fidInfo=new FieldInfo();
@@ -82,18 +82,18 @@ class itsap_referenceEntity extends EntityClass {
 	public function setMessage($Message){
 		$this->setField(itsap_referenceEntity::$MESSAGE,$Message);
 	}
-	public static $SYSTEMUSER_FID="systemuser_fid";
+	public static $ROLE_SYSTEMUSER_FID="role_systemuser_fid";
 	/**
 	 * @return mixed
 	 */
-	public function getSystemuser_fid(){
-		return $this->getField(itsap_referenceEntity::$SYSTEMUSER_FID);
+	public function getRole_systemuser_fid(){
+		return $this->getField(itsap_referenceEntity::$ROLE_SYSTEMUSER_FID);
 	}
 	/**
-	 * @param mixed $Systemuser_fid
+	 * @param mixed $Role_systemuser_fid
 	 */
-	public function setSystemuser_fid($Systemuser_fid){
-		$this->setField(itsap_referenceEntity::$SYSTEMUSER_FID,$Systemuser_fid);
+	public function setRole_systemuser_fid($Role_systemuser_fid){
+		$this->setField(itsap_referenceEntity::$ROLE_SYSTEMUSER_FID,$Role_systemuser_fid);
 	}
 	public static $UNIT_FID="unit_fid";
 	/**

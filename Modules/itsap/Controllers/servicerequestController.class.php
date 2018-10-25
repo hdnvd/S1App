@@ -216,7 +216,7 @@ class servicerequestController extends Controller {
             $ReferenceEnt->setReference_time(time());
             $ReferenceEnt->setServicerequest_fid($ID);
             $ReferenceEnt->setMessage($Message);
-            $ReferenceEnt->setSystemuser_fid($role_systemuser_fid);
+            $ReferenceEnt->setRole_systemuser_fid($role_systemuser_fid);
             $ReferenceEnt->setEmployee_fid($EmployeeID);
             $ReferenceEnt->setUnit_fid($ITunitID);
             $ReferenceEnt->Save();
