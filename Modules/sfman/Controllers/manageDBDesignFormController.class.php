@@ -228,7 +228,6 @@ EOT;
             if($theTable!=null) {
                 $C .= "\n\n\t\t/******* " . $theUCTable ." *******/";
                 $C .= "\n\t\t\$this->" . $theUCTable . "s= new  CheckBox('$theTable" . "[]');";
-//                $C .= "\n\t\t\$this->" . $theUCTable . "s->setClass(\"form-control\");";
             }
         }
         $C .="\n\t}";
@@ -303,8 +302,7 @@ EOT;
 
         }
         $C .= "\r\n\t\t}";
-        $C .="\n\t\t\$LTable1=new Div();";
-        $C .="\n\t\t\$LTable1->setClass(\"formtable\");";
+        $C .="\n\t\t\$LTable1=new Div(null,\"formtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C .=$this->getDesignAddCode($formInfo,$i,false,true);
         }
@@ -375,70 +373,52 @@ EOT;
         $C .=$this->getDesignTopPartCode(false);
         $C .="\n\t\t\$addUrl=new AppRooter('$ModuleName',\$this->itemPage);";
         $C .="\n\t\t\$LblAdd=new Lable('ثبت ". "' . \$this->Data['" . $TableName . "']->getTableTitle() . '"." جدید');";
-        $C .="\n\t\t\$lnkAdd=new link(\$addUrl->getAbsoluteURL(),\$LblAdd);";
-        $C .="\n\t\t\$lnkAdd->setClass('linkbutton btn btn-primary');";
+        $C .="\n\t\t\$lnkAdd=new link(\$addUrl,\$LblAdd,'add" . $TableName . "link','linkbutton btn btn-primary');";
         $C .="\n\t\t\$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');";
-        $C .="\n\t\t\$lnkAdd->setId('add" . $TableName . "link');";
         $C .="\n\t\t\$Page->addElement(\$lnkAdd);";
 
-        $C .="\n\t\t\$SearchUrl=new AppRooter('$ModuleName',\$this->listPage);";
-        $C .="\n\t\t\$SearchUrl->addParameter(new URLParameter('search',null));";
-        $C .="\n\t\t\$LblSearch=new Lable('جستجو');";
-        $C .="\n\t\t\$lnkSearch=new link(\$SearchUrl->getAbsoluteURL(),\$LblSearch);";
-        $C .="\n\t\t\$lnkSearch->setClass('linkbutton btn btn-primary');";
+        $C .="\n\t\t\$SearchUrl=new AppRooter('$ModuleName',\$this->listPage,[new URLParameter('search',null)]);";
+        $C .="\n\t\t\$lnkSearch=new link(\$SearchUrl,new Lable('جستجو'),'search" . $TableName . "link','linkbutton btn btn-primary');";
         $C .="\n\t\t\$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');";
-        $C .="\n\t\t\$lnkSearch->setId('search" . $TableName . "link');";
         $C .="\n\t\t\$Page->addElement(\$lnkSearch);";
         $C .=$this->getDesignMessageAdding();
-        $C .="\n\t\t\$TableDiv=new Div();";
-        $C .="\n\t\t\$TableDiv->setClass('table-responsive');";
+        $C .="\n\t\t\$TableDiv=new Div(null,'table-responsive');";
         $C .="\n\t\t\$LTable1=new ListTable(3);";
         $C .="\n\t\t\$LTable1->setHeaderRowCount(1);";
         $C .="\n\t\t\$LTable1->setClass(\"table-striped table-hover managelist\");";
-        $C .="\n\t\t\$LTable1->addElement(new Lable('#'));";
-        $C .="\n\t\t\$LTable1->setLastElementClass(\"listtitle\");";
-        $C .="\n\t\t\$LTable1->addElement(new Lable('عنوان'));";
-        $C .="\n\t\t\$LTable1->setLastElementClass(\"listtitle\");";
-        $C .="\n\t\t\$LTable1->addElement(new Lable('عملیات'));";
-        $C .="\n\t\t\$LTable1->setLastElementClass(\"listtitle\");";
+        $C .="\n\t\t\$LTable1->addElement(new Lable('#'),1,null,\"listtitle\");";
+        $C .="\n\t\t\$LTable1->addElement(new Lable('عنوان'),1,null,\"listtitle\");";
+        $C .="\n\t\t\$LTable1->addElement(new Lable('عملیات'),1,null,\"listtitle\");";
         $C .="\n\t\tfor(\$i=0;\$i<count(\$this->Data['data']);\$i++){";
-        $C .="\n\t\t\t\$url=new AppRooter('$ModuleName',\$this->itemPage);";
-        $C .="\n\t\t\t\$url->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
+        $C .="\n\t\t\t\$url=new AppRooter('$ModuleName',\$this->itemPage,[new UrlParameter('id',\$this->Data['data'][\$i]->getID())]);";
         $C .="\n\t\t\t\$Title=\$this->Data['data'][\$i]->getTitleField();";
         $C .="\n\t\t\tif(\$Title==\"\")";
         $C .="\n\t\t\t\t\$Title='- بدون عنوان -';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
-        $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
+        $C .="\n\t\t\t\$liTit[\$i]=new link(\$url,\$lbTit[\$i]);";
 
-        $C .="\n\t\t\t\$ViewURL=new AppRooter('$ModuleName',\$this->itemViewPage);";
-        $C .="\n\t\t\t\$ViewURL->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
+        $C .="\n\t\t\t\$ViewURL=new AppRooter('$ModuleName',\$this->itemViewPage,[new UrlParameter('id',\$this->Data['data'][\$i]->getID())]);";
         $C .="\n\t\t\t\$lbView[\$i]=new Lable('مشاهده');";
-        $C .="\n\t\t\t\$lnkView[\$i]=new link(\$ViewURL->getAbsoluteURL(),\$lbView[\$i]);";
+        $C .="\n\t\t\t\$lnkView[\$i]=new link(\$ViewURL,\$lbView[\$i],null,'btn btn-primary');";
         $C .="\n\t\t\t\$lnkView[\$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');";
-        $C .="\n\t\t\t\$lnkView[\$i]->setClass('btn btn-primary');";
 
-        $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage);";
-        $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('id',\$this->Data['data'][\$i]->getID()));";
-        $C .="\n\t\t\t\$delurl->addParameter(new UrlParameter('delete',1));";
-        $C .="\n\t\t\t\$lbDel[\$i]=new Lable('حذف');";
-        $C .="\n\t\t\t\$lnkDel[\$i]=new link(\$delurl->getAbsoluteURL(),\$lbDel[\$i]);";
+        $C .="\n\t\t\t\$delurl=new AppRooter('$ModuleName',\$this->listPage,[new UrlParameter('id',\$this->Data['data'][\$i]->getID()),new UrlParameter('delete',1)]);";
+        $C .="\n\t\t\t\$lnkDel[\$i]=new link(\$delurl,new Lable('حذف'),null,'btn btn-danger');";
         $C .="\n\t\t\t\$lnkDel[\$i]->setGlyphiconClass('glyphicon glyphicon-remove');";
-        $C .="\n\t\t\t\$lnkDel[\$i]->setClass('btn btn-danger');";
 
-        $C .="\n\t\t\t\$operationDiv[\$i]=new Div();";
-        $C .="\n\t\t\t\$operationDiv[\$i]->setClass('operationspart');";
+        $C .="\n\t\t\t\$operationDiv[\$i]=new Div(null,'operationspart');";
         $C .="\n\t\t\t\$operationDiv[\$i]->addElement(\$lnkView[\$i]);";
         $C .="\n\t\t\t\$operationDiv[\$i]->addElement(\$lnkDel[\$i]);";
 
-        $C .="\n\t\t\t\$LTable1->addElement(new Lable(\$i+1));";
-        $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
-        $C .="\n\t\t\t\$LTable1->addElement(\$liTit[\$i]);";
-        $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
-        $C .="\n\t\t\t\$LTable1->addElement(\$operationDiv[\$i]);";
-        $C .="\n\t\t\t\$LTable1->setLastElementClass(\"listcontent\");";
+        $C .="\n\t\t\t\$LTable1->addElement(new Lable(\$i+1),null,\"listcontent\");";
+        $C .="\n\t\t\t\$LTable1->addElement(\$liTit[\$i],null,\"listcontent\");";
+        $C .="\n\t\t\t\$LTable1->addElement(\$operationDiv[\$i],null,\"listcontent\");";
         $C .="\n\t\t}";
         $C .="\n\t\t\$TableDiv->addElement(\$LTable1);";
         $C .="\n\t\t\$Page->addElement(\$TableDiv);";
+        $C .="\n\t\t\$TotalDiv=new Div(null,\"listtotalinfo\");";
+        $C .="\n\t\t\$TotalDiv->addElement(new Lable(\"تعداد کل: \".\$this->Data['allcount']));";
+        $C .="\n\t\t\$Page->addElement(\$TotalDiv);";
         $C .="\n\t\t\$Page->addElement(\$this->getPaginationPart(\$this->Data['pagecount'],\"".$this->getCodeModuleName()."\",\$this->listPage));";
         $C .="\n\t\t\$form=new SweetFrom(\"\", \"POST\", \$Page);";
         $C .="\n\t\treturn \$form->getHTML();";
@@ -498,14 +478,14 @@ EOT;
         $C .="\n\t\t\tif(\$this->Data['data'][\$i]->getTitleField()==\"\")";
         $C .="\n\t\t\t\t\$Title='-- بدون عنوان --';";
         $C .="\n\t\t\t\$lbTit[\$i]=new Lable(\$Title);";
-        $C .="\n\t\t\t\$liTit[\$i]=new link(\$url->getAbsoluteURL(),\$lbTit[\$i]);";
+        $C .="\n\t\t\t\$liTit[\$i]=new link(\$url,\$lbTit[\$i]);";
         $C .="\n\t\t\t\$innerDiv[\$i]->addElement(\$liTit[\$i]);";
         $C .="\n\t\t\t\$Div1->addElement(\$innerDiv[\$i]);";
         $C .="\n\t\t}";
         $C .="\n\t\t\$Page->addElement(\$Div1);";
         $C .="\n\t\t\$Page->addElement(\$this->getPaginationPart(\$this->Data['pagecount'],\"".$this->getCodeModuleName()."\",\"$FormName\"));";
         $C.="\n\t\t\$PageLink=new AppRooter('".$this->getCodeModuleName()."','$FormName');";
-        $C .="\n\t\t\$form=new SweetFrom(\$PageLink->getAbsoluteURL(), \"GET\", \$Page);";
+        $C .="\n\t\t\$form=new SweetFrom(\$PageLink, \"GET\", \$Page);";
         $C .="\n\t\t\$form->setClass('form-horizontal');";
         $C .="\n\t\treturn \$form->getHTML();";
         $C .="\n\t}";
@@ -623,8 +603,7 @@ EOT;
         $C .="\n\t{";
         $C.="\n\t\t\$this->FillItems();";
         $C .=$this->getDesignTopPartCode();
-        $C .="\n\t\t\$LTable1=new Div();";
-        $C .="\n\t\t\$LTable1->setClass(\"searchtable\");";
+        $C .="\n\t\t\$LTable1=new Div(null,\"searchtable\");";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $C .=$this->getDesignAddCode($formInfo,$i,false,false);
         }
