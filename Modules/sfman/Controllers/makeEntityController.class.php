@@ -128,6 +128,30 @@ class makeEntityController extends Controller {
             $FieldTitle='تصویر';
         elseif(strtolower($FieldTitle)=='context')
             $FieldTitle='متن';
+        elseif(strtolower($FieldTitle)=='page')
+            $FieldTitle='صفحه';
+        elseif(strtolower($FieldTitle)=='action')
+            $FieldTitle='فعالیت';
+        elseif(strtolower($FieldTitle)=='module')
+            $FieldTitle='ماژول';
+        elseif(strtolower($FieldTitle)=='time')
+            $FieldTitle='زمان';
+        elseif(strtolower($FieldTitle)=='role_systemuser_fid')
+            $FieldTitle='کاربر';
+        elseif(strtolower($FieldTitle)=='created_at')
+            $FieldTitle='تاریخ ایجاد';
+        elseif(strtolower($FieldTitle)=='updated_at')
+            $FieldTitle='تاریخ بروز رسانی';
+        elseif(strtolower($FieldTitle)=='browserinfo')
+            $FieldTitle='اطلاعات مرورگر';
+        elseif(strtolower($FieldTitle)=='ip')
+            $FieldTitle='آدرس IP';
+        elseif(strtolower($FieldTitle)=='username')
+            $FieldTitle='نام کاربری';
+        elseif(strtolower($FieldTitle)=='password')
+            $FieldTitle='کلمه عبور';
+        elseif(strtolower($FieldTitle)=='message')
+            $FieldTitle='پیام';
         $Info="\n\n\t\t/******** $FieldName ********/";
         $Info.="\n\t\t$FieldNameInfoVar=new FieldInfo();";
         $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldTitle\");";
