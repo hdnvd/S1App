@@ -81,7 +81,7 @@ return $html;
 		$Elements=$html->find($logic);
 		for($i=0;$i<count($Elements) && $i<$this->MaxPosts;$i++)
 		{
-			$titles[$i]=$Elements[$i]->innertext;
+			$titles[$i]=$Elements[$i]->plaintext;
 			$links[$i]=$Elements[$i]->href;
 		}
 		$postsCount=$i;
