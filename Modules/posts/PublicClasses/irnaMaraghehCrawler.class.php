@@ -96,7 +96,9 @@ class irnaMaraghehCrawler extends irnaCrawler
             $JunkWordCount++;
         if (strpos($Context,"مردم سالاری دینی") !== false)
             $JunkWordCount++;
-        echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
+        if (strpos($Context,"منجر می شود") !== false)
+            $JunkWordCount++;
+//        echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
 
         return $JunkWordCount;
     }
@@ -115,7 +117,7 @@ class irnaMaraghehCrawler extends irnaCrawler
             $JunkWordCount++;
         if (strpos($Context,"عجب شیر") !== false)
             $JunkWordCount++;
-        echo $Context . " Has $JunkWordCount Junkwords when getIsTitleForMaragheh";
+//        echo $Context . " Has $JunkWordCount Junkwords when getIsTitleForMaragheh";
         if ($JunkWordCount > 0)
             return false;
         return true;
