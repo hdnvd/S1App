@@ -37,7 +37,7 @@ class postsController extends Controller {
 	{
 
 		$langCatEnt=new posts_languagecategoryEntity();
-		$title=$langCatEnt->Select("latintitle",$CategoryID,null,null,null,null);
+		$title=$langCatEnt->Select(["latintitle"],$CategoryID,null,null,null,null);
 		return $title[0]['latintitle'];
 	}
 	public function loadLanguageCategoryPosts($LanguageCategoryID,$MinId=-1,$OrderAscending=false,$Limit=null,$MaxDaysToShow=null,$orderBy="post.id")
