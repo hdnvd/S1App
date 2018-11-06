@@ -39,7 +39,7 @@ class blogposts_Code extends posts_Code {
 			(isset($_GET['pn']))?$Page=$_GET['pn']:$Page=1;
 			$design->setCurrentPage($Page);
 			$design->setPageCount($Posts['pagecount']);
-			$PageLink=new AppRooter("articles", "");
+			$PageLink=new AppRooter($Posts['catlatintitle'], "");
 			$PageLink->setFileFormat("");
 			$design->setPageLink($PageLink->getAbsoluteURL());
 			return $design->getResponse();

@@ -18,7 +18,8 @@ class posts_Code extends FormCode {
 		$postsController=new postsController();
 		$translator=new ModuleTranslator("posts");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
-		
+
+		$CatLatinTitle="articles";
 		//******************Pagination Variables******************//
 		$PageSize=ParameterManager::getParameter("posts_pagesize");
 		$PageNumber=1;
@@ -65,6 +66,7 @@ class posts_Code extends FormCode {
 			$MinId=$_GET['lastid'];
 		if(isset($_GET['category']))
 		{
+            $CatLatinTitle=$postsController->getCatLatinTitle($_GET['category']);
 			$Fields=$postsController->loadLanguageCategoryPosts($_GET['category'],$MinId,$OrderASC,$Limit,$MaxDaysToShow);
 			$AllPosts=$postsController->loadLanguageCategoryPosts($_GET['category'],$MinId,$OrderASC,null,$MaxDaysToShow);
 			$AllPostsCount=count($AllPosts['posts']);
@@ -112,6 +114,7 @@ class posts_Code extends FormCode {
 		$Result=array();
 		$Result['fields']=$Fields;
 		$Result['links']=$links;
+		$Result['catlatintitle']=$CatLatinTitle;
 		$Result['pagecount']=(int)($AllPostsCount/$PageSize);
 		if($AllPostsCount%$PageSize!=0)
 			$Result['pagecount']++;

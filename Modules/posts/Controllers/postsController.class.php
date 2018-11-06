@@ -33,7 +33,13 @@ class postsController extends Controller {
 			$result['postcats'][$i]=$PLCE->SelectPostCats($result['posts'][$i]['id']);
 		return $result;
 	}
-	
+	public function getCatLatinTitle($CategoryID)
+	{
+
+		$langCatEnt=new posts_languagecategoryEntity();
+		$title=$langCatEnt->Select("latintitle",$CategoryID,null,null,null,null);
+		return $title[0]['latintitle'];
+	}
 	public function loadLanguageCategoryPosts($LanguageCategoryID,$MinId=-1,$OrderAscending=false,$Limit=null,$MaxDaysToShow=null,$orderBy="post.id")
 	{
 		$LanguageID=CurrentLanguageManager::getCurrentLanguageID();
