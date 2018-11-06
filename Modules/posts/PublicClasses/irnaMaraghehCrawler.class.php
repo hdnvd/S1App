@@ -98,6 +98,12 @@ class irnaMaraghehCrawler extends irnaCrawler
             $JunkWordCount++;
         if (strpos($Context,"منجر می شود") !== false)
             $JunkWordCount++;
+        if (strpos($Context,"رهبری") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"شئونات") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"آیت الله") !== false)
+            $JunkWordCount++;
 //        echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
 
         return $JunkWordCount;
