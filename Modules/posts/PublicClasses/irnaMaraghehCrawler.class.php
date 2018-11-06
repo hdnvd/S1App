@@ -50,51 +50,51 @@ class irnaMaraghehCrawler extends irnaCrawler
     {
         $Context = trim($Context);
         $JunkWordCount = 0;
-        if (strpos("استکبار", $Context) !== false)
+        if (strpos($Context,"استکبار") !== false)
             $JunkWordCount++;
-        if (strpos("شعار", $Context) !== false)
+        if (strpos($Context,"شعار") !== false)
             $JunkWordCount++;
-        if (strpos("انزجار", $Context) !== false)
+        if (strpos($Context,"انزجار") !== false)
             $JunkWordCount++;
-        if (strpos("فلسطین", $Context) !== false)
+        if (strpos($Context,"فلسطین") !== false)
             $JunkWordCount++;
-        if (strpos("لبنان", $Context) !== false)
+        if (strpos($Context,"لبنان") !== false)
             $JunkWordCount++;
-        if (strpos("عراق", $Context) !== false)
+        if (strpos($Context,"عراق") !== false)
             $JunkWordCount++;
-        if (strpos("امام جمعه", $Context) !== false)
+        if (strpos($Context,"امام جمعه") !== false)
             $JunkWordCount++;
-        if (strpos("اولویت", $Context) !== false)
+        if (strpos($Context,"اولویت") !== false)
             $JunkWordCount++;
-        if (strpos("روستا", $Context) !== false)
+        if (strpos($Context,"روستا") !== false)
             $JunkWordCount += 0.5;
-        if (strpos("عراق", $Context) !== false)
+        if (strpos($Context,"عراق") !== false)
             $JunkWordCount++;
-        if (strpos("آمریکا", $Context) !== false)
+        if (strpos($Context,"آمریکا") !== false)
             $JunkWordCount++;
-        if (strpos("انزوا", $Context) !== false)
+        if (strpos($Context,"انزوا") !== false)
             $JunkWordCount++;
-        if (strpos("ولایت", $Context) !== false)
+        if (strpos($Context,"ولایت") !== false)
             $JunkWordCount++;
-        if (strpos("عزت", $Context) !== false)
+        if (strpos($Context,"عزت") !== false)
             $JunkWordCount++;
-        if (strpos("نظام اسلامی", $Context) !== false)
+        if (strpos($Context,"نظام اسلامی") !== false)
             $JunkWordCount++;
-        if (strpos("جمهوری اسلامی", $Context) !== false)
+        if (strpos($Context,"جمهوری اسلامی") !== false)
             $JunkWordCount++;
-        if (strpos("صلابت", $Context) !== false)
+        if (strpos($Context,"صلابت") !== false)
             $JunkWordCount++;
-        if (strpos("توتئه", $Context) !== false)
+        if (strpos($Context,"توتئه") !== false)
             $JunkWordCount++;
-        if (strpos("انقلاب", $Context) !== false)
+        if (strpos($Context,"انقلاب") !== false)
             $JunkWordCount++;
-        if (strpos("ماندگار", $Context) !== false)
+        if (strpos($Context,"ماندگار") !== false)
             $JunkWordCount++;
-        if (strpos("صرفه جویی", $Context) !== false)
+        if (strpos($Context,"صرفه جویی") !== false)
             $JunkWordCount++;
-        if (strpos("جهادی", $Context) !== false)
+        if (strpos($Context,"جهادی") !== false)
             $JunkWordCount++;
-        if (strpos("مردم سالاری دینی", $Context) !== false)
+        if (strpos($Context,"مردم سالاری دینی") !== false)
             $JunkWordCount++;
         echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
 
@@ -105,15 +105,15 @@ class irnaMaraghehCrawler extends irnaCrawler
     {
         $Context = trim($Context);
         $JunkWordCount = 0;
-        if (strpos("مراغه", $Context) !== false)
+        if (strpos($Context,"مراغه") !== false)
             return true;
-        if (strpos("قره ‌آغاج", $Context) !== false)
+        if (strpos($Context,"قره ‌آغاج") !== false)
             $JunkWordCount++;
-        if (strpos("چاراویماق", $Context) !== false)
+        if (strpos($Context,"چاراویماق") !== false)
             $JunkWordCount++;
-        if (strpos("هشترود", $Context) !== false)
+        if (strpos($Context,"هشترود") !== false)
             $JunkWordCount++;
-        if (strpos("عجب شیر", $Context) !== false)
+        if (strpos($Context,"عجب شیر") !== false)
             $JunkWordCount++;
         echo $Context . " Has $JunkWordCount Junkwords when getIsTitleForMaragheh";
         if ($JunkWordCount > 0)
