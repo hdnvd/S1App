@@ -95,7 +95,7 @@ class updateservice_Code extends FormCode {
 			
 			    if(trim($Posts['titles'][$i])!="")
 			    {
-                    $categoryID=1;
+                    $categoryID="1";
 			    $thumb="";
 			    if(key_exists('thumbnails',$Posts))
 			    	$thumb=$Posts['thumbnails'][$i];
