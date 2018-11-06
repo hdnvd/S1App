@@ -125,7 +125,7 @@ class irnaMaraghehCrawler extends irnaCrawler{
             $Posts['titles'][$i]=trim($Posts['titles'][$i]);
             if($Posts['titles'][$i]!="") {
                 $PostWords = explode(" ", $Posts['titles'][$i]);
-                $LastWord = $PostWords(count($PostWords) - 1);
+                $LastWord = $PostWords[count($PostWords) - 1];
                 if ($this->isJunkWord($LastWord) || $this->getJunkWordCount($Posts['titles'][$i])>=1 || !$this->getIsTitleForMaragheh($Posts['titles'][$i]))
                     $Posts['categoryids'][$i] = 1;
                 else
