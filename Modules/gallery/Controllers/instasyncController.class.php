@@ -3,6 +3,7 @@ namespace Modules\gallery\Controllers;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
+use Modules\gallery\Entity\gallery_albumphotoEntity;
 use Modules\gallery\Entity\gallery_photoEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use Modules\users\PublicClasses\sessionuser;
@@ -50,7 +51,9 @@ class instasyncController extends Controller {
                 $Contexts=explode(",",$Context);
                 $this->downloadImage($images[$i]['url'],DEFAULT_PUBLICPATH . $PhotoPath);
                 $this->downloadImage($images[$i]['thumbnailurl'],DEFAULT_PUBLICPATH . $ThumbnailPath);
-                $galleryEnt->Insert($Contexts[0],$Contexts[1],$ThumbnailPath,$PhotoPath,time(),time(),time());
+                $PhotoID=$galleryEnt->Insert($Contexts[0],$Contexts[1],$ThumbnailPath,$PhotoPath,time(),time(),time());
+                $albumEnt=new gallery_albumphotoEntity();
+                $albumEnt->Insert(6,$PhotoID);
                 echo "Inserted $Contexts[0]";
             }
         }
