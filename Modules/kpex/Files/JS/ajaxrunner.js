@@ -7,6 +7,9 @@ let PrecisionSum=0;
 let StartTime=0;
 let EndTime=0;
 var circle;
+let AverageSeconds=0;
+let RemainingSeconds=0;
+let ItemStartTime=0;
 $(document).ready(function () {
 circle = new ProgressBar.Circle('#progress', {
     color: '#aaa',
@@ -84,12 +87,13 @@ function RefreshMessage() {
     circle.animate(thePercentage/100);
     let Info="<p>"+" Progress:"+Progress+"/"+AllCount+" ("+thePercentage+"%) AveragePrecision:"+theAveragePrecision;
     let ElapsedSeconds=Number(Number(getTimeInSeconds())-Number(StartTime));
-    let AverageSeconds=ElapsedSeconds/Progress;
-    let RemainingSeconds=AverageSeconds*(AllCount-Progress);
+    let ElapsedSecondsUntilItemStart=Number(Number(ItemStartTime)-Number(StartTime));
+    AverageSeconds=Math.floor(ElapsedSecondsUntilItemStart/Progress);
+    RemainingSeconds=AverageSeconds*(AllCount-Progress);
     Info=Info+" ElapsedTime: "+ secondsToTimeString(ElapsedSeconds);
-    Info=Info+" Average Time For Each Item: "+ AverageSeconds;
+    Info=Info+" Average Item Time: "+ AverageSeconds;
     Info=Info+" Remaining Time: "+ secondsToTimeString(RemainingSeconds);
-    Info=Info+" All tasks will complete at : "+ secondsToTimeString(RemainingSeconds+Number(getTimeInSeconds()));
+    Info=Info+" CompletionTime: "+ secondsToTimeString(RemainingSeconds+Number(ItemStartTime));
     Info=Info+"</p>";
 
     $("#logbox").html(Info+Message);
@@ -103,6 +107,7 @@ function StartService() {
     }, 1000);
 }
 function RunTest(testid) {
+    ItemStartTime=getTimeInSeconds();
     AddMessage("Testing " + testid + "...");
         $.post("/json/fa/kpex/managetests.jsp?run&id=" + testid, {id: testid, run: true}, function (data) {
             Progress=Progress+1;
