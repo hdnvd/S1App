@@ -41,15 +41,15 @@ class instasyncController extends Controller {
         $images=$loader->getSelfImages();
         for($i=0;$i<count($images);$i++)
         {
-            $PhotoPath= 'content/files/gallery/img/insta' .$images[$i]['id'] ."jpg";
-            $ThumbnailPath='content/files/gallery/img/thumbnails/insta' .$images[$i]['id'] ."jpg";
+            $PhotoPath= 'content/files/gallery/img/insta' .$images[$i]['id'] .".jpg";
+            $ThumbnailPath='content/files/gallery/img/thumbnails/insta' .$images[$i]['id'] .".jpg";
             $galleryEnt=new gallery_photoEntity();
             if(!file_exists(DEFAULT_PUBLICPATH . $PhotoPath))
             {
-                $Context=$images['caption'];
+                $Context=$images[$i]['caption'];
                 $Contexts=explode(",",$Context);
-                $this->downloadImage($images['url'],DEFAULT_PUBLICPATH . $PhotoPath);
-                $this->downloadImage($images['thumbnailurl'],DEFAULT_PUBLICPATH . $ThumbnailPath);
+                $this->downloadImage($images[$i]['url'],DEFAULT_PUBLICPATH . $PhotoPath);
+                $this->downloadImage($images[$i]['thumbnailurl'],DEFAULT_PUBLICPATH . $ThumbnailPath);
                 $galleryEnt->Insert($Contexts[0],$Contexts[1],$ThumbnailPath,$PhotoPath,time(),time(),time());
                 echo "Inserted $Contexts[0]";
             }
