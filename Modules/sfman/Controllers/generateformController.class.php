@@ -42,6 +42,7 @@ class generateformController extends Controller {
         $MenuEnt->setModule($Module[0]['name']);
         $MenuEnt->setPage($Name);
         $MenuEnt->setParameters("");
+        $MenuEnt->setPriority(1);
         $MenuEnt->Save();
 		$DBAccessor->close_connection();
 		return $result;
