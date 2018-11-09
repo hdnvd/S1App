@@ -14,17 +14,6 @@ class maraghehMehrCrawler extends Crawler{
 	{
 		$this->ArchiveUrl=$ArchiveUrl;
 	}
-	private function getXMLFromURL($RSSURL)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $RSSURL);
-
-        $data = curl_exec($ch); // execute curl request
-//        echo $data;
-        curl_close($ch);
-        return $data;
-    }
 	public function getPostsArray()
 	{
 		$RSSURL="https://www.mehrnews.com/rss?kw=%D9%85%D8%B1%D8%A7%D8%BA%D9%87";
@@ -43,12 +32,20 @@ class maraghehMehrCrawler extends Crawler{
         $xml = simplexml_load_string($data);
         $items=$xml->channel->item;
         $ItemCount=count($items);
+
+        $categoryids=[];
         for($i=0;$i<$ItemCount && $i<$this->MaxPosts;$i++)
         {
             $titles[$i]=$items[$i]->title . "";
             $links[$i]=$items[$i]->link . "";
             $summary[$i]=$items[$i]->description . "";
             $images[$i]=$items[$i]->enclosure->attributes()->url . "";
+            if (trim($titles[$i]) != "") {
+                if ($this->getJunkWordCount($titles[$i]) >= 1)
+                    $categoryids[$i] = "1";
+                else
+                    $categoryids[$i] = "12";
+            }
         }
 		$postsCount=$i;
 		//***********Title***********//
@@ -64,7 +61,8 @@ class maraghehMehrCrawler extends Crawler{
 			$imageContainers[$i]=$html->find(".item-summary",0);
 			$contents[$i]=$imageContainers[$i]->innertext . $contents[$i];
 		}
-		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$images);
+		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$images,'categoryids'=>$categoryids);
+
 
 		return $result;
 		

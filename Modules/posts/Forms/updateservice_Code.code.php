@@ -15,6 +15,7 @@ use Modules\posts\PublicClasses\farsnewsMaraghehCrawler;
 use Modules\posts\PublicClasses\maraghehAbfaCrawler;
 use Modules\posts\PublicClasses\maraghehErshadCrawler;
 use Modules\posts\PublicClasses\maraghehMehrCrawler;
+use Modules\posts\PublicClasses\maraghehUniversityCrawler;
 
 
 class updateservice_Code extends FormCode {
@@ -79,6 +80,12 @@ class updateservice_Code extends FormCode {
         {
             $Msg.="<p><b>Maragheh&nbsp;Abfa</b></p>";
             $dastanak=new maraghehAbfaCrawler($MaxPosts);
+            $Msg.=$this->Add($dastanak);
+        }
+        if($PostService=="maraghehuni")
+        {
+            $Msg.="<p><b>Maragheh&nbsp;Uni</b></p>";
+            $dastanak=new maraghehUniversityCrawler($MaxPosts);
             $Msg.=$this->Add($dastanak);
         }
 		if($Msg!="")
