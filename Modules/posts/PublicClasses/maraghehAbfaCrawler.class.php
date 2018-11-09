@@ -41,12 +41,7 @@ class maraghehAbfaCrawler extends Crawler{
 		for($i=0;$i<count($Elements) && $i<$this->MaxPosts;$i++)
 		{
 			$titles[$i]=trim($Elements[$i]->plaintext);
-			
-			if(strlen($titles[$i])>=$maxTitleLength)
-			{
-			    $spaceaftermax=strpos($titles[$i]," ",$maxTitleLength);
-			    $titles[$i]=substr($titles[$i],0,$spaceaftermax) . "...";
-			}
+            $titles[$i]=$this->getConciseTitle($titles[$i]);
 			     
 			$links[$i]=$RootURL . html_entity_decode($Elements[$i]->href);
 			echo $titles[$i] . "</br>";

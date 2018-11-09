@@ -131,6 +131,12 @@ class Crawler {
             $JunkWordCount++;
         if (strpos($Context,"انقلاب") !== false)
             $JunkWordCount++;
+        if (strpos($Context,"سوگوار") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"ترویج") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"پرفیض") !== false)
+            $JunkWordCount++;
 //        echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
 
         return $JunkWordCount;
