@@ -12,6 +12,7 @@ use Modules\posts\PublicClasses\dastanakCrawler;
 use Modules\posts\PublicClasses\asriranHealthCrawler;
 use Modules\posts\PublicClasses\irnaMaraghehCrawler;
 use Modules\posts\PublicClasses\farsnewsMaraghehCrawler;
+use Modules\posts\PublicClasses\maraghehAbfaCrawler;
 use Modules\posts\PublicClasses\maraghehErshadCrawler;
 use Modules\posts\PublicClasses\maraghehMehrCrawler;
 
@@ -29,7 +30,7 @@ class updateservice_Code extends FormCode {
 		$PostService="DefaultService";
 		if(isset($_GET['postservice']))
 			$PostService=$_GET['postservice'];
-		
+
 		if($PostService=="asrirandastan")
 		{
 			$Msg.="<p><b>Asriran</b></p>";
@@ -74,6 +75,12 @@ class updateservice_Code extends FormCode {
 		    $dastanak=new maraghehMehrCrawler($MaxPosts);
 		    $Msg.=$this->Add($dastanak);
 		}
+        if($PostService=="abfamaragheh")
+        {
+            $Msg.="<p><b>Maragheh&nbsp;Abfa</b></p>";
+            $dastanak=new maraghehAbfaCrawler($MaxPosts);
+            $Msg.=$this->Add($dastanak);
+        }
 		if($Msg!="")
 			return $Msg;
 		$design=new updateservice_Design();
@@ -92,7 +99,7 @@ class updateservice_Code extends FormCode {
 		{
 			try
 			{
-			
+
 			    if(trim($Posts['titles'][$i])!="")
 			    {
                     $categoryID="12";
@@ -113,8 +120,8 @@ class updateservice_Code extends FormCode {
 				$Msg.= "Post " . ($i+1) . " already exists!<br/>";
 			}
 		}
-		return $Msg;		
+		return $Msg;
 	}
-	
+
 }
 ?>
