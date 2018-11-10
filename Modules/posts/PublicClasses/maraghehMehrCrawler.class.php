@@ -41,10 +41,12 @@ class maraghehMehrCrawler extends Crawler{
             $summary[$i]=$items[$i]->description . "";
             $images[$i]=$items[$i]->enclosure->attributes()->url . "";
             if (trim($titles[$i]) != "") {
-                if ($this->getJunkWordCount($titles[$i]) >= 1)
-                    $categoryids[$i] = "1";
+                $PostWords = explode(" ", $titles[$i]);
+                $LastWord = $PostWords[count($PostWords) - 1];
+                if ($this->isJunkWord($LastWord) || $this->getJunkWordCount($titles[$i]) >= 1 || !$this->getIsTitleForMaragheh($titles[$i]))
+                    $categoryids[$i] = ["1"];
                 else
-                    $categoryids[$i] = "12";
+                    $categoryids[$i] = ["1","12"];
             }
         }
 		$postsCount=$i;

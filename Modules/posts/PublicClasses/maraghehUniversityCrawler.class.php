@@ -59,9 +59,9 @@ class maraghehUniversityCrawler extends Crawler{
             $contents[$i]=str_replace("src='","src='".$RootURL,$contents[$i]);
             if (trim($titles[$i]) != "") {
                 if ($this->getJunkWordCount($titles[$i]) >= 1)
-                    $categoryids[$i] = "1";
+                    $categoryids[$i] = ["1"];
                 else
-                    $categoryids[$i] = "12";
+                    $categoryids[$i] = ["1","12"];
             }
         }
 

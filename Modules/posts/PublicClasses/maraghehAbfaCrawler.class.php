@@ -36,7 +36,6 @@ class maraghehAbfaCrawler extends Crawler{
 		$html=sweet_file_get_html($ListURL);
 		$Elements=$html->find($ListItemsLogic);
  		echo count($Elements);
-		$maxTitleLength=110;
 		$maxSummaryLength=300;
 		for($i=0;$i<count($Elements) && $i<$this->MaxPosts;$i++)
 		{
