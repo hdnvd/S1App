@@ -19,7 +19,7 @@ use Modules\parameters\PublicClasses\ParameterManager;
  *        
  */
 class PostManageCTL extends Controller {
-	public function Add($Title,$Summary,$Content,$ExternalLink,$Thumbnail,$Rank,$Visits,$IsPublished,$LanguageCategoryIDs,$LinkTitle,$Description,$Tags="",$Keywords="",$CanonicalURL="")
+	public function Add($Title,$Summary,$Content,$ExternalLink,$Thumbnail,$Rank,$Visits,$IsPublished,$LanguageCategoryIDs,$LinkTitle,$Description,$Tags="",$Keywords="",$CanonicalURL="",$IsUniqueExternalLink=false)
 	{
 		$Today=time();
 //echo $ExternalLink;
@@ -29,8 +29,12 @@ if(strlen($ExternalLink)>222)
 $ExternalLink=substr($ExternalLink,0,222);
 		$PE2=new posts_postEntity(new dbaccess());
 		$search=$PE2->Select(null, $Title, $Summary, $Content, $ExternalLink, null, null, null, null, null, null,null,null,null,null,array(),array(),"0,1");
-		if(!is_null($search) && count($search)>0)
+        $searchExt=$PE2->Select(null, null, null, null, $ExternalLink, null, null, null, null, null, null,null,null,null,null,array(),array(),"0,1");
+
+        if(!is_null($search) && count($search)>0)
 			throw new PostExistsException($this);
+		elseif ($IsUniqueExternalLink && (!is_null($searchExt) && count($searchExt)>0))
+            throw new PostExistsException($this);
 		else
 		{
 		   $DBAccessor=new dbaccess();
