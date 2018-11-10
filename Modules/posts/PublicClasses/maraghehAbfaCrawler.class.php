@@ -48,6 +48,7 @@ class maraghehAbfaCrawler extends Crawler{
 		$postsCount=$i;
 		//***********Title***********//
 		$contents=array();
+        $Images=[];
 		for($i=0;$i<$postsCount;$i++)
 		{
 			$response=sweet_file_get_html($links[$i]);
@@ -63,6 +64,7 @@ class maraghehAbfaCrawler extends Crawler{
 			$contents[$i]=str_replace("tr","div",$contents[$i]);
 			$contents[$i]=str_replace("face","disabledface",$contents[$i]);
 
+            $Images[$i]=$this->getAnImageURL($contents[$i]);
 			$summary[$i]=$element->plaintext;
             $firstSentenceEnd=strpos($summary[$i],".",$maxSummaryLength);
             $foundSentenceEnd=true;
@@ -75,7 +77,7 @@ class maraghehAbfaCrawler extends Crawler{
  			if(!$foundSentenceEnd && strlen($summary[$i])>=$maxSummaryLength)
      			$summary[$i]=$summary[$i]. "...";
 		}
-		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary);
+		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$Images);
 //		print_r($result);
 //		die();
 		return $result;

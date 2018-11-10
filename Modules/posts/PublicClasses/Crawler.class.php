@@ -141,6 +141,46 @@ class Crawler {
 
         return $JunkWordCount;
     }
+    protected function getAnImageURL($Content)
+    {
+        $URL="";
+
+        $found=strpos($Content,"<img");
+        if($found===false)
+            $found=strpos($Content,"< img");
+
+        if($found===false)
+            $found=strpos($Content,"< IMG");
+
+        if($found===false)
+            $found=strpos($Content,"< IMG");
+
+        if($found===false)
+            $found=strpos($Content,"< Img");
+
+        if($found===false)
+            $found=strpos($Content,"< Img");
+        if($found!==false)
+        {
+            $ImgPlace=$found;
+            $URLStart=strpos($Content,'http',$ImgPlace+1);
+            if($URLStart!==false)
+            {
+                $URLEnd=strpos($Content,"\"",$URLStart+1);
+                if($URLEnd===false)
+                {
+                    $URLEnd=strpos($Content,"''",$URLStart+1);
+                }
+                if($URLEnd!==false)
+                {
+                    $URL=trim(substr($Content,$URLStart,$URLEnd));
+                }
+
+            }
+        }
+        return $URL;
+    }
+
 	protected function getConciseTitle($Title)
     {
         $Title=trim($Title);

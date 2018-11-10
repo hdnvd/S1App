@@ -47,6 +47,7 @@ class maraghehUniversityCrawler extends Crawler{
 		//***********Title***********//
         $contents=[];
         $categoryids=[];
+        $Images=[];
         for($i=0;$i<$postsCount;$i++)
         {
             $response=sweet_file_get_html($links[$i]);
@@ -63,9 +64,10 @@ class maraghehUniversityCrawler extends Crawler{
                 else
                     $categoryids[$i] = ["1","12"];
             }
+            $Images[$i]=$this->getAnImageURL($contents[$i]);
         }
 
-		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,'categoryids'=>$categoryids);
+		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,'categoryids'=>$categoryids,"thumbnails"=>$Images);
 //		print_r($result);
 //		die();
 		return $result;

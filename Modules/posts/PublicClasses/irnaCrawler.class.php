@@ -52,6 +52,7 @@ class irnaCrawler extends Crawler{
         //***********Title***********//
 // 		echo "getting Contents:";
         $contents=array();
+        $Images=[];
         for($i=0;$i<$postsCount;$i++)
         {
             $postdata = array();
@@ -67,8 +68,9 @@ class irnaCrawler extends Crawler{
             //echo "text:<br>" . $Summaryelement->innertext;
             //die();
             $summary[$i]=$Summaryelement->innertext;
+            $Images[$i]=$this->getAnImageURL($contents[$i]);
         }
-        $result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary);
+        $result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$Images);
 // 		echo "Title:" . $result['titles'][0];
         return $result;
 

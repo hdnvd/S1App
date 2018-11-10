@@ -36,7 +36,7 @@ class maraghehMeduCrawler extends Crawler{
         $html=sweet_file_get_html($ListURL);
 //        echo $html;
         $Elements=$html->find($ListItemsLogic);
-        echo "count:".count($Elements);
+//        echo "count:".count($Elements);
         $maxSummaryLength=300;
         $categoryids=[];
         for($i=0;$i<count($Elements) && $i<$this->MaxPosts;$i++)
@@ -51,12 +51,13 @@ class maraghehMeduCrawler extends Crawler{
             $titles[$i]=$this->getConciseTitle($titles[$i]);
 
             $links[$i]=html_entity_decode($Elements[$i]->href);
-            echo $titles[$i] . "</br>";
+//            echo $titles[$i] . "</br>";
         }
         $postsCount=$i;
 //        die();
         //***********Title***********//
         $contents=array();
+        $Images=[];
         for($i=0;$i<$postsCount;$i++)
         {
             $response=sweet_file_get_html($links[$i]);
@@ -71,7 +72,7 @@ class maraghehMeduCrawler extends Crawler{
             $contents[$i]=str_replace("td","div",$contents[$i]);
             $contents[$i]=str_replace("tr","div",$contents[$i]);
             $contents[$i]=str_replace("face","disabledface",$contents[$i]);
-
+            $Images[$i]=$this->getAnImageURL($contents[$i]);
             $summary[$i]=$element->plaintext;
             $firstSentenceEnd=strpos($summary[$i],".",$maxSummaryLength);
             $foundSentenceEnd=true;
@@ -84,7 +85,7 @@ class maraghehMeduCrawler extends Crawler{
             if(!$foundSentenceEnd && strlen($summary[$i])>=$maxSummaryLength)
                 $summary[$i]=$summary[$i]. "...";
         }
-        $result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"categoryids"=>$categoryids);
+        $result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"categoryids"=>$categoryids,"thumbnails"=>$Images);
 //		print_r($result);
 //		die();
         return $result;
