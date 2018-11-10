@@ -1,6 +1,7 @@
 <?php
 
 namespace Modules\posts\Forms;
+use core\CoreClasses\html\Image;
 use core\CoreClasses\services\FormDesign;
 use core\CoreClasses\html\ListTable;
 use core\CoreClasses\html\Label;
@@ -18,6 +19,23 @@ use core\CoreClasses\html\Headers\H1;
 class blogposts_Design extends FormDesign {
 	private $links,$titles,$posts,$PostCats;
 	private $PageCount,$CurrentPage,$PageLink;
+	private $displaypostthumbnails,$defaultpostthumbnail;
+
+    /**
+     * @param mixed $displaypostthumbnails
+     */
+    public function setDisplaypostthumbnails($displaypostthumbnails)
+    {
+        $this->displaypostthumbnails = $displaypostthumbnails;
+    }
+
+    /**
+     * @param mixed $defaultpostthumbnail
+     */
+    public function setDefaultpostthumbnail($defaultpostthumbnail)
+    {
+        $this->defaultpostthumbnail = $defaultpostthumbnail;
+    }
 	public function getBodyHTML($command=null)
 	{
 		$Page=new ListTable(1);
@@ -37,9 +55,20 @@ class blogposts_Design extends FormDesign {
 			$FullContentLink->setClass("posts_fullcontentlink");
 			$PostDiv=new Div();
 			$PostDiv->setClass("posts_postsummary");
-			$l=new Lable($this->posts['summary'][$i]);
-			$l->setHtmlContent(false);
-			$PostDiv->addElement($l);
+
+            $thumb[$i]=DEFAULT_PUBLICURL . $this->defaultpostthumbnail;
+            if(trim($this->posts['thumbnail'][$i])!="")
+                $thumb[$i]=trim($this->posts['thumbnail'][$i]);
+            $img[$i]=new Image($thumb[$i],$this->titles[$i]);
+            $imgDiv[$i]=new Div("thumbnaildiv".$this->posts['id'][$i],"posts_thumbnail");
+            $imgDiv[$i]->addElement($img[$i]);
+            if($this->displaypostthumbnails=="1")
+                $PostDiv->addElement($imgDiv[$i]);
+
+            $l=new Lable($this->posts['summary'][$i]);
+            $l->setHtmlContent(false);
+            $PostDiv->addElement($l);
+
 			$Page->addElement($LinkTitle);
 			$Page->setLastElementClass("posts_blogposttitle");
 			$Page->addElement($PostDiv);

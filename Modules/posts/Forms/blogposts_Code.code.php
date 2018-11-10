@@ -4,6 +4,8 @@ namespace Modules\posts\Forms;
 use core\CoreClasses\services\FormCode;
 use Modules\languages\PublicClasses\ModuleTranslator;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
+use Modules\parameters\Entity\ParameterEntity;
+use Modules\parameters\PublicClasses\ParameterManager;
 use Modules\posts\Controllers\postsController;
 use core\CoreClasses\Sweet2DArray;
 use Modules\common\PublicClasses\AppRooter;
@@ -29,6 +31,8 @@ class blogposts_Code extends posts_Code {
 	{
 		$Posts=$this->LoadPosts();
 		$Fields=$Posts['fields'];
+        $displaypostthumbnails=ParameterManager::getParameter("displaypostthumbnail");
+		$defaultpostthumbnail=ParameterManager::getParameter("defaultpostthumbnail");
 		if($Fields!==null && count($Fields['posts'])>0)
 		{
 			$design=new blogposts_Design();
@@ -39,6 +43,9 @@ class blogposts_Code extends posts_Code {
 			(isset($_GET['pn']))?$Page=$_GET['pn']:$Page=1;
 			$design->setCurrentPage($Page);
 			$design->setPageCount($Posts['pagecount']);
+			$design->setDefaultpostthumbnail($defaultpostthumbnail);
+			$design->setDisplaypostthumbnails($displaypostthumbnails);
+
 			$PageLink=new AppRooter($Posts['catlatintitle'], "");
 			$PageLink->setFileFormat("");
 			$design->setPageLink($PageLink->getAbsoluteURL());
