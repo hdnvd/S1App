@@ -9,7 +9,7 @@ namespace Modules\posts\PublicClasses;
  */
 class Crawler {
 
-    private $maxTitleLength=110;
+    private $maxTitleLength=120;
     private $maxSummaryLength=300;
 	public function getPostsArray()
 	{
