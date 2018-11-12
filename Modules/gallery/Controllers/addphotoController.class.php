@@ -60,7 +60,7 @@ class addphotoController extends Controller{
 	private function PublishOnTelegram($photo,$caption,$ChatID,$BotToken)
 	{
 	    $TC=new \TelegramClient($BotToken);
-	    $TC->sendPhoto($ChatID, $photo, $caption, "", "");
+	    $TC->sendPhoto($ChatID, $photo, $caption, "", "",\TelegramClient::$PHOTOSENDMODE_UPLOAD);
 	}
 	public function sendphoto($title,$description,$thumburl,$url,$Album_Fid,$photopath,$photoname)
 	{
