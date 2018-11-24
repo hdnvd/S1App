@@ -24,6 +24,7 @@ class maraghehAbfaCrawler extends Crawler{
 		$ContentLogic="#toph1";
 		
 		$titles=array();
+		$FullTitles=[];
 		$links=array();
 		$summary=array();
 		$contents=array();
@@ -40,8 +41,9 @@ class maraghehAbfaCrawler extends Crawler{
 		for($i=0;$i<count($Elements) && $i<$this->MaxPosts;$i++)
 		{
 			$titles[$i]=trim($Elements[$i]->plaintext);
+            $FullTitles[$i]=$titles[$i];
             $titles[$i]=$this->getConciseTitle($titles[$i]);
-			     
+
 			$links[$i]=$RootURL . html_entity_decode($Elements[$i]->href);
 			echo $titles[$i] . "</br>";
 		}
@@ -77,7 +79,7 @@ class maraghehAbfaCrawler extends Crawler{
  			if(!$foundSentenceEnd && strlen($summary[$i])>=$maxSummaryLength)
      			$summary[$i]=$summary[$i]. "...";
 		}
-		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$Images);
+		$result=array("titles"=>$titles,"fulltitles"=>$FullTitles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$Images);
 //		print_r($result);
 //		die();
 		return $result;

@@ -21,6 +21,7 @@ class maraghehMehrCrawler extends Crawler{
 		
 		
 		$titles=array();
+		$FullTitles=[];
 		$links=array();
 		$summary=array();
 		$dom=new \simple_html_dom();
@@ -47,7 +48,7 @@ class maraghehMehrCrawler extends Crawler{
                     $categoryids[$i] = ["1"];
                 else
                     $categoryids[$i] = ["1","12"];
-
+                $FullTitles[$i]=$titles[$i];
                 $titles[$i]=$this->getConciseTitle($titles[$i]);
             }
         }
@@ -65,7 +66,7 @@ class maraghehMehrCrawler extends Crawler{
 			$imageContainers[$i]=$html->find(".item-summary",0);
 			$contents[$i]=$imageContainers[$i]->innertext . $contents[$i];
 		}
-		$result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$images,'categoryids'=>$categoryids);
+		$result=array("titles"=>$titles,"fulltitles"=>$FullTitles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"thumbnails"=>$images,'categoryids'=>$categoryids);
 
 
 		return $result;

@@ -24,6 +24,7 @@ class maraghehMeduCrawler extends Crawler{
         $ContentLogic="#news";
 
         $titles=array();
+        $FullTitles=[];
         $links=array();
         $summary=array();
         $contents=array();
@@ -50,6 +51,7 @@ class maraghehMeduCrawler extends Crawler{
                 else
                     $categoryids[$i] = ["1","12"];
             }
+            $FullTitles[$i]=$titles[$i];
             $titles[$i]=$this->getConciseTitle($titles[$i]);
 
             $links[$i]=html_entity_decode($Elements[$i]->href);
@@ -87,7 +89,7 @@ class maraghehMeduCrawler extends Crawler{
             if(!$foundSentenceEnd && strlen($summary[$i])>=$maxSummaryLength)
                 $summary[$i]=$summary[$i]. "...";
         }
-        $result=array("titles"=>$titles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"categoryids"=>$categoryids,"thumbnails"=>$Images);
+        $result=array("titles"=>$titles,"fulltitles"=>$FullTitles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"categoryids"=>$categoryids,"thumbnails"=>$Images);
 //		print_r($result);
 //		die();
         return $result;
