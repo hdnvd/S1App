@@ -122,8 +122,14 @@ class updateservice_Code extends FormCode {
 			    	$thumb=$Posts['thumbnails'][$i];
 				if(key_exists('categoryids',$Posts))
                     $categoryIDs=$Posts['categoryids'][$i];
+				$FullTitle="";
+				if(key_exists('fulltitles',$Posts))
+                    $FullTitle=$Posts['fulltitles'][$i];
+				else
+					$FullTitle=$Posts['titles'][$i];
+
 //			    	echo "Category Is $categoryID";
-				    $updateserviceController->Add($Posts['titles'][$i], $Posts['summary'][$i], $Posts['contents'][$i], $Posts['links'][$i], $thumb, "0", "0", $IsPublished, $categoryIDs,$Posts['titles'][$i], $Posts['description'][$i],"","","",true);
+				    $updateserviceController->Add($Posts['titles'][$i],$FullTitle, $Posts['summary'][$i], $Posts['contents'][$i], $Posts['links'][$i], $thumb, "0", "0", $IsPublished, $categoryIDs,$Posts['titles'][$i], $Posts['description'][$i],"","","",true);
 				    $Msg.= "Post " . ($i+1) . " Inserted!<br/>";
 			    }
 			    else

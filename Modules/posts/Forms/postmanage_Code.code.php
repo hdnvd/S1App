@@ -94,7 +94,7 @@ class postmanage_Code extends FormCode {
 		    $keywords=str_ireplace("-", ",", $page->getTxtKeywords()->getValue());
 		    $keywords=str_ireplace("،", ",", $keywords);
 		    
-		$postmanageController->Add($_POST['txtTitle'], $_POST['txtSummary'], $_POST['txtContent'],$_POST['txtExternalLink'] , "Not Implemented","0",$_POST['txtVisits'] ,"1" , $_POST['cats'],$_POST['txtLinkTitle'],$_POST['txtDescription'],$tags,$keywords,$page->getTxtCanonicalURL()->getValue());
+		$postmanageController->Add($_POST['txtTitle'],$_POST['txtTitle'], $_POST['txtSummary'], $_POST['txtContent'],$_POST['txtExternalLink'] , "Not Implemented","0",$_POST['txtVisits'] ,"1" , $_POST['cats'],$_POST['txtLinkTitle'],$_POST['txtDescription'],$tags,$keywords,$page->getTxtCanonicalURL()->getValue());
 		$design->setMessage($translator->getWordTranslation("postadded"));
 		}
 		catch (PostExistsException $Ex)

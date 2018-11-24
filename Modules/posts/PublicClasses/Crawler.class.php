@@ -5,7 +5,7 @@ namespace Modules\posts\PublicClasses;
 /**
  *
  * @author nahavandi
- *        
+ *
  */
 class Crawler {
 
@@ -137,6 +137,18 @@ class Crawler {
             $JunkWordCount++;
         if (strpos($Context,"پرفیض") !== false)
             $JunkWordCount++;
+        if (strpos($Context,"بسیج") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"سپاه") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"علمیه") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"قرآن") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"عترت") !== false)
+            $JunkWordCount++;
+        if (strpos($Context,"امامت") !== false)
+            $JunkWordCount++;
 //        echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
 
         return $JunkWordCount;
@@ -166,15 +178,19 @@ class Crawler {
             $URLStart=strpos($Content,'http',$ImgPlace+1);
             if($URLStart!==false)
             {
-                $URLEnd=strpos($Content,"\"",$URLStart+1);
-                if($URLEnd===false)
-                {
-                    $URLEnd=strpos($Content,"''",$URLStart+1);
-                }
+                $URLEnd=false;
+                $URLEndDoubleQuote=strpos($Content,"\"",$URLStart+1);
+                $URLEndSingleQuote=strpos($Content,"'",$URLStart+1);
+                if($URLEndDoubleQuote===false)
+                    $URLEnd=$URLEndSingleQuote;
+                elseif($URLEndSingleQuote===false)
+                    $URLEnd=$URLEndDoubleQuote;
+                else
+                    $URLEnd=min($URLEndSingleQuote,$URLEndDoubleQuote);
+
                 if($URLEnd!==false)
-                {
-                    $URL=trim(substr($Content,$URLStart,$URLEnd));
-                }
+                    $URL=trim(substr($Content,$URLStart,$URLEnd-$URLStart));
+
 
             }
         }

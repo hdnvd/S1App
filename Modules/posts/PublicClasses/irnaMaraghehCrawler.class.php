@@ -32,6 +32,7 @@ class irnaMaraghehCrawler extends irnaCrawler
                         $Posts['categoryids'][$i] = ["1"];
                     else
                         $Posts['categoryids'][$i] = ["1","12"];
+                    $Posts['titles'][$i]=$this->getConciseTitle($Posts['titles'][$i]);
                 }
             }
         } catch (\Exception $ex) {

@@ -43,7 +43,9 @@ class maraghehMeduCrawler extends Crawler{
         {
             $titles[$i]=trim($Elements[$i]->plaintext);
             if (trim($titles[$i]) != "") {
-                if ($this->getJunkWordCount($titles[$i]) >= 1)
+                $PostWords = explode(" ", $titles[$i]);
+                $LastWord = $PostWords[count($PostWords) - 1];
+                if ($this->isJunkWord($LastWord) || $this->getJunkWordCount($titles[$i]) >= 1)
                     $categoryids[$i] = ["1"];
                 else
                     $categoryids[$i] = ["1","12"];

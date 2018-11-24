@@ -2,6 +2,7 @@
 
 namespace Modules\posts\Controllers;
 
+use classes\Telegram\TelegramClient;
 use core\CoreClasses\services\Controller;
 use Modules\posts\Entity\posts_postEntity;
 use Modules\posts\Entity\posts_postlanguagecategoryEntity;
@@ -19,7 +20,7 @@ use Modules\parameters\PublicClasses\ParameterManager;
  *        
  */
 class PostManageCTL extends Controller {
-	public function Add($Title,$Summary,$Content,$ExternalLink,$Thumbnail,$Rank,$Visits,$IsPublished,$LanguageCategoryIDs,$LinkTitle,$Description,$Tags="",$Keywords="",$CanonicalURL="",$IsUniqueExternalLink=false)
+	public function Add($Title,$FullTitle,$Summary,$Content,$ExternalLink,$Thumbnail,$Rank,$Visits,$IsPublished,$LanguageCategoryIDs,$LinkTitle,$Description,$Tags="",$Keywords="",$CanonicalURL="",$IsUniqueExternalLink=false)
 	{
 		$Today=time();
 //echo $ExternalLink;
@@ -42,9 +43,10 @@ $ExternalLink=substr($ExternalLink,0,222);
 			$PLCE=new posts_postlanguagecategoryEntity($DBAccessor);
 			$DBAccessor->beginTransaction();
 			$PostID=$PE->Insert($Title, $Summary, $Content, $ExternalLink, $Thumbnail, $Rank, $Visits, $IsPublished, $Today,$Today,$LinkTitle,$Description,$Keywords,$CanonicalURL);
-			for($i=0;$i<count($LanguageCategoryIDs);$i++)
+//            $PostID=0;
+            for($i=0;$i<count($LanguageCategoryIDs);$i++)
 			{
-			    $this->DoTelegramJobs($Title, $Summary, $Content,$PostID, $ExternalLink, $Thumbnail, $IsPublished, $LanguageCategoryIDs[$i]);
+			    $this->DoTelegramJobs($FullTitle, $Summary, $Content,$PostID, $ExternalLink, $Thumbnail, $IsPublished, $LanguageCategoryIDs[$i]);
 			    $PLCE->Insert($PostID, $LanguageCategoryIDs[$i]);
 			}
 			$this->setTags($PostID, $Tags, $DBAccessor);
@@ -60,12 +62,16 @@ $ExternalLink=substr($ExternalLink,0,222);
 	    $ChatID=$PMan->getParameter("posts_cat" . $CatID . "_telegramchatid");
 	    $BotToken=$PMan->getParameter("posts_telegram_bottoken");
 	    if($ChatID!="" && $IsPublished)
-	        $this->PublishOnTelegram($Title . "\n" .DEFAULT_PUBLICURL . $PostID . ".tgp". "\n\n" . $ChatID, $ChatID, $BotToken);
+	        $this->PublishOnTelegram($Title . "\n" .DEFAULT_PUBLICURL . $PostID . ".tgp". "\n\n" . $ChatID,$Thumbnail, $ChatID, $BotToken);
 	}
-	private function PublishOnTelegram($Content,$ChatID,$BotToken)
+	private function PublishOnTelegram($Content,$ThumbnailURL,$ChatID,$BotToken)
 	{
-	    $TC=new \TelegramClient($BotToken);
-	    $TC->sendMessage($ChatID, $Content, true, "", "");
+//	    echo $ThumbnailURL;
+	    $TC=new TelegramClient($BotToken);
+	    if($ThumbnailURL=="")
+	        $TC->sendMessage($ChatID, $Content, false, "", "");
+	    else
+            $TC->sendPhoto($ChatID, $ThumbnailURL, $Content, "", "",TelegramClient::$PHOTOSENDMODE_LINK);
 	}
 	protected function deletePostTags($PostID,$DBAccessor)
 	{

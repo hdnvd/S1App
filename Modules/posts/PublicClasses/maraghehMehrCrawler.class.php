@@ -47,6 +47,8 @@ class maraghehMehrCrawler extends Crawler{
                     $categoryids[$i] = ["1"];
                 else
                     $categoryids[$i] = ["1","12"];
+
+                $titles[$i]=$this->getConciseTitle($titles[$i]);
             }
         }
 		$postsCount=$i;
