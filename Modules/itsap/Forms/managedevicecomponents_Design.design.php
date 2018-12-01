@@ -82,7 +82,7 @@ class managedevicecomponents_Design extends FormDesign {
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
 		$lnkAdd->setId('adddevicecomponentlink');
 		$Page->addElement($lnkAdd);
-		$SearchUrl=new AppRooter('itsap',$this->listPage);
+		$SearchUrl=new AppRooter('itsap',$this->listPage,[new URLParameter('search',null)]);
 		$SearchUrl->addParameter(new URLParameter('search',null));
 		$LblSearch=new Lable('جستجو');
 		$lnkSearch=new link($SearchUrl->getAbsoluteURL(),$LblSearch);
@@ -97,7 +97,7 @@ class managedevicecomponents_Design extends FormDesign {
 		$LTable1=new ListTable(3);
 		$LTable1->setHeaderRowCount(1);
 		$LTable1->setClass("table-striped table-hover managelist");
-		$LTable1->addElement(new Lable('#'));
+		$LTable1->addElement(new Lable('#'),1,null,"listtitle");
 		$LTable1->setLastElementClass("listtitle");
 		$LTable1->addElement(new Lable('عنوان'));
 		$LTable1->setLastElementClass("listtitle");

@@ -38,7 +38,29 @@ class managetestsController extends testlistController {
 		$DBAccessor->close_connection();
 		return $this->load(-1);
 	}
-    public function makeHulthCSV($PageNum)
+	public function makeHulthCSV($PageNum)
+    {
+        $file = fopen("/home/hduser/fear.csv","r");
+        $Sid=1;
+        $row=fgetcsv($file);
+        $xx="/home/hduser/far.csv";
+        $txt="";
+        while($row!== FALSE)
+        {
+
+            $f=$row[0];
+            $f2=$row[1];
+            if($f!="***************")
+                $txt=$txt. "\"" . $f ."\"".",\"" . $f2 ."\"".",\"" . $Sid ."\""."\r\n";
+            else
+                $Sid++;
+            $row=fgetcsv($file);
+        }
+        file_put_contents($xx,$txt);
+        fclose($file);
+
+    }
+    public function makeHulthCSVAA($PageNum)
     {
         $DBAccessor=new dbaccess();
         for($i=1;$i<2300;$i++)

@@ -2,6 +2,7 @@
 
 namespace Modules\gallery\Controllers;
 
+use classes\Telegram\TelegramClient;
 use core\CoreClasses\services\Controller;
 use Modules\gallery\Entity\gallery_photoEntity;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
@@ -42,6 +43,7 @@ class addphotoController extends Controller{
 		$LangID=CurrentLanguageManager::getCurrentLanguageID();
 		$ent=new gallery_photoEntity();
 		$entalbum=new gallery_albumphotoEntity();
+//        $photoID=0;
 		$photoID=$ent->Insert($title, $description, $thumburl, $url,time(),time(),time()-1);
 		$entalbum->Insert($Album_Fid, $photoID);
 		$this->DoTelegramJobs($title, $description, $thumburl, $url, $photoID, $Album_Fid);
@@ -59,8 +61,8 @@ class addphotoController extends Controller{
 	}
 	private function PublishOnTelegram($photo,$caption,$ChatID,$BotToken)
 	{
-	    $TC=new \TelegramClient($BotToken);
-	    $TC->sendPhoto($ChatID, $photo, $caption, "", "",\TelegramClient::$PHOTOSENDMODE_UPLOAD);
+	    $TC=new TelegramClient($BotToken);
+	    $TC->sendPhoto($ChatID, $photo, $caption, "", "",TelegramClient::$PHOTOSENDMODE_UPLOAD);
 	}
 	public function sendphoto($title,$description,$thumburl,$url,$Album_Fid,$photopath,$photoname)
 	{

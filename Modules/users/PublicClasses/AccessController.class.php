@@ -68,16 +68,35 @@ class AccessController{
             $dbaccess->close_connection();
 		return false;
 	}
+    private function get_client_ip() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
 	private function saveLog($SystemUserID,$Module, $Page, $Action)
 	{
         $dbaccess=new dbaccess();
 		$Ent=new users_userlogEntity($dbaccess);
-		$Time=AppDate::now();
+		$Time=time();
 		$Ent->setAction($Action);
 		$Ent->setRole_systemuser_fid($SystemUserID);
 		$Ent->setModule($Module);
 		$Ent->setPage($Page);
 		$Ent->setTime($Time);
+		$Ent->set($Time);
 		$Ent->Save();
         $dbaccess->close_connection();
 	}

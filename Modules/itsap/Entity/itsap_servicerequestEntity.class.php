@@ -331,7 +331,7 @@ class itsap_servicerequestEntity extends EntityClass {
     {
         if($isSecurity)
         {
-            return $this->getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$Limit,$LoadOnlyCount,$AdditionalQuery);
+            return $this->getSecurityAcceptorRequests($EmployeeID,$TopUnitID,$UnitID,$AdditionalQuery,$Limit,$LoadOnlyCount);
         }
         if($IsFava)
         {

@@ -1,5 +1,6 @@
 <?php
 namespace Modules\gallery\Controllers;
+use classes\Telegram\TelegramClient;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
@@ -17,7 +18,7 @@ use core\CoreClasses\db\LogicalOperator;
 *@SweetFrameworkHelperVersion 2.004
 *@SweetFrameworkVersion 2.004
 */
-class instasyncController extends Controller {
+class instasyncController extends addphotoController {
 	private $PAGESIZE=10;
 	private function downloadImage($URL,$FilePath)
     {
@@ -31,14 +32,15 @@ class instasyncController extends Controller {
         curl_close($ch);
         fclose($fp);
     }
-	public function load($ID)
+	public function load()
 	{
+        $TC=new TelegramClient("");
 		$Language_fid=CurrentLanguageManager::getCurrentLanguageID();
 		$DBAccessor=new dbaccess();
 		$su=new sessionuser();
 		$role_systemuser_fid=$su->getSystemUserID();
 		$result=array();
-        $loader=new \InstagramClient("8575326782.c195ddb.2974a9252d744da7998fb500f08f6d4f");
+        $loader=new \classes\instagram\InstagramClient("8575326782.c195ddb.2974a9252d744da7998fb500f08f6d4f");
         $images=$loader->getSelfImages();
         for($i=0;$i<count($images);$i++)
         {
@@ -51,9 +53,10 @@ class instasyncController extends Controller {
                 $Contexts=explode(",",$Context);
                 $this->downloadImage($images[$i]['url'],DEFAULT_PUBLICPATH . $PhotoPath);
                 $this->downloadImage($images[$i]['thumbnailurl'],DEFAULT_PUBLICPATH . $ThumbnailPath);
-                $PhotoID=$galleryEnt->Insert($Contexts[0],$Contexts[1],$ThumbnailPath,$PhotoPath,time(),time(),time());
-                $albumEnt=new gallery_albumphotoEntity();
-                $albumEnt->Insert(6,$PhotoID);
+                $this->addphoto($Contexts[0],$Contexts[1], $ThumbnailPath,$PhotoPath,6);
+//                $PhotoID=$galleryEnt->Insert($Contexts[0],$Contexts[1],$ThumbnailPath,$PhotoPath,time(),time(),time());
+//                $albumEnt=new gallery_albumphotoEntity();
+//                $albumEnt->Insert(6,$PhotoID);
                 echo "Inserted $Contexts[0]";
             }
         }

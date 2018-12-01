@@ -24,7 +24,7 @@ class instasync_Code extends FormCode {
 		$translator=new ModuleTranslator("gallery");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		try{
-		$Result=$instasyncController->load($this->getID());
+		$Result=$instasyncController->load();
 		$design=new instasync_Design();
 		$design->setData($Result);
 		$design->setMessage("");

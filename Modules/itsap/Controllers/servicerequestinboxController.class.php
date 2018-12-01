@@ -77,6 +77,7 @@ class servicerequestinboxController extends Controller {
         $servicerequestEnt=new itsap_viewservicerequesthandlerEntity($DBAccessor);
 		$result['servicerequest']=$servicerequestEnt;
         $allcount=$count[0]['allcount'];
+        $result['allcount']=$allcount;
 		$result['pagecount']=$this->getPageCount($allcount,$this->PAGESIZE);
         $res=$servicerequestEnt1->getRequests($isSecurity,$isFava,$isAdmin,$emp->getId(),$topUnit->getId(),$unit->getId(),$QueryLogic,$this->getPageRowsLimit($PageNum,$this->PAGESIZE),false);
         $result['data']=$res;

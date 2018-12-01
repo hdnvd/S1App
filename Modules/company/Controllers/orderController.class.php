@@ -1,5 +1,6 @@
 <?php
 namespace Modules\company\Controllers;
+use classes\Telegram\TelegramClient;
 use core\CoreClasses\services\Controller;
 use core\CoreClasses\Exception\DataNotFoundException;
 use core\CoreClasses\db\dbaccess;
@@ -128,7 +129,7 @@ class orderController extends Controller {
     }
     private function PublishOnTelegram($Content,$ChatID,$BotToken)
     {
-        $TC=new \TelegramClient($BotToken);
+        $TC=new TelegramClient($BotToken);
         $TC->sendMessage($ChatID, $Content, false, "", "");
     }
 }

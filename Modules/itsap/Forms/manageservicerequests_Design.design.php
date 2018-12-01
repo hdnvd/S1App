@@ -178,6 +178,10 @@ class manageservicerequests_Design extends FormDesign {
 		}
 		$TableDiv->addElement($LTable1);
 		$Page->addElement($TableDiv);
+		$TotalDiv=new Div();
+        $TotalDiv->setClass("listtotalinfo");
+        $TotalDiv->addElement(new Lable("تعداد کل: ".$this->Data['allcount']));
+        $Page->addElement($TotalDiv);
 		$Page->addElement($this->getPaginationPart($this->Data['pagecount'],"itsap",$this->listPage));
 		$form=new SweetFrom("", "POST", $Page);
 		return $form->getHTML();

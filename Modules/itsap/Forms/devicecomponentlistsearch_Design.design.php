@@ -86,8 +86,7 @@ class devicecomponentlistsearch_Design extends FormDesign {
 		$this->devicetype_fid->setClass("form-control");
 
 		/******* title *******/
-		$this->title= new textbox("title");
-		$this->title->setClass("form-control");
+		$this->title= new textbox("title",null,true,null,"form-control");
 
 		/******* sortby *******/
 		$this->sortby= new combobox("sortby");
