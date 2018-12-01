@@ -338,6 +338,12 @@ abstract class manageDBFormController extends BaseManageDBFormController
 
             $this->makeLaravelAPIController($formInfo);
         }
+        if ($this->getIsItemSelected($FormsToGenerate, "react_codes")) {
+
+            $this->makeReactListDesign($formInfo);
+            $this->makeReactItemManageDesign($formInfo);
+            $this->makeReactRoutes($formInfo);
+        }
         $DBAccessor->close_connection();
     }
 
@@ -496,7 +502,7 @@ EOT;
         return $C;
     }
 
-    protected function SaveFile($File, $Content)
+    protected function SaveFile($File, $Content,$IsAppend=false)
     {
         $lastSlash=strrpos($File,'/');
         $FileDir=substr($File,0,$lastSlash);
@@ -504,7 +510,10 @@ EOT;
             //Directory does not exist, so lets create it.
             mkdir($FileDir, 0755, true);
         }
-        file_put_contents($File, $Content);
+        if(!$IsAppend)
+            file_put_contents($File, $Content);
+        else
+            file_put_contents($File, $Content,FILE_APPEND);
         chmod($File, 0777);
     }
 

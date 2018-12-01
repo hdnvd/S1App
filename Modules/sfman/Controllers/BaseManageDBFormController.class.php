@@ -88,6 +88,9 @@ abstract class BaseManageDBFormController extends baseFormCodeGenerator {
     protected abstract function makeSenchaItemView($formInfo);
 
     protected abstract function makeLaravelAPIController($formInfo);
+    protected abstract function makeReactListDesign($formInfo);
+    protected abstract function makeReactItemManageDesign($formInfo);
+    protected abstract function makeReactRoutes($formInfo);
 
     /**
      * @param array $formInfo

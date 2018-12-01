@@ -33,7 +33,7 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $FormNames = $FormName . "s";
         $ModuleNames = $ModuleName . "s";
         $C = "<?php
-namespace App;
+namespace App\\models\\$ModuleName;
 
 use Illuminate\\Database\\Eloquent\\Model;
 
@@ -57,7 +57,7 @@ class $ModuleName" . "_" . "$FormName extends Model
         }
         $C .= $fieldSetCode . "];";
         $C .= "\n}";
-        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/$ModuleName" . "_$FormName" . ".php";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/models/$ModuleName/$ModuleName" . "_$FormName" . ".php";
         $this->SaveFile($DesignFile, $C);
     }
 
@@ -73,8 +73,8 @@ class $ModuleName" . "_" . "$FormName extends Model
         $C .= "\nRoute::put('$ModuleName/$FormNames/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@update');";
         $C .= "\nRoute::delete('$ModuleName/$FormNames/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@delete');";
 
-        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/$FormName" . ".php";
-        $this->SaveFile($DesignFile, $C);
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes" . ".php";
+        $this->SaveFile($DesignFile, $C,true);
     }
 
     protected function makeLaravelWebRoutes($formInfo)
@@ -110,8 +110,8 @@ class $ModuleName" . "_" . "$FormName extends Model
         $FormNames = $FormName . "s";
         $ModuleNames = $ModuleName . "s";
         $C = "<?php
-namespace App\\Http\\Controllers\\API;
-use App\\$ModuleName" . "_" . "$FormName;
+namespace App\\Http\\Controllers\\$ModuleName\\API;
+use App\\models\\$ModuleName\\$ModuleName" . "_" . "$FormName;
 use App\\Http\\Controllers\\Controller;
 use Illuminate\\Http\\Request;
 
@@ -177,7 +177,7 @@ class $UCFormName" . "Controller extends Controller
         $C .= "\nreturn response()->json(['message'=>'deleted'], 201);";
         $C .= "\n}";
         $C .= "\n}";
-        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/Http/Controllers/API/$FormName" . "Controller.php";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/Http/Controllers/$ModuleName/API/$FormName" . "Controller.php";
         $this->SaveFile($DesignFile, $C);
     }
 

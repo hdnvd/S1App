@@ -50,11 +50,13 @@ private $Translations;
             'isneededinsurance'=>'نیاز به بیمه',
             'education'=>'تحصیلات',
             'nationality'=>'ملیت',
+            'common_city'=>'شهر',
             'is_payable'=>'قابل پرداخت',
             'passportnumber'=>'شماره پاسپورت',
             'passportserial'=>'شماره سریال پاسپورت',
             'entrance_date'=>'تاریخ ورود',
             'visatype'=>'نوع ویزا',
+            'employmentcode'=>'کد استخدام',
             'visaexpire_date'=>'تاریخ انقضا ویزا',
             'internationalemployee'=>'کارکنان غیر ایرانی',
             'iranianemployee'=>'کارکنان ایرانی',
@@ -63,8 +65,11 @@ private $Translations;
     public function getPersian($Word,$DefaultValue)
     {
         $Word=trim(strtolower($Word));
-        if(strlen($Word)>4 && substr($Word,strlen($Word)-5)=="_fid")
+        if(strlen($Word)>4 && substr($Word,strlen($Word)-4)=="_fid")
+        {
             $Word=substr($Word,0,strlen($Word)-4);
+        }
+
         if(key_exists($Word,$this->Translations))
             return $this->Translations[$Word];
         return $DefaultValue;

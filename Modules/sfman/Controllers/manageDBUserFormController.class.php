@@ -22,7 +22,7 @@ use Modules\sfman\Entity\sfman_tableEntity;
  *@SweetFrameworkHelperVersion 1.112
 */
 
-class manageDBUserFormController extends manageDBLaravelAPIFormController
+class manageDBUserFormController extends manageDBReactFormController
 {
 
     protected function makeUserManageCode($formName,$GeneralFormInfo)
