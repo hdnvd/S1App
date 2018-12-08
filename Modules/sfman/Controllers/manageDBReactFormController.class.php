@@ -33,6 +33,7 @@ import { FaEdit } from 'react-icons/fa';
 import { IoMdEye,IoMdAddCircle } from 'react-icons/io';
 import { MdDeleteForever } from 'react-icons/md';
 import SweetTable from '../../../../classes/sweet-table'
+import moment from 'moment-jalaali'
 
 class $FileName extends React.Component {
     constructor(props) {
@@ -72,11 +73,24 @@ columns = [";
                 $UCField = $this->getCurrentTableFields()[$i];
                 $UCField = trim(strtolower($UCField));
                 $PersianField = $trans->getPersian($UCField, $UCField);
-                $C = $C . "
+                if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$DATE)
+                {
+                    $C = $C . "
+{
+    Header: '$PersianField',
+    id: '$UCField',
+    accessor:data=> moment.unix((parseInt(data.$UCField))).format('jYYYY/jM/jD')
+},";
+                }
+                else
+                {
+                    $C = $C . "
 {
     Header: '$PersianField',
     accessor: '$UCField'
 },";
+                }
+
 
             }
         }
@@ -163,24 +177,55 @@ class $FileName extends React.Component {
         this.state = {
             ";
         for ($i = 0; $i < count($Fields); $i++) {
-            $C = $C . "\r\n\t$Fields[$i]:'',";
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
-                $C = $C . "\r\n\t$Fields[$i]Options:[],";
+            if(FieldType::getFieldType($Fields[$i])==FieldType::$DATE)
+            {
+                $C = $C . "\r\n\t$Fields[$i]:moment().format('X'),";
+            }
+            else
+            {
+                $C = $C . "\r\n\t$Fields[$i]:'',";
+                if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
+                    $C = $C . "\r\n\t$Fields[$i]Options:[],";
+            }
+
+
         }
 
         $C .= "
         };
+        if(this.props.match.params.id>0){
         fetch('" . $this->SiteURL . "/api/$ModuleName/$FormNames/'+this.props.match.params.id)
             .then(response => response.json())
             .then(data => {
+            ";
+        for ($i = 0; $i < count($Fields); $i++){
+            if(FieldType::getFieldType($Fields[$i])==FieldType::$DATE)
+            {
+                $C = $C . "\r\n\t\tif(data.$Fields[$i]<=0)
+                    data.$Fields[$i]=moment().format('X');";
+            }
+        }
+            $C.="
                  this.setState({ ";
         for ($i = 0; $i < count($Fields); $i++)
             $C = $C . "$Fields[$i]:data.$Fields[$i],";
 
-        $C .= "});";
+        $C .= "});
+        
+            });
+        }";
         for ($i = 0; $i < count($Fields); $i++)
             if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
-                $C = $C . "\r\nfetch('" . $this->SiteURL . "/api/$ModuleName/" . $PureFields[$i] . "s')
+                $URL='';
+            if($Fields[$i]=='common_city_fid')
+                {
+                    $URL="'" . $this->SiteURL . "/api/placeman/provinces'";
+                }
+                else
+                {
+                    $URL="'" . $this->SiteURL . "/api/$ModuleName/" . $PureFields[$i] . "s'";
+                }
+                $C = $C . "\r\nfetch($URL)
             .then(response => response.json())
             .then(data => {
                 let Options=data.map(item=><option value={item.id}>{item.title}</option>);
@@ -188,7 +233,6 @@ class $FileName extends React.Component {
             });";
             }
         $C .= "
-            });
     }
     render(){
         return <MDBContainer>
@@ -254,8 +298,12 @@ class $FileName extends React.Component {
                             <DatePicker
                                 label='$PersianFields[$i]'
                                 group
-                                value={this.state.$Fields[$i]}
-                                onChange={(value)=>{this.setState({" . $Fields[$i] . ":value})}}
+                                value={moment.unix(parseInt(this.state.$Fields[$i]))}
+                                onChange={(value)=>{
+                                let date=moment(value).format('X');
+                                if(date!=this.state.$Fields[$i])
+                                        this.setState({".$Fields[$i].":date})
+                                }}
                             />
                         </div>";
             }
