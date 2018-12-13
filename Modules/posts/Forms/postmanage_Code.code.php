@@ -111,7 +111,7 @@ class postmanage_Code extends FormCode {
 		$tags=str_ireplace("-", "_", $page->getTxtTags()->getValue());
 		$keywords=str_ireplace("-", ",", $page->getTxtKeywords()->getValue());
 		$keywords=str_ireplace("،", ",", $keywords);
-		$postmanageController->Edit($_POST['hidid'],$_POST['txtTitle'], $_POST['txtSummary'], $_POST['txtContent'],$_POST['txtExternalLink'] , "Not Implemented","0",$_POST['txtVisits'] ,null , $_POST['cats'],$_POST['txtLinkTitle'],$_POST['txtDescription'],$tags,$keywords,$page->getTxtCanonicalURL()->getValue());
+		$postmanageController->Edit($_POST['hidid'],$_POST['txtTitle'], $_POST['txtSummary'], $_POST['txtContent'],$_POST['txtExternalLink'] , null,"0",$_POST['txtVisits'] ,null , $_POST['cats'],$_POST['txtLinkTitle'],$_POST['txtDescription'],$tags,$keywords,$page->getTxtCanonicalURL()->getValue());
 		$translator=new ModuleTranslator("posts");
 		$translator->setLanguageName(CurrentLanguageManager::getCurrentLanguageName());
 		$design=new message_Design();
