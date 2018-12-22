@@ -27,6 +27,8 @@ class Crawler {
             $JunkWordCount++;
         if (strpos($Context,"هشترود") !== false)
             $JunkWordCount++;
+        if (strpos($Context,"باسمنج") !== false)
+            $JunkWordCount++;
         if (strpos($Context,"عجب شیر") !== false)
             $JunkWordCount++;
 //        echo $Context . " Has $JunkWordCount Junkwords when getIsTitleForMaragheh";
