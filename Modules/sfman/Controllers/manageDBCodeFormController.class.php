@@ -95,6 +95,15 @@ abstract class manageDBCodeFormController extends manageDBControllerFormControll
         }
         $GetterCode=$C;
     }
+    protected function getPureFieldName($FieldName)
+    {
+        $PureField=$FieldName;
+        if (FieldType::getFieldType($FieldName) == FieldType::$FID)
+            $PureField = substr($FieldName, 0, strlen($FieldName) - 4);
+        $PureField=str_replace("_","",$PureField);
+        return $PureField;
+    }
+
     protected function fillPostParamValueGetters($formInfo,&$Params,&$GetterCode)
     {
         $formName=$formInfo['form']['name'];

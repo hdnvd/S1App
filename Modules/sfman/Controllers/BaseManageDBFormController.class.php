@@ -90,6 +90,7 @@ abstract class BaseManageDBFormController extends baseFormCodeGenerator {
     protected abstract function makeLaravelAPIController($formInfo);
     protected abstract function makeReactListDesign($formInfo);
     protected abstract function makeReactItemManageDesign($formInfo);
+    protected abstract function makeReactItemViewDesign($formInfo);
     protected abstract function makeReactRoutes($formInfo);
 
     /**
@@ -135,6 +136,9 @@ class FieldType{
         if($FieldName=="role_systemuser_fid" ||
             $FieldName=="deletetime")
             return FieldType::$METAINF;
+        if($FieldName=="readonly" ||
+            $FieldName=="gender")
+            return FieldType::$BOOLEAN;
         if(substr($FieldName,strlen($FieldName)-4)=="_fid")
             return FieldType::$FID;
         if(substr($FieldName,strlen($FieldName)-4)=="_flu")

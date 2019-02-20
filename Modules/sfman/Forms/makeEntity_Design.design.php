@@ -72,27 +72,27 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate= new CheckBox("chkItemstoGenerate[]");
 
         $this->chkItemsToGenerate->addOption("Manage List Controller","manage_list_controller");
-        $this->chkItemsToGenerate->addSelectedValue("manage_list_controller");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_list_controller");
         $this->chkItemsToGenerate->addOption("Manage List Code","manage_list_code");
-        $this->chkItemsToGenerate->addSelectedValue("manage_list_code");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_list_code");
         $this->chkItemsToGenerate->addOption("Manage User List Code","manage_userlist_code");
 //        $this->chkItemsToGenerate->addSelectedValue("manage_userlist_code");
         $this->chkItemsToGenerate->addOption("Manage List Design","manage_list_design");
-        $this->chkItemsToGenerate->addSelectedValue("manage_list_design");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_list_design");
 
         $this->chkItemsToGenerate->addOption("Manage Item Controller","manage_item_controller");
-        $this->chkItemsToGenerate->addSelectedValue("manage_item_controller");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_item_controller");
         $this->chkItemsToGenerate->addOption("Manage Item Code","manage_item_code");
-        $this->chkItemsToGenerate->addSelectedValue("manage_item_code");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_item_code");
         $this->chkItemsToGenerate->addOption("Manage User Item Code","manage_useritem_code");
 //        $this->chkItemsToGenerate->addSelectedValue("manage_useritem_code");
         $this->chkItemsToGenerate->addOption("Manage Item Design","manage_item_design");
-        $this->chkItemsToGenerate->addSelectedValue("manage_item_design");
+//        $this->chkItemsToGenerate->addSelectedValue("manage_item_design");
 
         $this->chkItemsToGenerate->addOption("List Controller","list_controller");
-        $this->chkItemsToGenerate->addSelectedValue("list_controller");
+//        $this->chkItemsToGenerate->addSelectedValue("list_controller");
         $this->chkItemsToGenerate->addOption("List Code","list_code");
-        $this->chkItemsToGenerate->addSelectedValue("list_code");
+//        $this->chkItemsToGenerate->addSelectedValue("list_code");
         $this->chkItemsToGenerate->addOption("List Design","list_design");
 //        $this->chkItemsToGenerate->addSelectedValue("list_design");
 
@@ -103,10 +103,12 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("Item Display Design","item_display_design");
 //        $this->chkItemsToGenerate->addSelectedValue("item_display_design");
         $this->chkItemsToGenerate->addOption("Item Search Design","search_design");
-        $this->chkItemsToGenerate->addSelectedValue("search_design");
+//        $this->chkItemsToGenerate->addSelectedValue("search_design");
         $this->chkItemsToGenerate->addOption("Sencha Framework Codes","sencha_codes");
         $this->chkItemsToGenerate->addOption("Laravel Framework Codes","laravel_api_codes");
+        $this->chkItemsToGenerate->addSelectedValue("laravel_api_codes");
         $this->chkItemsToGenerate->addOption("React Framework Codes","react_codes");
+        $this->chkItemsToGenerate->addSelectedValue("react_codes");
 
 
         $this->chkItemsToGenerate->addOption("Android Class","android_class");

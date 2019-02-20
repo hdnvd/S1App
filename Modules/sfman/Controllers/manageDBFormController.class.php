@@ -92,6 +92,26 @@ abstract class manageDBFormController extends BaseManageDBFormController
         return $tblEnt->GetCollumns();
     }
 
+    protected function getAllFormsOfFields()
+    {
+        $trans = new Translator();
+        $Fields = [];
+        $PureFields = [];
+        $PersianFields = [];
+        $FieldIndex = 0;
+        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
+            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
+                $UCField = $this->getCurrentTableFields()[$i];
+                $UCField = trim(strtolower($UCField));
+                $PersianField = $trans->getPersian($UCField, $UCField);
+                $PureFields[$FieldIndex]=$this->getPureFieldName($UCField);
+                $Fields[$FieldIndex] = $UCField;
+                $PersianFields[$FieldIndex] = $PersianField;
+                $FieldIndex++;
+            }
+        }
+        return ['fields'=>$Fields,'purefields'=>$PureFields,'persianfields'=>$PersianFields];
+    }
     protected function getFieldName($i)
     {
         $fl = $this->CurrentTableFields[$i];
@@ -342,6 +362,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
 
             $this->makeReactListDesign($formInfo);
             $this->makeReactItemManageDesign($formInfo);
+            $this->makeReactItemViewDesign($formInfo);
             $this->makeReactRoutes($formInfo);
         }
         $DBAccessor->close_connection();

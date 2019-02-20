@@ -26,6 +26,11 @@ abstract class manageDBReactFormController extends manageDBLaravelAPIFormControl
         $UFormName = ucfirst($FormName);
         $ModuleNames = $ModuleName . "s";
         $FileName = $ModuleName . "_$FormName" . "List";
+
+        $AllFields = $this->getAllFormsOfFields();
+        $Fields = $AllFields['fields'];
+        $PersianFields = $AllFields['persianfields'];
+        $PureFields = $AllFields['purefields'];
         $C = "// @flow
 import * as React from 'react';
 import { Link} from 'react-router-dom';
@@ -34,64 +39,126 @@ import { IoMdEye,IoMdAddCircle } from 'react-icons/io';
 import { MdDeleteForever } from 'react-icons/md';
 import SweetTable from '../../../../classes/sweet-table'
 import moment from 'moment-jalaali'
+import SweetFetcher from '../../../../classes/sweet-fetcher';
+import SweetAlert from '../../../../classes/SweetAlert';
+import Constants from '../../../../classes/Constants';
+import AccessManager from '../../../../classes/AccessManager';
+import { MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
+import Common from '../../../../classes/Common';
+import SweetComponent from '../../../../classes/sweet-component';
 
-class $FileName extends React.Component {
+class $FileName extends SweetComponent {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            pages:1,
+            page:0,
+            canEdit:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.EDIT),
+            canDelete:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.DELETE),
+            displaySearchWindow:false,
+            ";
+        for ($i = 0; $i < count($Fields); $i++) {
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
+                $C = $C . "\r\n            $PureFields[$i]Options:[],";
+        }
+        $C.="
         };
     };
+    searchParams={};
+    toggleSearchWindow = () => {
+        this.setState({
+            displaySearchWindow: !this.state.displaySearchWindow
+        });
+    };
     componentDidMount() {
-        this.LoadData();
+        this.LoadData(Constants.DefaultPageSize,1,null,null);
     }
-    LoadData()
+    LoadData(pageSize,page,sorted,filtered)
     {
-            fetch('" . $this->SiteURL . "/api/$ModuleName/$FormNames')
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ data:data })
-            });
+        let filterString=this.HttpGetParamsFromArray(filtered);
+        if(filterString!='') filterString='&'+filterString;
+        let url='/$ModuleName/$FormName?pg='+page+filterString;
+        new SweetFetcher().Fetch(url, SweetFetcher.METHOD_GET, null, 
+        data => {
+            let Pages=Math.ceil(data.RecordCount/Constants.DefaultPageSize);
+            for(let i=0;i<data.Data.length;i++)
+                    data.Data[i]=Common.convertNullKeysToEmpty(data.Data[i]);
+            this.setState({data: data.Data,pages:Pages})
+        }, 
+        null,'$ModuleName" . "." . "$FormName',AccessManager.LIST,
+        this.props.history);
+    };
+    searchData=()=>
+    {
+        this.toggleSearchWindow();
+        if(this.searchParams!=null)
+            this.LoadData(Constants.DefaultPageSize,1,null,Common.ObjectToIdValueArray(this.searchParams));
     };
     render(){
         return <div className={'pagecontent'}>
+            <MDBContainer className={'searchcontainer'}>
+                <MDBBtn onClick={this.toggleSearchWindow}>جستجو</MDBBtn>
+                <MDBModal isOpen={this.state.displaySearchWindow} toggle={this.toggleSearchWindow}>
+                    <MDBModalHeader toggle={this.toggleSearchWindow}>جستجو</MDBModalHeader>
+                    <MDBModalBody>
+                        ";
+        for ($i = 0; $i < count($Fields); $i++) {
+            $C .= $this->getReactFieldFillCode($Fields[$i], $PersianFields[$i], $PureFields[$i], true);
+        }
+        $C .= "
+                    </MDBModalBody>
+                    <MDBModalFooter>
+                        <MDBBtn color='secondary' onClick={this.toggleSearchWindow}>بستن</MDBBtn>
+                        <MDBBtn color='primary' onClick={this.searchData}>جستجو</MDBBtn>
+                    </MDBModalFooter>
+                </MDBModal>
+            </MDBContainer>
             <div className={'topoperationsrow'}><Link className={'addlink'}  to={'/$ModuleName/$FormNames/management'}><IoMdAddCircle/></Link></div>
         <SweetTable
-            filterable={true}
+            filterable={false}
             className='-striped -highlight'
-            defaultPageSize={10}
+            defaultPageSize={Constants.DefaultPageSize}
             data={this.state.data}
+            pages={this.state.pages}
             columns={this.columns}
+            excludedExportColumns={'id'}
+            manual
+            onFetchData={(state, instance) => {
+                this.setState({loading: true,page:state.page});
+                this.LoadData(state.pageSize,state.page+1,state.sorted,state.filtered);
+            }}
         />
         </div>;
     }
 ";
         $C = $C . "
 columns = [";
-        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
-                $UCField = $this->getCurrentTableFields()[$i];
-                $UCField = trim(strtolower($UCField));
-                $PersianField = $trans->getPersian($UCField, $UCField);
-                if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$DATE)
-                {
-                    $C = $C . "
+        for ($i = 0; $i < count($Fields); $i++) {
+            $UCField = $Fields[$i];
+            $PureField = $PureFields[$i];
+            $UCField = trim(strtolower($UCField));
+            $PureField = trim(strtolower($PureField));
+            $PersianField = $trans->getPersian($UCField, $UCField);
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$DATE) {
+                $C = $C . "
 {
     Header: '$PersianField',
     id: '$UCField',
-    accessor:data=> moment.unix((parseInt(data.$UCField))).format('jYYYY/jM/jD')
+    accessor:data=> data.$PureField
 },";
-                }
-                else
-                {
-                    $C = $C . "
+            } elseif (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
+                $C = $C . "
 {
     Header: '$PersianField',
-    accessor: '$UCField'
+    accessor: '$PureField" . "content'
 },";
-                }
-
-
+            } elseif (FieldType::getFieldType($Fields[$i]) != FieldType::$FILE) {
+                $C = $C . "
+{
+    Header: '$PersianField',
+    accessor: '$PureField'
+},";
             }
         }
         $C = $C . "
@@ -99,31 +166,27 @@ columns = [";
     Header: 'عملیات',
     accessor: 'id',
     Cell: props => <div className={'operationsrow'}>
-                   <Link className={'viewlink'}  to={'/$ModuleName/$FormNames/'+props.value}><IoMdEye/></Link>
-                   <Link className={'editlink'}  to={'/$ModuleName/$FormNames/management/'+props.value}><FaEdit/></Link>
-                   <MdDeleteForever onClick={ () =>{
-                    fetch('$this->SiteURL/api/$ModuleName/$FormNames/'+props.value, {
-                        method: 'delete',
-                        headers: {
-                            Accept: 'application/json',
-                        },
-                        mode: 'cors',
-                        crossDomain:true,
-                    })
-                        .then(res => res.json())
-                        .then(res => {
-                            if (res.hasOwnProperty('errors')) {
-                                alert('خطا','خطایی در حذف اطلاعات بوجود آمد');
-                            }
-                            else {
-                                this.LoadData();
-                            }
-                            // console.log(res);
-                        }).catch(function (error) {
-                        alert('خطا','خطایی در حذف اطلاعات بوجود آمد');
-                        throw error;
-                    });
-                }}/>
+                   {!this.state.canEdit &&
+                    <Link className={'viewlink'}  to={'/$ModuleName/$FormNames/management/'+props.value}><IoMdEye/></Link>
+                   }
+                   {this.state.canEdit &&
+                    <Link className={'editlink'}  to={'/$ModuleName/$FormNames/management/'+props.value}><FaEdit/></Link>
+                   }
+                   {this.state.canDelete &&
+                       <MdDeleteForever onClick={ 
+                       () =>{
+                         SweetAlert.displayDeleteAlert(()=>{
+                            new SweetFetcher().Fetch('/$ModuleName/$FormName/' + props.value, SweetFetcher.METHOD_DELETE, null,
+                                data => {
+                                    this.LoadData(Constants.DefaultPageSize,this.state.page+1,null,null);
+                                },(error)=>{
+                                            let status=error.response.status;
+                                            SweetAlert.displaySimpleAlert('خطای پیش بینی نشده ','خطایی در حذف اطلاعات به وجود آمد'+status.toString().trim());
+                                        },'$ModuleName" . "." . "$FormName',AccessManager.DELETE,this.props.history);
+                         });
+                        }
+                        }/>
+                 }
                 </div>,
 },";
 
@@ -138,7 +201,6 @@ export default $FileName;
 
     protected function makeReactItemManageDesign($formInfo)
     {
-        $trans = new Translator();
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
@@ -146,223 +208,309 @@ export default $FileName;
         $UFormName = ucfirst($FormName);
         $ModuleNames = $ModuleName . "s";
         $FileName = $ModuleName . "_$FormName" . "Manage";
-        $Fields = [];
-        $PureFields = [];
-        $PersianFields = [];
-        $FieldIndex = 0;
-        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
-                $UCField = $this->getCurrentTableFields()[$i];
-                $UCField = trim(strtolower($UCField));
-                $PersianField = $trans->getPersian($UCField, $UCField);
-                if (FieldType::getFieldType($UCField) == FieldType::$FID)
-                    $PureFields[$FieldIndex] = substr($UCField, 0, strlen($UCField) - 4);
-                else
-                    $PureFields[$FieldIndex] = $UCField;
-
-                $Fields[$FieldIndex] = $UCField;
-                $PersianFields[$FieldIndex] = $PersianField;
-                $FieldIndex++;
-            }
-        }
+        $Translations=new Translator();
+        $PageTitle = "تعریف " . $Translations->getPersian($FormName,$FormName);
+        $AllFields = $this->getAllFormsOfFields();
+        $Fields = $AllFields['fields'];
+        $PersianFields = $AllFields['persianfields'];
+        $PureFields = $AllFields['purefields'];
         $C = "// @flow
 import * as React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn,FormInline, Input } from 'mdbreact';
 import  DatePicker  from '../../../../PersianDatePicker/components/DatePicker';
 import '../../../../scss/datepicker.scss'
 import moment from 'moment-jalaali'
-class $FileName extends React.Component {
+import SweetFetcher from '../../../../classes/sweet-fetcher';
+import InputMask from 'react-input-mask';
+import Constants from '../../../../classes/Constants';
+import AccessManager from '../../../../classes/AccessManager';
+import Common from '../../../../classes/Common';
+import SweetComponent from '../../../../classes/sweet-component';
+import ModalImage from 'react-modal-image'
+import SweetButton from '../../../../classes/sweet-button';
+import SweetAlert from '../../../../classes/SweetAlert';
+
+class $FileName extends SweetComponent {
     constructor(props) {
         super(props);
         this.state = {
+                canEdit:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.EDIT),
             ";
         for ($i = 0; $i < count($Fields); $i++) {
-            if(FieldType::getFieldType($Fields[$i])==FieldType::$DATE)
-            {
-                $C = $C . "\r\n\t$Fields[$i]:moment().format('X'),";
-            }
-            else
-            {
-                $C = $C . "\r\n\t$Fields[$i]:'',";
-                if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
-                    $C = $C . "\r\n\t$Fields[$i]Options:[],";
-            }
-
-
+            $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
+                $C = $C . "\r\n\t\t\t$PureFields[$i]Options:[],";
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE)
+                $C = $C . "\r\n\t\t\t$PureFields[$i]Preview:'',";
         }
 
         $C .= "
         };
         if(this.props.match.params.id>0){
-        fetch('" . $this->SiteURL . "/api/$ModuleName/$FormNames/'+this.props.match.params.id)
-            .then(response => response.json())
-            .then(data => {
+        new SweetFetcher().Fetch('/$ModuleName/$FormName/'+this.props.match.params.id, SweetFetcher.METHOD_GET,null, 
+        data => {
+            data.Data=Common.convertNullKeysToEmpty(data.Data);
             ";
-        for ($i = 0; $i < count($Fields); $i++){
-            if(FieldType::getFieldType($Fields[$i])==FieldType::$DATE)
-            {
-                $C = $C . "\r\n\t\tif(data.$Fields[$i]<=0)
-                    data.$Fields[$i]=moment().format('X');";
-            }
-        }
-            $C.="
+        $C .= "
                  this.setState({ ";
-        for ($i = 0; $i < count($Fields); $i++)
-            $C = $C . "$Fields[$i]:data.$Fields[$i],";
+        for ($i = 0; $i < count($PureFields); $i++) {
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE)
+                $C = $C . "$PureFields[$i]Preview:Constants.SiteURL+'/'+data.Data." . $PureFields[$i] . ",";
+            $C = $C . "$PureFields[$i]:data.Data." . $PureFields[$i] . ",";
+        }
 
         $C .= "});
-        
-            });
-        }";
-        for ($i = 0; $i < count($Fields); $i++)
+            }, 
+            null,'$ModuleName" . "." . "$FormName',AccessManager.VIEW,
+            this.props.history);
+        }//IF";
+        for ($i = 0; $i < count($Fields); $i++) {
             if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
-                $URL='';
-            if($Fields[$i]=='common_city_fid')
-                {
-                    $URL="'" . $this->SiteURL . "/api/placeman/provinces'";
+                $URL = '';
+                if ($Fields[$i] == 'common_city_fid') {
+                    $URL = "'/placeman/provinces'";
+                } else {
+                    $URL = "'/$ModuleName/" . $PureFields[$i] . "'";
                 }
-                else
-                {
-                    $URL="'" . $this->SiteURL . "/api/$ModuleName/" . $PureFields[$i] . "s'";
-                }
-                $C = $C . "\r\nfetch($URL)
-            .then(response => response.json())
-            .then(data => {
-                let Options=data.map(item=><option value={item.id}>{item.title}</option>);
-                this.setState({" . $Fields[$i] . "Options:Options})
-            });";
+                $C = $C . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
+                data=>{
+                let Options=data.Data.map(item=><option value={item.id}>{item.name}</option>);
+                this.setState({" . $PureFields[$i] . "Options:Options});
+            }, 
+            null,'$ModuleName" . "." . "$PureFields[$i]',AccessManager.LIST,
+            this.props.history);";
             }
+        }
         $C .= "
+        
     }
     render(){
         return <MDBContainer>
             <MDBRow>
                 <MDBCol md='6'>
                     <form>
-                        <p className='h5 text-center mb-4'>$FileName</p>
+                        <p className='h5 text-center mb-4'>$PageTitle</p>
                         ";
         for ($i = 0; $i < count($Fields); $i++) {
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
+            $C .= $this->getReactFieldFillCode($Fields[$i], $PersianFields[$i], $PureFields[$i], false);
+        }
+        $C = $C . "    
+                            <div className='text-center'>
+                            {this.state.canEdit && 
+                                <SweetButton value={'ذخیره'}
+                                    onButtonPress={(afterFetchListener) => {
+                                let id = '';
+                                let method=SweetFetcher.METHOD_POST;
+                                let Separator='';
+                                let action=AccessManager.INSERT;
+                                    if (this.props.match.params.id > 0)
+                                        id = this.props.match.params.id;
+                                    const data = new FormData();
+                                    ";
+        for ($i = 0; $i < count($PureFields); $i++)
+            $C = $C . "\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFields[$i]', this.state.$PureFields[$i]);";
+        $C .= "\r\n\t\t\t\t\t\t\t\tif(id!==''){";
+        $C = $C . "\r\n\t\t\t\t\t\t\t\t\tmethod=SweetFetcher.METHOD_PUT;";
+        $C = $C . "\r\n\t\t\t\t\t\t\t\t\tSeparator='/';";
+        $C = $C . "\r\n\t\t\t\t\t\t\t\t\taction=AccessManager.EDIT;";
+        $C = $C . "\r\n\t\t\t\t\t\t\t\t\t\tdata.append('id', id);";
+        $C = $C . "\r\n\t\t\t\t\t\t\t\t}";
+        $C .= "
+                                    new SweetFetcher().Fetch('/$ModuleName/$FormName'+Separator+id,method,data, 
+                                    res => {
+                                                return this.props.history.push('/$ModuleName/$FormNames');
+                                                //console.log(res);
+                                        },(error)=>{
+                                            let status=error.response.status;
+                                            afterFetchListener();
+                                            SweetAlert.displaySimpleAlert('خطای پیش بینی نشده','خطایی در ذخیره اطلاعات به وجود آمد'+status.toString().trim());
+
+                                        },
+                                        '$ModuleName" . "." . "$FormName',action,
+                                        this.props.history);
+                                    
+                                }
+                                }
+                                />
+                            }
+                            <MDBBtn onClick={() =>
+                             {
+                                this.props.history.push('/$ModuleName/$FormNames');
+                             }
+                            }>برگشت</MDBBtn>
+                        </div>
+                    </form>
+                </MDBCol>
+            </MDBRow>
+        </MDBContainer>
+    }
+}
+
+export default $FileName;
+";
+        $DesignFile = $this->getReactCodeModuleDir() . "/modules/" . $ModuleName . "/pages/$FormName/" . $FileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+
+    protected function makeReactItemViewDesign($formInfo)
+    {
+        $trans = new Translator();
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $FileName = $ModuleName . "_$FormName" . "View";
+        $PageTitle = " " . $FormName;
+        $AllFields = $this->getAllFormsOfFields();
+        $Fields = $AllFields['fields'];
+        $PersianFields = $AllFields['persianfields'];
+        $PureFields = $AllFields['purefields'];
+        $C = "// @flow
+import * as React from 'react';
+import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn,FormInline, Input } from 'mdbreact';
+import moment from 'moment-jalaali'
+import SweetFetcher from '../../../../classes/sweet-fetcher';
+import InputMask from 'react-input-mask';
+import Constants from '../../../../classes/Constants';
+import AccessManager from '../../../../classes/AccessManager';
+import Common from '../../../../classes/Common';
+import SweetComponent from '../../../../classes/sweet-component';
+import ModalImage from 'react-modal-image'
+import SweetButton from '../../../../classes/sweet-button';
+import SweetAlert from '../../../../classes/SweetAlert';
+
+class $FileName extends SweetComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+                canEdit:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.EDIT),
+            ";
+        for ($i = 0; $i < count($Fields); $i++) {
+            $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
+                $C = $C . "\r\n\t\t\t$PureFields[$i]Options:[],";
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE)
+                $C = $C . "\r\n\t\t\t$PureFields[$i]Preview:'',";
+        }
+
+        $C .= "
+        };
+        if(this.props.match.params.id>0){
+        new SweetFetcher().Fetch('/$ModuleName/$FormName/'+this.props.match.params.id, SweetFetcher.METHOD_GET,null, 
+        data => {
+            data.Data=Common.convertNullKeysToEmpty(data.Data);
+            ";
+        $C .= "
+                 this.setState({ ";
+        $FieldLoaders = "";
+        for ($i = 0; $i < count($PureFields); $i++) {
+            $FieldType = FieldType::getFieldType($Fields[$i]);
+            if ($FieldType == FieldType::$FILE)
+                $C = $C . "$PureFields[$i]Preview:Constants.SiteURL+'/'+data.Data." . $PureFields[$i] . ",";
+            elseif ($FieldType != FieldType::$FID)
+                $C = $C . "\r\n$PureFields[$i]:data.Data." . $PureFields[$i] . ",";
+            else {
+                $URL = '';
+                if ($Fields[$i] == 'common_city_fid') {
+                    $URL = "'/placeman/provinces'";
+                } else {
+                    $URL = "'/$ModuleName/" . $PureFields[$i] . "'";
+                }
+                $URL = $URL . "+'/'+data.Data.$PureFields[$i]";
+                $FieldLoaders = $FieldLoaders . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
+                data=>{
+                this.setState({" . $PureFields[$i] . ":data.Data.name});
+            }, 
+            null,'$ModuleName" . "." . "$PureFields[$i]',AccessManager.VIEW,
+            this.props.history);";
+            }
+        }
+        $C .= "});
+        $FieldLoaders
+            }, 
+            null,'$ModuleName" . "." . "$FormName',AccessManager.VIEW,
+            this.props.history);
+        }//IF";
+
+        $C .= "
+        
+    }
+    render(){
+        return <MDBContainer>
+            <MDBRow>
+                <MDBCol md='6'>
+                    <form>
+                        <p className='h5 text-center mb-4'>$PageTitle</p>
+                        ";
+        for ($i = 0; $i < count($Fields); $i++) {
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$BOOLEAN) {
+                $TrueTitle = $PersianFields[$i] . ' دارد';
+                $FalseTitle = $PersianFields[$i] . ' ندارد';
+                if ($Fields[$i] == 'ismale' || $Fields[$i] == 'gender') {
+                    $FalseTitle = 'زن';
+                    $TrueTitle = 'مرد';
+                } elseif ($Fields[$i] == 'ismarried') {
+                    $FalseTitle = 'مجرد';
+                    $TrueTitle = 'متاهل';
+                } elseif ($Fields[$i] == 'isactive') {
+                    $FalseTitle = 'غیر فعال';
+                    $TrueTitle = 'فعال';
+                } elseif ($Fields[$i] == 'readonly') {
+                    $FalseTitle = 'قابل تغییر';
+                    $TrueTitle = 'غیر قابل تغییر';
+                }
                 $C = $C . "
-                    <div className='grey-text'>
-                        <select className='browser-default custom-select' value={this.state.$Fields[$i]} onChange={(event)=>{this.setState({" . $Fields[$i] . ":event.target.value})}}>
-                                <option>$PersianFields[$i]</option>
-                                {this.state.$Fields[$i]Options}
-                            </select>
-                            </div>";
-
-            } elseif (FieldType::getFieldType($Fields[$i]) == FieldType::$BOOLEAN) {
-                $TrueTitle=$PersianFields[$i] . ' دارد';
-                $FalseTitle=$PersianFields[$i] . ' ندارد';
-                if($Fields[$i]=='ismale')
-                {
-
-                    $FalseTitle='زن';
-                    $TrueTitle='مرد';
-                }
-                elseif($Fields[$i]=='ismarried')
-                {
-
-                    $FalseTitle='مجرد';
-                    $TrueTitle='متاهل';
-                }
-                elseif($Fields[$i]=='isactive')
-                {
-
-                    $FalseTitle='غیر فعال';
-                    $TrueTitle='فعال';
-                }
-                $C = $C . "
-                        <div className='grey-text'>
+                         <div className='form-group'>
                             <FormInline>
+                            
+                           <label>$PersianFields[$i]</label>
                                     <Input
-                                        onClick={() => this.setState({" . $Fields[$i] . " : 0})}
-                                        checked={this.state.$Fields[$i] === 0}
+                                        onClick={() => this.setState({" . $PureFields[$i] . " : 0})}
+                                        checked={this.state.$PureFields[$i] == 0}
                                         label='$FalseTitle'
                                         type='radio'
                                         id='radio$Fields[$i]1'
+                                readOnly={!this.state.canEdit}
                                     />
                                     <Input
-                                        onClick={() => this.setState({" . $Fields[$i] . " : 1})}
-                                        checked={this.state.$Fields[$i] === 1}
+                                        onClick={() => this.setState({" . $PureFields[$i] . " : 1})}
+                                        checked={this.state.$PureFields[$i] == 1}
                                         label='$TrueTitle'
                                         type='radio'
                                         id='radio$Fields[$i]2'
+                                readOnly={!this.state.canEdit}
                                     />
                                 </FormInline>
                         </div>";
-            }
-            elseif(FieldType::getFieldType($Fields[$i]) == FieldType::$DATE) {
+            } elseif (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE) {
+                $C = $C . "<div className='form-group'>
+                            <label htmlFor='$PureFields[$i]'>$PersianFields[$i]</label>
+                            
+                        <ModalImage
+                            small={this.state.$PureFields[$i]Preview}
+                            large={this.state.$PureFields[$i]Preview}
+                            className={'imageuploadpreview'} />
+                        </div>
+                            ";
+            } else {
                 $C = $C . "
-                        <div className='grey-text'>
-                            <DatePicker
-                                label='$PersianFields[$i]'
-                                group
-                                value={moment.unix(parseInt(this.state.$Fields[$i]))}
-                                onChange={(value)=>{
-                                let date=moment(value).format('X');
-                                if(date!=this.state.$Fields[$i])
-                                        this.setState({".$Fields[$i].":date})
-                                }}
-                            />
-                        </div>";
-            }
-            else {
-                $C = $C . "
-                        <div className='grey-text'>
-                            <MDBInput
-                                label='$PersianFields[$i]'
-                                group
-                                type='text'
-                                validate
-                                value={this.state.$Fields[$i]}
-                                onChange={(event)=>{this.setState({" . $Fields[$i] . ":event.target.value})}}
-                            />
+                        <div className='form-group'>
+                            <label>$PersianFields[$i]</label>
+                            <label
+                                className='valuelabel'>
+                                {this.state.$PureFields[$i]}
+                            </label>
                         </div>";
             }
 
 
         }
         $C = $C . "    
-                        <div className='text-center'>
-                            <MDBBtn onClick={()=> {
-                            let id = '';
-                                if (this.props.match.params.id > 0)
-                                    id = '/' + this.props.match.params.id;
-                                const data = new FormData();
-                                ";
-        for ($i = 0; $i < count($Fields); $i++)
-            $C = $C . "\r\n\tdata.append('$Fields[$i]', this.state.$Fields[$i]);";
-        $C .= "\r\n\tif(id!=='')";
-        $C = $C . "\r\n\tdata.append('_method', 'PUT');";
-
-        $C .= "
-                                fetch('" . $this->SiteURL . "/api/$ModuleName/$FormNames'+id, {
-                                    method: 'post',
-                                    headers: {
-                                        Accept: 'application/json',
-                                    },
-                                    mode: 'cors',
-                                    crossDomain:true,
-                                    body: data
-                                })
-                                    .then(res => res.json())
-                                    .then(res => {
-                                        if (res.hasOwnProperty('errors')) {
-                                            alert('خطا','خطایی در ثبت اطلاعات بوجود آمد');
-                                        }
-                                        else {
-                                            return this.props.history.push('/$ModuleName/$FormNames');   
-
-                                            //alert('پیام',res.message);
-                                        }
-                                        // console.log(res);
-                                    }).catch(function (error) {
-                                    alert('خطا','خطایی در ثبت اطلاعات بوجود آمد');
-                                    throw error;
-                                });
-                            }
-                            }>ذخیره</MDBBtn>
+                            <div className='text-center'>
+                            <MDBBtn onClick={() =>
+                             {
+                                this.props.history.push('/$ModuleName/$FormNames');
+                             }
+                            }>برگشت</MDBBtn>
                         </div>
                     </form>
                 </MDBCol>
@@ -388,18 +536,164 @@ export default $FileName;
         $ModuleNames = $ModuleName . "s";
         $ListFileName = $ModuleName . "_$FormName" . "List";
         $EditFileName = $ModuleName . "_$FormName" . "Manage";
-        $ViewFileName = $ModuleName . "_$FormName";
+        $ViewFileName = $ModuleName . "_$FormName" . "View";;
         $C = "
 
-const $ListFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$ListFileName'));
-routes.push({ path: '/$ModuleName/$FormNames',exact:true, name: 'لیست اطلاعات',component:$ListFileName});
-const $EditFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$EditFileName'));
-routes.push({ path: '/$ModuleName/$FormNames/management/:id',exact:false, name: 'مدیریت اطلاعات',component:$EditFileName});
-routes.push({ path: '/$ModuleName/$FormNames/management',exact:false, name: 'مدیریت اطلاعات',component:$EditFileName});
+            const $ListFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$ListFileName'));
+            routes.push({ path: '/$ModuleName/$FormNames',exact:true, name: 'لیست $FormName',component:$ListFileName});
+            const $EditFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$EditFileName'));
+            const $ViewFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$ViewFileName'));
+            routes.push({ path: '/$ModuleName/$FormNames/management/:id',exact:false, name: 'ویرایش $FormName',component:$EditFileName});
+            routes.push({ path: '/$ModuleName/$FormNames/management',exact:false, name: 'تعریف $FormName',component:$EditFileName});
+            routes.push({ path: '/$ModuleName/$FormNames/view/:id',exact:false, name: '$FormName',component:$ViewFileName});
 ";
         $DesignFile = $this->getReactCodeModuleDir() . "/routes.js";
 
         $this->SaveFile($DesignFile, $C, true);
+    }
+
+    private function getReactFieldFillCode($FieldName, $PersianFieldName, $PureFieldName, $IsForSearchSake)
+    {
+        $ReturningCode = "";
+        if ($IsForSearchSake) {
+            if (FieldType::getFieldType($FieldName) == FieldType::$FILE)
+                return "";
+        }
+        if (FieldType::getFieldType($FieldName) == FieldType::$FID) {
+            $ReturningCode = $ReturningCode . "
+                    <div className='form-group'>
+                        <label htmlFor='$PureFieldName'>$PersianFieldName</label>
+                        <select 
+                                id='$PureFieldName'
+                                className='browser-default custom-select'
+                                ";
+            if ($IsForSearchSake) {
+                $ReturningCode .= "onChange={(event)=>{this.searchParams.$PureFieldName=event.target.value;}}>
+                                <option>همه</option>";
+            } else {
+                $ReturningCode .= "value={this.state.$PureFieldName}
+                                disabled={!this.state.canEdit}
+                                onChange={(event)=>{this.setState({" . $PureFieldName . ":event.target.value})}}>
+                                <option>انتخاب کنید</option>";
+            }
+            $ReturningCode .= "\r\n                                {this.state.$PureFieldName" . "Options}
+                            </select>
+                            </div>";
+
+        } elseif (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN) {
+            $TrueTitle = $PersianFieldName . ' دارد';
+            $FalseTitle = $PersianFieldName . ' ندارد';
+            if ($FieldName == 'ismale' || $FieldName == 'gender') {
+                $FalseTitle = 'زن';
+                $TrueTitle = 'مرد';
+            } elseif ($FieldName == 'ismarried') {
+                $FalseTitle = 'مجرد';
+                $TrueTitle = 'متاهل';
+            } elseif ($FieldName == 'isactive') {
+                $FalseTitle = 'غیر فعال';
+                $TrueTitle = 'فعال';
+            } elseif ($FieldName == 'readonly') {
+                $FalseTitle = 'قابل تغییر';
+                $TrueTitle = 'غیر قابل تغییر';
+            }
+            $ReturningCode = $ReturningCode . "
+                         <div className='form-group'>
+                            <FormInline>
+                            
+                           <label>$PersianFieldName</label>
+                                    <Input
+                                        onClick={() => this.setState({" . $PureFieldName . " : 0})}
+                                        checked={this.state.$PureFieldName == 0}
+                                        label='$FalseTitle'
+                                        type='radio'
+                                        id='radio$FieldName" . "1'
+                                readOnly={!this.state.canEdit}
+                                    />
+                                    <Input
+                                        onClick={() => this.setState({" . $PureFieldName . " : 1})}
+                                        checked={this.state.$PureFieldName == 1}
+                                        label='$TrueTitle'
+                                        type='radio'
+                                        id='radio$FieldName" . "2'
+                                readOnly={!this.state.canEdit}
+                                    />
+                                </FormInline>
+                        </div>";
+        } elseif (FieldType::getFieldType($FieldName) == FieldType::$FILE) {
+            $ReturningCode = $ReturningCode . "<div className='form-group'>
+                            <label htmlFor='$PureFieldName'>$PersianFieldName</label>
+                            <input
+                            className='form-control file'
+                            readOnly={!this.state.canEdit}
+                            id='$PureFieldName'
+                            group
+                            type='file'
+                            onChange={(event)=>{
+                                let file=event.target.files[0];
+                                let reader = new FileReader();
+                                let url = reader.readAsDataURL(file);
+                                reader.onloadend = function (e) {
+                                    this.setState({
+                                        $PureFieldName" . "Preview: [reader.result]
+                                });
+                                }.bind(this);
+                                this.setState({ $PureFieldName : file})
+                            }}
+                        />
+                        {this.state.$PureFieldName!='' &&
+                        <ModalImage
+                            small={this.state.$PureFieldName" . "Preview}
+                            large={this.state.$PureFieldName" . "Preview}
+                            className={'imageuploadpreview'} />
+                        }
+                        </div>
+                            ";
+        } else {
+            $InputStart = "<input
+                                className='form-control'";
+            if (!$IsForSearchSake) {
+                if (FieldType::getFieldType($FieldName) == FieldType::$DATE) {
+                    $InputStart = "                            <InputMask
+                                mask='9999/99/99'
+                                className='form-control ltr_field'";
+                } elseif ($FieldName == "nationalcode" || $FieldName == "mellicode" || $FieldName == "hesabno" || $FieldName == "hmeli") {
+
+                    $InputStart = "<InputMask
+                                mask='9999999999'
+                                className='form-control ltr_field'";
+                } elseif ($FieldName == "personelno") {
+
+                    $InputStart = "<InputMask
+                                mask='9999999999'
+                                className='form-control ltr_field'";
+                }
+            }
+
+            $ReturningCode = $ReturningCode . "
+                        <div className='form-group'>
+                            <label htmlFor='$PureFieldName'>$PersianFieldName</label>
+                            $InputStart
+                                id='$PureFieldName'
+                                type='text'";
+                if ($IsForSearchSake) {
+                $ReturningCode .= "
+                                onChange={(event)=>{this.searchParams.$PureFieldName=event.target.value;}}";
+                }
+                else
+                {
+                    $ReturningCode.="
+                                readOnly={!this.state.canEdit}
+                                group
+                                validate
+                                value={this.state.$PureFieldName}
+                                onChange={(event)=>{this.setState({" . $PureFieldName . ":event.target.value})}}";
+                }
+            $ReturningCode.="/>
+                        </div>";
+        }
+        return $ReturningCode;
+
+
     }
 }
 
