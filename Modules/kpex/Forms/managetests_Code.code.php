@@ -44,6 +44,17 @@ class managetests_Code extends testlist_Code {
 			}elseif(isset($_GET['hulth'])){
 
                 $Result=$managetestsController->makeHulthCSV($this->getHttpGETparameter('pn',-1));
+            }elseif(isset($_GET['majuro'])){
+
+                $Result=$managetestsController->makeMajuroCSV($this->getHttpGETparameter('pn',-1));
+            }
+            elseif(isset($_GET['wv'])){
+
+                $Result=$managetestsController->makeWordVectorCSV();
+            }
+            elseif(isset($_GET['semeval'])){
+
+                $Result=$managetestsController->makeSemEvalCSV($this->getHttpGETparameter('pn',-1));
             }
 			else{
 				$Result=$managetestsController->load($this->getHttpGETparameter('pn',-1));

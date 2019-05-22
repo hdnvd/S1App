@@ -82,18 +82,93 @@ private $Translations;
             'sendertel'=>'تلفن ارسال کننده',
             'messagereceiver'=>'دریافت کننده پیام',
             'sendername'=>'نام ارسال کننده',
+            'devicetype'=>'نوع سخت افزار',
+            'post'=>'مطلب',
+            'summary'=>'خلاصه',
+            'content'=>'محتوا',
+            'thumbnail'=>'تصویر شاخص',
+            'code'=>'شماره سریال',
+            'needssecurityacceptance'=>'نیاز به تایید حفاظت اطلاعات',
+            'mother__requesttype'=>'نوع درخواست مادر',
+            'requesttype'=>'نوع درخواست',
+            'priority'=>'اولویت',
+            'commited'=>'به اتمام رسیده',
+            'successful'=>'اتمام موفق',
+            'needsadminapproval'=>'نیاز به تایید مدیر',
+            'req'=>'درخواست',
+            'sendtonext'=>'ارجاع به دیگری',
+            'setstatus'=>'ثبت وضعیت',
+            'changepriority'=>'تغییر اولویت',
+            'user__user'=>'کاربر',
+            'admin__user'=>'مدیر',
+            'source__unit'=>'بخش مبدا',
+            'destination__unit'=>'بخش مقصد(بعدی)',
+            'security__user'=>'حفاظت',
+            'note'=>'یادداشت',
+            'owner__unit'=>'بخش مالک',
+            'device'=>'تجهیز',
+            'component'=>'قطعه',
+            'attachment'=>'ضمیمه',
+            'status'=>'وضعیت',
+            'sender__unit'=>'بخش ارسال کننده',
+            'current__unit'=>'بخش فعلی',
+            'adminacceptance'=>'تایید مدیر',
+            'securityacceptance'=>'تایید حفاظت',
+            'fullsend'=>'ارسال نهایی',
+            'letternumber'=>'شماره نامه',
+            'letter'=>'نامه',
+            'logo'=>'لوگو',
+            'unittype'=>'نوع بخش',
+            'sender__user'=>'کاربر ارسال کننده',
+            'request'=>'درخواست',
+            'description'=>'توضیحات',
+            'hardwareneeded'=>'نیازمند ثبت سخت افزار',
         ];
     }
     public function getPersian($Word,$DefaultValue)
     {
         $Word=trim(strtolower($Word));
-        if(strlen($Word)>4 && substr($Word,strlen($Word)-4)=="_fid")
+        $Result="";
+        if(strlen($Word)>5)
         {
-            $Word=substr($Word,0,strlen($Word)-4);
+            $LastPart=substr($Word,strlen($Word)-4);
+            $LastPart2=substr($Word,strlen($Word)-5);
+            $LastPart3=substr($Word,strlen($Word)-3);
+            $Prefix1=substr($Word,0,2);
+            $Prefix2=substr($Word,0,3);
+            $Prefix3=substr($Word,0,4);
+            if($LastPart=="_fid" || $LastPart=="_flu" || $LastPart=="_igu")
+            {
+                $Word=substr($Word,0,strlen($Word)-4);
+            }
+            if($LastPart2=="_time")
+            {
+                $Word=substr($Word,0,strlen($Word)-5);
+                $Result=$Result."زمان ";
+            }
+            if($LastPart2=="_date")
+            {
+                $Word=substr($Word,0,strlen($Word)-5);
+                $Result=$Result."تاریخ ";
+            }
+            if($LastPart3=="_te")
+            {
+                $Word=substr($Word,0,strlen($Word)-3);
+            }
+            if($Prefix3=="can_")
+            {
+                $Word=substr($Word,4);
+                $Result=$Result."قابلیت ";
+            }
+
+            elseif($Prefix2=="is_")
+                $Word=substr($Word,3);
+            elseif($Prefix1=="is")
+                $Word=substr($Word,2);
         }
 
         if(key_exists($Word,$this->Translations))
-            return $this->Translations[$Word];
+            return $Result . $this->Translations[$Word];
         return $DefaultValue;
     }
 }

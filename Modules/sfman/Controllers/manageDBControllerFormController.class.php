@@ -32,7 +32,7 @@ abstract class manageDBControllerFormController extends manageDBFormController
 
                 if ($isInsert || trim(strtolower($UCField)) != "role_systemuser_fid") {
                     $FieldValueVariable = $UCField;
-                    if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FILE) {
+                    if (FieldType::fieldIsFileUpload($this->getCurrentTableFields()[$i])) {
                         $FieldValueVariable .= "URL";
                         $InsertCode .= "\n\t\t\tif(\$$FieldValueVariable!='')";
                     }
@@ -58,7 +58,7 @@ abstract class manageDBControllerFormController extends manageDBFormController
         $FieldIndex = 0;
         for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
             $UCField = $this->getCurrentTableFields()[$i];
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FILE) {
+            if (FieldType::fieldIsFileUpload($this->getCurrentTableFields()[$i])) {
                 $ValidateCode .= "\r\n\t\t\$" . $UCField . "URL='';";
                 $ValidateCode .= "\r\n\t\tif(\$" . $UCField . "!=null && count(\$" . $UCField . ")>0)";
                 $ValidateCode .= "\r\n\t\t\t\$" . $this->getCurrentTableFields()[$i] . "URL=\$" . $UCField . "[0]['url'];";
@@ -77,7 +77,7 @@ abstract class manageDBControllerFormController extends manageDBFormController
                     $ValidateCode .= "\$$UCField";
                     $FieldsCode .= $ObjectName . "->getFieldInfo(";
                     $FieldsCode .= "$EntityClassName" . "::\$" . strtoupper($UCField);
-                    if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) == FieldType::$FILE)
+                    if (FieldType::fieldIsFileUpload($this->getCurrentTableFields()[$i]))
                         $ValidateCode .= "URL";
                     $FieldsCode .= ")";
                     $FieldIndex++;

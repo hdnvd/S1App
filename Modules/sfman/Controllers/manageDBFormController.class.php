@@ -34,6 +34,71 @@ abstract class manageDBFormController extends BaseManageDBFormController
         return $theFieldPart;
     }
 
+    protected function getFieldNameWithoutPostFix($FieldName)
+    {
+        $PureField=$FieldName;
+        if (FieldType::getFieldType($FieldName) == FieldType::$FID)
+            $PureField = substr($FieldName, 0, strlen($FieldName) - 4);
+        return $PureField;
+    }
+    protected function getFieldNameWithoutPreFix($FieldName)
+    {
+        $PureField=$FieldName;
+        if (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
+        {
+            if(substr($FieldName,0,3)=="isـ")
+                $PureField = substr($FieldName, 3);
+            elseif(substr($FieldName,0,4)=="can_")
+                $PureField = substr($FieldName, 4);
+            if(substr($FieldName,0,2)=="is")
+                $PureField = substr($FieldName, 2);
+        }
+        return $PureField;
+    }
+    protected function getTableNameFromFIDFieldName($Field)
+    {
+        if(strlen($Field)>=8 && substr($Field,strlen($Field)-8,8)=="user_fid")
+            return "User";
+        $Field=$this->getFieldNameWithoutPostFix($Field);
+        $Pos=strpos($Field,"__");
+        if($Pos!==false)
+        {
+            $Field=substr($Field,$Pos+2);
+        }
+        $Pos=strpos($Field,"_");
+        if($Pos!==false)
+        {
+            $Field=substr($Field,$Pos+1);
+        }
+        return $Field;
+    }
+    protected function getModuleNameFromFIDFieldName($Field,$DefaultModuleName)
+    {
+        if(strlen($Field)>=8 && substr($Field,strlen($Field)-8,8)=="user_fid")
+            return "";
+        $Field=$this->getFieldNameWithoutPostFix($Field);
+        $Pos=strpos($Field,"__");
+        if($Pos!==false)
+        {
+            $Field=substr($Field,$Pos+2);
+        }
+        $Pos=strpos($Field,"_");
+        if($Pos!==false)
+        {
+            $Field=substr($Field,0,$Pos);
+        }
+        else
+            $Field=$DefaultModuleName;
+        return $Field;
+    }
+    protected function getPureFieldName($FieldName)
+    {
+        $PureField=$this->getFieldNameWithoutPostFix($FieldName);
+        $PureField=$this->getFieldNameWithoutPreFix($PureField);
+        $PureField=str_replace("_","",$PureField);
+        return $PureField;
+    }
+
     /**
      * @return mixed
      */
@@ -118,7 +183,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
         $Last4Chars = substr($fl, strlen($fl) - 4);
         $EntityName = null;
         $FT = FieldType::getFieldType($fl);
-        if (($FT == FieldType::$FID || $FT == FieldType::$FILE) && $fl != "role_systemuser_fid") {
+        if (($FT == FieldType::$FID || FieldType::fieldTypesIsFileUpload($FT)) && $fl != "role_systemuser_fid") {
             $FieldName = substr($fl, 0, strlen($fl) - 4);
             $EntityName = $FieldName;
             $LastUnderLinePlace = strrpos($FieldName, "_");
@@ -190,7 +255,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
                 $formInfo['elements'][$i - $skippedCollumns]['caption'] = $E;
                 if ($FT == FieldType::$FID)
                     $formInfo['elements'][$i - $skippedCollumns]['type_fid'] = 3;
-                elseif ($FT == FieldType::$FILE)
+                elseif (FieldType::fieldTypesIsFileUpload($FT))
                     $formInfo['elements'][$i - $skippedCollumns]['type_fid'] = 6;
                 elseif ($FT == FieldType::$BOOLEAN)
                     $formInfo['elements'][$i - $skippedCollumns]['type_fid'] = 3;

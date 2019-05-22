@@ -432,22 +432,36 @@ class itsap_servicerequestEntity extends EntityClass {
         else
             $sq=$this->getDatabase()->Select("sr.*");
 
-        $sq=$sq->From(array('itsap_servicerequest sr','itsap_reference ref','itsap_unit u','itsap_servicerequestdevice device','itsap_servicerequestservicestatus thestatus','itsap_servicetype st'))->Where()->OpenParenthesis()->Equal(new DBField('sr.id',false),new DBField('ref.servicerequest_fid',false));
-
-        $sq=$sq->AndLogic()->OpenParenthesis()->Equal(new DBField('ref.unit_fid',false),$UnitID);
-        $sq=$sq->OrLogic()->Equal(new DBField('ref.employee_fid',false),$EmployeeID)->CloseParenthesis()->CloseParenthesis();
-        $sq=$sq->OrLogic()->OpenParenthesis()->Equal(new DBField('sr.unit_fid',false),new DBField('u.id',false));
-        $sq=$sq->AndLogic()->Equal(new DBField('u.topunit_fid',false),$TopUnitID)->CloseParenthesis();
-        $sq=$sq->AndLogic()->Equal(new DBField('sr.last_servicestatus_fid',false),new DBField('thestatus.id',false));
+        $sq=$sq->From(array('itsap_servicerequest sr','itsap_reference ref','itsap_unit u','itsap_servicerequestdevice device','itsap_servicerequestservicestatus thestatus','itsap_servicetype st'))->Where()->Equal("'1'","1");
         $sq=$sq->AndLogic()->Equal(new DBField('sr.servicetype_fid',false),new DBField('st.id',false));
+
         if($AdditionalQuery!=null && ($AdditionalQuery->isFieldInConditions("device.code") || $AdditionalQuery->isFieldInConditions("device.devicetype_fid")))
             $sq=$sq->AndLogic()->Equal(new DBField('sr.id',false),new DBField('device.servicerequest_fid',false));
+
         if($LoadOnlySecurityAccepted)
             $sq=$sq->AndLogic()->Equal(new DBField('sr.is_securityaccepted',false),1);
+
+        $sq=$sq->AndLogic()->Equal(new DBField('sr.last_servicestatus_fid',false),new DBField('thestatus.id',false));
+
+        $sq=$sq->AndLogic()->OpenParenthesis();
+            $sq=$sq->Equal(new DBField('sr.id',false),new DBField('ref.servicerequest_fid',false));
+            $sq=$sq->AndLogic()->OpenParenthesis();
+                $sq=$sq->Equal(new DBField('ref.unit_fid',false),$UnitID);
+                $sq=$sq->OrLogic()->Equal(new DBField('ref.employee_fid',false),$EmployeeID);
+            $sq=$sq->CloseParenthesis();
+
+            $sq=$sq->OrLogic()->OpenParenthesis();
+                $sq=$sq->Equal(new DBField('sr.unit_fid',false),new DBField('u.id',false));
+                $sq=$sq->AndLogic()->Equal(new DBField('u.topunit_fid',false),$TopUnitID);
+            $sq=$sq->CloseParenthesis();
+        $sq=$sq->CloseParenthesis();
+
         $sq=$this->AddSelectParamsToQuery($sq,$AdditionalQuery);
         if($Limit!=null)
             $sq=$sq->setLimit($Limit);
 
+//        echo $sq->getQueryString();
+//        die("");
         if(!$LoadOnlyCount)
         {
 
@@ -467,7 +481,6 @@ class itsap_servicerequestEntity extends EntityClass {
         {
             $result= $sq->ExecuteAssociated();
         }
-//        echo $sq->getQueryString();
         $this->getDatabase()->getDBAccessor()->close_connection();
         return $result;
     }

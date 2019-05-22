@@ -43,9 +43,10 @@ import SweetFetcher from '../../../../classes/sweet-fetcher';
 import SweetAlert from '../../../../classes/SweetAlert';
 import Constants from '../../../../classes/Constants';
 import AccessManager from '../../../../classes/AccessManager';
-import { MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter } from 'mdbreact';
+import { MDBContainer, MDBBtn, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter,FormInline, Input } from 'mdbreact';
 import Common from '../../../../classes/Common';
 import SweetComponent from '../../../../classes/sweet-component';
+import SweetHttpRequest from '../../../../classes/sweet-http-request';
 
 class $FileName extends SweetComponent {
     constructor(props) {
@@ -55,6 +56,7 @@ class $FileName extends SweetComponent {
             pages:1,
             page:0,
             canEdit:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.EDIT),
+            canInsert:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.INSERT),
             canDelete:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.DELETE),
             displaySearchWindow:false,
             ";
@@ -76,9 +78,15 @@ class $FileName extends SweetComponent {
     }
     LoadData(pageSize,page,sorted,filtered)
     {
-        let filterString=this.HttpGetParamsFromArray(filtered);
-        if(filterString!='') filterString='&'+filterString;
-        let url='/$ModuleName/$FormName?pg='+page+filterString;
+        let RecordStart=((page-1)*pageSize);
+        let Request=new SweetHttpRequest();
+        Request.appendVariables(filtered,'id','value');
+        Request.appendVariablesWithPostFix(sorted,'id','desc','__sort');
+        Request.appendVariable('_pagesize',pageSize);
+        Request.appendVariable('_startrow',RecordStart);
+        let filterAndSortString=Request.getParamsString();
+        if(filterAndSortString!='') filterAndSortString='?'+filterAndSortString;
+        let url='/$ModuleName/$FormName'+filterAndSortString;
         new SweetFetcher().Fetch(url, SweetFetcher.METHOD_GET, null, 
         data => {
             let Pages=Math.ceil(data.RecordCount/Constants.DefaultPageSize);
@@ -88,6 +96,27 @@ class $FileName extends SweetComponent {
         }, 
         null,'$ModuleName" . "." . "$FormName',AccessManager.LIST,
         this.props.history);
+        ";
+        for ($i = 0; $i < count($Fields); $i++) {
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
+                $URL = '';
+
+                $TableName=strtolower($this->getTableNameFromFIDFieldName($Fields[$i]));
+                if ($Fields[$i] == 'common_city_fid') {
+                    $URL = "'/placeman/provinces'";
+                } else {
+                    $URL = "'/$ModuleName/" . $TableName . "'";
+                }
+                $C = $C . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
+                data=>{
+                let Options=data.Data.map(item=><option value={item.id}>{item.name}</option>);
+                this.setState({" . $PureFields[$i] . "Options:Options});
+            }, 
+            null,'$ModuleName" . "." . "$TableName',AccessManager.LIST,
+            this.props.history);";
+            }
+        }
+        $C.="
     };
     searchData=()=>
     {
@@ -114,7 +143,7 @@ class $FileName extends SweetComponent {
                     </MDBModalFooter>
                 </MDBModal>
             </MDBContainer>
-            <div className={'topoperationsrow'}><Link className={'addlink'}  to={'/$ModuleName/$FormNames/management'}><IoMdAddCircle/></Link></div>
+            <div className={'topoperationsrow'}>{this.state.canInsert && <Link className={'addlink'}  to={'/$ModuleName/$FormNames/management'}><IoMdAddCircle/></Link>}</div>
         <SweetTable
             filterable={false}
             className='-striped -highlight'
@@ -151,9 +180,19 @@ columns = [";
                 $C = $C . "
 {
     Header: '$PersianField',
-    accessor: '$PureField" . "content'
+    id: '$PureField',
+    accessor: data=>data.$PureField" . "content,
 },";
-            } elseif (FieldType::getFieldType($Fields[$i]) != FieldType::$FILE) {
+            }
+            elseif (FieldType::getFieldType($Fields[$i]) == FieldType::$BOOLEAN) {
+                $C = $C . "
+{
+    Header: '$PersianField',
+    id: '$PureField',
+    accessor: data=>data.$PureField==0?'خیر':'بله',
+},";
+            }
+            elseif (!FieldType::fieldIsFileUpload($Fields[$i]) && !FieldType::fieldIsTextArea($Fields[$i])) {
                 $C = $C . "
 {
     Header: '$PersianField',
@@ -167,7 +206,7 @@ columns = [";
     accessor: 'id',
     Cell: props => <div className={'operationsrow'}>
                    {!this.state.canEdit &&
-                    <Link className={'viewlink'}  to={'/$ModuleName/$FormNames/management/'+props.value}><IoMdEye/></Link>
+                    <Link className={'viewlink'}  to={'/$ModuleName/$FormNames/view/'+props.value}><IoMdEye/></Link>
                    }
                    {this.state.canEdit &&
                     <Link className={'editlink'}  to={'/$ModuleName/$FormNames/management/'+props.value}><FaEdit/></Link>
@@ -199,6 +238,33 @@ export default $FileName;
         $this->SaveFile($DesignFile, $C);
     }
 
+    private function getFieldLoadCode($ModuleName,$PureFields,$Fields)
+    {
+        $C="";
+        for ($i = 0; $i < count($Fields); $i++) {
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
+                $URL = '';
+                $TableName=strtolower($this->getTableNameFromFIDFieldName($Fields[$i]));
+                if ($Fields[$i] == 'common_city_fid') {
+                    $URL = "'/placeman/provinces'";
+                } else {
+                    $URL = "'/$ModuleName/" . $TableName . "'";
+                }
+                $C = $C . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
+                data=>{
+                let Options=data.Data.map(item=><option value={item.id}>{item.name}</option>);
+                this.setState({" . $PureFields[$i] . "Options:Options});
+            }, 
+            null,'$ModuleName" . "." . "$TableName',AccessManager.LIST,
+            this.props.history);";
+            }
+        }
+
+
+
+
+        return $C;
+    }
     protected function makeReactItemManageDesign($formInfo)
     {
         $ModuleName = $formInfo['module']['name'];
@@ -230,17 +296,22 @@ import ModalImage from 'react-modal-image'
 import SweetButton from '../../../../classes/sweet-button';
 import SweetAlert from '../../../../classes/SweetAlert';
 
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 class $FileName extends SweetComponent {
     constructor(props) {
         super(props);
         this.state = {
-                canEdit:AccessManager.UserCan('$ModuleName','$FormName',AccessManager.EDIT),
+                canEdit:AccessManager.UserCan('$ModuleName','$FormName',this.props.match.params.id>0?AccessManager.EDIT:AccessManager.INSERT),
             ";
         for ($i = 0; $i < count($Fields); $i++) {
-            $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
+            if(FieldType::getFieldType($Fields[$i]) == FieldType::$BOOLEAN)
+                $C = $C . "\r\n\t\t\t$PureFields[$i]:0,";
+            else
+                $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
             if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
                 $C = $C . "\r\n\t\t\t$PureFields[$i]Options:[],";
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE)
+            if (FieldType::fieldIsFileUpload($Fields[$i]))
                 $C = $C . "\r\n\t\t\t$PureFields[$i]Preview:'',";
         }
 
@@ -254,7 +325,7 @@ class $FileName extends SweetComponent {
         $C .= "
                  this.setState({ ";
         for ($i = 0; $i < count($PureFields); $i++) {
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE)
+            if (FieldType::fieldIsFileUpload($Fields[$i]))
                 $C = $C . "$PureFields[$i]Preview:Constants.SiteURL+'/'+data.Data." . $PureFields[$i] . ",";
             $C = $C . "$PureFields[$i]:data.Data." . $PureFields[$i] . ",";
         }
@@ -263,27 +334,14 @@ class $FileName extends SweetComponent {
             }, 
             null,'$ModuleName" . "." . "$FormName',AccessManager.VIEW,
             this.props.history);
-        }//IF";
-        for ($i = 0; $i < count($Fields); $i++) {
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
-                $URL = '';
-                if ($Fields[$i] == 'common_city_fid') {
-                    $URL = "'/placeman/provinces'";
-                } else {
-                    $URL = "'/$ModuleName/" . $PureFields[$i] . "'";
-                }
-                $C = $C . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
-                data=>{
-                let Options=data.Data.map(item=><option value={item.id}>{item.name}</option>);
-                this.setState({" . $PureFields[$i] . "Options:Options});
-            }, 
-            null,'$ModuleName" . "." . "$PureFields[$i]',AccessManager.LIST,
-            this.props.history);";
-            }
-        }
+        }//IF
+        ";
+        $C.=$this->getFieldLoadCode($ModuleName,$PureFields,$Fields);
         $C .= "
-        
     }
+    editorConfiguration = {
+        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList'],
+    };
     render(){
         return <MDBContainer>
             <MDBRow>
@@ -388,7 +446,7 @@ class $FileName extends SweetComponent {
             $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
             if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
                 $C = $C . "\r\n\t\t\t$PureFields[$i]Options:[],";
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE)
+            if (FieldType::fieldIsFileUpload($Fields[$i]))
                 $C = $C . "\r\n\t\t\t$PureFields[$i]Preview:'',";
         }
 
@@ -404,25 +462,31 @@ class $FileName extends SweetComponent {
         $FieldLoaders = "";
         for ($i = 0; $i < count($PureFields); $i++) {
             $FieldType = FieldType::getFieldType($Fields[$i]);
-            if ($FieldType == FieldType::$FILE)
-                $C = $C . "$PureFields[$i]Preview:Constants.SiteURL+'/'+data.Data." . $PureFields[$i] . ",";
+            if (FieldType::fieldTypesIsFileUpload($FieldType))
+                $C = $C . "\r\n$PureFields[$i]Preview:Constants.SiteURL+'/'+data.Data." . $PureFields[$i] . ",";
             elseif ($FieldType != FieldType::$FID)
                 $C = $C . "\r\n$PureFields[$i]:data.Data." . $PureFields[$i] . ",";
-            else {
-                $URL = '';
-                if ($Fields[$i] == 'common_city_fid') {
-                    $URL = "'/placeman/provinces'";
-                } else {
-                    $URL = "'/$ModuleName/" . $PureFields[$i] . "'";
-                }
-                $URL = $URL . "+'/'+data.Data.$PureFields[$i]";
-                $FieldLoaders = $FieldLoaders . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
-                data=>{
-                this.setState({" . $PureFields[$i] . ":data.Data.name});
-            }, 
-            null,'$ModuleName" . "." . "$PureFields[$i]',AccessManager.VIEW,
-            this.props.history);";
+            else
+            {
+                $C = $C . "\r\n$PureFields[$i]:data.Data." . $PureFields[$i] . "info.name,";
             }
+//            else {
+//
+//                $URL = '';
+//                $TableName=strtolower($this->getTableNameFromFIDFieldName($Fields[$i]));
+//                if ($Fields[$i] == 'common_city_fid') {
+//                    $URL = "'/placeman/provinces'";
+//                } else {
+//                    $URL = "'/$ModuleName/" . $TableName . "'";
+//                }
+//                $URL = $URL . "+'/'+data.Data.$PureFields[$i]";
+//                $FieldLoaders = $FieldLoaders . "\r\nnew SweetFetcher().Fetch($URL,SweetFetcher.METHOD_GET,null,
+//                data=>{
+//                this.setState({" . $PureFields[$i] . ":data.Data.name});
+//            },
+//            null,'$ModuleName" . "." . "$TableName',AccessManager.VIEW,
+//            this.props.history);";
+//            }
         }
         $C .= "});
         $FieldLoaders
@@ -481,7 +545,7 @@ class $FileName extends SweetComponent {
                                     />
                                 </FormInline>
                         </div>";
-            } elseif (FieldType::getFieldType($Fields[$i]) == FieldType::$FILE) {
+            } elseif (FieldType::fieldIsFileUpload($Fields[$i])) {
                 $C = $C . "<div className='form-group'>
                             <label htmlFor='$PureFields[$i]'>$PersianFields[$i]</label>
                             
@@ -491,6 +555,12 @@ class $FileName extends SweetComponent {
                             className={'imageuploadpreview'} />
                         </div>
                             ";
+            }elseif (FieldType::fieldIsTextArea($Fields[$i])) {
+                $C = $C . "
+                        <div className='form-group'>
+                            <label>$PersianFields[$i]</label>
+                            <div dangerouslySetInnerHTML={{__html: this.state.$PureFields[$i]}} />
+                        </div>";
             } else {
                 $C = $C . "
                         <div className='form-group'>
@@ -534,18 +604,19 @@ export default $FileName;
         $UFormNames = ucfirst($FormNames);
         $UFormName = ucfirst($FormName);
         $ModuleNames = $ModuleName . "s";
+        $FormNamePersian=$trans->getPersian($FormName,$FormName);
         $ListFileName = $ModuleName . "_$FormName" . "List";
         $EditFileName = $ModuleName . "_$FormName" . "Manage";
         $ViewFileName = $ModuleName . "_$FormName" . "View";;
         $C = "
 
             const $ListFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$ListFileName'));
-            routes.push({ path: '/$ModuleName/$FormNames',exact:true, name: 'لیست $FormName',component:$ListFileName});
+            routes.push({ path: '/$ModuleName/$FormNames',exact:true, name: 'لیست $FormNamePersian',component:$ListFileName});
             const $EditFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$EditFileName'));
             const $ViewFileName = React.lazy(() => import('./modules/$ModuleName/pages/$FormName/$ViewFileName'));
-            routes.push({ path: '/$ModuleName/$FormNames/management/:id',exact:false, name: 'ویرایش $FormName',component:$EditFileName});
-            routes.push({ path: '/$ModuleName/$FormNames/management',exact:false, name: 'تعریف $FormName',component:$EditFileName});
-            routes.push({ path: '/$ModuleName/$FormNames/view/:id',exact:false, name: '$FormName',component:$ViewFileName});
+            routes.push({ path: '/$ModuleName/$FormNames/management/:id',exact:false, name: 'ویرایش $FormNamePersian',component:$EditFileName});
+            routes.push({ path: '/$ModuleName/$FormNames/management',exact:false, name: 'تعریف $FormNamePersian',component:$EditFileName});
+            routes.push({ path: '/$ModuleName/$FormNames/view/:id',exact:false, name: '$FormNamePersian',component:$ViewFileName});
 ";
         $DesignFile = $this->getReactCodeModuleDir() . "/routes.js";
 
@@ -556,7 +627,7 @@ export default $FileName;
     {
         $ReturningCode = "";
         if ($IsForSearchSake) {
-            if (FieldType::getFieldType($FieldName) == FieldType::$FILE)
+            if (FieldType::fieldIsFileUpload($FieldName))
                 return "";
         }
         if (FieldType::getFieldType($FieldName) == FieldType::$FID) {
@@ -569,12 +640,12 @@ export default $FileName;
                                 ";
             if ($IsForSearchSake) {
                 $ReturningCode .= "onChange={(event)=>{this.searchParams.$PureFieldName=event.target.value;}}>
-                                <option>همه</option>";
+                                <option value={''}>همه</option>";
             } else {
                 $ReturningCode .= "value={this.state.$PureFieldName}
                                 disabled={!this.state.canEdit}
                                 onChange={(event)=>{this.setState({" . $PureFieldName . ":event.target.value})}}>
-                                <option>انتخاب کنید</option>";
+                                <option value={''}>انتخاب کنید</option>";
             }
             $ReturningCode .= "\r\n                                {this.state.$PureFieldName" . "Options}
                             </select>
@@ -619,7 +690,7 @@ export default $FileName;
                                     />
                                 </FormInline>
                         </div>";
-        } elseif (FieldType::getFieldType($FieldName) == FieldType::$FILE) {
+        } elseif (FieldType::fieldIsFileUpload($FieldName)) {
             $ReturningCode = $ReturningCode . "<div className='form-group'>
                             <label htmlFor='$PureFieldName'>$PersianFieldName</label>
                             <input
@@ -648,7 +719,25 @@ export default $FileName;
                         }
                         </div>
                             ";
-        } else {
+        }
+        elseif (FieldType::fieldIsTextArea($FieldName) && !$IsForSearchSake) {
+            $ReturningCode = $ReturningCode . "<div className='form-group'>
+                            <label htmlFor='$PureFieldName'>$PersianFieldName</label>
+                            <CKEditor
+                                className='form-control'
+                                id='content'
+                                readOnly={!this.state.canEdit}
+                                group
+                                editor={ ClassicEditor }
+                                config={ this.editorConfiguration }
+                                data={this.state.$PureFieldName}
+                                onChange={ ( event, editor ) => {
+                                    this.setState({". $PureFieldName .":editor.getData()});
+                                } }
+                            />
+                            </div>";
+        }
+        else {
             $InputStart = "<input
                                 className='form-control'";
             if (!$IsForSearchSake) {

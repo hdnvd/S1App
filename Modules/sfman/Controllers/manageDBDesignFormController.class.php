@@ -252,14 +252,14 @@ EOT;
 
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $ft=FieldType::getFieldType($formInfo['elements'][$i]['name']);
-            if($ft==FieldType::$NORMAL || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID|| $ft==FieldType::$FILE || $ft==FieldType::$AUTOTIME || $ft==FieldType::$DATE)
+            if(FieldType::fieldTypesIsText($ft) || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID|| FieldType::fieldTypesIsFileUpload($ft) || $ft==FieldType::$AUTOTIME || $ft==FieldType::$DATE)
             $C.=$this->getTableItemDesignElementDefineCode($formInfo,$i);
         }
         $C .="\n\tpublic function __construct()";
         $C .="\n\t{";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $ft=FieldType::getFieldType($formInfo['elements'][$i]['name']);
-            if($ft==FieldType::$NORMAL || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID || $ft==FieldType::$FILE || $ft==FieldType::$AUTOTIME || $ft==FieldType::$DATE)
+            if(FieldType::fieldTypesIsText($ft) || $ft==FieldType::$BOOLEAN || $ft==FieldType::$FID || FieldType::fieldTypesIsFileUpload($ft) || $ft==FieldType::$AUTOTIME || $ft==FieldType::$DATE)
             $C.=$this->getDesignInitialization($formInfo,$i);
         }
         $C .="\n\t}";
@@ -273,7 +273,7 @@ EOT;
         $C .= "\r\n\t\tif (key_exists(\"$TableName\", \$this->Data)){";
         for($i=0;$i<count($formInfo['elements']);$i++) {
             $Ename=$formInfo['elements'][$i]['name'];
-            if(FieldType::getFieldType($Ename)==FieldType::$NORMAL || FieldType::getFieldType($Ename)==FieldType::$FILE ) {
+            if(FieldType::fieldIsText($Ename) || FieldType::fieldIsFileUpload($Ename) ) {
                 $Val="\$this->Data['$TableName']->get" . ucwords($Ename) . "()";
                 $C .= "\r\n\t\t\t\$this->setFieldCaption('$Ename',\$this->Data['$TableName']->getFieldInfo('$Ename')->getTitle());";
                 $C .= "\r\n\t\t\t\$this->$Ename" . "->setText($Val);";

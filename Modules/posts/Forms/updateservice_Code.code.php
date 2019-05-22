@@ -30,6 +30,10 @@ class updateservice_Code extends FormCode {
 		$result=$updateserviceController->load();
 		$MaxPosts=$result['maxposts'];
 		$PostService="DefaultService";
+
+
+
+
 		if(isset($_GET['postservice']))
 			$PostService=$_GET['postservice'];
 

@@ -20,7 +20,7 @@ use Modules\common\Forms\message_Design;
 */
 class servicerequestlist_Code extends FormCode {
 //    private $VisibleFields=['title','topunit','unit_fid','servicetypegroup','servicetype_fid','devicetype','devicecode','servicestatus','description','priority','request_date_from','request_date_to','is_securityaccepted','letternumber','letter_date_from','letter_date_to','letter_date_from'];
-    private $VisibleFields=['title','unit_fid','servicetypegroup','servicetype_fid','devicetype','devicecode','servicestatus','description'];
+    private $VisibleFields=['title','servicetypegroup','servicetype_fid','devicetype','devicecode','servicestatus','description'];
 
     /**
      * @return array
@@ -110,11 +110,11 @@ class servicerequestlist_Code extends FormCode {
 			$design->setMessageType(MessageType::$ERROR);
 			$design->setMessage("آیتم مورد نظر پیدا نشد");
 		}
-		catch(\Exception $uex){
-			$design=new message_Design();
-			$design->setMessageType(MessageType::$ERROR);
-			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
-		}
+//		catch(\Exception $uex){
+//			$design=new message_Design();
+//			$design->setMessageType(MessageType::$ERROR);
+//			$design->setMessage("متاسفانه خطایی در اجرای دستور خواسته شده بوجود آمد.");
+//		}
 		return $design;
 	}
 	public function __construct($namespace)

@@ -386,7 +386,7 @@ class servicerequestlistsearch_Design extends FormDesign {
 		$LTable1=new Div();
 		$LTable1->setClass("searchtable");
 		if($this->getIsFieldEnabled('title'))
-		    $LTable1->addElement($this->getFieldRowCode($this->title,$this->getFieldCaption('title'),null,'',null));
+		    $LTable1->addElement($this->getFieldRowCode($this->title,"عنوان",null,'',null));
         if($this->getIsFieldEnabled('topunit'))
             $LTable1->addElement($this->getFieldRowCode($this->topunit,"یگان مادر",null,'',null));
         if($this->getIsFieldEnabled('unit_fid'))
@@ -402,7 +402,7 @@ class servicerequestlistsearch_Design extends FormDesign {
         if($this->getIsFieldEnabled('servicestatus'))
             $LTable1->addElement($this->getFieldRowCode($this->servicestatus,"وضعیت",null,'',null));
         if($this->getIsFieldEnabled('description'))
-            $LTable1->addElement($this->getFieldRowCode($this->description,$this->getFieldCaption('description'),null,'',null));
+            $LTable1->addElement($this->getFieldRowCode($this->description,"توضیحات",null,'',null));
         if($this->getIsFieldEnabled('priority'))
             $LTable1->addElement($this->getFieldRowCode($this->priority,$this->getFieldCaption('priority'),null,'',null));
         if($this->getIsFieldEnabled('request_date_from'))
