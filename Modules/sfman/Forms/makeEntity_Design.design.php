@@ -110,6 +110,9 @@ class makeEntity_Design extends FormDesign {
         $this->chkItemsToGenerate->addOption("React Framework Codes","react_codes");
         $this->chkItemsToGenerate->addSelectedValue("react_codes");
 
+        $this->chkItemsToGenerate->addOption("React Native Codes","react_native_codes");
+        $this->chkItemsToGenerate->addSelectedValue("react_native_codes");
+
 
         $this->chkItemsToGenerate->addOption("Android Class","android_class");
 

@@ -30,6 +30,7 @@ private $Translations;
             'group'=>'گروه',
             'type'=>'عنوان',
             'isactive'=>'فعال/غیرفعال',
+            'active'=>'فعال/غیرفعال',
             'activity'=>'فعالیت',
             'bank'=>'بانک',
             'chapter'=>'سرفصل',
@@ -123,6 +124,31 @@ private $Translations;
             'request'=>'درخواست',
             'description'=>'توضیحات',
             'hardwareneeded'=>'نیازمند ثبت سخت افزار',
+            'backuptel'=>'تلفن شماره ۲',
+            'backupmobile'=>'تلفن همراه شماره ۲',
+            'email'=>'ایمیل',
+            'photo'=>'تصویر',
+            'nationalcard'=>'تصویر کارت ملی',
+            'area'=>'منطقه',
+            'placeman_area'=>'منطقه',
+            'shabacode'=>'کد شبا',
+            'areatype'=>'بافت',
+            'roomcount'=>'تعداد اتاق',
+            'capacity'=>'ظرفیت به نفر',
+            'maxguests'=>'حداکثر تعداد مهمان',
+            'structurearea'=>'متراژ بنا',
+            'totalarea'=>'متراژ کل',
+            'placeman_place'=>'محل',
+            'addedbyowner'=>'دارای سند مالکیت به نام کاربر',
+            'viewtype'=>'چشم انداز',
+            'structuretype'=>'نوع ساختمان',
+            'fulltimeservice'=>'تحویل ۲۴ ساعته',
+            'timestart'=>'تحویل/تخلیه',
+            'owningtype'=>'نوع اقامتگاه',
+            'documentphoto'=>'سند مالکیت',
+            'latitude'=>'عرض جغرافیایی',
+            'longitude'=>'طول جغرافیایی',
+            'visits'=>'تعداد بازدید',
         ];
     }
     public function getPersian($Word,$DefaultValue)
@@ -140,6 +166,11 @@ private $Translations;
             if($LastPart=="_fid" || $LastPart=="_flu" || $LastPart=="_igu")
             {
                 $Word=substr($Word,0,strlen($Word)-4);
+            }
+            if($LastPart=="_clk")
+            {
+                $Word=substr($Word,0,strlen($Word)-4);
+                $Result=$Result."زمان ";
             }
             if($LastPart2=="_time")
             {
@@ -166,9 +197,11 @@ private $Translations;
             elseif($Prefix1=="is")
                 $Word=substr($Word,2);
         }
-
-        if(key_exists($Word,$this->Translations))
+        if(key_exists($Word,$this->Translations)){
+//            echo $Word . ":".$this->Translations[$Word]."<br>";
             return $Result . $this->Translations[$Word];
+        }
+//        echo $Word . " Has No Translation<br>";
         return $DefaultValue;
     }
 }

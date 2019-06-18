@@ -79,7 +79,7 @@ class sendphoto_Design extends FormDesign {
 		$table->addElement($filephoto);
 		$table->addElement($lblAlbum);
 		$table->addElement($this->cmbMotherAlbum);
-		$captcha=new Image(DEFAULT_APPURL . "captcha");
+		$captcha=new Image(DEFAULT_APPURL . " ");
 		$table->addElement($captcha,2);
 		$table->addElement(new Lable("حروف تصویر"));
 		$table->addElement($this->txtCaptcha);

@@ -24,101 +24,167 @@ use Modules\sfman\Entity\sfman_tableEntity;
 abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormController
 {
 
-    protected function makeLaravelAPIModel($formInfo)
-    {
+    private function _codeGeneratorTemplate($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $AddGetterCodes = "";
+        $AddFieldSetCodes = "";
+        $UpdateGetterCodes = "";
+        $UpdateFieldSetCodes = "";
+        $ListQueryCodes = "";
+        $ListFieldLoadCodes = "";
+        $SingleLoadFieldLoadCodes = "";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes);
+        return $FieldCode;
+    }
+    private function _getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $UCFieldInput = "Input".ucfirst($PureFieldName);
+        $UCFormName = ucfirst($FormName);
 
-        $ModuleName = $formInfo['module']['name'];
-        $FormName = $formInfo['form']['name'];
-
-        $AllFields=$this->getAllFormsOfFields();
-        $Fields=$AllFields['fields'];
-        $PureFields=$AllFields['purefields'];
-        $C = "<?php
-namespace App\\models\\$ModuleName;
-
-use App\\User;
-use Illuminate\\Database\\Eloquent\\Model;
-
-class $ModuleName" . "_" . "$FormName extends Model
-{
-    protected \$table = \"$ModuleName" . "_" . "$FormName\";
-    protected \$fillable = [";
-        $fieldSetCode = '';
-        for ($i = 0; $i < count($Fields); $i++) {
-                $UCField = $Fields[$i];
-                $Field = trim(strtolower($UCField));
-                $UCField = ucfirst($Field);
-                if ($Field != "deletetime") {
-
-                    if ($fieldSetCode != "")
-                        $fieldSetCode .= ",";
-                    $fieldSetCode .= "'$Field'";
-                }
+        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName');";
+        $AddFieldSetCodes = "'$FieldName'=>\$$UCFieldInput";
+        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName');";
+        $UpdateFieldSetCodes = "\n        \$$UCFormName->$FieldName=\$$UCFieldInput;";
+        $ListQueryCodes = "\n        \$$UCFormName"."Query =SweetQueryBuilder::WhereLikeIfNotNull(\$$UCFormName"."Query,'$FieldName',\$request->get('$PureFieldName'));";
+        $ListQueryCodes.="\n        \$$UCFormName"."Query =SweetQueryBuilder::OrderIfNotNull(\$$UCFormName"."Query,'$PureFieldName"."__sort','$FieldName',\$request->get('$PureFieldName"."__sort'));";;
+        $ListFieldLoadCodes = "";
+        $SingleLoadFieldLoadCodes = "";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes);
+        return $FieldCode;
+    }
+    private function _getFileUploadFiledCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        $UCFieldInput = "Input".ucfirst($PureFieldName);
+        $UCFormName = ucfirst($FormName);
+        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->file('$PureFieldName');";
+        $AddGetterCodes .= "\n        if(\$$UCFieldInput!=null){
+            \$$UCFieldInput"."->move('img/$ModuleName/$FormName',\$$UCFieldInput" . "->getClientOriginalName());
+            \$$UCFieldInput='img/$ModuleName/$FormName/'.\$$UCFieldInput" . "->getClientOriginalName();
         }
-        $C .= $fieldSetCode . "];";
-        for ($i = 0; $i < count($Fields); $i++) {
-            $Field = trim(strtolower($Fields[$i]));
-
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID){
-                $TableName=$this->getTableNameFromFIDFieldName($Field);
-                $Module=$this->getModuleNameFromFIDFieldName($Field,$ModuleName);
-                $ModelName=$Module."_".$TableName;
-                if($Module==="")
-                    $ModelName=$TableName;
-
-                $C .= "\n\tpublic function $PureFields[$i]()
-    {
-        return \$this->belongsTo($ModelName::class,'$Field')->first();
-    }";
-            }
-
+        else
+        { 
+            \$$UCFieldInput='';
+        }";
+        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
+        $UpdateGetterCodes = "\n        \$$UCFieldInput=\$request->file('$PureFieldName');";
+        $UpdateGetterCodes .= "\n        if(\$$UCFieldInput!=null){
+            \$$UCFieldInput"."->move('img/',\$$UCFieldInput" . "->getClientOriginalName());
+            \$$UCFieldInput='img/'.\$$UCFieldInput" . "->getClientOriginalName();
         }
-
-            $C .= "\n}";
-        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/models/$ModuleName/$ModuleName" . "_$FormName" . ".php";
-        $this->SaveFile($DesignFile, $C);
+        else
+        { 
+            \$$UCFieldInput='';
+        }";
+        $UpdateFieldSetCodes = "\n        if(\$$UCFieldInput!=null)
+            \$$UCFormName->$FieldName=\$$UCFieldInput;";;
+        $ListQueryCodes = "";
+        $ListFieldLoadCodes = $GFC->getListFieldLoadCodes();
+        $SingleLoadFieldLoadCodes = $GFC->getSingleLoadFieldLoadCodes();
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes);
+        return $FieldCode;
     }
 
-    protected function makeLaravelAPIRoutes($formInfo)
+    /**
+     * @param string $ModuleName
+     * @param string $FormName
+     * @param string $FieldName
+     * @param string $PureFieldName
+     * @param string $TranslatedFieldName
+     * @return LaravelFieldCode
+     */
+    private function _getFieldCodes($ModuleName, $FormName, $FieldName, $PureFieldName, $TranslatedFieldName)
     {
+//        if(FieldType::fieldIsAutoGenerated($FieldName))
+//            return $this->_getAutoFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+//        if(FieldType::fieldIsLongitude($FieldName))
+//            return $this->_getEmptyCodedFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+//        if(FieldType::fieldIsLatitude($FieldName))
+//            return $this->_getLocationFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+//        if(FieldType::getFieldType($FieldName)==FieldType::$CLOCK)
+//            return $this->_getClockFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+//        if (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
+//            return $this->_getBooleanFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        if (FieldType::getFieldType($FieldName) == FieldType::$FID) {
 
-        $ModuleName = $formInfo['module']['name'];
-        $FormName = $formInfo['form']['name'];
-        $FormNames = $FormName . "s";
-        $C = "\n//------------------------------------------------------------------------------------------------------";
-        $C2 = "\n//------------------------------------------------------------------------------------------------------";
-        $C2 .= "\nRoute::get('$ModuleName/$FormName', '$ModuleName\\\\API\\\\$FormName" . "Controller@list');";
-        $C2 .= "\nRoute::get('$ModuleName/$FormName/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@get');";
-        $C .= "\nRoute::post('$ModuleName/$FormName', '$ModuleName\\\\API\\\\$FormName" . "Controller@add');";
-        $C .= "\nRoute::put('$ModuleName/$FormName/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@update');";
-        $C .= "\nRoute::delete('$ModuleName/$FormName/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@delete');";
-
-        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/ChangerRoutes" . ".php";
-        $DesignFile2 = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/GetterRoutes" . ".php";
-        $this->SaveFile($DesignFile, $C,true);
-        $this->SaveFile($DesignFile2, $C2,true);
+            if (FieldType::fieldIsCityAreaFid($FieldName))
+                return $this->_getCityAreaFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+            if (FieldType::fieldIsPlaceFid($FieldName))
+                return $this->_getPlaceFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+            return $this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        }
+        if (FieldType::fieldIsFileUpload($FieldName))
+            return $this->_getFileUploadFiledCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        return $this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
     }
+    private function _getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
 
-    protected function makeLaravelWebRoutes($formInfo)
-    {
-
-        $ModuleName = $formInfo['module']['name'];
-        $FormName = $formInfo['form']['name'];
-        $FormNames = $FormName . "s";
-        $C = "\nRoute::get('$ModuleName/management/$FormNames', '$ModuleName\\\\Web\\\\$FormName" . "Controller@managelist')->name('$FormName" . "manlist');";
-        $C .= "\nRoute::post('$ModuleName/management/$FormNames/manage', '$ModuleName\\\\Web\\\\$FormName" . "Controller@managesave');";
-        $C .= "\nRoute::get('$ModuleName/management/$FormNames/manage', '$ModuleName\\\\Web\\\\$FormName" . "Controller@manageload')->name('$FormName" . "manlist');";
-        $C .= "\nRoute::get('$ModuleName/management/$FormNames/delete', '$ModuleName\\\\Web\\\\$FormName" . "Controller@delete');";
-
-
-        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/$FormName" . "-web.php";
-        $this->SaveFile($DesignFile, $C);
+        $UCFormName = ucfirst($FormName);
+        $PureFieldNameUCField=ucfirst($PureFieldName)."Field";
+        $PureFieldNameUC=ucfirst($PureFieldName);
+        $FieldTableName=$this->getTableNameFromFIDFieldName($FieldName);
+        $FieldModuleName=$this->getModuleNameFromFIDFieldName($FieldName,$ModuleName);
+        $ModelName=$FieldModuleName."_".$FieldTableName;
+        if($FieldModuleName==="")
+            $ModelName=$FieldTableName;
+        $AddGetterCodes =$GFC->getAddGetterCodes();
+        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
+        $UpdateGetterCodes = $GFC->getUpdateGetterCodes();
+        $UpdateFieldSetCodes = $GFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$GFC->getListQueryCodes();
+        $ListFieldLoadCodes = "\n            \$$PureFieldNameUCField=\$$UCFormName" . "s[\$i]->$PureFieldName();";
+        $ListFieldLoadCodes .= "\n            \$$UCFormName" . "sArray[\$i]['$PureFieldName"."content']=\$$PureFieldNameUCField==null?'':\$$PureFieldNameUCField"."->name;";
+        $SingleLoadFieldLoadCodes = "
+        \$$PureFieldNameUC"."Object=\$$UCFormName->$PureFieldName"."();
+        \$$PureFieldNameUC"."Object=\$$PureFieldNameUC"."Object==null?'':\$$PureFieldNameUC"."Object;
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']=\$this->getNormalizedItem(\$$PureFieldNameUC"."Object->toArray());";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes);
+        return $FieldCode;
     }
-    protected function makeLaravelRoutes($formInfo)
-    {
+    private function _getPlaceFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $FFC=$this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        $AddGetterCodes =$FFC->getAddGetterCodes();
+        $AddFieldSetCodes = $FFC->getAddFieldSetCodes();
+        $UpdateGetterCodes = $FFC->getUpdateGetterCodes();
+        $UpdateFieldSetCodes = $FFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$FFC->getListQueryCodes();
+        $ListFieldLoadCodes =$FFC->getListFieldLoadCodes();
+        $SingleLoadFieldLoadCodes=$FFC->getSingleLoadFieldLoadCodes();
+        $PureFieldNameUC=ucfirst($PureFieldName);
+        $UCFormName = ucfirst($FormName);
+        $SingleLoadFieldLoadCodes .= "
+        \$area= \$$PureFieldNameUC"."Object->area();
+        \$city=\$area->city();
+        \$province=\$city->province();
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['areainfo']=\$this->getNormalizedItem(\$area->toArray());
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['cityinfo']=\$this->getNormalizedItem(\$city->toArray());
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['provinceinfo']=\$this->getNormalizedItem(\$province->toArray());";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes);
+        return $FieldCode;
+    }
+    private function _getCityAreaFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $FFC=$this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
 
-        $this->makeLaravelAPIRoutes($formInfo);
-        $this->makeLaravelWebRoutes($formInfo);
+        $UCFormName = ucfirst($FormName);
+        $AddGetterCodes =$FFC->getAddGetterCodes();
+        $AddFieldSetCodes = $FFC->getAddFieldSetCodes();
+        $UpdateGetterCodes = $FFC->getUpdateGetterCodes();
+        $UpdateFieldSetCodes = $FFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$FFC->getListQueryCodes();
+        $ListFieldLoadCodes = "
+            \$AreaField=\$$UCFormName" . "s[\$i]->$PureFieldName();
+            \$CityField=\$AreaField==null?'':\$AreaField->city();
+            \$ProvinceField=\$CityField==null?'':\$CityField->province();
+            \$$UCFormName" . "sArray[\$i]['$PureFieldName"."content']=\$AreaField==null?'':\$AreaField->title;
+            \$$UCFormName" . "sArray[\$i]['citycontent']=\$CityField==null?'':\$CityField->title;
+            \$$UCFormName" . "sArray[\$i]['provincecontent']=\$ProvinceField==null?'':\$ProvinceField->title;";
+        $SingleLoadFieldLoadCodes = "
+        \$AreaField=\$$UCFormName" . "->$PureFieldName();
+        \$CityField=\$AreaField==null?'':\$AreaField->city();
+        \$ProvinceField=\$CityField==null?'':\$CityField->province();
+        \$$UCFormName" . "ObjectAsArray['$PureFieldName"."info']=\$AreaField==null?'':\$AreaField;
+        \$$UCFormName" . "ObjectAsArray['cityinfo']=\$CityField==null?'':\$CityField;
+        \$$UCFormName" . "ObjectAsArray['provinceinfo']=\$ProvinceField==null?'':\$ProvinceField;";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes);
+        return $FieldCode;
     }
     protected function makeLaravelAPIController($formInfo)
     {
@@ -136,6 +202,25 @@ class $ModuleName" . "_" . "$FormName extends Model
         $Fields=$AllFields['fields'];
         $PersianFields=$AllFields['persianfields'];
         $PureFields=$AllFields['purefields'];
+        $AddGetterCodes = "";
+        $AddFieldSetCodes = "";
+        $UpdateGetterCodes = "";
+        $UpdateFieldSetCodes = "";
+        $ListQueryCodes = "";
+        $ListFieldLoadCodes = "";
+        $SingleLoadFieldLoadCodes = "";
+        for ($i = 0; $i < count($Fields); $i++) {
+            $FC=$this->_getFieldCodes($ModuleName,$FormName,$Fields[$i],$PureFields[$i],$PersianFields[$i]);
+            $AddGetterCodes.=$FC->getAddGetterCodes();
+            if ($AddFieldSetCodes != "")
+                $AddFieldSetCodes .= ",";
+            $AddFieldSetCodes.=$FC->getAddFieldSetCodes();
+            $UpdateGetterCodes.=$FC->getUpdateGetterCodes();
+            $UpdateFieldSetCodes.=$FC->getUpdateFieldSetCodes();
+            $ListQueryCodes.=$FC->getListQueryCodes();
+            $ListFieldLoadCodes.=$FC->getListFieldLoadCodes();
+            $SingleLoadFieldLoadCodes.=$FC->getSingleLoadFieldLoadCodes();
+        }
         $C = "<?php
 namespace App\\Http\\Controllers\\$ModuleName\\API;
 use App\\models\\$ModuleName\\$ModuleName" . "_" . "$FormName;
@@ -153,82 +238,23 @@ class $UCFormName" . "Controller extends SweetController
     {
         if(!Bouncer::can('$ModuleName" . "." . "$FormName.insert'))
             throw new AccessDeniedHttpException();
+        $AddGetterCodes
     ";
-        $fieldSetCode = "";
-        for ($i = 0; $i < count($Fields); $i++) {
-
-            $TheFieldType=FieldType::getFieldType($Fields[$i]);
-                $UCField = $Fields[$i];
-                $Field = trim(strtolower($UCField));
-                if ($Field != "deletetime") {
-                    $PureField=$PureFields[$i];
-                    $UCField = "Input".ucfirst($PureField);
-                    if(FieldType::fieldTypesIsFileUpload($TheFieldType))
-                    {
-                        $C .= "\n\t\t\$$UCField=\$request->file('$PureField');";
-                        $C .= "\n        if(\$$UCField!=null){
-            \$$UCField"."->move('img/',\$$UCField" . "->getClientOriginalName());
-            \$$UCField='img/'.\$$UCField" . "->getClientOriginalName();
-        }
-        else
-        { 
-            \$$UCField='';
-        }";
-                    }
-                    else
-                    {
-                        $C .= "\n\t\t\$$UCField=\$request->input('$PureField');";
-                    }
-                    if ($fieldSetCode != "")
-                        $fieldSetCode .= ",";
-                    $fieldSetCode .= "'$Field'=>\$$UCField";
-                }
-
-        }
         $C .= "\n\t\t\$$UCFormName" . " = $ModuleName" . "_" . "$FormName::create([";
-        $C .= $fieldSetCode . ",'deletetime'=>-1]);";
+        $C .= $AddFieldSetCodes . ",'deletetime'=>-1]);";
         $C .= "\n\t\treturn response()->json(['Data'=>\$$UCFormName], 201);";
         $C .= "\n\t}";
         $C .= "\n\tpublic function update(\$id,Request \$request)
     {
         if(!Bouncer::can('$ModuleName" . "." . "$FormName.edit'))
             throw new AccessDeniedHttpException();
+        $UpdateGetterCodes;
+            
     ";
-        $fieldSetCode = "";
-        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            $TheFieldType=FieldType::getFieldType($this->getCurrentTableFields()[$i]);
-            if ($TheFieldType != FieldType::$LARAVELMETAINF && $TheFieldType != FieldType::$ID) {
-                $UCField = $this->getCurrentTableFields()[$i];
-                $Field = trim(strtolower($UCField));
-                if ($Field != "deletetime") {
-                    $PureField=$this->getPureFieldName($Field);
-                    $UCField = "Input".ucfirst($PureField);
-                    if(FieldType::fieldTypesIsFileUpload($TheFieldType))
-                    {
-                        $C .= "\n        \$$UCField=\$request->file('$PureField');";
-                        $C .= "\n        if(\$$UCField!=null){
-            \$$UCField"."->move('img/',\$$UCField" . "->getClientOriginalName());
-            \$$UCField='img/'.\$$UCField" . "->getClientOriginalName();
-        }
-        else
-        { 
-            \$$UCField='';
-        }";
-                        $fieldSetCode .= "\n        if(\$$UCField!=null)
-            \$$UCFormName->$Field=\$$UCField;";
-                    }
-                    else
-                    {
-                        $C .= "\n        \$$UCField=\$request->get('$PureField');";
-                        $fieldSetCode .= "\n        \$$UCFormName->$Field=\$$UCField;";
-                    }
 
-                }
-            }
-        }
         $C .= "\n        \$$UCFormName" . " = new $ModuleName" . "_" . "$FormName();";
         $C .= "\n        \$$UCFormName" . " = \$$UCFormName" . "->find(\$id);";
-        $C .= $fieldSetCode;
+        $C .= $UpdateFieldSetCodes;
         $C .= "\n        \$$UCFormName" . "->save();";
         $C .= "\n        return response()->json(['Data'=>\$$UCFormName], 202);";
         $C .= "\n    }";
@@ -240,22 +266,15 @@ class $UCFormName" . "Controller extends SweetController
         Bouncer::allow('admin')->to('$ModuleName" . "." . "$FormName.view');
         Bouncer::allow('admin')->to('$ModuleName" . "." . "$FormName.delete');
         //if(!Bouncer::can('$ModuleName" . "." . "$FormName.list'))
-            //throw new AccessDeniedHttpException();";
+            //throw new AccessDeniedHttpException();
+        \$SearchText=\$request->get('searchtext');";
 
         $C .= "\n        \$$UCFormName"."Query = $ModuleName" . "_" . "$FormName::where('id','>=','0');";
-        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            $TheFieldType=FieldType::getFieldType($this->getCurrentTableFields()[$i]);
-            if ($TheFieldType != FieldType::$LARAVELMETAINF && $TheFieldType != FieldType::$ID && !FieldType::fieldTypesIsFileUpload($TheFieldType)) {
-                $UCField = $this->getCurrentTableFields()[$i];
-                $Field = trim(strtolower($UCField));
-                if ($Field != "deletetime") {
-                    $PureField=$this->getPureFieldName($Field);
-                    $UCField = ucfirst($PureField);
-                    $C .= "\n        \$$UCFormName"."Query =SweetQueryBuilder::WhereLikeIfNotNull(\$$UCFormName"."Query,'$Field',\$request->get('$PureField'));";
-                    $C .= "\n        \$$UCFormName"."Query =SweetQueryBuilder::OrderIfNotNull(\$$UCFormName"."Query,'$PureField"."__sort','$Field',\$request->get('$PureField"."__sort'));";
-                }
-            }
-        }
+//        print_r($Fields);
+        $titleField=$Fields[$this->getTitleFieldIndex($Fields)];
+        $C .= "\n        \$$UCFormName"."Query =SweetQueryBuilder::WhereLikeIfNotNull(\$$UCFormName"."Query,'$titleField',\$SearchText);";
+
+        $C.=$ListQueryCodes;
         $C .= "\n        \$$UCFormName"."sCount=\$$UCFormName"."Query->get()->count();";
         $C .= "\n        if(\$request->get('_onlycount')!==null)";
         $C .= "\n            return response()->json(['Data'=>[],'RecordCount'=>\$$UCFormName"."sCount], 200);";
@@ -264,15 +283,7 @@ class $UCFormName" . "Controller extends SweetController
         $C .= "\n        for(\$i=0;\$i<count(\$$UCFormName"."s);\$i++)";
         $C .= "\n        {";
         $C .= "\n            \$$UCFormName"."sArray[\$i]=" . "\$$UCFormName" . "s[\$i]->toArray();";
-        for ($i = 0; $i < count($Fields); $i++) {
-            if(FieldType::getFieldType($Fields[$i])==FieldType::$FID)
-            {
-                $PureFieldsUC=ucfirst($PureFields[$i])."Field";
-                $C .= "\n            \$$PureFieldsUC=\$$UCFormName" . "s[\$i]->$PureFields[$i]();";
-                $C .= "\n            \$$UCFormName" . "sArray[\$i]['$PureFields[$i]content']=\$$PureFieldsUC==null?'':\$$PureFieldsUC"."->name;";
-            }
-
-            }
+        $C.=$ListFieldLoadCodes;
         $C .= "\n        }";
         $C .= "\n        \$$UCFormName = \$this->getNormalizedList(\$$UCFormName" . "sArray);";
         $C .= "\n        return response()->json(['Data'=>\$$UCFormName,'RecordCount'=>\$$UCFormName"."sCount], 200);";
@@ -284,21 +295,7 @@ class $UCFormName" . "Controller extends SweetController
         $C .= "
         \$$UCFormName"."=$ModuleName" . "_" . "$FormName::find(\$id);
         \$$UCFormName"."ObjectAsArray=\$$UCFormName"."->toArray();";
-        for ($i = 0; $i < count($Fields); $i++) {
-            if(FieldType::getFieldType($Fields[$i])==FieldType::$FID)
-            {
-                $PureFieldsUC=ucfirst($PureFields[$i]);
-                $FieldTableName=$this->getTableNameFromFIDFieldName($Fields[$i]);
-                $FieldModuleName=$this->getModuleNameFromFIDFieldName($Fields[$i],$ModuleName);
-                $ModelName=$FieldModuleName."_".$FieldTableName;
-                if($FieldModuleName==="")
-                    $ModelName=$FieldTableName;
-                $C .= "
-        \$$PureFieldsUC"."ID=\$$UCFormName"."->$Fields[$i];
-        \$$PureFieldsUC"."Object=\$$PureFieldsUC"."ID>0?$ModelName::find(\$$PureFieldsUC"."ID):'';
-        \$$UCFormName"."ObjectAsArray['$PureFields[$i]info']=\$this->getNormalizedItem(\$$PureFieldsUC"."Object->toArray());";
-            }
-        }
+        $C.=$SingleLoadFieldLoadCodes;
         $C .= "\n        \$$UCFormName = \$this->getNormalizedItem(\$$UCFormName"."ObjectAsArray);";
         $C .= "\n        return response()->json(['Data'=>\$$UCFormName], 200);";
         $C .= "\n    }";
@@ -317,8 +314,8 @@ class $UCFormName" . "Controller extends SweetController
 
     protected function makeLaravelMigrations($formInfo)
     {
-        $this->makeLaravelAPIModel($formInfo);
-        $this->makeLaravelRoutes($formInfo);
+//        $this->makeLaravelAPIModel($formInfo);
+//        $this->makeLaravelRoutes($formInfo);
         $ModuleName = $formInfo['module']['name'];
         $UModuleName = ucfirst($ModuleName);
         $FormName = $formInfo['form']['name'];
@@ -393,6 +390,110 @@ class Create$UModuleName$UCFormName" . "Table extends Migration
 ";
         $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/database/migrations/2014_10_12_000000_create_$ModuleName" . "_$FormName" . "_table.php";
         $this->SaveFile($DesignFile, $C);
+    }
+
+    protected function makeLaravelAPIModel($formInfo)
+    {
+
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+
+        $AllFields=$this->getAllFormsOfFields();
+        $Fields=$AllFields['fields'];
+        $PureFields=$AllFields['purefields'];
+        $C = "<?php
+namespace App\\models\\$ModuleName;
+
+use App\\User;
+use Illuminate\\Database\\Eloquent\\Model;
+
+class $ModuleName" . "_" . "$FormName extends Model
+{
+    protected \$table = \"$ModuleName" . "_" . "$FormName\";
+    protected \$fillable = [";
+        $fieldSetCode = '';
+        for ($i = 0; $i < count($Fields); $i++) {
+            $UCField = $Fields[$i];
+            $Field = trim(strtolower($UCField));
+            $UCField = ucfirst($Field);
+            if ($Field != "deletetime") {
+
+                if ($fieldSetCode != "")
+                    $fieldSetCode .= ",";
+                $fieldSetCode .= "'$Field'";
+            }
+        }
+        $C .= $fieldSetCode . "];";
+        for ($i = 0; $i < count($Fields); $i++) {
+            $Field = trim(strtolower($Fields[$i]));
+
+            if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID){
+                $TableName=$this->getTableNameFromFIDFieldName($Field);
+                $Module=$this->getModuleNameFromFIDFieldName($Field,$ModuleName);
+                $ModelName=$Module."_".$TableName;
+                if($Module==="")
+                    $ModelName=$TableName;
+
+                $C .= "\n\tpublic function $PureFields[$i]()
+    {
+        return \$this->belongsTo($ModelName::class,'$Field')->first();
+    }";
+            }
+
+        }
+
+        $C .= "\n}";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/models/$ModuleName/$ModuleName" . "_$FormName" . ".php";
+        $this->SaveFile($DesignFile, $C);
+    }
+
+    protected function makeLaravelAPIRoutes($formInfo)
+    {
+
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $C = "<?php
+//------------------------------------------------------------------------------------------------------
+Route::group(['middleware' => 'auth:api'], function() {";
+        $C2 = "<?php
+//------------------------------------------------------------------------------------------------------";
+        $C2 .= "\nRoute::get('$ModuleName/$FormName', '$ModuleName\\\\API\\\\$FormName" . "Controller@list');";
+        $C2 .= "\nRoute::get('$ModuleName/$FormName/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@get');";
+        $C .= "\n    Route::post('$ModuleName/$FormName', '$ModuleName\\\\API\\\\$FormName" . "Controller@add');";
+        $C .= "\n    Route::put('$ModuleName/$FormName/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@update');";
+        $C .= "\n    Route::delete('$ModuleName/$FormName/{id}', '$ModuleName\\\\API\\\\$FormName" . "Controller@delete');";
+        $C.="\n});
+?>";
+        $C2.="
+?>";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/" . $ModuleName . "/changer-api.php";
+        $DesignFile2 = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/" . $ModuleName . "/viewer-api.php";
+        $this->SaveFile($DesignFile, $C,true);
+        $this->SaveFile($DesignFile2, $C2,true);
+    }
+
+    protected function makeLaravelWebRoutes($formInfo)
+    {
+
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $C = "<?php
+//------------------------------------------------------------------------------------------------------";
+        $C .= "\nRoute::get('$ModuleName/management/$FormNames', '$ModuleName\\\\Web\\\\$FormName" . "Controller@managelist')->name('$FormName" . "manlist');";
+        $C .= "\nRoute::post('$ModuleName/management/$FormNames/manage', '$ModuleName\\\\Web\\\\$FormName" . "Controller@managesave');";
+        $C .= "\nRoute::get('$ModuleName/management/$FormNames/manage', '$ModuleName\\\\Web\\\\$FormName" . "Controller@manageload')->name('$FormName" . "manlist');";
+        $C .= "\nRoute::get('$ModuleName/management/$FormNames/delete', '$ModuleName\\\\Web\\\\$FormName" . "Controller@delete');";
+        $C .= "\n?>";
+        $DesignFile = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/routes/$ModuleName/web.php";
+        $this->SaveFile($DesignFile, $C);
+    }
+    protected function makeLaravelRoutes($formInfo)
+    {
+
+        $this->makeLaravelAPIRoutes($formInfo);
+        $this->makeLaravelWebRoutes($formInfo);
     }
 }
 

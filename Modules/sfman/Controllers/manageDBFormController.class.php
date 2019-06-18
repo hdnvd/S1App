@@ -157,16 +157,18 @@ abstract class manageDBFormController extends BaseManageDBFormController
         return $tblEnt->GetCollumns();
     }
 
-    protected function getAllFormsOfFields()
+    protected function getAllFormsOfFields($FieldList=null)
     {
+        if($FieldList==null)
+            $FieldList=$this->getCurrentTableFields();
         $trans = new Translator();
         $Fields = [];
         $PureFields = [];
         $PersianFields = [];
         $FieldIndex = 0;
-        for ($i = 0; $i < count($this->getCurrentTableFields()); $i++) {
-            if (FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$METAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($this->getCurrentTableFields()[$i]) != FieldType::$ID) {
-                $UCField = $this->getCurrentTableFields()[$i];
+        for ($i = 0; $i < count($FieldList); $i++) {
+            if (FieldType::getFieldType($FieldList[$i]) != FieldType::$METAINF && FieldType::getFieldType($FieldList[$i]) != FieldType::$LARAVELMETAINF && FieldType::getFieldType($FieldList[$i]) != FieldType::$ID) {
+                $UCField = $FieldList[$i];
                 $UCField = trim(strtolower($UCField));
                 $PersianField = $trans->getPersian($UCField, $UCField);
                 $PureFields[$FieldIndex]=$this->getPureFieldName($UCField);
@@ -174,6 +176,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
                 $PersianFields[$FieldIndex] = $PersianField;
                 $FieldIndex++;
             }
+            
         }
         return ['fields'=>$Fields,'purefields'=>$PureFields,'persianfields'=>$PersianFields];
     }
@@ -429,6 +432,14 @@ abstract class manageDBFormController extends BaseManageDBFormController
             $this->makeReactItemManageDesign($formInfo);
             $this->makeReactItemViewDesign($formInfo);
             $this->makeReactRoutes($formInfo);
+        }
+        if ($this->getIsItemSelected($FormsToGenerate, "react_native_codes")) {
+
+            $this->makeReactNativeListDesign($formInfo);
+            $this->makeReactNativeItemManageDesign($formInfo);
+            $this->makeReactNativeItemViewDesign($formInfo);
+//            $this->makeReactItemViewDesign($formInfo);
+//            $this->makeReactRoutes($formInfo);
         }
         $DBAccessor->close_connection();
     }

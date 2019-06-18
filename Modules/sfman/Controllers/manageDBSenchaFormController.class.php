@@ -158,7 +158,7 @@ abstract class manageDBSenchaFormController extends manageDBAndroidCodeControlle
         $FormNames = $FormName . "s";
         $FormNameList = $FormName . "List";
         $ModuleNames = $ModuleName . "s";
-        $titleFiled=$this->getCurrentTableFields()[$this->getTitleFieldIndex()];
+        $titleFiled=$this->getCurrentTableFields($this->getCurrentTableFields())[$this->getTitleFieldIndex()];
         $ptitleField=$trans->getPersian($titleFiled,$titleFiled);
         $C = "Ext.define('MyApp.view.$ModuleName.$FormNames.Manage$FormNames', {
     extend: 'Ext.tab.Panel',

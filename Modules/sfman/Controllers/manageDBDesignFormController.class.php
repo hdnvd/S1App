@@ -563,9 +563,8 @@ EOT;
         }
         return $C;
     }
-    protected function getTitleFieldIndex()
+    protected function getTitleFieldIndex($Fields)
     {
-        $Fields=$this->getCurrentTableFields();
         $TitleInd=array_search("title",$Fields);
         if($TitleInd===false)
             $TitleInd=array_search("caption",$Fields);
