@@ -149,6 +149,21 @@ private $Translations;
             'latitude'=>'عرض جغرافیایی',
             'longitude'=>'طول جغرافیایی',
             'visits'=>'تعداد بازدید',
+            'price'=>'قیمت',
+            'villa'=>'ویلا',
+            'orderstatus'=>'وضعیت سفارش',
+            'order'=>'سفارش',
+            'start'=>'شروع',
+            'duration'=>'مدت',
+            'user'=>'کاربر',
+            'amount'=>'مقدار',
+            'transaction'=>'تراکنش',
+            'reservefinancetransaction'=>'تراکنش',
+            'transactionid'=>'کد تراکنش',
+            'normalprice'=>'قیمت در روزهای عادی',
+            'holidayprice'=>'قیمت در روزهای تعطیل',
+            'weeklyoff'=>'تخفیف رزرو بیش از یک هفته',
+            'monthlyoff'=>'تخفیف رزرو بیش از یک ماه',
         ];
     }
     public function getPersian($Word,$DefaultValue)
@@ -166,6 +181,15 @@ private $Translations;
             if($LastPart=="_fid" || $LastPart=="_flu" || $LastPart=="_igu")
             {
                 $Word=substr($Word,0,strlen($Word)-4);
+            }
+            if($LastPart=="_num" || $LastPart=="_prc" || $LastPart=="_int")
+            {
+                $Word=substr($Word,0,strlen($Word)-4);
+            }
+            if($LastPart2=="_bnum")
+            {
+                $Word=substr($Word,0,strlen($Word)-5);
+//                $Result=$Result."زمان ";
             }
             if($LastPart=="_clk")
             {

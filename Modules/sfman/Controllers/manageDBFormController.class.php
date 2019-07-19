@@ -79,9 +79,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
         $Field=$this->getFieldNameWithoutPostFix($Field);
         $Pos=strpos($Field,"__");
         if($Pos!==false)
-        {
             $Field=substr($Field,$Pos+2);
-        }
         $Pos=strpos($Field,"_");
         if($Pos!==false)
         {

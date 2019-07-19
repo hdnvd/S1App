@@ -9,11 +9,8 @@
 namespace Modules\sfman\Controllers;
 
 
-class ReactFieldCode
+class ReactFieldCode extends FieldCode
 {
-    public static $ADD_POLICY_TO_TOP=1;
-    public static $ADD_POLICY_TO_BOTTOM=2;
-    public static $ADD_POLICY_TO_WITH_CURRENT=3;
     private $DataStateVariableCodes = "";
     private $StateVariableCodes = "";
     private $ConstructorCodes = "";
@@ -25,7 +22,7 @@ class ReactFieldCode
     private $LoaderMethodCallCodes = "";
     private $ViewCodes = "";
     private $SaveCodes = "";
-    private $AddPolicy;
+    private $SearchCodes = "";
 
     /**
      * FieldCode constructor.
@@ -43,7 +40,7 @@ class ReactFieldCode
      */
     public function __construct($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$StateVariableCodes,$DataStateVariableCodes, $InitialDataLoadFieldFillCodes,$LoaderMethodCodes, $LoaderMethodCallCodes, $ViewCodes ,$SaveCodes,$AddPolicy)
     {
-        $this->AddPolicy=$AddPolicy;
+        $this->setAddPolicy($AddPolicy);
         $this->DataStateVariableCodes = $DataStateVariableCodes;
         $this->ConstructorCodes = $ConstructorCodes;
         $this->ImportCodes = $ImportCodes;
@@ -142,22 +139,6 @@ class ReactFieldCode
     public function getLoaderMethodCodes()
     {
         return $this->LoaderMethodCodes;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getAddPolicy()
-    {
-        return $this->AddPolicy;
-    }
-
-    /**
-     * @param int|null $AddPolicy
-     */
-    public function setAddPolicy($AddPolicy)
-    {
-        $this->AddPolicy = $AddPolicy;
     }
 
     /**

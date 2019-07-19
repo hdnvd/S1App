@@ -140,6 +140,7 @@ class FieldType{
     public static $INTEGER=14;
     public static $PRICE=15;
     public static $DOUBLE=16;
+    public static $BIGPOSITIVENUMBER=17;
 
 
 
@@ -177,6 +178,8 @@ class FieldType{
             return FieldType::$DOUBLE;
         if(substr($FieldName,strlen($FieldName)-4)=="_num")
             return FieldType::$POSITIVENUMBER;
+        if(substr($FieldName,strlen($FieldName)-5)=="_bnum")
+            return FieldType::$BIGPOSITIVENUMBER;
         if(substr($FieldName,strlen($FieldName)-4)=="_prc")
             return FieldType::$PRICE;
         if(substr($FieldName,0,2)=="is" || substr($FieldName,0,4)=="can_" || substr($FieldName,0,4)=="has_")
@@ -200,6 +203,8 @@ class FieldType{
         if($FieldType==FieldType::$DOUBLE)
             return true;
         if($FieldType==FieldType::$POSITIVENUMBER)
+            return true;
+        if($FieldType==FieldType::$BIGPOSITIVENUMBER)
             return true;
         if($FieldType==FieldType::$PRICE)
             return true;

@@ -9,7 +9,7 @@
 namespace Modules\sfman\Controllers;
 
 
-class LaravelFieldCode
+class LaravelFieldCode extends FieldCode
 {
     private $AddGetterCodes = "";
     private $AddFieldSetCodes = "";
@@ -28,9 +28,11 @@ class LaravelFieldCode
      * @param string $ListQueryCodes
      * @param string $ListFieldLoadCodes
      * @param string $SingleLoadFieldLoadCodes
+     * @param int $AddPolicy
      */
-    public function __construct($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes)
+    public function __construct($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$AddPolicy)
     {
+        $this->setAddPolicy($AddPolicy);
         $this->AddGetterCodes = $AddGetterCodes;
         $this->AddFieldSetCodes = $AddFieldSetCodes;
         $this->UpdateGetterCodes = $UpdateGetterCodes;

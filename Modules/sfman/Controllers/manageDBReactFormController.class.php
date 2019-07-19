@@ -82,8 +82,8 @@ class $FileName extends SweetComponent {
         let Request=new SweetHttpRequest();
         Request.appendVariables(filtered,'id','value');
         Request.appendVariablesWithPostFix(sorted,'id','desc','__sort');
-        Request.appendVariable('_pagesize',pageSize);
-        Request.appendVariable('_startrow',RecordStart);
+        Request.appendVariable('__pagesize',pageSize);
+        Request.appendVariable('__startrow',RecordStart);
         let filterAndSortString=Request.getParamsString();
         if(filterAndSortString!='') filterAndSortString='?'+filterAndSortString;
         let url='/$ModuleName/$FormName'+filterAndSortString;
