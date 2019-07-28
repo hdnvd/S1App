@@ -243,7 +243,7 @@ export default class $FileName extends SweetPage {
                         onEndReachedThreshold={0.3}
                         renderItem={({item}) =>
                         <TouchableWithoutFeedback onPress={() => {
-                                global.itemID=item.id;
+                                global.".$FormName."ID=item.id;
                                 this.props.navigation.navigate('$ModuleName" . "_" . $FormName . "Manage', { name: '$ModuleName" . "_" . $FormName . "Manage' });
                             }}>
                             <View style={generalStyles.ListItem}>

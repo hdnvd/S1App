@@ -298,6 +298,7 @@ import CheckedRow from '../../../../sweet/components/CheckedRow';
 import ComponentHelper from '../../../../classes/ComponentHelper';
 import SweetPage from '../../../../sweet/components/SweetPage';
 import LogoTitle from '../../../../components/LogoTitle';
+import SweetAlert from '../../../../classes/SweetAlert';
 $ImportCodes
 export default class  $FileName extends SweetPage {
     static navigationOptions =({navigation}) => {
@@ -321,9 +322,9 @@ export default class  $FileName extends SweetPage {
     }
     loadData=()=>{
 $LoaderMethodCallCodes
-        if(global.itemID>0){
+        if(global.".$FormName."ID>0){
             this.setState({isLoading:true});
-            new SweetFetcher().Fetch('/$ModuleName/$FormName/'+global.itemID,SweetFetcher.METHOD_GET, null, data => {
+            new SweetFetcher().Fetch('/$ModuleName/$FormName/'+global.".$FormName."ID,SweetFetcher.METHOD_GET, null, data => {
                 data.Data.isLoading=false;
                 this.setState({".$InitialDataLoadFieldFillCodes."});
             });
@@ -349,8 +350,8 @@ $LoaderMethodCodes
                                         let method=SweetFetcher.METHOD_POST;
                                         let Separator='';
                                         let action=AccessManager.INSERT;
-                                        if (global.itemID > 0)
-                                            id = global.itemID;
+                                        if (global.".$FormName."ID > 0)
+                                            id = global.".$FormName."ID;
                                             ";
         $C .= "\r\n\t\t\t\t\t\t\t\tif(id!==''){";
         $C = $C . "\r\n\t\t\t\t\t\t\t\t\tmethod=SweetFetcher.METHOD_PUT;";
@@ -363,7 +364,7 @@ $LoaderMethodCodes
                                         new SweetFetcher().Fetch('/$ModuleName/$FormName'+Separator+id, method, data, data => {
                                              if(data.hasOwnProperty('Data'))
                                              {
-                                                 Alert.alert('پیام','اطلاعات با موفقیت ذخیره شد.');
+                                                 SweetAlert.displaySimpleAlert('پیام','اطلاعات با موفقیت ذخیره شد.');
                                                  OnEnd(true);
                                              }
                                         },(error)=>{OnEnd(false)},'$ModuleName','$FormName',this.props.history);

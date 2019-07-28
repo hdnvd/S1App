@@ -327,7 +327,7 @@ export default class  $FileName extends SweetPage {
     }
     loadData=()=>{
         this.setState({isLoading:true});
-        new SweetFetcher().Fetch('/$ModuleName/$FormName/'+global.itemID,SweetFetcher.METHOD_GET, null, data => {
+        new SweetFetcher().Fetch('/$ModuleName/$FormName/'+global.".$FormName."ID,SweetFetcher.METHOD_GET, null, data => {
             this.setState({LoadedData:data.Data,isLoading:false});
         });
 $LoaderMethodCallCodes
