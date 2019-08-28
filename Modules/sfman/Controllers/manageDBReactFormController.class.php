@@ -38,7 +38,7 @@ import { FaEdit } from 'react-icons/fa';
 import { IoMdEye,IoMdAddCircle } from 'react-icons/io';
 import { MdDeleteForever } from 'react-icons/md';
 import SweetTable from '../../../../classes/sweet-table'
-import moment from 'moment-jalaali'
+import jMoment from 'moment-jalaali'
 import SweetFetcher from '../../../../classes/sweet-fetcher';
 import SweetAlert from '../../../../classes/SweetAlert';
 import Constants from '../../../../classes/Constants';
@@ -169,14 +169,15 @@ columns = [";
             $UCField = trim(strtolower($UCField));
             $PureField = trim(strtolower($PureField));
             $PersianField = $trans->getPersian($UCField, $UCField);
-            if (FieldType::getFieldType($Fields[$i]) == FieldType::$DATE) {
-                $C = $C . "
-{
-    Header: '$PersianField',
-    id: '$UCField',
-    accessor:data=> data.$PureField
-},";
-            } elseif (FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
+//            if (FieldType::getFieldType($Fields[$i]) == FieldType::$DATE) {
+//                $C = $C . "
+//{
+//    Header: '$PersianField',
+//    id: '$UCField',
+//    accessor:data=> jMoment(Number(data.$PureField), 'X').format('jYYYY/jMM/jDD')
+//},";
+//            } elseif
+            if(FieldType::getFieldType($Fields[$i]) == FieldType::$FID) {
                 $C = $C . "
 {
     Header: '$PersianField',
@@ -285,7 +286,7 @@ import * as React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn,FormInline, Input } from 'mdbreact';
 import  DatePicker  from '../../../../PersianDatePicker/components/DatePicker';
 import '../../../../scss/datepicker.scss'
-import moment from 'moment-jalaali'
+import jMoment from 'moment-jalaali'
 import SweetFetcher from '../../../../classes/sweet-fetcher';
 import InputMask from 'react-input-mask';
 import Constants from '../../../../classes/Constants';
@@ -307,8 +308,10 @@ class $FileName extends SweetComponent {
         for ($i = 0; $i < count($Fields); $i++) {
             if(FieldType::getFieldType($Fields[$i]) == FieldType::$BOOLEAN)
                 $C = $C . "\r\n\t\t\t$PureFields[$i]:0,";
+//            elseif(FieldType::getFieldType($Fields[$i]) == FieldType::$DATE)
+//                $C = $C . "\r\n\t\t\t$PureFields[$i]:jMoment.utc().format('jYYYY/jMM/jDD'),";
             else
-                $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
+            $C = $C . "\r\n\t\t\t$PureFields[$i]:'',";
             if (FieldType::getFieldType($Fields[$i]) == FieldType::$FID)
                 $C = $C . "\r\n\t\t\t$PureFields[$i]Options:[],";
             if (FieldType::fieldIsFileUpload($Fields[$i]))
@@ -327,7 +330,10 @@ class $FileName extends SweetComponent {
         for ($i = 0; $i < count($PureFields); $i++) {
             if (FieldType::fieldIsFileUpload($Fields[$i]))
                 $C = $C . "$PureFields[$i]Preview:Constants.SiteURL+'/'+data.Data." . $PureFields[$i] . ",";
-            $C = $C . "$PureFields[$i]:data.Data." . $PureFields[$i] . ",";
+//            if (FieldType::getFieldType($Fields[$i])==FieldType::$DATE)
+//                $C = $C . "$PureFields[$i]:jMoment(Number(data.Data." . $PureFields[$i] . "), 'X').format('jYYYY/jMM/jDD'),";
+//            else
+                $C = $C . "$PureFields[$i]:data.Data." . $PureFields[$i] . ",";
         }
 
         $C .= "});
@@ -365,8 +371,15 @@ class $FileName extends SweetComponent {
                                         id = this.props.match.params.id;
                                     const data = new FormData();
                                     ";
-        for ($i = 0; $i < count($PureFields); $i++)
+        for ($i = 0; $i < count($PureFields); $i++){
+//            if(FieldType::getFieldType($Fields[$i])==FieldType::$DATE){
+//                $C = $C . "\r\n\t\t\t\t\t\t\t\t\tconst $PureFields[$i]_time=jMoment(this.state.$PureFields[$i], 'jYYYY/jMM/jDD').format('X');";
+//                $C = $C . "\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFields[$i]',$PureFields[$i]_time);";
+//            }
+//            else
             $C = $C . "\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFields[$i]', this.state.$PureFields[$i]);";
+        }
+
         $C .= "\r\n\t\t\t\t\t\t\t\tif(id!==''){";
         $C = $C . "\r\n\t\t\t\t\t\t\t\t\tmethod=SweetFetcher.METHOD_PUT;";
         $C = $C . "\r\n\t\t\t\t\t\t\t\t\tSeparator='/';";
@@ -425,7 +438,7 @@ export default $FileName;
         $C = "// @flow
 import * as React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn,FormInline, Input } from 'mdbreact';
-import moment from 'moment-jalaali'
+import jMoment from 'moment-jalaali'
 import SweetFetcher from '../../../../classes/sweet-fetcher';
 import InputMask from 'react-input-mask';
 import Constants from '../../../../classes/Constants';

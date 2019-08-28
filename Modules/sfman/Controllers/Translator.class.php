@@ -16,6 +16,8 @@ private $Translations;
     {
         $this->Translations=[
             'title'=>'عنوان',
+            'day'=>'روز',
+            'factor'=>'ضریب',
             'role'=>'سمت',
             'name'=>'نام',
             'latinname'=>'نام لاتین',
@@ -53,6 +55,8 @@ private $Translations;
             'education'=>'تحصیلات',
             'nationality'=>'ملیت',
             'common_city'=>'شهر',
+            'city'=>'شهر',
+            'province'=>'استان',
             'is_payable'=>'قابل پرداخت',
             'passportnumber'=>'شماره پاسپورت',
             'passportserial'=>'شماره سریال پاسپورت',
@@ -181,6 +185,10 @@ private $Translations;
             if($LastPart=="_fid" || $LastPart=="_flu" || $LastPart=="_igu")
             {
                 $Word=substr($Word,0,strlen($Word)-4);
+            }
+            if($LastPart3=="_id")
+            {
+                $Word=substr($Word,0,strlen($Word)-3);
             }
             if($LastPart=="_num" || $LastPart=="_prc" || $LastPart=="_int")
             {

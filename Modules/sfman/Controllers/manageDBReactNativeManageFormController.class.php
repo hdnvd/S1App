@@ -87,7 +87,7 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
         $ViewCodes="
-                            <ImageSelector title='انتخاب $TranslatedFieldName' onConfirm={(path)=>this.setState({Selected$PureFieldName"."Location : path})} />";
+                            <ImageSelector title='انتخاب $TranslatedFieldName' onConfirm={(path,onEnd)=>{onEnd(true);this.setState({Selected$PureFieldName"."Location : path});}} />";
         $SaveCodes="\r\n\t\t\t\t\t\t\t\tComponentHelper.appendImageSelectorToFormDataIfNotNull(data,'$PureFieldName',this.state.Selected$PureFieldName"."Location);";
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
@@ -279,9 +279,9 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
             $SaveCodes.=$FC->getSaveCodes();
         }
 
-        $C = "import React, {Component} from 'react'
+        $C = "import React from 'react'
 import { CheckBox } from 'react-native-elements';
-import {StyleSheet, View, Alert, TextInput, ScrollView, Dimensions,AsyncStorage,Picker,Text,Image } from 'react-native';
+import {StyleSheet, View, TextInput, ScrollView, Dimensions,Picker,Text,Image } from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
 import SweetFetcher from '../../../../classes/sweet-fetcher';
 import Common from '../../../../classes/Common';
@@ -332,16 +332,22 @@ $LoaderMethodCallCodes
     };
 $LoaderMethodCodes
     render() {
-        const {height: heightOfDeviceScreen} = Dimensions.get('window');
+        let Window = Dimensions.get('window');
             return (
                 <View style={{flex:1}}  >
-                    <ScrollView contentContainerStyle={{minHeight: this.height || heightOfDeviceScreen}}>
+                  <View style={{height:this.getManagementPageHeight()}}>
+                    <ScrollView contentContainerStyle={{minHeight: this.height || Window.height}}>
                         <View style={generalStyles.container}>
                         $ViewCodes";
 
         $C .= "
-                            <View  style={{marginTop: '3%'}}>
-                                <SweetButton title='ذخیره' onPress={(OnEnd) => {
+                            
+
+                        </View>
+                    </ScrollView>
+                        </View>
+                    <View style={generalStyles.actionButtonContainer}>
+                                <SweetButton title='ذخیره' style={generalStyles.actionButton} onPress={(OnEnd) => {
                                     let formIsValid=true;
                                     if(formIsValid)
                                     {
@@ -373,9 +379,6 @@ $LoaderMethodCodes
                                         OnEnd(false);
                                 }}/>
                             </View>
-
-                        </View>
-                    </ScrollView>
                 </View>
             )
     }

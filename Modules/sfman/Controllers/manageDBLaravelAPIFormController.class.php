@@ -40,16 +40,37 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $UCFieldInput = "Input".ucfirst($PureFieldName);
         $UCFormName = ucfirst($FormName);
 
-        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName','');";
-        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName','');";
+        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName',' ');";
+        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName',' ');";
         $AddFieldSetCodes = "'$FieldName'=>\$$UCFieldInput";
         $UpdateFieldSetCodes = "\n        \$$UCFormName->$FieldName=\$$UCFieldInput;";
         $ListQueryCodes = "\n        \$$UCFormName"."Query =SweetQueryBuilder::WhereLikeIfNotNull(\$$UCFormName"."Query,'$FieldName',\$request->get('$PureFieldName'));";
         $ListQueryCodes.="\n        \$$UCFormName"."Query =SweetQueryBuilder::OrderIfNotNull(\$$UCFormName"."Query,'$PureFieldName"."__sort','$FieldName',\$request->get('$PureFieldName"."__sort'));";;
         $ListFieldLoadCodes = "";
         $SingleLoadFieldLoadCodes = "";
-        $ValidationRules = "\n            '$PureFieldName' => 'required',";
-        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
+        $ValidationRules = "\n            '$FieldName' => 'required',";
+        $ValidationMessages = "\n            '$FieldName".".required' => 'وارد کردن ".$TranslatedFieldName." اجباری می باشد',";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
+        return $FieldCode;
+    }
+
+
+    private function _getDateFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        $UCFormName = ucfirst($FormName);
+        $UCFieldInput = "Input".ucfirst($PureFieldName);
+        $AddGetterCodes = "\n\t\t\$$UCFieldInput= SweetDateManager::getTimeStampFromString(\$request->input('$PureFieldName',' '));";
+        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=SweetDateManager::getTimeStampFromString(\$request->get('$PureFieldName',' '));";
+//        $AddGetterCodes = $GFC->getAddGetterCodes();
+//        $UpdateGetterCodes =  $GFC->getUpdateGetterCodes();
+        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
+        $UpdateFieldSetCodes = $GFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$GFC->getListQueryCodes();
+        $ListFieldLoadCodes = "\n            \$$UCFormName" . "sArray[\$i]['$FieldName']=SweetDateManager::getStringFromTimeStamp(\$$UCFormName" . "sArray[\$i]['$FieldName']);";
+        $SingleLoadFieldLoadCodes = "\n       \$$UCFormName"."ObjectAsArray['$FieldName']=SweetDateManager::getStringFromTimeStamp(\$$UCFormName"."ObjectAsArray['$FieldName']);";
+        $ValidationRules = $GFC->getValidationRules();
+        $ValidationMessages = $GFC->getValidationMessages();
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
     private function _getFileUploadFiledCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
@@ -64,8 +85,109 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $ListQueryCodes = "";
         $ListFieldLoadCodes = $GFC->getListFieldLoadCodes();
         $SingleLoadFieldLoadCodes = $GFC->getSingleLoadFieldLoadCodes();
-        $ValidationRules = "\n            '$PureFieldName' => 'required',";
-        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,FieldCode::$ADD_POLICY_TO_AFTER_JOB);
+        $ValidationRules = "\n            '$FieldName' => 'required',";
+        $ValidationMessages = $GFC->getValidationMessages();
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_AFTER_JOB);
+        return $FieldCode;
+    }
+
+    private function _getNumberFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        $UCFieldInput = "Input".ucfirst($PureFieldName);
+        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName',0);";
+        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName',0);";
+        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
+//        $UpdateGetterCodes = $GFC->getUpdateGetterCodes();
+        $UpdateFieldSetCodes = $GFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$GFC->getListQueryCodes();
+        $ListFieldLoadCodes =$GFC->getListFieldLoadCodes();
+        $SingleLoadFieldLoadCodes = $GFC->getSingleLoadFieldLoadCodes();
+        $ValidationRules = "\n            '$FieldName' => 'required|numeric',";
+        $ValidationMessages = $GFC->getValidationMessages();
+        $ValidationMessages .= "\n            '$FieldName".".numeric' => 'مقدار ".$TranslatedFieldName." باید عدد انگلیسی باشد.',";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
+        return $FieldCode;
+    }
+    private function _getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+
+        $UCFormName = ucfirst($FormName);
+        $PureFieldNameUCField=ucfirst($PureFieldName)."Field";
+        $PureFieldNameUC=ucfirst($PureFieldName);
+        $FieldTableName=$this->getTableNameFromFIDFieldName($FieldName);
+        $FieldModuleName=$this->getModuleNameFromFIDFieldName($FieldName,$ModuleName);
+        $ModelName=$FieldModuleName."_".$FieldTableName;
+        if($FieldModuleName==="")
+            $ModelName=$FieldTableName;
+        $UCFieldInput = "Input".ucfirst($PureFieldName);
+        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName',-1);";
+        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName',-1);";
+        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
+        $UpdateFieldSetCodes = $GFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$GFC->getListQueryCodes();
+        $ListFieldLoadCodes = "\n            \$$PureFieldNameUCField=\$$UCFormName" . "s[\$i]->$PureFieldName();";
+        $ListFieldLoadCodes .= "\n            \$$UCFormName" . "sArray[\$i]['$PureFieldName"."content']=\$$PureFieldNameUCField==null?'':\$$PureFieldNameUCField"."->name;";
+        $SingleLoadFieldLoadCodes = "
+        \$$PureFieldNameUC"."Object=\$$UCFormName->$PureFieldName"."();
+        \$$PureFieldNameUC"."Object=\$$PureFieldNameUC"."Object==null?'':\$$PureFieldNameUC"."Object;
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']=\$this->getNormalizedItem(\$$PureFieldNameUC"."Object->toArray());";
+        $ValidationRules = "\n            '$FieldName' => 'required|min:-1|integer',";
+        $ValidationMessages = $GFC->getValidationMessages();
+        $ValidationMessages .= "\n            '$FieldName".".integer' => 'مقدار ".$TranslatedFieldName." صحیح وارد نشده است.',";
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
+        return $FieldCode;
+    }
+    private function _getPlaceFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $FFC=$this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        $AddGetterCodes =$FFC->getAddGetterCodes();
+        $AddFieldSetCodes = $FFC->getAddFieldSetCodes();
+        $UpdateGetterCodes = $FFC->getUpdateGetterCodes();
+        $UpdateFieldSetCodes = $FFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$FFC->getListQueryCodes();
+        $ListFieldLoadCodes =$FFC->getListFieldLoadCodes();
+        $SingleLoadFieldLoadCodes=$FFC->getSingleLoadFieldLoadCodes();
+        $PureFieldNameUC=ucfirst($PureFieldName);
+        $UCFormName = ucfirst($FormName);
+        $SingleLoadFieldLoadCodes .= "
+        \$area= \$$PureFieldNameUC"."Object->area();
+        \$city=\$area->city();
+        \$province=\$city->province();
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['areainfo']=\$this->getNormalizedItem(\$area->toArray());
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['cityinfo']=\$this->getNormalizedItem(\$city->toArray());
+        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['provinceinfo']=\$this->getNormalizedItem(\$province->toArray());";
+        $ValidationRules = $FFC->getValidationRules();
+
+        $ValidationMessages = $FFC->getValidationMessages();
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
+        return $FieldCode;
+    }
+    private function _getCityAreaFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
+        $FFC=$this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+
+        $UCFormName = ucfirst($FormName);
+        $AddGetterCodes =$FFC->getAddGetterCodes();
+        $AddFieldSetCodes = $FFC->getAddFieldSetCodes();
+        $UpdateGetterCodes = $FFC->getUpdateGetterCodes();
+        $UpdateFieldSetCodes = $FFC->getUpdateFieldSetCodes();
+        $ListQueryCodes =$FFC->getListQueryCodes();
+        $ListFieldLoadCodes = "
+            \$AreaField=\$$UCFormName" . "s[\$i]->$PureFieldName();
+            \$CityField=\$AreaField==null?'':\$AreaField->city();
+            \$ProvinceField=\$CityField==null?'':\$CityField->province();
+            \$$UCFormName" . "sArray[\$i]['$PureFieldName"."content']=\$AreaField==null?'':\$AreaField->title;
+            \$$UCFormName" . "sArray[\$i]['citycontent']=\$CityField==null?'':\$CityField->title;
+            \$$UCFormName" . "sArray[\$i]['provincecontent']=\$ProvinceField==null?'':\$ProvinceField->title;";
+        $SingleLoadFieldLoadCodes = "
+        \$AreaField=\$$UCFormName" . "->$PureFieldName();
+        \$CityField=\$AreaField==null?'':\$AreaField->city();
+        \$ProvinceField=\$CityField==null?'':\$CityField->province();
+        \$$UCFormName" . "ObjectAsArray['$PureFieldName"."info']=\$AreaField==null?'':\$AreaField;
+        \$$UCFormName" . "ObjectAsArray['cityinfo']=\$CityField==null?'':\$CityField;
+        \$$UCFormName" . "ObjectAsArray['provinceinfo']=\$ProvinceField==null?'':\$ProvinceField;";
+        $ValidationRules = $FFC->getValidationRules();
+
+        $ValidationMessages = $FFC->getValidationMessages();
+        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
 
@@ -99,102 +221,11 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         }
         if (FieldType::fieldIsFileUpload($FieldName))
             return $this->_getFileUploadFiledCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
+        if (FieldType::getFieldType($FieldName)==FieldType::$DATE)
+            return $this->_getDateFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
         if (FieldType::fieldIsNumber($FieldName))
             return $this->_getNumberFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
         return $this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
-    }
-    private function _getNumberFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
-        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
-        $UCFieldInput = "Input".ucfirst($PureFieldName);
-        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName',0);";
-        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName',0);";
-        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
-//        $UpdateGetterCodes = $GFC->getUpdateGetterCodes();
-        $UpdateFieldSetCodes = $GFC->getUpdateFieldSetCodes();
-        $ListQueryCodes =$GFC->getListQueryCodes();
-        $ListFieldLoadCodes =$GFC->getListFieldLoadCodes();
-        $SingleLoadFieldLoadCodes = $GFC->getSingleLoadFieldLoadCodes();
-        $ValidationRules = "\n            '$PureFieldName' => 'required|numeric',";
-        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    private function _getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
-        $GFC=$this->_getGeneralFieldCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
-
-        $UCFormName = ucfirst($FormName);
-        $PureFieldNameUCField=ucfirst($PureFieldName)."Field";
-        $PureFieldNameUC=ucfirst($PureFieldName);
-        $FieldTableName=$this->getTableNameFromFIDFieldName($FieldName);
-        $FieldModuleName=$this->getModuleNameFromFIDFieldName($FieldName,$ModuleName);
-        $ModelName=$FieldModuleName."_".$FieldTableName;
-        if($FieldModuleName==="")
-            $ModelName=$FieldTableName;
-        $UCFieldInput = "Input".ucfirst($PureFieldName);
-        $AddGetterCodes = "\n\t\t\$$UCFieldInput=\$request->input('$PureFieldName',-1);";
-        $UpdateGetterCodes = "\n\t\t\$$UCFieldInput=\$request->get('$PureFieldName',-1);";
-        $AddFieldSetCodes = $GFC->getAddFieldSetCodes();
-        $UpdateFieldSetCodes = $GFC->getUpdateFieldSetCodes();
-        $ListQueryCodes =$GFC->getListQueryCodes();
-        $ListFieldLoadCodes = "\n            \$$PureFieldNameUCField=\$$UCFormName" . "s[\$i]->$PureFieldName();";
-        $ListFieldLoadCodes .= "\n            \$$UCFormName" . "sArray[\$i]['$PureFieldName"."content']=\$$PureFieldNameUCField==null?'':\$$PureFieldNameUCField"."->name;";
-        $SingleLoadFieldLoadCodes = "
-        \$$PureFieldNameUC"."Object=\$$UCFormName->$PureFieldName"."();
-        \$$PureFieldNameUC"."Object=\$$PureFieldNameUC"."Object==null?'':\$$PureFieldNameUC"."Object;
-        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']=\$this->getNormalizedItem(\$$PureFieldNameUC"."Object->toArray());";
-        $ValidationRules = "\n            '$PureFieldName' => 'required|min:-1|integer',";
-        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    private function _getPlaceFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
-        $FFC=$this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
-        $AddGetterCodes =$FFC->getAddGetterCodes();
-        $AddFieldSetCodes = $FFC->getAddFieldSetCodes();
-        $UpdateGetterCodes = $FFC->getUpdateGetterCodes();
-        $UpdateFieldSetCodes = $FFC->getUpdateFieldSetCodes();
-        $ListQueryCodes =$FFC->getListQueryCodes();
-        $ListFieldLoadCodes =$FFC->getListFieldLoadCodes();
-        $SingleLoadFieldLoadCodes=$FFC->getSingleLoadFieldLoadCodes();
-        $PureFieldNameUC=ucfirst($PureFieldName);
-        $UCFormName = ucfirst($FormName);
-        $SingleLoadFieldLoadCodes .= "
-        \$area= \$$PureFieldNameUC"."Object->area();
-        \$city=\$area->city();
-        \$province=\$city->province();
-        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['areainfo']=\$this->getNormalizedItem(\$area->toArray());
-        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['cityinfo']=\$this->getNormalizedItem(\$city->toArray());
-        \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']['provinceinfo']=\$this->getNormalizedItem(\$province->toArray());";
-        $ValidationRules = $FFC->getValidationRules();
-
-        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    private function _getCityAreaFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName){
-        $FFC=$this->_getForeignIDFieldCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName);
-
-        $UCFormName = ucfirst($FormName);
-        $AddGetterCodes =$FFC->getAddGetterCodes();
-        $AddFieldSetCodes = $FFC->getAddFieldSetCodes();
-        $UpdateGetterCodes = $FFC->getUpdateGetterCodes();
-        $UpdateFieldSetCodes = $FFC->getUpdateFieldSetCodes();
-        $ListQueryCodes =$FFC->getListQueryCodes();
-        $ListFieldLoadCodes = "
-            \$AreaField=\$$UCFormName" . "s[\$i]->$PureFieldName();
-            \$CityField=\$AreaField==null?'':\$AreaField->city();
-            \$ProvinceField=\$CityField==null?'':\$CityField->province();
-            \$$UCFormName" . "sArray[\$i]['$PureFieldName"."content']=\$AreaField==null?'':\$AreaField->title;
-            \$$UCFormName" . "sArray[\$i]['citycontent']=\$CityField==null?'':\$CityField->title;
-            \$$UCFormName" . "sArray[\$i]['provincecontent']=\$ProvinceField==null?'':\$ProvinceField->title;";
-        $SingleLoadFieldLoadCodes = "
-        \$AreaField=\$$UCFormName" . "->$PureFieldName();
-        \$CityField=\$AreaField==null?'':\$AreaField->city();
-        \$ProvinceField=\$CityField==null?'':\$CityField->province();
-        \$$UCFormName" . "ObjectAsArray['$PureFieldName"."info']=\$AreaField==null?'':\$AreaField;
-        \$$UCFormName" . "ObjectAsArray['cityinfo']=\$CityField==null?'':\$CityField;
-        \$$UCFormName" . "ObjectAsArray['provinceinfo']=\$ProvinceField==null?'':\$ProvinceField;";
-        $ValidationRules = $FFC->getValidationRules();
-
-        $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
     }
     protected function makeLaravelAPIController($formInfo)
     {
@@ -202,9 +233,12 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $this->makeLaravelAPIModel($formInfo);
         $this->makeLaravelRoutes($formInfo);
         $this->makeLaravelMigrations($formInfo);
+        $this->makeLaravelRequests($formInfo);
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $UCFormName = ucfirst($FormName);
+        $InsertRequestClassName=$ModuleName."_".$FormName."AddRequest";
+        $UpdateRequestClassName=$ModuleName."_".$FormName."UpdateRequest";
         $FormNames = $FormName . "s";
         $ModuleNames = $ModuleName . "s";
 
@@ -223,7 +257,7 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $AfterSaveAddFieldSetCodes="";
         $AfterSaveUpdateGetterCodes="";
         $AfterSaveUpdateFieldSetCodes="";
-        $ValidationRules="";
+//        $ValidationRules="";
         for ($i = 0; $i < count($Fields); $i++) {
             $FC=$this->_getFieldCodes($ModuleName,$FormName,$Fields[$i],$PureFields[$i],$PersianFields[$i]);
             if($FC->getAddPolicy()!=FieldCode::$ADD_POLICY_TO_AFTER_JOB)
@@ -241,7 +275,7 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
                 $AfterSaveUpdateGetterCodes.=$FC->getUpdateGetterCodes();
                 $AfterSaveUpdateFieldSetCodes.=$FC->getUpdateFieldSetCodes();
             }
-            $ValidationRules.=$FC->getValidationRules();
+//            $ValidationRules.=$FC->getValidationRules();
             $ListQueryCodes.=$FC->getListQueryCodes();
             $ListFieldLoadCodes.=$FC->getListFieldLoadCodes();
             $SingleLoadFieldLoadCodes.=$FC->getSingleLoadFieldLoadCodes();
@@ -253,21 +287,24 @@ use App\\Http\\Controllers\\Controller;
 use App\\Sweet\\SweetQueryBuilder;
 use App\\Sweet\\SweetController;
 use Illuminate\\Http\\Request;
+use App\Http\Controllers\common\classes\SweetDateManager;
 use App\\Classes\\Sweet\\SweetDBFile;
 use Illuminate\\Validation\\ValidationException;
 use Validator;
 use Bouncer;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use App\\Http\\Requests\\$ModuleName\\$InsertRequestClassName;
+use App\\Http\\Requests\\$ModuleName\\$UpdateRequestClassName;
 
 class $UCFormName" . "Controller extends SweetController
 {
     private \$ModuleName='$ModuleName';
 ";
-        $C .= "\n\tpublic function add(Request \$request)
+        $C .= "\n\tpublic function add($InsertRequestClassName \$request)
     {
         if(!Bouncer::can('$ModuleName" . "." . "$FormName.insert'))
             throw new AccessDeniedHttpException();
-        \$this->_validateFields(\$request,false);
+        \$request->validated();
         $AddGetterCodes
     ";
         $C .= "\n\t\t\$$UCFormName" . " = $ModuleName" . "_" . "$FormName::create([";
@@ -278,11 +315,12 @@ class $UCFormName" . "Controller extends SweetController
             $C .= "\n\t\t$$UCFormName" . "->save();";
         $C .= "\n\t\treturn response()->json(['Data'=>\$$UCFormName], 201);";
         $C .= "\n\t}";
-        $C .= "\n\tpublic function update(\$id,Request \$request)
+        $C .= "\n\tpublic function update(\$id,$UpdateRequestClassName \$request)
     {
         if(!Bouncer::can('$ModuleName" . "." . "$FormName.edit'))
             throw new AccessDeniedHttpException();
-        \$this->_validateFields(\$request,true);
+        \$request->setIsUpdate(true);
+        \$request->validated();
         $UpdateGetterCodes;
             
     ";
@@ -294,19 +332,6 @@ class $UCFormName" . "Controller extends SweetController
         $C .= "\n        \$$UCFormName" . "->save();";
         $C .= "\n        return response()->json(['Data'=>\$$UCFormName], 202);";
         $C .= "\n    }";
-        $C.="
-        
-    private function _validateFields(\$request,\$isUpdate)
-    {
-        \$updateFields=[
-$ValidationRules
-        ];
-        \$addFields=[];
-        \$addFields=array_merge(\$addFields,\$updateFields);
-        \$validator = Validator::make(\$request->all(), \$isUpdate?\$updateFields:\$addFields);
-        if (\$validator->fails())
-            throw new ValidationException(\$validator);
-    }";
         $C .= "\n    public function list(Request \$request)";
         $C .= "\n    {
         Bouncer::allow('admin')->to('$ModuleName" . "." . "$FormName.insert');
@@ -361,6 +386,76 @@ $ValidationRules
         $this->SaveFile($DesignFile, $C);
     }
 
+    protected function makeLaravelRequests($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $InsertRequestClassName=$ModuleName."_".$FormName."AddRequest";
+        $UpdateRequestClassName=$ModuleName."_".$FormName."UpdateRequest";
+        $AllFields=$this->getAllFormsOfFields();
+        $Fields=$AllFields['fields'];
+        $PersianFields=$AllFields['persianfields'];
+        $PureFields=$AllFields['purefields'];
+        $ValidationRules="";
+        $ValidationMessages="";
+        for ($i = 0; $i < count($Fields); $i++) {
+            $FC=$this->_getFieldCodes($ModuleName,$FormName,$Fields[$i],$PureFields[$i],$PersianFields[$i]);
+            $ValidationRules.=$FC->getValidationRules();
+            $ValidationMessages.=$FC->getValidationMessages();
+        }
+        $InsertCode = "<?php
+namespace App\\Http\\Requests\\$ModuleName;
+use App\Http\Requests\sweetRequest;
+class $InsertRequestClassName extends $UpdateRequestClassName
+{
+    public function authorize()
+    {
+        return true;
+    }
+    public function rules()
+    {
+        \$Fields = [
+        ];
+        
+        \$Fields = array_merge(\$Fields, parent::rules());
+        return \$Fields;
+    }
+    public function messages()
+    {
+        return [
+            $ValidationMessages
+        ];
+    }
+}";
+        $UpdateCode = "<?php
+namespace App\\Http\\Requests\\$ModuleName;
+use App\\Http\\Requests\\sweetRequest;
+
+class $UpdateRequestClassName extends sweetRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+    public function rules()
+    {
+        \$Fields = [
+            $ValidationRules
+        ];
+        return \$Fields;
+    }
+    public function messages()
+    {
+        return [
+            $ValidationMessages
+        ];
+    }
+}";
+        $DesignFile1 = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/Http/Requests/$ModuleName/$InsertRequestClassName" . ".php";
+        $this->SaveFile($DesignFile1, $InsertCode);
+        $DesignFile2 = $this->getLaravelCodeModuleDir() . "/" . $ModuleName . "/app/Http/Requests/$ModuleName/$UpdateRequestClassName" . ".php";
+        $this->SaveFile($DesignFile2, $UpdateCode);
+    }
     protected function makeLaravelMigrations($formInfo)
     {
 //        $this->makeLaravelAPIModel($formInfo);

@@ -291,7 +291,7 @@ abstract class manageDBReactNativeViewFormController extends manageDBReactNative
         $ViewCodes .= $EndViewCodes;
 
         $C = "import React, {Component} from 'react';
-import {StyleSheet, View, Alert, ScrollView, Dimensions,AsyncStorage,Text,Image } from 'react-native';
+import {StyleSheet, View, ScrollView, Dimensions,Text,Image } from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
 import SweetFetcher from '../../../../classes/sweet-fetcher';
 import Common from '../../../../classes/Common';

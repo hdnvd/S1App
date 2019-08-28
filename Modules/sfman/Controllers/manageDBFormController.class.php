@@ -38,7 +38,12 @@ abstract class manageDBFormController extends BaseManageDBFormController
     {
         $PureField=$FieldName;
         if (FieldType::getFieldType($FieldName) == FieldType::$FID)
-            $PureField = substr($FieldName, 0, strlen($FieldName) - 4);
+        {
+            if(substr($FieldName,strlen($FieldName)-3)=="_id")
+                $PureField = substr($FieldName, 0, strlen($FieldName) - 3);
+            else
+                $PureField = substr($FieldName, 0, strlen($FieldName) - 4);
+        }
         return $PureField;
     }
     protected function getFieldNameWithoutPreFix($FieldName)

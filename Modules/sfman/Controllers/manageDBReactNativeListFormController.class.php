@@ -146,17 +146,17 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
                 $FieldDisplayCodes .= "
                 <Image style={generalStyles.listitemthumbnail} source={{uri: Constants.ServerURL+'/'+item.$PureFields[$i]}}/>
 ";
-            }elseif (FieldType::getFieldType($Fields[$i])==FieldType::$DATE) {
-                $FieldDisplayCodes .= "
-                <Text style={generalStyles.simplelabel}>{jMoment.utc(moment.unix(item.$PureFields[$i])).format('jYYYY/jMM/jDD')}</Text>";
+//            }elseif (FieldType::getFieldType($Fields[$i])==FieldType::$DATE) {
+//                $FieldDisplayCodes .= "
+//                <Text style={generalStyles.simplelabel}>{jMoment.utc(moment.unix(item.$PureFields[$i])).format('jYYYY/jMM/jDD')}</Text>";
             } else {
                 $FieldDisplayCodes .= "
                 <Text style={generalStyles.simplelabel}>{item.$PureFields[$i]}</Text>";
             }
         }
-        $C = "import React, {Component} from 'react'
+        $C = "import React from 'react'
 import { Button } from 'react-native-elements';
-import {StyleSheet, View, Alert, Dimensions,AsyncStorage,Image,TouchableWithoutFeedback,Text,Picker,TextInput,ScrollView,FlatList } from 'react-native';
+import {StyleSheet, View, Alert, Dimensions,Image,TouchableWithoutFeedback,Text,Picker,TextInput,ScrollView,FlatList } from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
 import SweetFetcher from '../../../../classes/sweet-fetcher';
 import Common from '../../../../classes/Common';

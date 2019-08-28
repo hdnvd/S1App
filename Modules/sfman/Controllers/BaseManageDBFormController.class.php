@@ -156,6 +156,8 @@ class FieldType{
         if($FieldName=="readonly" ||
             $FieldName=="gender")
             return FieldType::$BOOLEAN;
+        if(substr($FieldName,strlen($FieldName)-3)=="_id")
+            return FieldType::$FID;
         if(substr($FieldName,strlen($FieldName)-4)=="_fid")
             return FieldType::$FID;
         if(substr($FieldName,strlen($FieldName)-4)=="_flu")

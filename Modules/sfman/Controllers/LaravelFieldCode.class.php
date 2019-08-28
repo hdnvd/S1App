@@ -19,6 +19,7 @@ class LaravelFieldCode extends FieldCode
     private $ListFieldLoadCodes = "";
     private $SingleLoadFieldLoadCodes = "";
     private $ValidationRules = "";
+    private $ValidationMessages = "";
 
 
 
@@ -32,9 +33,10 @@ class LaravelFieldCode extends FieldCode
      * @param string $ListFieldLoadCodes
      * @param string $SingleLoadFieldLoadCodes
      * @param string $ValidationRules
+     * @param string $ValidationMessages
      * @param int $AddPolicy
      */
-    public function __construct($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$AddPolicy)
+    public function __construct($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,$AddPolicy)
     {
         $this->setAddPolicy($AddPolicy);
         $this->AddGetterCodes = $AddGetterCodes;
@@ -45,7 +47,25 @@ class LaravelFieldCode extends FieldCode
         $this->ListFieldLoadCodes = $ListFieldLoadCodes;
         $this->SingleLoadFieldLoadCodes = $SingleLoadFieldLoadCodes;
         $this->ValidationRules = $ValidationRules;
+        $this->ValidationMessages = $ValidationMessages;
     }
+
+    /**
+     * @return string
+     */
+    public function getValidationMessages()
+    {
+        return $this->ValidationMessages;
+    }
+
+    /**
+     * @param string $ValidationMessages
+     */
+    public function setValidationMessages($ValidationMessages)
+    {
+        $this->ValidationMessages = $ValidationMessages;
+    }
+
     /**
      * @return string
      */
