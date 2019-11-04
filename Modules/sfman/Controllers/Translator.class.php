@@ -7,6 +7,7 @@
  */
 
 namespace Modules\sfman\Controllers;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 
 class Translator
@@ -232,6 +233,15 @@ private $Translations;
         if(key_exists($Word,$this->Translations)){
 //            echo $Word . ":".$this->Translations[$Word]."<br>";
             return $Result . $this->Translations[$Word];
+        }
+        else
+        {
+            try {
+                $translate = new GoogleTranslate();
+                $translate->setSource(); // Translate from English
+                $translate->setTarget('fa'); // Translate to Georgian
+                return $translate->translate($Word);
+            }catch (\Exception $ex){}
         }
 //        echo $Word . " Has No Translation<br>";
         return $DefaultValue;
