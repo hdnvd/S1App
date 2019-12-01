@@ -86,6 +86,8 @@ class makeEntityController extends Controller {
         $FieldNameInfoVar="\$" . ucfirst($FieldName) . "Info";
         $FieldNameUPPERVar="\$" . strtoupper($FieldName);
         $FieldTitle=$FieldName;
+
+
         if(strtolower($FieldTitle)=='title')
             $FieldTitle='عنوان';
         elseif(strtolower($FieldTitle)=='name')
@@ -128,6 +130,10 @@ class makeEntityController extends Controller {
             $FieldTitle='تصویر';
         elseif(strtolower($FieldTitle)=='context')
             $FieldTitle='متن';
+        elseif(strtolower($FieldTitle)=='rate')
+            $FieldTitle='امتیاز';
+        elseif(strtolower($FieldTitle)=='text')
+            $FieldTitle='متن';
         elseif(strtolower($FieldTitle)=='page')
             $FieldTitle='صفحه';
         elseif(strtolower($FieldTitle)=='action')
@@ -152,6 +158,7 @@ class makeEntityController extends Controller {
             $FieldTitle='کلمه عبور';
         elseif(strtolower($FieldTitle)=='message')
             $FieldTitle='پیام';
+
         $Info="\n\n\t\t/******** $FieldName ********/";
         $Info.="\n\t\t$FieldNameInfoVar=new FieldInfo();";
         $Info.="\n\t\t$FieldNameInfoVar" . "->setTitle(\"$FieldTitle\");";
