@@ -442,7 +442,7 @@ abstract class manageDBFormController extends BaseManageDBFormController
             $this->makeReactNativeItemManageDesign($formInfo);
             $this->makeReactNativeItemViewDesign($formInfo);
 //            $this->makeReactItemViewDesign($formInfo);
-//            $this->makeReactRoutes($formInfo);
+            $this->makeReactNativeRoutes($formInfo);
         }
         $DBAccessor->close_connection();
     }
