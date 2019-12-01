@@ -250,6 +250,8 @@ abstract class manageDBReactNativeViewFormController extends manageDBReactNative
 
     protected function makeReactNativeItemViewDesign($formInfo)
     {
+        $this->makeReactNativeViewStyle($formInfo);
+        $this->makeReactNativeViewController($formInfo);
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
@@ -257,6 +259,8 @@ abstract class manageDBReactNativeViewFormController extends manageDBReactNative
         $UFormName = ucfirst($FormName);
         $ModuleNames = $ModuleName . "s";
         $FileName = $ModuleName . "_$FormName" . "View";
+        $ControllerFileName = $FileName . "Controller";
+        $StyleFileName = $FileName . "Styles";
         $Translations = new Translator();
         $PageTitle = "اطلاعات " . $Translations->getPersian($FormName, $FormName);
         $AllFields = $this->getAllFormsOfFields();
@@ -291,66 +295,111 @@ abstract class manageDBReactNativeViewFormController extends manageDBReactNative
         $ViewCodes .= $EndViewCodes;
 
         $C = "import React, {Component} from 'react';
-import {StyleSheet, View, ScrollView, Dimensions,Text,Image } from 'react-native';
+import {StyleSheet,View,ScrollView,Dimensions,Text,Image} from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
-import SweetFetcher from '../../../../classes/sweet-fetcher';
-import Common from '../../../../classes/Common';
-import AccessManager from '../../../../classes/AccessManager';
 import Constants from '../../../../classes/Constants';
+import Common from '../../../../classes/Common';
 import TextRow from '../../../../sweet/components/TextRow';
 import SweetButton from '../../../../sweet/components/SweetButton';
-import ComponentHelper from '../../../../classes/ComponentHelper';
 import SimpleMap from '../../../../components/SimpleMap';
+import SweetAlert from '../../../../classes/SweetAlert';
 import SweetPage from '../../../../sweet/components/SweetPage';
-import LogoTitle from '../../../../components/LogoTitle';
+import PageContainer from '../../../../sweet/components/PageContainer';
+import SweetTopCarousel from '../../../../sweet/components/SweetTopCarousel';
+import ViewBox from '../../../../sweet/components/ViewBox';
+import $ControllerFileName from '../../controllers/$FormName/$ControllerFileName';
+import $StyleFileName from '../../values/styles/$FormName/$StyleFileName';
 $ImportCodes
-export default class  $FileName extends SweetPage {
-    static navigationOptions =({navigation}) => {
-        return {
-            headerLeft: null,
-            headerTitle: <LogoTitle title={'$PageTitle'} />
-        };
-    };
+export default class $FileName extends SweetPage {
     $ClassFieldDefinitionCodes
     constructor(props) {
         super(props);
-        this.state =
-            {
-                isLoading:false,
-                LoadedData:{" . $StateVariableCodes . "
-                },
-                ";
-        $C .= "
-            };
         $ConstructorCodes
+    }
+    componentDidMount(){
+        super.componentDidMount();
         this.loadData();
     }
-    loadData=()=>{
-        this.setState({isLoading:true});
-        new SweetFetcher().Fetch('/$ModuleName/$FormName/'+global.".$FormName."ID,SweetFetcher.METHOD_GET, null, data => {
-            this.setState({LoadedData:data.Data,isLoading:false});
+    
+    loadData = () => {
+        this.setState({isLoading: true},()=>{
+            new $ControllerFileName().load(global.$FormName"."ID,(data)=>{
+                this.setState({LoadedData: {...data}, isLoading: false});
+            });
         });
-$LoaderMethodCallCodes
     };
+$LoaderMethodCallCodes
 $LoaderMethodCodes
     render() {
-        const {height: heightOfDeviceScreen} = Dimensions.get('window');
-            return (
-                <View style={{flex:1}}  >
-                    <ScrollView contentContainerStyle={{minHeight: this.height || heightOfDeviceScreen}}>
-                    
-                        <View style={generalStyles.container}>
-                        $ViewCodes";
-
-        $C .= "
-                        </View>
-                    </ScrollView>
+        let Window = Dimensions.get('window');
+        let content=<View style={{flex: 1}}>
+                {this.state.LoadedData != null &&
+                    <View>
+                        <ScrollView contentContainerStyle={{minHeight: this.height || Window.height}}>
+                            <View style={generalStyles.containerWithNoBG}>
+                            <ViewBox title={'اطلاعات'}>
+                                $ViewCodes
+                            </ViewBox>
+                            </View>
+                        </ScrollView>
+                     </View>
+                }
                 </View>
-            )
+        return (<PageContainer isLoading={this.state.isLoading}>{content}</PageContainer>);
     }
 }
     ";
         $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/pages/$FormName/" . $FileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+    private function makeReactNativeViewStyle($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FileName = $ModuleName . "_$FormName" . "View";
+        $StyleFileName = $FileName . "Styles";
+
+        $C = "import {Dimensions, StyleSheet} from 'react-native';
+let Window = Dimensions.get('window');
+export default StyleSheet.create(
+    {
+        test:
+            {
+                width: '100%',
+
+            },
+    }
+);
+    ";
+        $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/values/styles/$FormName/" . $StyleFileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+    private function makeReactNativeViewController($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FileName = $ModuleName . "_$FormName" . "View";
+        $ControllerFileName = $FileName . "Controller";
+        $C = "import controller from '../../../../sweet/architecture/controller';
+import SweetFetcher from '../../../../classes/sweet-fetcher';
+import SweetHttpRequest from '../../../../classes/sweet-http-request';
+import Constants from '../../../../classes/Constants';
+import SweetConsole from '../../../../classes/SweetConsole';
+import SweetAlert from '../../../../classes/SweetAlert';
+import Common from '../../../../classes/Common';
+import AccessManager from '../../../../classes/AccessManager';
+
+
+export default class $ControllerFileName extends controller {
+    load($FormName"."Id,onLoad)
+    {
+        new SweetFetcher().Fetch('/trapp/$FormName/' + $FormName"."Id, SweetFetcher.METHOD_GET, null, data => {
+            onLoad(data.Data);
+        });
+    }
+}
+    ";
+        $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/controllers/$FormName/" . $ControllerFileName . ".js";
         $this->SaveFile($DesignFile, $C);
     }
 
