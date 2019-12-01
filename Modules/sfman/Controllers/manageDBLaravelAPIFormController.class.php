@@ -48,8 +48,8 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $ListQueryCodes.="\n        \$$UCFormName"."Query =SweetQueryBuilder::OrderIfNotNull(\$$UCFormName"."Query,'$PureFieldName"."__sort','$FieldName',\$request->get('$PureFieldName"."__sort'));";;
         $ListFieldLoadCodes = "";
         $SingleLoadFieldLoadCodes = "";
-        $ValidationRules = "\n            '$FieldName' => 'required',";
-        $ValidationMessages = "\n            '$FieldName".".required' => 'وارد کردن ".$TranslatedFieldName." اجباری می باشد',";
+        $ValidationRules = "\n            '$PureFieldName' => 'required',";
+        $ValidationMessages = "\n            '$PureFieldName".".required' => 'وارد کردن ".$TranslatedFieldName." اجباری می باشد',";
         $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
@@ -85,7 +85,7 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $ListQueryCodes = "";
         $ListFieldLoadCodes = $GFC->getListFieldLoadCodes();
         $SingleLoadFieldLoadCodes = $GFC->getSingleLoadFieldLoadCodes();
-        $ValidationRules = "\n            '$FieldName' => 'required',";
+        $ValidationRules = "\n            '$PureFieldName' => 'required',";
         $ValidationMessages = $GFC->getValidationMessages();
         $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_AFTER_JOB);
         return $FieldCode;
@@ -102,9 +102,9 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         $ListQueryCodes =$GFC->getListQueryCodes();
         $ListFieldLoadCodes =$GFC->getListFieldLoadCodes();
         $SingleLoadFieldLoadCodes = $GFC->getSingleLoadFieldLoadCodes();
-        $ValidationRules = "\n            '$FieldName' => 'required|numeric',";
+        $ValidationRules = "\n            '$PureFieldName' => 'required|numeric',";
         $ValidationMessages = $GFC->getValidationMessages();
-        $ValidationMessages .= "\n            '$FieldName".".numeric' => 'مقدار ".$TranslatedFieldName." باید عدد انگلیسی باشد.',";
+        $ValidationMessages .= "\n            '$PureFieldName".".numeric' => 'مقدار ".$TranslatedFieldName." باید عدد انگلیسی باشد.',";
         $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
@@ -131,9 +131,9 @@ abstract class manageDBLaravelAPIFormController extends manageDBSenchaFormContro
         \$$PureFieldNameUC"."Object=\$$UCFormName->$PureFieldName"."();
         \$$PureFieldNameUC"."Object=\$$PureFieldNameUC"."Object==null?'':\$$PureFieldNameUC"."Object;
         \$$UCFormName"."ObjectAsArray['$PureFieldName"."info']=\$this->getNormalizedItem(\$$PureFieldNameUC"."Object->toArray());";
-        $ValidationRules = "\n            '$FieldName' => 'required|min:-1|integer',";
+        $ValidationRules = "\n            '$PureFieldName' => 'required|min:-1|integer',";
         $ValidationMessages = $GFC->getValidationMessages();
-        $ValidationMessages .= "\n            '$FieldName".".integer' => 'مقدار ".$TranslatedFieldName." صحیح وارد نشده است.',";
+        $ValidationMessages .= "\n            '$PureFieldName".".integer' => 'مقدار ".$TranslatedFieldName." صحیح وارد نشده است.',";
         $FieldCode=new LaravelFieldCode($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,FieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
