@@ -16,25 +16,27 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
 
         $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
         $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes="selectedAreaValue: -1,";
+        $StateVariableCodes="area: -1,";
         $ConstructorCodes="";
         $ImportCodes="";
         $ClassFieldDefinitionCodes="";
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
         $ViewCodes="
-                            <CityAreaSelector
-                                onAreaSelected={(AreaID)=>this.setState({selectedAreaValue: AreaID})}
+                            <CityAreaSelectorModal area={this.state.formData.area}
+                                onSelect={(placeObject)=>this.setState({formData:{...this.state.formData,area: placeObject.area}})}
                             />";
-        $SaveCodes="
-									data.append('$PureFieldName', this.state.selectedAreaValue);";
+        /*$SaveCodes="
+									data.append('$PureFieldName', this.state.formData.selectedAreaValue);";*/
+        $SaveCodes="";
+
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
     protected function _getForeignIDFieldManageCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
 
         $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes="Selected$PureFieldName"."Value:data.Data.$PureFieldName,";
+        $InitialDataLoadFieldFillCodes="$PureFieldName".":data.Data.$PureFieldName,";
         $StateVariableCodes="";
         $CodeStateVariableCodes="";
         $ConstructorCodes="";
@@ -48,7 +50,7 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $TableName = strtolower($this->getTableNameFromFIDFieldName($FieldName));
         if ($FiledModule != "") {
             $CodeStateVariableCodes .= "\r\n\t\t\t$PureFieldName"."Options:null,";
-            $StateVariableCodes.="\r\n\t\t\tSelected$PureFieldName" . "Value:'-1',";
+            $StateVariableCodes.="\r\n\t\t\t$PureFieldName" . ":'-1',";
 
             $LoaderMethodCallCodes .= "
         this.load" . ucfirst($PureFieldName) . "s();";
@@ -64,13 +66,15 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
                             <PickerBox
                                 name={'$PureFieldName"."s'}
                                 title={'$TranslatedFieldName'}
-                                selectedValue ={this.state.Selected$PureFieldName" . "Value}
+                                selectedValue ={this.state.formData.$PureFieldName" . "}
                                 onValueChange={(value, index) => {
-                                    this.setState({Selected$PureFieldName" . "Value: value});
+                                    this.setState({formData:{...this.state.formData,$PureFieldName" . ": value}});
                                 }}
                                 options={this.state.$PureFieldName"."Options}
                             />";
-                $SaveCodes="\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFieldName', this.state.Selected$PureFieldName" . "Value);";
+//                $SaveCodes="\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFieldName', this.state.formData.Selected$PureFieldName" . "Value);";
+            $SaveCodes="";
+
         }
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$CodeStateVariableCodes,$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
@@ -87,8 +91,9 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
         $ViewCodes="
-                            <ImageSelector title='انتخاب $TranslatedFieldName' onConfirm={(path,onEnd)=>{onEnd(true);this.setState({Selected$PureFieldName"."Location : path});}} />";
-        $SaveCodes="\r\n\t\t\t\t\t\t\t\tComponentHelper.appendImageSelectorToFormDataIfNotNull(data,'$PureFieldName',this.state.Selected$PureFieldName"."Location);";
+                            <ImageSelector title='انتخاب $TranslatedFieldName' onConfirm={(path,onEnd)=>{onEnd(true);this.setState({formData:{...this.state.formData,$PureFieldName:ComponentHelper.getImageSelectorNormalPath(path)},Selected$PureFieldName"."Location : path});}} />";
+//        $SaveCodes="\r\n\t\t\t\t\t\t\t\tComponentHelper.appendImageSelectorToFormDataIfNotNull(data,'$PureFieldName',this.state.formData.Selected$PureFieldName"."Location);";
+        $SaveCodes="";
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
@@ -102,8 +107,8 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
         $ViewCodes="
-                            <CheckedRow title='$TranslatedFieldName' checked={this.state.$PureFieldName}
-                            onPress={() => this.setState({" . $PureFieldName . ": this.state.$PureFieldName==0?1:0})}
+                            <CheckedRow title='$TranslatedFieldName' checked={this.state.formData.$PureFieldName}
+                            onPress={() => this.setState({formData:{...this.state.formData," . $PureFieldName . ": this.state.formData.$PureFieldName==0?1:0}})}
                             />";
         $SaveCodes=$GFC->getSaveCodes();
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
@@ -120,11 +125,18 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $ClassFieldDefinitionCodes="";
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
+        $PostFix="";
+        if(strpos($FieldName,"_flt")!==false)
+            $PostFix="flt";
         $ViewCodes="
-                            <LocationSelector title='انتخاب از روی نقشه' navigation={this.props.navigation}/>";
+                            <SweetLocationSelector location={SweetLocationSelector.getLocationInfoFromObject(this.state.formData)}
+                                                   onLocationChange={(region)=>{
+                                                       this.setState({formData:{...this.state.formData,region}});
+                                                   }}/>";
         $SaveCodes="
-                                    data.append('latitude', global.SelectedLocation.latitude);
-                                    data.append('longitude', global.SelectedLocation.longitude);";
+                                        data.append('latitude$PostFix', this.state.formData.latitude);
+                                        data.append('longitude$PostFix', this.state.formData.longitude);
+                                    ";
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
@@ -137,8 +149,10 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
         $ViewCodes="
-                            <TextBox title={'$TranslatedFieldName'} value={this.state.$PureFieldName} onChangeText={(text) => {this.setState({".$PureFieldName.": text});}}/>";
-        $SaveCodes="\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFieldName', this.state.$PureFieldName);";
+                            <TextBox title={'$TranslatedFieldName'} value={this.state.formData.$PureFieldName} onChangeText={(text) => {this.setState({formData:{...this.state.formData,".$PureFieldName.": text}});}}/>";
+//        $SaveCodes="\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFieldName', this.state.formData.$PureFieldName);";
+        $SaveCodes="";
+
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
@@ -153,7 +167,7 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $LoaderMethodCodes=$GFC->getLoaderMethodCodes();
         $LoaderMethodCallCodes=$GFC->getLoaderMethodCallCodes();
         $ViewCodes="
-                            <TextBox keyboardType='numeric' title={'$TranslatedFieldName'} value={this.state.$PureFieldName} onChangeText={(text) => {this.setState({".$PureFieldName.": text});}}/>";
+                            <TextBox keyboardType='numeric' title={'$TranslatedFieldName'} value={this.state.formData.$PureFieldName} onChangeText={(text) => {this.setState({formData:{...this.state.formData,".$PureFieldName.": text}});}}/>";
         $SaveCodes=$GFC->getSaveCodes();
 
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$StateVariableCodes,$DataStateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
@@ -234,13 +248,15 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $LoaderMethodCodes="";
         $LoaderMethodCallCodes="";
         $ViewCodes="
-                            <TimeSelector title={'$TranslatedFieldName'} value={this.state.$PureFieldName} onConfirm={(date)=>this.setState({".$PureFieldName.": date})} />";
+                            <TimeSelector title={'$TranslatedFieldName'} value={this.state.formData.$PureFieldName} onConfirm={(date)=>this.setState({formData:{...this.state.formData,".$PureFieldName.": date}})} />";
         $SaveCodes=$GFC->getSaveCodes();
         $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
         return $FieldCode;
     }
     protected function makeReactNativeItemManageDesign($formInfo)
     {
+        $this->makeReactNativeManagementController($formInfo);
+        $this->makeReactNativeManagementStyle($formInfo);
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
@@ -248,6 +264,8 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         $UFormName = ucfirst($FormName);
         $ModuleNames = $ModuleName . "s";
         $FileName = $ModuleName . "_$FormName" . "Manage";
+        $StyleFileName = $FileName . "Styles";
+        $ControllerFileName = $FileName . "Controller";
         $Translations = new Translator();
         $PageTitle = "اطلاعات " . $Translations->getPersian($FormName, $FormName);
         $AllFields = $this->getAllFormsOfFields();
@@ -280,6 +298,9 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
         }
 
         $C = "import React from 'react'
+
+import $StyleFileName from '../../values/styles/$FormName/$StyleFileName';
+import $ControllerFileName from '../../controllers/$FormName/$ControllerFileName';
 import { CheckBox } from 'react-native-elements';
 import {StyleSheet, View, TextInput, ScrollView, Dimensions,Picker,Text,Image } from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
@@ -291,8 +312,9 @@ import PickerBox from '../../../../sweet/components/PickerBox';
 import TextBox from '../../../../sweet/components/TextBox';
 import TimeSelector from '../../../../sweet/components/TimeSelector';
 import ImageSelector from '../../../../sweet/components/ImageSelector';
-import LocationSelector from '../../../../sweet/components/LocationSelector';
-import CityAreaSelector from '../../../../sweet/components/CityAreaSelector';
+
+import SweetLocationSelector from '../../../../sweet/components/SweetLocationSelector';
+import CityAreaSelectorModal from '../../../../sweet/components/CityAreaSelectorModal';
 import SweetButton from '../../../../sweet/components/SweetButton';
 import CheckedRow from '../../../../sweet/components/CheckedRow';
 import ComponentHelper from '../../../../classes/ComponentHelper';
@@ -301,19 +323,13 @@ import LogoTitle from '../../../../components/LogoTitle';
 import SweetAlert from '../../../../classes/SweetAlert';
 $ImportCodes
 export default class  $FileName extends SweetPage {
-    static navigationOptions =({navigation}) => {
-        return {
-            headerLeft: null,
-            headerTitle: <LogoTitle title={'$PageTitle'} />
-        };
-    };
     $ClassFieldDefinitionCodes
     constructor(props) {
         super(props);
         this.state =
         {
             isLoading:false,
-            $DataStateVariableCodes
+            formData:{},
             $CodeStateVariableCodes
         };";
         $C .= "
@@ -321,14 +337,15 @@ export default class  $FileName extends SweetPage {
         this.loadData();
     }
     loadData=()=>{
-$LoaderMethodCallCodes
-        if(global.".$FormName."ID>0){
-            this.setState({isLoading:true});
-            new SweetFetcher().Fetch('/$ModuleName/$FormName/'+global.".$FormName."ID,SweetFetcher.METHOD_GET, null, data => {
-                data.Data.isLoading=false;
-                this.setState({".$InitialDataLoadFieldFillCodes."});
+        $LoaderMethodCallCodes
+        if(global.".$FormName."ID!=null)
+        {
+            this.setState({isLoading:true},()=>{
+                new $ControllerFileName().load(global.".$FormName."ID,(data)=>{
+                    this.setState({isLoading:false,formData:data});
+                });
             });
-        }//IF
+        }
     };
 $LoaderMethodCodes
     render() {
@@ -351,29 +368,13 @@ $LoaderMethodCodes
                                     let formIsValid=true;
                                     if(formIsValid)
                                     {
-                                        const data = new FormData();
-                                        let id = '';
-                                        let method=SweetFetcher.METHOD_POST;
-                                        let Separator='';
-                                        let action=AccessManager.INSERT;
-                                        if (global.".$FormName."ID > 0)
-                                            id = global.".$FormName."ID;
-                                            ";
-        $C .= "\r\n\t\t\t\t\t\t\t\tif(id!==''){";
-        $C = $C . "\r\n\t\t\t\t\t\t\t\t\tmethod=SweetFetcher.METHOD_PUT;";
-        $C = $C . "\r\n\t\t\t\t\t\t\t\t\tSeparator='/';";
-        $C = $C . "\r\n\t\t\t\t\t\t\t\t\taction=AccessManager.EDIT;";
-        $C = $C . "\r\n\t\t\t\t\t\t\t\t\t\tdata.append('id', id);";
-        $C = $C . "\r\n\t\t\t\t\t\t\t\t}
-        $SaveCodes";
-        $C .= "
-                                        new SweetFetcher().Fetch('/$ModuleName/$FormName'+Separator+id, method, data, data => {
-                                             if(data.hasOwnProperty('Data'))
-                                             {
+                                        const data =Common.appendObject2FormData(this.state.formData,new FormData());
+                                        new $ControllerFileName().save(global.".$FormName."ID,data,(data)=>{
                                                  SweetAlert.displaySimpleAlert('پیام','اطلاعات با موفقیت ذخیره شد.');
                                                  OnEnd(true);
-                                             }
-                                        },(error)=>{OnEnd(false)},'$ModuleName','$FormName',this.props.history);
+                                        },(error)=>{OnEnd(false)}); 
+        $SaveCodes";
+        $C .= "
                                     }
                                     else
                                         OnEnd(false);
@@ -387,7 +388,86 @@ $LoaderMethodCodes
         $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/pages/$FormName/" . $FileName . ".js";
         $this->SaveFile($DesignFile, $C);
     }
+    protected function makeReactNativeManagementStyle($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FileName = $ModuleName . "_$FormName" . "Manage";
+        $StyleFileName = $FileName . "Styles";
 
+        $C = "import {Dimensions, StyleSheet} from 'react-native';
+let Window = Dimensions.get('window');
+export default StyleSheet.create(
+    {
+        test:
+            {
+                width: '100%',
+
+            },
+    }
+);
+    ";
+        $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/values/styles/$FormName/" . $StyleFileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+    protected function makeReactNativeManagementController($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $FileName = $ModuleName . "_$FormName" . "Manage";
+        $ControllerFileName = $FileName . "Controller";
+        $AllFields = $this->getAllFormsOfFields();
+        $Fields = $AllFields['fields'];
+        $Translations = new Translator();
+        $PageTitle = " " . $Translations->getPersian($FormName, $FormName);
+        $PersianFields = $AllFields['persianfields'];
+        $PureFields = $AllFields['purefields'];
+        $IdField=$FormName."ID";
+        $C = "import controller from '../../../../sweet/architecture/controller';
+import SweetFetcher from '../../../../classes/sweet-fetcher';
+import SweetHttpRequest from '../../../../classes/sweet-http-request';
+import Constants from '../../../../classes/Constants';
+import SweetConsole from '../../../../classes/SweetConsole';
+import SweetAlert from '../../../../classes/SweetAlert';
+import Common from '../../../../classes/Common';
+import AccessManager from '../../../../classes/AccessManager';
+
+
+export default class $ControllerFileName extends controller {
+    load($IdField,onLoad)
+    {
+        if($IdField>0){
+            this.setState({isLoading:true});
+            new SweetFetcher().Fetch('/$ModuleName/$FormName/'+$IdField,SweetFetcher.METHOD_GET, null, data => {
+                onLoad(data.Data);
+            });
+        }//if
+    }
+    save($IdField,data,onSave,onError)
+    {
+        let method=SweetFetcher.METHOD_POST;
+        let recordIdentifier='';
+        let action=AccessManager.INSERT;
+        if($IdField!=null || $IdField.length>=1){
+            method=SweetFetcher.METHOD_PUT;
+            recordIdentifier='/'+requestID;
+            action=AccessManager.EDIT;
+            data.append('id', $IdField);
+        }//if
+        new SweetFetcher().Fetch('/$ModuleName/$FormName'+recordIdentifier, method, data, data => {
+            if(data.hasOwnProperty('Data'))
+                onSave(data.Data);
+            else
+                onError(null);
+        },error=>{onError(error);},'$ModuleName','$FormName',null);
+    }
 }
+    ";
+        $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/controllers/$FormName/" . $ControllerFileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+}
+
 
 ?>
