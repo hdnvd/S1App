@@ -247,13 +247,13 @@ class FieldType{
     }
     public static function fieldIsLatitude($FieldName)
     {
-        if(strtolower($FieldName)=="latitude")
+        if(strtolower($FieldName)=="latitude" || strtolower($FieldName)=="latitude_flt")
             return true;
         return false;
     }
     public static function fieldIsLongitude($FieldName)
     {
-        if(strtolower($FieldName)=="longitude")
+        if(strtolower($FieldName)=="longitude" || strtolower($FieldName)=="longitude_flt")
             return true;
         return false;
     }
