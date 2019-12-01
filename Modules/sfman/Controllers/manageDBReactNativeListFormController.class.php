@@ -125,11 +125,15 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
     protected function makeReactNativeListDesign($formInfo)
     {
         $this->makeReactNativeSearchDesign($formInfo);
+        $this->makeReactNativeListController($formInfo);
+        $this->makeReactNativeListStyle($formInfo);
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
         $FileName = $ModuleName . "_$FormName" . "List";
         $SearchFileName = ucfirst($ModuleName) . "_$FormName" . "Search";
+        $StyleFileName = $FileName . "Styles";
+        $ControllerFileName = $FileName . "Controller";
         $AllFields = $this->getAllFormsOfFields();
         $Fields = $AllFields['fields'];
         $Translations = new Translator();
@@ -146,9 +150,6 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
                 $FieldDisplayCodes .= "
                 <Image style={generalStyles.listitemthumbnail} source={{uri: Constants.ServerURL+'/'+item.$PureFields[$i]}}/>
 ";
-//            }elseif (FieldType::getFieldType($Fields[$i])==FieldType::$DATE) {
-//                $FieldDisplayCodes .= "
-//                <Text style={generalStyles.simplelabel}>{jMoment.utc(moment.unix(item.$PureFields[$i])).format('jYYYY/jMM/jDD')}</Text>";
             } else {
                 $FieldDisplayCodes .= "
                 <Text style={generalStyles.simplelabel}>{item.$PureFields[$i]}</Text>";
@@ -156,12 +157,18 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
         }
         $C = "import React from 'react'
 import { Button } from 'react-native-elements';
-import {StyleSheet, View, Alert, Dimensions,Image,TouchableWithoutFeedback,Text,Picker,TextInput,ScrollView,FlatList } from 'react-native';
+import {StyleSheet, View, Dimensions,Image,TouchableWithoutFeedback,Text,Picker,TextInput,ScrollView,FlatList} from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
 import SweetFetcher from '../../../../classes/sweet-fetcher';
+import SweetHttpRequest from '../../../../classes/sweet-http-request';
+import SweetListPage from '../../../../sweet/components/SweetListPage';
 import Common from '../../../../classes/Common';
 import AccessManager from '../../../../classes/AccessManager';
 import Constants from '../../../../classes/Constants';
+import SweetNavigation from '../../../../classes/sweetNavigation';
+import ListTopBar from '../../../../sweet/components/ListTopBar';
+import PageContainer from '../../../../sweet/components/PageContainer';
+import TextRow from '../../../../sweet/components/TextRow';
 import PickerBox from '../../../../sweet/components/PickerBox';
 import TextBox from '../../../../sweet/components/TextBox';
 import TimeSelector from '../../../../sweet/components/TimeSelector';
@@ -169,99 +176,154 @@ import LocationSelector from '../../../../sweet/components/LocationSelector';
 import CityAreaSelector from '../../../../sweet/components/CityAreaSelector';
 import CheckedRow from '../../../../sweet/components/CheckedRow';
 import $SearchFileName from './$SearchFileName';
-import SweetHttpRequest from '../../../../classes/sweet-http-request';
-import SweetPage from '../../../../sweet/components/SweetPage';
+import $StyleFileName from '../../values/styles/$FormName/$StyleFileName';
+import $ControllerFileName from '../../controllers/$FormName/$ControllerFileName';
 import LogoTitle from '../../../../components/LogoTitle';
 import jMoment from 'moment-jalaali';
 import moment from 'moment';
 
 
-export default class $FileName extends SweetPage {
-    static navigationOptions =({navigation}) => {
-        return {
-            headerLeft: null,
-            headerTitle: <LogoTitle title={'$PageTitle'} />
-        };
-    };
+export default class $FileName extends SweetListPage {
     state =
     {
+        ...super.state,
         $FormNames:[],
-        LastSearchFields:null,
-        nextStartRow:0,
-        SearchText:'',
-        isLoading:false,
-        isRefreshing:false,
-        displaySearchPage:false,
+        searchFields:null,
+        sortField: $ControllerFileName.SORTFIELD_ID,
     };
     async componentDidMount() {
-        this._loadData('',null,true);
+        this._loadData(true, false);
     }
-    _loadData=(SearchText,SearchFields,isRefreshing)=>{
+    _loadData=(isRefreshing, forceHideSearchPage)=>{
         let {nextStartRow,$FormNames}=this.state;
         if(isRefreshing)
         {
             $FormNames=[];
             nextStartRow=0;
         }
-        this.setState({isRefreshing:isRefreshing,isLoading:true,LastSearchFields:SearchFields});
-        let Request=new SweetHttpRequest();
-        Request.appendVariablesFromObjectKeys(SearchFields);
-        Request.appendVariable('__pagesize',Constants.DEFAULT_PAGESIZE);
-        Request.appendVariable('__startrow',nextStartRow);
-        Request.appendVariable('searchtext',SearchText);
-        let filterString=Request.getParamsString();
-        if(filterString!='') filterString='?'+filterString;
-        let url='/$ModuleName/$FormName'+filterString;
-        new SweetFetcher().Fetch(url,SweetFetcher.METHOD_GET, null, data => {
-            this.setState({".$FormNames.":[...$FormNames,...data.Data],nextStartRow:nextStartRow+Constants.DEFAULT_PAGESIZE,isLoading:false,isRefreshing:false,SearchText:SearchText});
+        this.setState({isRefreshing:isRefreshing,isLoading:true},()=>{
+            new $ControllerFileName().loadData(this.state.searchText, this.state.searchFields, nextStartRow, this.state.sortField, (data) => {
+            if (forceHideSearchPage) {
+               this.removeBackHandler();
+            }
+                this.setState({
+                    $FormNames: [...".$FormNames.", ...data],
+                    nextStartRow: nextStartRow + Constants.DEFAULT_PAGESIZE,
+                    isLoading: false,
+                    isRefreshing: false,
+                    displaySearchPage: forceHideSearchPage ? false : this.state.displaySearchPage,
+                });
+                
+            });
+            
         });
     };
     render() {
-        const {height: heightOfDeviceScreen} =  Dimensions.get('window');
-            return (<View style={{flex: 1}}>
-                    {this.state.displaySearchPage &&
-                    <$SearchFileName
-                        dataLoader={SearchFields=>{this._loadData('',SearchFields,true)}}
-                    />
-                    }
-                    {!this.state.displaySearchPage &&
-                    <View style={generalStyles.listcontainer}>
-                <View style={generalStyles.searchbar}>
-                    <TextInput placeholder='' underlineColorAndroid={'transparent'} style={generalStyles.searchbarinput}
-                               onChangeText={(text) => {
-                                   this._loadData(text,this.state.LastSearchFields,true);
-                               }}/>
-                </View>
-                <View style={generalStyles.listcontainer}>
-                    <FlatList
-                        data={this.state.$FormNames}
-                        showsVerticalScrollIndicator={false}
-                        onEndReached={()=>this._loadData(this.state.SearchText,this.state.LastSearchFields,false)}
-                        onRefresh={()=>this._loadData(this.state.SearchText,this.state.LastSearchFields,true)}
-                        refreshing={this.state.isRefreshing}
-                        keyExtractor={item => item.id}
-                        onEndReachedThreshold={0.3}
-                        renderItem={({item}) =>
-                        <TouchableWithoutFeedback onPress={() => {
+            const renderListItem=({item}) =>{
+                        return <TouchableWithoutFeedback onPress={() => {
                                 global.".$FormName."ID=item.id;
-                                this.props.navigation.navigate('$ModuleName" . "_" . $FormName . "Manage', { name: '$ModuleName" . "_" . $FormName . "Manage' });
+                                SweetNavigation.navigateToNormalPage(this.props.navigation,'$ModuleName" . "_" . $FormName . "Manage');
                             }}>
                             <View style={generalStyles.ListItem}>
                             $FieldDisplayCodes
                             </View>
                             </TouchableWithoutFeedback>
-                        }
+                        };//renderListItem
+            const content=<View style={{flex: 1}}>
+                    {this.state.displaySearchPage &&
+                    <$SearchFileName dataLoader={searchFields=>{
+                            this.setState({searchFields: searchFields}, () => {
+                                this._loadData(true, true);
+                            });
+                        }}
                     />
+                    }
+                    {!this.state.displaySearchPage &&
+                    <View style={generalStyles.listcontainer}>
+                {this._getTopBar([{id:$ControllerFileName.SORTFIELD_ID,name: 'جدیدترین ها'}])}
+                <PageContainer isLoading={this.state.isLoading}
+                               isEmpty={this.state.$FormNames == null || this.state.$FormNames.length == 0}>
+                               <View style={generalStyles.listcontainer}>
+                    {this._getFlatList(this.state.$ControllerFileName,renderListItem)}
                 </View>
-                </View>
+                </PageContainer>
+
+                    </View>
                 }
-                </View>
-            );";
+                </View>";
         $C .= "
     }
 }
     ";
         $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/pages/$FormName/" . $FileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+    protected function makeReactNativeListStyle($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FileName = $ModuleName . "_$FormName" . "List";
+        $StyleFileName = $FileName . "Styles";
+
+        $C = "import {Dimensions, StyleSheet} from 'react-native';
+let Window = Dimensions.get('window');
+export default StyleSheet.create(
+    {
+        test:
+            {
+                width: '100%',
+
+            },
+    }
+);
+    ";
+        $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/values/styles/$FormName/" . $StyleFileName . ".js";
+        $this->SaveFile($DesignFile, $C);
+    }
+    protected function makeReactNativeListController($formInfo)
+    {
+        $ModuleName = $formInfo['module']['name'];
+        $FormName = $formInfo['form']['name'];
+        $FormNames = $FormName . "s";
+        $FileName = $ModuleName . "_$FormName" . "List";
+        $ControllerFileName = $FileName . "Controller";
+        $AllFields = $this->getAllFormsOfFields();
+        $Fields = $AllFields['fields'];
+        $Translations = new Translator();
+        $PageTitle = " " . $Translations->getPersian($FormName, $FormName);
+        $PersianFields = $AllFields['persianfields'];
+        $PureFields = $AllFields['purefields'];
+
+        $C = "import controller from '../../../../sweet/architecture/controller';
+import SweetFetcher from '../../../../classes/sweet-fetcher';
+import SweetHttpRequest from '../../../../classes/sweet-http-request';
+import Constants from '../../../../classes/Constants';
+import SweetConsole from '../../../../classes/SweetConsole';
+import SweetAlert from '../../../../classes/SweetAlert';
+import Common from '../../../../classes/Common';
+import AccessManager from '../../../../classes/AccessManager';
+
+
+export default class $ControllerFileName extends controller {
+    static SORTFIELD_ID = 'id';
+    loadData = (SearchText, SearchFields,nextStartRow,sortField,onLoad) => {
+            let Request=new SweetHttpRequest();
+            Request.appendVariablesFromObjectKeys(SearchFields,true);
+            Request.appendVariable('__pagesize', Constants.DEFAULT_PAGESIZE);
+            if (sortField === $ControllerFileName.SORTFIELD_ID)
+                Request.appendVariable('id__sort', '1');
+            Request.appendVariable('__startrow', nextStartRow);
+            Request.appendVariable('searchtext', SearchText,true);
+            let filterString = Request.getParamsString();
+            if(filterString!='') filterString='?'+filterString;
+            let url='/$ModuleName/$FormName'+filterString;
+            new SweetFetcher().Fetch(url,SweetFetcher.METHOD_GET, null, data => {
+                onLoad(data.Data);
+            });
+    };
+}
+    ";
+        $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/controllers/$FormName/" . $ControllerFileName . ".js";
         $this->SaveFile($DesignFile, $C);
     }
     protected function makeReactNativeSearchDesign($formInfo)
@@ -316,14 +378,7 @@ import SweetHttpRequest from '../../../../classes/sweet-http-request';
 import SweetPage from '../../../../sweet/components/SweetPage';
 import LogoTitle from '../../../../components/LogoTitle';
 
-
 export default class $FileName extends SweetPage {
-    static navigationOptions =({navigation}) => {
-        return {
-            headerLeft: null,
-            headerTitle: <LogoTitle title={'$PageTitle'} />
-        };
-    };
     state =
     {
         SearchFields:{
