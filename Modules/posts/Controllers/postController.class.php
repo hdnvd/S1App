@@ -41,10 +41,13 @@ class postController extends Controller {
 		}
 		if($result['post']!==null && count($result['post'])>0)
 			$PE->Update($PostID, null, null, null, null, null, null, ((int)$result['post'][0]['visits']+1), null, null, null,null,null,null,null);
-		$param=new ParameterEntity();
-		$param=$param->getParameter("posts_showexternallinks");
+		$paramEnt=new ParameterEntity();
+		$param=$paramEnt->getParameter("posts_showexternallinks");
+		$adddateparam=$paramEnt->getParameter("posts_show_last_update");
 		$param=$param[0]['value'];
+		$adddateparam=$adddateparam[0]['value'];
 		$result['showexternallinks']=$param;
+		$result['show_last_update']=$adddateparam;
 		return $result;
 	}
 }

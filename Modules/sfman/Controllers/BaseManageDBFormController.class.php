@@ -236,6 +236,15 @@ class FieldType{
             return true;
         return false;
     }
+    public static function fieldIsUserFid($FieldName)
+    {
+        $FieldType=FieldType::getFieldType($FieldName);
+        if($FieldType!=FieldType::$FID)
+            return false;
+        if(strtolower($FieldName)=="users_id" || strtolower($FieldName)=="users_fid"|| strtolower($FieldName)=="user_id"|| strtolower($FieldName)=="user_fid")
+            return true;
+        return false;
+    }
     public static function fieldIsPlaceFid($FieldName)
     {
         $FieldType=FieldType::getFieldType($FieldName);

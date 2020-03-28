@@ -5,6 +5,7 @@ namespace Modules\sfman\Controllers;
 use core\CoreClasses\db\FieldCondition;
 use core\CoreClasses\db\QueryLogic;
 use core\CoreClasses\db\dbaccess;
+use Modules\sfman\Classes\Field\FieldCode;
 use Modules\sfman\Entity\sfman_formelementtypeEntity;
 use Modules\sfman\Entity\sfman_formEntity;
 use Modules\sfman\Entity\sfman_moduleEntity;
@@ -24,82 +25,27 @@ abstract class manageDBFormController extends BaseManageDBFormController
 
     protected function getTableFieldPart($theFieldName, $offset)
     {
-        $theFieldNameParts = explode('_', $theFieldName);
-        $allCount = count($theFieldNameParts);
-        $place=($allCount + $offset);
-        if($place<0)
-            $place=-$place;
-        $place = $place % $allCount;
-        $theFieldPart = $theFieldNameParts[$place];
-        return $theFieldPart;
+        return FieldCode::getTableFieldPart($theFieldName,$offset);
     }
-
     protected function getFieldNameWithoutPostFix($FieldName)
     {
-        $PureField=$FieldName;
-        if (FieldType::getFieldType($FieldName) == FieldType::$FID)
-        {
-            if(substr($FieldName,strlen($FieldName)-3)=="_id")
-                $PureField = substr($FieldName, 0, strlen($FieldName) - 3);
-            else
-                $PureField = substr($FieldName, 0, strlen($FieldName) - 4);
-        }
-        return $PureField;
+        return FieldCode::getFieldNameWithoutPostFix($FieldName);
     }
     protected function getFieldNameWithoutPreFix($FieldName)
     {
-        $PureField=$FieldName;
-        if (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
-        {
-            if(substr($FieldName,0,3)=="isـ")
-                $PureField = substr($FieldName, 3);
-            elseif(substr($FieldName,0,4)=="can_")
-                $PureField = substr($FieldName, 4);
-            if(substr($FieldName,0,2)=="is")
-                $PureField = substr($FieldName, 2);
-        }
-        return $PureField;
+        return FieldCode::getFieldNameWithoutPreFix($FieldName);
     }
     protected function getTableNameFromFIDFieldName($Field)
     {
-        if(strlen($Field)>=8 && substr($Field,strlen($Field)-8,8)=="user_fid")
-            return "User";
-        $Field=$this->getFieldNameWithoutPostFix($Field);
-        $Pos=strpos($Field,"__");
-        if($Pos!==false)
-        {
-            $Field=substr($Field,$Pos+2);
-        }
-        $Pos=strpos($Field,"_");
-        if($Pos!==false)
-        {
-            $Field=substr($Field,$Pos+1);
-        }
-        return $Field;
+        return FieldCode::getTableNameFromFIDFieldName($Field);
     }
     protected function getModuleNameFromFIDFieldName($Field,$DefaultModuleName)
     {
-        if(strlen($Field)>=8 && substr($Field,strlen($Field)-8,8)=="user_fid")
-            return "";
-        $Field=$this->getFieldNameWithoutPostFix($Field);
-        $Pos=strpos($Field,"__");
-        if($Pos!==false)
-            $Field=substr($Field,$Pos+2);
-        $Pos=strpos($Field,"_");
-        if($Pos!==false)
-        {
-            $Field=substr($Field,0,$Pos);
-        }
-        else
-            $Field=$DefaultModuleName;
-        return $Field;
+        return FieldCode::getModuleNameFromFIDFieldName($Field,$DefaultModuleName);
     }
     protected function getPureFieldName($FieldName)
     {
-        $PureField=$this->getFieldNameWithoutPostFix($FieldName);
-        $PureField=$this->getFieldNameWithoutPreFix($PureField);
-        $PureField=str_replace("_","",$PureField);
-        return $PureField;
+        return FieldCode::getPureFieldName($FieldName);
     }
 
     /**

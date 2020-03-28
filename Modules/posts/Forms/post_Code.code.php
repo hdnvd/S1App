@@ -102,6 +102,7 @@ class post_Code extends FormCode {
 		}
 		$design->setExternalLink($this->Fields['post'][0]['externallink']);
 		$design->setShowExternalLinks($this->Fields['showexternallinks']);
+		$design->setShowLastUpdate($this->Fields['show_last_update']);
 		$design->setTags($this->Fields['posttags']);
 		return $design->getResponse();
 	}

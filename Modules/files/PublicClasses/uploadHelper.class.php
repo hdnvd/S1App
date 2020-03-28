@@ -16,7 +16,7 @@ class uploadHelper {
 	 * @param String $uploadPlace :Where To Upload File
 	 * @return Null if Upload Unsucccessful and The Uploaded URL if Upload Successful
 	 */
-	public static function UploadFile($tmpfile,$fileName,$uploadPlace,array $fileTypes=null,$maxSize=2000,$Override=false,$fileType=null)
+	public static function UploadFile($tmpfile,$fileName,$uploadPlace,array $fileTypes=null,$maxSize=8192,$Override=false,$fileType=null)
 	{
 		$uploader=new Uploader();
 		$newName=$fileName;

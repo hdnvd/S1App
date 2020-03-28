@@ -2,6 +2,18 @@
 
 namespace Modules\sfman\Controllers;
 
+use Modules\sfman\Classes\Field\React\Native\Manage\autoField;
+use Modules\sfman\Classes\Field\React\Native\Manage\booleanField;
+use Modules\sfman\Classes\Field\React\Native\Manage\cityAreaField;
+use Modules\sfman\Classes\Field\React\Native\Manage\clockField;
+use Modules\sfman\Classes\Field\React\Native\Manage\emptyField;
+use Modules\sfman\Classes\Field\React\Native\Manage\foreignIDField;
+use Modules\sfman\Classes\Field\React\Native\Manage\imageUploadField;
+use Modules\sfman\Classes\Field\React\Native\Manage\locationField;
+use Modules\sfman\Classes\Field\React\Native\Manage\nummericField;
+use Modules\sfman\Classes\Field\React\Native\Manage\reactNativeManageField;
+use Modules\sfman\Classes\Field\React\ReactFieldCode;
+
 
 /**
  * @author Hadi AmirNahavandi
@@ -11,186 +23,6 @@ namespace Modules\sfman\Controllers;
  */
 abstract class manageDBReactNativeManageFormController extends manageDBReactNativeFormController
 {
-
-    protected function _getCityAreaFieldManageCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes="area: -1,";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="
-                            <CityAreaSelectorModal area={this.state.formData.area}
-                                onSelect={(placeObject)=>this.setState({formData:{...this.state.formData,area: placeObject.area}})}
-                            />";
-        /*$SaveCodes="
-									data.append('$PureFieldName', this.state.formData.selectedAreaValue);";*/
-        $SaveCodes="";
-
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getForeignIDFieldManageCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes="$PureFieldName".":data.Data.$PureFieldName,";
-        $StateVariableCodes="";
-        $CodeStateVariableCodes="";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="";
-        $SaveCodes="";
-        $FiledModule = strtolower($this->getModuleNameFromFIDFieldName($FieldName, $ModuleName));
-        $TableName = strtolower($this->getTableNameFromFIDFieldName($FieldName));
-        if ($FiledModule != "") {
-            $CodeStateVariableCodes .= "\r\n\t\t\t$PureFieldName"."Options:null,";
-            $StateVariableCodes.="\r\n\t\t\t$PureFieldName" . ":'-1',";
-
-            $LoaderMethodCallCodes .= "
-        this.load" . ucfirst($PureFieldName) . "s();";
-            $LoaderMethodCodes .= "
-    load" . ucfirst($PureFieldName) . "s = () => {
-        new SweetFetcher().Fetch('/$FiledModule/$TableName',SweetFetcher.METHOD_GET, null, data => {
-            this.setState({" . $PureFieldName . "Options:data.Data});
-        });
-    };
-                ";
-
-            $ViewCodes="
-                            <PickerBox
-                                name={'$PureFieldName"."s'}
-                                title={'$TranslatedFieldName'}
-                                selectedValue ={this.state.formData.$PureFieldName" . "}
-                                onValueChange={(value, index) => {
-                                    this.setState({formData:{...this.state.formData,$PureFieldName" . ": value}});
-                                }}
-                                options={this.state.$PureFieldName"."Options}
-                            />";
-//                $SaveCodes="\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFieldName', this.state.formData.Selected$PureFieldName" . "Value);";
-            $SaveCodes="";
-
-        }
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$CodeStateVariableCodes,$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-
-    protected function _getImageUploadFieldManageCodes($ModuleName, $FormName, $FieldName, $PureFieldName, $TranslatedFieldName,$LoadedDataSubClass){
-
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes="\r\n\t\t\tSelected$PureFieldName"."Location:'',";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="
-                            <ImageSelector title='انتخاب $TranslatedFieldName' onConfirm={(path,onEnd)=>{onEnd(true);this.setState({formData:{...this.state.formData,$PureFieldName:ComponentHelper.getImageSelectorNormalPath(path)},Selected$PureFieldName"."Location : path});}} />";
-//        $SaveCodes="\r\n\t\t\t\t\t\t\t\tComponentHelper.appendImageSelectorToFormDataIfNotNull(data,'$PureFieldName',this.state.formData.Selected$PureFieldName"."Location);";
-        $SaveCodes="";
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getBooleanFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes="\r\n\t\t\t$PureFieldName:0,";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="
-                            <CheckedRow title='$TranslatedFieldName' checked={this.state.formData.$PureFieldName}
-                            onPress={() => this.setState({formData:{...this.state.formData," . $PureFieldName . ": this.state.formData.$PureFieldName==0?1:0}})}
-                            />";
-        $SaveCodes=$GFC->getSaveCodes();
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-
-    protected function _getLocationFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes="";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $PostFix="";
-        if(strpos($FieldName,"_flt")!==false)
-            $PostFix="flt";
-        $ViewCodes="
-                            <SweetLocationSelector location={SweetLocationSelector.getLocationInfoFromObject(this.state.formData)}
-                                                   onLocationChange={(region)=>{
-                                                       this.setState({formData:{...this.state.formData,region}});
-                                                   }}/>";
-        $SaveCodes="
-                                        data.append('latitude$PostFix', this.state.formData.latitude);
-                                        data.append('longitude$PostFix', this.state.formData.longitude);
-                                    ";
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $InitialDataLoadFieldFillCodes="$PureFieldName:data.Data.$PureFieldName,";
-        $StateVariableCodes="\r\n\t\t\t$PureFieldName:'',";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="
-                            <TextBox title={'$TranslatedFieldName'} value={this.state.formData.$PureFieldName} onChangeText={(text) => {this.setState({formData:{...this.state.formData,".$PureFieldName.": text}});}}/>";
-//        $SaveCodes="\r\n\t\t\t\t\t\t\t\t\tdata.append('$PureFieldName', this.state.formData.$PureFieldName);";
-        $SaveCodes="";
-
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getNumericFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $DataStateVariableCodes=$GFC->getDataStateVariableCodes();
-        $StateVariableCodes=$GFC->getStateVariableCodes();
-        $ConstructorCodes=$GFC->getConstructorCodes();
-        $ImportCodes=$GFC->getImportCodes();
-        $ClassFieldDefinitionCodes=$GFC->getClassFieldDefinitionCodes();
-        $LoaderMethodCodes=$GFC->getLoaderMethodCodes();
-        $LoaderMethodCallCodes=$GFC->getLoaderMethodCallCodes();
-        $ViewCodes="
-                            <TextBox keyboardType='numeric' title={'$TranslatedFieldName'} value={this.state.formData.$PureFieldName} onChangeText={(text) => {this.setState({formData:{...this.state.formData,".$PureFieldName.": text}});}}/>";
-        $SaveCodes=$GFC->getSaveCodes();
-
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$StateVariableCodes,$DataStateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getEmptyCodedFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes="";
-        $StateVariableCodes="";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="";;
-        $SaveCodes="";
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getAutoFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        return $this->_getEmptyCodedFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-    }
-
     /**
      * @param string $ModuleName
      * @param string $FormName
@@ -201,57 +33,29 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
      */
     protected function _getFieldManageCodes($ModuleName, $FormName, $FieldName, $PureFieldName, $TranslatedFieldName,$LoadedDataSubClass)
     {
-
+        $obj=null;
         if(FieldType::fieldIsAutoGenerated($FieldName))
-            return $this->_getAutoFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::fieldIsLongitude($FieldName))
-            return $this->_getEmptyCodedFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::fieldIsLatitude($FieldName))
-            return $this->_getLocationFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::getFieldType($FieldName)==FieldType::$CLOCK)
-            return $this->_getClockFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
-            return $this->_getBooleanFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if (FieldType::getFieldType($FieldName) == FieldType::$FID) {
-
+            $obj=new autoField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::fieldIsLongitude($FieldName))
+            $obj=new emptyField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::fieldIsLatitude($FieldName))
+            $obj=new locationField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::getFieldType($FieldName)==FieldType::$CLOCK)
+            $obj=new clockField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
+            $obj=new booleanField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif (FieldType::getFieldType($FieldName) == FieldType::$FID) {
             if (FieldType::fieldIsCityAreaFid($FieldName))
-                return $this->_getCityAreaFieldManageCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-            return $this->_getForeignIDFieldManageCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+                $obj=new cityAreaField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+            else $obj=new foreignIDField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
         }
-        if (FieldType::fieldIsImageUpload($FieldName))
-            return $this->_getImageUploadFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::fieldIsNumber($FieldName))
-            return $this->_getNumericFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-
-        return $this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-    }
-    private function _codeGeneratorTemplate($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $InitialDataLoadFieldFillCodes="";
-        $StateVariableCodes="";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="";
-        $SaveCodes="";
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getClockFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes=$GFC->getStateVariableCodes();
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="
-                            <TimeSelector title={'$TranslatedFieldName'} value={this.state.formData.$PureFieldName} onConfirm={(date)=>this.setState({formData:{...this.state.formData,".$PureFieldName.": date}})} />";
-        $SaveCodes=$GFC->getSaveCodes();
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
+        elseif (FieldType::fieldIsImageUpload($FieldName))
+            $obj=new imageUploadField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::fieldIsNumber($FieldName))
+            $obj=new nummericField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        else
+            $obj=new reactNativeManageField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        return $obj;
     }
     protected function makeReactNativeItemManageDesign($formInfo)
     {
@@ -302,25 +106,14 @@ abstract class manageDBReactNativeManageFormController extends manageDBReactNati
 import $StyleFileName from '../../values/styles/$FormName/$StyleFileName';
 import $ControllerFileName from '../../controllers/$FormName/$ControllerFileName';
 import { CheckBox } from 'react-native-elements';
-import {StyleSheet, View, TextInput, ScrollView, Dimensions,Picker,Text,Image } from 'react-native';
+import {StyleSheet, View, TextInput, ScrollView, Dimensions,Picker,Text,Image,TouchableOpacity } from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
-import SweetFetcher from '../../../../classes/sweet-fetcher';
-import Common from '../../../../classes/Common';
-import AccessManager from '../../../../classes/AccessManager';
+import {SweetFetcher,ComponentHelper} from 'sweet-one-react-native-net';
+import {Common} from 'sweet-js-common';
 import Constants from '../../../../classes/Constants';
-import PickerBox from '../../../../sweet/components/PickerBox';
-import TextBox from '../../../../sweet/components/TextBox';
-import TimeSelector from '../../../../sweet/components/TimeSelector';
-import ImageSelector from '../../../../sweet/components/ImageSelector';
-
-import SweetLocationSelector from '../../../../sweet/components/SweetLocationSelector';
+import {PickerBox,TextBox,TimeSelector,SweetImageSelector,SweetButton,CheckedRow,SweetPage,SweetLocationSelector} from 'sweet-react-native-components';
 import CityAreaSelectorModal from '../../../../sweet/components/CityAreaSelectorModal';
-import SweetButton from '../../../../sweet/components/SweetButton';
-import CheckedRow from '../../../../sweet/components/CheckedRow';
-import ComponentHelper from '../../../../classes/ComponentHelper';
-import SweetPage from '../../../../sweet/components/SweetPage';
-import LogoTitle from '../../../../components/LogoTitle';
-import SweetAlert from '../../../../classes/SweetAlert';
+import SweetAlert from 'sweet-react-native-alert';
 $ImportCodes
 export default class  $FileName extends SweetPage {
     $ClassFieldDefinitionCodes
@@ -352,15 +145,14 @@ $LoaderMethodCodes
         let Window = Dimensions.get('window');
             return (
                 <View style={{flex:1}}  >
-                  <View style={{height:this.getManagementPageHeight()}}>
+                  <View style={{flex:1}}>
                     <ScrollView contentContainerStyle={{minHeight: this.height || Window.height}}>
-                        <View style={generalStyles.container}>
+                        <View style={generalStyles.container}><TouchableOpacity><View>
                         $ViewCodes";
-
         $C .= "
                             
 
-                        </View>
+                        </View></TouchableOpacity></View>
                     </ScrollView>
                         </View>
                     <View style={generalStyles.actionButtonContainer}>
@@ -425,13 +217,12 @@ export default StyleSheet.create(
         $PureFields = $AllFields['purefields'];
         $IdField=$FormName."ID";
         $C = "import controller from '../../../../sweet/architecture/controller';
-import SweetFetcher from '../../../../classes/sweet-fetcher';
+import {SweetFetcher,AccessManager} from 'sweet-one-react-native-net';
 import SweetHttpRequest from '../../../../classes/sweet-http-request';
 import Constants from '../../../../classes/Constants';
 import SweetConsole from '../../../../classes/SweetConsole';
-import SweetAlert from '../../../../classes/SweetAlert';
-import Common from '../../../../classes/Common';
-import AccessManager from '../../../../classes/AccessManager';
+import SweetAlert from 'sweet-react-native-alert';
+import {Common} from 'sweet-js-common';
 
 
 export default class $ControllerFileName extends controller {

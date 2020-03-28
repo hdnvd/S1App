@@ -9,7 +9,7 @@ namespace Modules\sfman\Controllers;
  * @lastUpdate 1395/10/9 - 2016/12/29 19:36:38
  * @SweetFrameworkHelperVersion 1.112
  */
-abstract class manageDBReactNativeFormController extends manageDBReactFormController
+abstract class manageDBReactNativeFormController extends manageDBReactManageFormController
 {
     protected function makeReactNativeModuleRoute($formInfo)
     {
@@ -19,7 +19,7 @@ abstract class manageDBReactNativeFormController extends manageDBReactFormContro
         $FileName = $ModuleName . "Routes";
         $C = "
 import $RouteFileName from './$RouteFileName';
-    let $FileName=Object.assign({}, $RouteFileName);
+    let $FileName=Object.assign({}, $RouteFileName.routes);
 export default $FileName;
     ";
         $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/routes/" . $FileName . ".js";
@@ -31,20 +31,30 @@ export default $FileName;
         $ModuleName = $formInfo['module']['name'];
         $FormName = $formInfo['form']['name'];
         $FileName = $ModuleName . "_$FormName"."Routes";
-        $ManageForm=$ModuleName."_"."$FormName"."Manage";
+
+        $upFormName=strtoupper($FormName);
+        $PureManageForm="$upFormName"."_MANAGE";
+        $PureViewForm="$upFormName"."_VIEW";
+        $PureListForm="$upFormName"."_LIST";
+
+        $ManageForm=$ModuleName."_".$FormName."Manage";
         $ViewForm=$ModuleName."_"."$FormName"."View";
         $ListForm=$ModuleName."_"."$FormName"."List";
         $C = "
+import SweetRoute from '../../../sweet/architecture/SweetRoute';
 import $ManageForm from '../pages/$FormName/$ManageForm';
 import $ViewForm from '../pages/$FormName/$ViewForm';
 import $ListForm from '../pages/$FormName/$ListForm';
-    let $FileName={
+export default class $FileName extends SweetRoute{
+    static routes={
         $ManageForm: $ManageForm,
         $ViewForm: $ViewForm,
         $ListForm: $ListForm,
     };
-export default $FileName;
-    ";
+    static " . $PureManageForm . "='$ManageForm';
+    static " . $PureViewForm . "='$ViewForm';
+    static " . $PureListForm . "='$ListForm';
+}";
         $DesignFile = $this->getReactNativeCodeModuleDir() . "/modules/" . $ModuleName . "/routes/" . $FileName . ".js";
         $this->SaveFile($DesignFile, $C);
     }

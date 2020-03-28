@@ -7,11 +7,11 @@ namespace Modules\posts\PublicClasses;
  * @author nahavandi
  *
  */
-class irnaMaraghehCrawler extends irnaCrawler
+class irnaMaraghehCrawler extends irnaRssCrawler
 {
     public function __construct($MaxPosts = 10)
     {
-        $ArchiveUrl = "http://www.irna.ir/eazarbaijan/fa/zone/100066/%D8%AF%D9%81%D8%AA%D8%B1_%D9%85%D8%B1%D8%A7%D8%BA%D9%87";
+        $ArchiveUrl = "https://www.irna.ir/rss?kw=%D9%85%D8%B1%D8%A7%D8%BA%D9%87";
         $this->setMaxPosts($MaxPosts);
         parent::__construct($ArchiveUrl);
     }
@@ -24,8 +24,10 @@ class irnaMaraghehCrawler extends irnaCrawler
         $Posts = parent::getPostsArray();
         try {
             for ($i =0;$i<count($Posts['titles']) ; $i++) {
+                $Posts['contents'][$i]=str_replace("شهرستان مراغه با حدود ۲۶۸ هزار نفر جمعیت در ۱۲۷ کیلومتری تبریز، مرکز آذربایجان شرقی قرار دارد","",$Posts['contents'][$i]);
                 $Posts['titles'][$i] = trim($Posts['titles'][$i]);
-                if ($Posts['titles'][$i] != "") {
+                if ($Posts['titles'][$i] != "" && strlen($this->getConciseTitle($Posts['titles'][$i]))>3)
+                {
                     $PostWords = explode(" ", $Posts['titles'][$i]);
                     $LastWord = $PostWords[count($PostWords) - 1];
                     if ($this->isJunkWord($LastWord) || $this->getJunkWordCount($Posts['titles'][$i]) >= 1 || !$this->getIsTitleForMaragheh($Posts['titles'][$i]))
@@ -39,7 +41,6 @@ class irnaMaraghehCrawler extends irnaCrawler
         } catch (\Exception $ex) {
 
         }
-
         return $Posts;
     }
 }

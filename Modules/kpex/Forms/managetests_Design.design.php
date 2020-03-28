@@ -106,12 +106,14 @@ class managetests_Design extends FormDesign {
         /******* words *******/
         $this->IDFrom= new textbox("idfrom");
         $this->IDFrom->setClass("form-control");
-        $this->IDFrom->setValue($_GET['idfrom']);
+        if(isset($_GET['idfrom']))
+            $this->IDFrom->setValue($_GET['idfrom']);
 
 
         /******* words *******/
         $this->IDTo= new textbox("idto");
         $this->IDTo->setClass("form-control");
+        if(isset($_GET['idto']))
         $this->IDTo->setValue($_GET['idto']);
         /******* method_fid *******/
         $this->testgroup_fid= new combobox("testgroup_fid");
@@ -121,9 +123,12 @@ class managetests_Design extends FormDesign {
 	public function getBodyHTML($command=null)
 	{
         $this->testgroup_fid->addOption("", "مهم نیست");
-        foreach ($this->Data['testgroup_fid'] as $item)
-            $this->testgroup_fid->addOption($item->getID(), $item->getTitleField());
-        $this->testgroup_fid->setSelectedValue($_GET['testgroup_fid']);
+            foreach ($this->Data['testgroup_fid'] as $item)
+                $this->testgroup_fid->addOption($item->getID(), $item->getTitleField());
+            if(isset($_GET['testgroup_fid']))
+                $this->testgroup_fid->setSelectedValue($_GET['testgroup_fid']);
+
+
 		$Page=new Div();
 		$Page->setClass("sweet_formtitle");
 		$Page->setId("kpex_managetests");
@@ -163,12 +168,13 @@ PlaySound('boom');
         }
 
 		$addUrl=new AppRooter('kpex',$this->itemPage);
-		$LblAdd=new Lable('ثبت ' . $this->Data['test']->getTableTitle() . ' جدید');
+		$LblAdd=new Lable('تعریف تست جدید');
 		$lnkAdd=new link($addUrl->getAbsoluteURL(),$LblAdd);
 		$lnkAdd->setClass('linkbutton btn btn-primary');
 		$lnkAdd->setGlyphiconClass('glyphicon glyphicon-plus');
 		$lnkAdd->setId('addtestlink');
 		$Page->addElement($lnkAdd);
+		/*
         $makeHulthCSV=new AppRooter('kpex',$this->listPage);
         $makeHulthCSV->addParameter(new URLParameter('hulth',null));
         $LblmakeHulthCSV=new Lable('Make Hulth CSV' );
@@ -192,14 +198,14 @@ PlaySound('boom');
         $LblmakeSemevalCSV=new Lable('Make SemEval CSV' );
         $lnkmakeSemevalCSV=new link($makeSemevalCSV,$LblmakeSemevalCSV,'addtestlink','linkbutton btn btn-primary');
         $lnkmakeSemevalCSV->setGlyphiconClass('glyphicon glyphicon-plus');
-        $Page->addElement($lnkmakeSemevalCSV);
+        $Page->addElement($lnkmakeSemevalCSV);*/
         $LblRunInRange=new Lable('اجرای دسته جمعی' );
         $lnkRunInRange=new link("javascript:RunTests($('#idfrom').val(),$('#idto').val())",$LblRunInRange);
         $lnkRunInRange->setClass('linkbutton btn btn-primary');
         $lnkRunInRange->setGlyphiconClass('glyphicon glyphicon-plus');
         $lnkRunInRange->setId('addtestlink');
         $Page->addElement($lnkRunInRange);
-
+/*
 		$SearchUrl=new AppRooter('kpex',$this->listPage);
 		$SearchUrl->addParameter(new URLParameter('search',null));
 		$LblSearch=new Lable('جستجو');
@@ -208,7 +214,7 @@ PlaySound('boom');
 		$lnkSearch->setGlyphiconClass('glyphicon glyphicon-search');
 		$lnkSearch->setId('searchtestlink');
 		$Page->addElement($lnkSearch);
-
+*/
         $Page->addElement(new JavascriptLink((new AppJSLink("kpex","ajaxrunner"))->getAbsoluteURL()));
 		if($this->getMessage()!="")
 			$Page->addElement($this->getMessagePart());
@@ -260,13 +266,14 @@ PlaySound('boom');
 			$lbTit[$i]=new Lable($Title);
 			$liTit[$i]=new link($url->getAbsoluteURL(),$lbTit[$i]);
 			$ViewURL=new AppRooter('kpex',$this->listPage);
-            $ViewURL->addParameter(new UrlParameter('pn',$_GET['pn']));
+			if(isset($_GET['pn']))
+                $ViewURL->addParameter(new UrlParameter('pn',$_GET['pn']));
 			$ViewURL->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$ViewURL->addParameter(new UrlParameter('run',null));
-			$lbView[$i]=new Lable('اجرا');
+			/*$lbView[$i]=new Lable('اجرا');
 			$lnkView[$i]=new link($ViewURL->getAbsoluteURL(),$lbView[$i]);
 			$lnkView[$i]->setGlyphiconClass('glyphicon glyphicon-eye-open');
-			$lnkView[$i]->setClass('btn btn-primary');
+			$lnkView[$i]->setClass('btn btn-primary');*/
 			$delurl=new AppRooter('kpex',$this->listPage);
 			$delurl->addParameter(new UrlParameter('id',$this->Data['data'][$i]->getID()));
 			$delurl->addParameter(new UrlParameter('delete',1));
@@ -275,7 +282,7 @@ PlaySound('boom');
 			$lnkDel[$i]->setGlyphiconClass('glyphicon glyphicon-remove');
 			$lnkDel[$i]->setClass('btn btn-danger');
 
-
+/*
             $lbViewGraph[$i]=new Lable('Graph');
             $lnkViewGraph[$i]=new link(DEFAULT_PUBLICURL . "content/files/kpex/results/graphs/graph".$this->Data['data'][$i]->getID().".html",$lbViewGraph[$i]);
             $lnkViewGraph[$i]->setGlyphiconClass('glyphicon glyphicon-grain');
@@ -285,13 +292,13 @@ PlaySound('boom');
             $lnkViewKeywords[$i]=new link(DEFAULT_PUBLICURL . "content/files/kpex/results/keywords".$this->Data['data'][$i]->getID().".txt",$lbViewKeywords[$i]);
             $lnkViewKeywords[$i]->setGlyphiconClass('glyphicon glyphicon-check');
             $lnkViewKeywords[$i]->setClass('btn btn-primary');
-
+*/
 			$operationDiv[$i]=new Div();
 			$operationDiv[$i]->setClass('operationspart');
-			$operationDiv[$i]->addElement($lnkView[$i]);
+//			$operationDiv[$i]->addElement($lnkView[$i]);
 			$operationDiv[$i]->addElement($lnkDel[$i]);
-			$operationDiv[$i]->addElement($lnkViewGraph[$i]);
-			$operationDiv[$i]->addElement($lnkViewKeywords[$i]);
+//			$operationDiv[$i]->addElement($lnkViewGraph[$i]);
+//			$operationDiv[$i]->addElement($lnkViewKeywords[$i]);
 			$LTable1->addElement(new Lable($i+1));
 			$LTable1->setLastElementClass("listcontent");
 			$LTable1->addElement($liTit[$i]);

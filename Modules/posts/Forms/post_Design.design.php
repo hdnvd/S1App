@@ -8,6 +8,8 @@ use core\CoreClasses\html\TextBox;
 use core\CoreClasses\html\DataComboBox;
 use core\CoreClasses\html\SweetButton;
 use core\CoreClasses\html\SweetFrom;
+use core\CoreClasses\SweetDate;
+use Modules\common\PublicClasses\AppDate;
 use Modules\languages\PublicClasses\CurrentLanguageManager;
 use core\CoreClasses\html\Lable;
 use core\CoreClasses\html\link;
@@ -21,30 +23,58 @@ class post_Design extends FormDesign {
 	private $PostLink;
 	private $Tags;
 	private $ShowExternalLinks;
+	private $ShowLastUpdate;
+
+	/**
+	 * @param mixed $ShowLastUpdate
+	 */
+	public function setShowLastUpdate($ShowLastUpdate)
+	{
+		$this->ShowLastUpdate = $ShowLastUpdate;
+	}
 	private $ExternalLink;
 	public function getBodyHTML($command=null)
 	{
-		
+
 		$Page=new ListTable(1);
 		$LblTitle=new H1($this->LblTitle);
 		$LblTitle->setClass("posttitle");
 		$LinkTitle=new link($this->PostLink, $LblTitle);
 		$Page->addElement($LinkTitle);
-		
-		$LblLastUpdateTitle=new Lable($this->LblLastUpdateTitle);
-		$LblLastUpdateTitle->setClass("postlastupdatetitle");
-		//$Page->addElement($LblLastUpdateTitle);
-		$lblLastUpdate=new Lable($this->lblLastUpdate);
-		$lblLastUpdate->setClass("postlastupdate");
-		//$Page->addElement($lblLastUpdate);
-		
+
+
+
 		$LblContent=new Lable($this->LblContent);
 		$LblContent->setHtmlContent(false);
 		$divContent=new Div();
-		$divContent->addElement($LblContent);
 		$divContent->setClass("posts_postcontent");
+
+		$lblLastUpdateTitle=new Lable($this->lblLastUpdate);
+		$lblLastUpdateTitle->setClass("post-last-update-title");
+		$lblLastUpdate=new Lable($this->lblLastUpdate);
+		$lblLastUpdate->setClass("post-last-update");
+		if($this->ShowLastUpdate=='1'){
+
+			try{
+				$date = new SweetDate(true, true, 'Asia/Tehran');
+
+				$dt=$date->date("d F Y",$this->lblLastUpdate*1,false);
+				$lblLastUpdateTitle->setText(' تاریخ خبر: ');
+				$lblLastUpdate->setText($dt);
+
+				$lblLastUpdateContainer=new Div();
+				$lblLastUpdateContainerBox=new Div();
+				$lblLastUpdateContainerBox->setClass("post-last-update-container-box");
+				$lblLastUpdateContainer->setClass("post-last-update-container");
+				$lblLastUpdateContainer->addElement($lblLastUpdateTitle);
+				$lblLastUpdateContainer->addElement($lblLastUpdate);
+				$lblLastUpdateContainerBox->addElement($lblLastUpdateContainer);
+				$divContent->addElement($lblLastUpdateContainerBox);
+			}catch (\Exception $sex){ }
+		}
+		$divContent->addElement($LblContent);
 		$Page->addElement($divContent);
-		
+
 		$divTags=new Div();
 		$divTags->setClass("posts_post_tags");
 // 		print_r($this->Tags);
@@ -53,9 +83,9 @@ class post_Design extends FormDesign {
 		    $tmpLink[$i]=new AppRooter("tags", str_ireplace(" ","-", $this->Tags[$i]));
 		    $tmpLink[$i]->setFileFormat(".html");
 		    $tmpLinkTag[$i]=new link($tmpLink[$i]->getAbsoluteURL(), new Lable($this->Tags[$i]));
-		   
+
 		    $divTags->addElement($tmpLinkTag[$i]);
-		    
+
 		}
 		if($this->ShowExternalLinks==1)
 		{
@@ -67,11 +97,11 @@ class post_Design extends FormDesign {
 		$LblVisitsTitle=new Lable($this->LblVisitsTitle);
 		$LblVisitsTitle->setClass("postvisitstitle");
 		//$Page->addElement($LblVisitsTitle);
-		
+
 		$LblVisits=new Lable($this->LblVisits);
 		$LblVisits->setClass("postvisits");
 		//$Page->addElement($LblVisits);
-		
+
 		//$linkCategories=new link("", "Cats");
 		//$Page->addElement($linkCategories);
 		$form=new SweetFrom("", "POST", $Page);

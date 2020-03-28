@@ -151,6 +151,8 @@ class Crawler {
             $JunkWordCount++;
         if (strpos($Context,"امامت") !== false)
             $JunkWordCount++;
+        if (strpos($Context,"خنثی") !== false)
+            $JunkWordCount++;
 //        echo $Context . " Has $JunkWordCount Junkwords when getJunkWordCount";
 
         return $JunkWordCount;
@@ -208,6 +210,12 @@ class Crawler {
             $Title=substr($Title,0,$spaceaftermax) . "...";
         }
         return $Title;
+    }
+    protected function replaceWords($Text)
+    {
+        $Text=trim($Text);
+//        $Text=str_replace();
+        return $Text;
     }
     protected function getXMLFromURL($RSSURL)
     {

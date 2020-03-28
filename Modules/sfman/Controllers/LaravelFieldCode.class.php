@@ -9,6 +9,8 @@
 namespace Modules\sfman\Controllers;
 
 
+use Modules\sfman\Classes\Field\FieldCode;
+
 class LaravelFieldCode extends FieldCode
 {
     private $AddGetterCodes = "";
@@ -20,6 +22,7 @@ class LaravelFieldCode extends FieldCode
     private $SingleLoadFieldLoadCodes = "";
     private $ValidationRules = "";
     private $ValidationMessages = "";
+    private $OrderFieldCodes = "";
 
 
 
@@ -34,9 +37,10 @@ class LaravelFieldCode extends FieldCode
      * @param string $SingleLoadFieldLoadCodes
      * @param string $ValidationRules
      * @param string $ValidationMessages
+     * @param string $OrderFieldCodes
      * @param int $AddPolicy
      */
-    public function __construct($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,$AddPolicy)
+    public function __construct($AddGetterCodes, $AddFieldSetCodes, $UpdateGetterCodes, $UpdateFieldSetCodes, $ListQueryCodes, $ListFieldLoadCodes, $SingleLoadFieldLoadCodes,$ValidationRules,$ValidationMessages,$OrderFieldCodes,$AddPolicy)
     {
         $this->setAddPolicy($AddPolicy);
         $this->AddGetterCodes = $AddGetterCodes;
@@ -44,10 +48,27 @@ class LaravelFieldCode extends FieldCode
         $this->UpdateGetterCodes = $UpdateGetterCodes;
         $this->UpdateFieldSetCodes = $UpdateFieldSetCodes;
         $this->ListQueryCodes = $ListQueryCodes;
+        $this->OrderFieldCodes = $OrderFieldCodes;
         $this->ListFieldLoadCodes = $ListFieldLoadCodes;
         $this->SingleLoadFieldLoadCodes = $SingleLoadFieldLoadCodes;
         $this->ValidationRules = $ValidationRules;
         $this->ValidationMessages = $ValidationMessages;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderFieldCodes()
+    {
+        return $this->OrderFieldCodes;
+    }
+
+    /**
+     * @param string $OrderFieldCodes
+     */
+    public function setOrderFieldCodes($OrderFieldCodes)
+    {
+        $this->OrderFieldCodes = $OrderFieldCodes;
     }
 
     /**

@@ -1,120 +1,32 @@
-<?php
+<!DOCTYPE HTML>
+<html lang="fa">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <?php $_GET['category']=12;  ?>
+    <?php require_once(THEMEPATH . "pagehead.php"); ?>
+    <title>شهرستان ویژه مراغه-اخبار، تصاویر و مناطق گردشگری شهر مراغه</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="maragheh,مراغه,اخبار مراغه,مراغا,maragha,خبرهای مراغه,نادر ابراهیمی,تبلیغات در مراغه" />
+    <meta name="description" content="تنها وب سایت جامع اخبار،تصاویر و مکان های توریستی شهرستان ویژه مراغه" />
+</head>
+<body>
+<div id="pagecontainer">
+    <div id="pagehead">
+        <div id="pagetitle">وب سایت جامع شهرستان ویژه مراغه</div>
+    </div>
+    <?php require_once(THEMEPATH . "topmenu.php"); ?>
+    <div id="pagemiddle">
+        <?php require_once(THEMEPATH . "rightsidebar.php"); ?>
+        <div id="midbar">
+            <div id="latestnews"></div>
+            <div id="content">
+                <?php echo $SWT_FORMLOADER->getResponse(); ?>
+            </div>
+        </div>
+        <?php require_once(THEMEPATH . "leftsidebar.php"); ?>
 
-namespace Modules\posts\PublicClasses;
+    </div>
 
-use core\CoreClasses\SweetDate;
-/**
- *
- * @author nahavandi
- *
- */
-class maraghehMeduCrawler extends Crawler{
-    private $ArchiveUrl;
-    private $MaxPosts=5;
-    private $SearchText;
-    public function __construct()
-    {
-    }
-    public function getPostsArray()
-    {
-
-        $ListURL="http://medu.ir/fa/news/section/1/%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1%20%D9%85%D9%87%D9%85?ocode=90185701";
-        $ListItemsLogic=".body-news-grid .news_grid_item a";
-        $RootURL="http://medu.ir";
-        $ContentLogic="#news";
-
-        $titles=array();
-        $FullTitles=[];
-        $links=array();
-        $summary=array();
-        $contents=array();
-        $dposter=new \data_poster();
-        $dom=new \simple_html_dom();
-
-
-        //***********Title***********//
-
-        $html=sweet_file_get_html($ListURL);
-//        echo $html;
-        $Elements=$html->find($ListItemsLogic);
-//        echo "count:".count($Elements);
-        $maxSummaryLength=300;
-        $categoryids=[];
-        for($i=0;$i<count($Elements) && $i<$this->MaxPosts;$i++)
-        {
-            $titles[$i]=trim($Elements[$i]->plaintext);
-            if (trim($titles[$i]) != "") {
-                $PostWords = explode(" ", $titles[$i]);
-                $LastWord = $PostWords[count($PostWords) - 1];
-                if ($this->isJunkWord($LastWord) || $this->getJunkWordCount($titles[$i]) >= 1)
-                    $categoryids[$i] = ["1"];
-                else
-                    $categoryids[$i] = ["1","12"];
-            }
-            $FullTitles[$i]=$titles[$i];
-            $titles[$i]=$this->getConciseTitle($titles[$i]);
-
-            $links[$i]=html_entity_decode($Elements[$i]->href);
-//            echo $titles[$i] . "</br>";
-        }
-        $postsCount=$i;
-//        die();
-        //***********Title***********//
-        $contents=array();
-        $Images=[];
-        for($i=0;$i<$postsCount;$i++)
-        {
-            $response=sweet_file_get_html($links[$i]);
-            $html=str_get_html($response);
-            $element=$html->find($ContentLogic,0);
-            $contents[$i]=$element->innertext;
-            $contents[$i]=str_replace("src=\"/portal","src=\"".$RootURL."/portal",$contents[$i]);
-            $contents[$i]=str_replace("src='/portal","src='".$RootURL."/portal",$contents[$i]);
-            $contents[$i]=str_replace("style","disabledstyle",$contents[$i]);
-            $contents[$i]=str_replace("bgcolor","disabledbgcolor",$contents[$i]);
-            $contents[$i]=str_replace("table","div",$contents[$i]);
-            $contents[$i]=str_replace("td","div",$contents[$i]);
-            $contents[$i]=str_replace("tr","div",$contents[$i]);
-            $contents[$i]=str_replace("face","disabledface",$contents[$i]);
-            $Images[$i]=$this->getAnImageURL($contents[$i]);
-            $summary[$i]=$element->plaintext;
-            $firstSentenceEnd=strpos($summary[$i],".",$maxSummaryLength);
-            $foundSentenceEnd=true;
-            if($firstSentenceEnd<=1)
-            {
-                $foundSentenceEnd=false;
-                $firstSentenceEnd=strpos($summary[$i]," ",$maxSummaryLength);
-            }
-            $summary[$i]=substr($summary[$i],0,$firstSentenceEnd+1);
-            if(!$foundSentenceEnd && strlen($summary[$i])>=$maxSummaryLength)
-                $summary[$i]=$summary[$i]. "...";
-        }
-        $result=array("titles"=>$titles,"fulltitles"=>$FullTitles,"contents"=>$contents,"summary"=>$summary,"links"=>$links,"description"=>$summary,"categoryids"=>$categoryids,"thumbnails"=>$Images);
-//		print_r($result);
-//		die();
-        return $result;
-
-    }
-
-    protected function getMaxPosts()
-    {
-        return $this->MaxPosts;
-    }
-
-    protected function setMaxPosts($MaxPosts)
-    {
-        $this->MaxPosts = $MaxPosts;
-    }
-
-    public function getSearchText()
-    {
-        return $this->SearchText;
-    }
-
-    public function setSearchText($SearchText)
-    {
-        $this->SearchText = $SearchText;
-    }
-}
-
-?>
+    <?php require_once(THEMEPATH . "footer.php"); ?>
+</div>
+</body>
+</html>

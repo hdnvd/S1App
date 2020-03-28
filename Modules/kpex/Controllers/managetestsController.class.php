@@ -329,7 +329,8 @@ class managetestsController extends testlistController {
 //        echo exec('whoami');s
 //        $ShellResult="";
         $StartTime=time();
-        $ShellResult=(shell_exec("bash /home/hduser/env.sh $ID 2>&1"));
+        $ShellResult=(shell_exec("F:\\out\\env.bat $ID 2>&1"));
+        $ShellResult=(shell_exec("hadoop fs -copyToLocal /in/results/FullResult.txt F:\out\FullResult.txt"));
         $ShellResult=str_replace("Adding annotator tokenize\n","",$ShellResult);
         $ShellResult=str_replace("Adding annotator ssplit\n","",$ShellResult);
         $ShellResult=str_replace("Adding annotator pos\n","",$ShellResult);
@@ -377,7 +378,7 @@ class managetestsController extends testlistController {
             $rowTest->setWords($NPTxt);
             $rowTest->Save();
         }
-        $RateStr=$Keywords[0];
+        /*$RateStr=$Keywords[0];
         $PrecisionStr=$Keywords[1];
         $RecallStr=$Keywords[2];
         $FScoreStr=$Keywords[3];
@@ -406,7 +407,7 @@ class managetestsController extends testlistController {
         {
             echo "Can't Update Score";
         }
-
+*/
         $DBAccessor->close_connection();
         $Result= $this->load($PageNum);
         $Result['precision']=$testEnt->getPrecisionrate();

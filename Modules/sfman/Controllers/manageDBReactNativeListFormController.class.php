@@ -3,6 +3,17 @@
 namespace Modules\sfman\Controllers;
 
 
+use Modules\sfman\Classes\Field\React\Native\Search\autoField;
+use Modules\sfman\Classes\Field\React\Native\Search\booleanField;
+use Modules\sfman\Classes\Field\React\Native\Search\cityAreaField;
+use Modules\sfman\Classes\Field\React\Native\Search\clockField;
+use Modules\sfman\Classes\Field\React\Native\Search\emptyField;
+use Modules\sfman\Classes\Field\React\Native\Search\foreignIDField;
+use Modules\sfman\Classes\Field\React\Native\Search\imageUploadField;
+use Modules\sfman\Classes\Field\React\Native\Search\locationField;
+use Modules\sfman\Classes\Field\React\Native\Search\nummericField;
+use Modules\sfman\Classes\Field\React\Native\Search\reactNativeItemSearchField;
+use Modules\sfman\Classes\Field\React\ReactFieldCode;
 /**
  * @author Hadi AmirNahavandi
  * @creationDate 1395/10/9 - 2016/12/29 19:36:38
@@ -12,79 +23,7 @@ namespace Modules\sfman\Controllers;
 abstract class manageDBReactNativeListFormController extends manageDBReactNativeViewFormController
 {
 
-    protected function _getCityAreaFieldSearchCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        $GFC=$this->_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $InitialDataLoadFieldFillCodes=$GFC->getInitialDataLoadFieldFillCodes();
-        $StateVariableCodes="area:'' ,";
-        $ConstructorCodes="";
-        $ImportCodes="";
-        $ClassFieldDefinitionCodes="";
-        $LoaderMethodCodes="";
-        $LoaderMethodCallCodes="";
-        $ViewCodes="
-                            <CityAreaSelector
-                                onAreaSelected={(AreaID)=>this.setState({area: AreaID})}
-                            />";
-        $SaveCodes="
-									data.append('$PureFieldName', this.state.area);";
-        $FieldCode=new ReactFieldCode($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,"",$StateVariableCodes,$InitialDataLoadFieldFillCodes,$LoaderMethodCodes,$LoaderMethodCallCodes,$ViewCodes,$SaveCodes,ReactFieldCode::$ADD_POLICY_TO_WITH_CURRENT);
-        return $FieldCode;
-    }
-    protected function _getForeignIDFieldSearchCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
 
-        $FieldCode=parent::_getForeignIDFieldManageCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $ViewCodes="";
-        $StateVar="\r\n\t\t\t$PureFieldName" . ":'',";
-        $FiledModule = strtolower($this->getModuleNameFromFIDFieldName($FieldName, $ModuleName));
-        if ($FiledModule != "") {
-
-            $ViewCodes="
-                            <PickerBox
-                                name={'$PureFieldName"."s'}
-                                title={'$TranslatedFieldName'}
-                                isOptional={true}
-                                selectedValue ={this.state.SearchFields.$PureFieldName}
-                                onValueChange={(value, index) => {
-                                    this.setState({SearchFields:{...this.state.SearchFields,$PureFieldName" . ": value}});
-                                }}
-                                options={this.state.$PureFieldName"."Options}
-                            />";
-        }
-        $FieldCode->setDataStateVariableCodes($StateVar);
-        $FieldCode->setViewCodes($ViewCodes);
-        return $FieldCode;
-    }
-    protected function _getBooleanFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        return $this->_getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-    }
-
-    protected function _getGeneralFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-
-        $FieldCode=parent::_getGeneralFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $FieldCode->setViewCodes("
-                            <TextBox title={'$TranslatedFieldName'} value={this.state.SearchFields.$PureFieldName} onChangeText={(text) => {this.setState({SearchFields:{...this.state.SearchFields,".$PureFieldName.": text}});}}/>");
-
-        return $FieldCode;
-    }
-    protected function _getNumericFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-
-        $FieldCode=parent::_getNumericFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        $ViewCodes="
-                            <TextBox keyboardType='numeric' title={'$TranslatedFieldName'} value={this.state.SearchFields.$PureFieldName} onChangeText={(text) => {this.setState({SearchFields:{...this.state.SearchFields,".$PureFieldName.": text}});}}/>";
-
-        $FieldCode->setViewCodes($ViewCodes);
-
-        return $FieldCode;
-    }
-    protected function _getClockFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-
-        $FieldCode=parent::_getClockFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        return $FieldCode;
-    }
-
-    protected function _getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass){
-        return parent::_getEmptyCodedFieldManageCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-    }
     /**
      * @param string $ModuleName
      * @param string $FormName
@@ -96,30 +35,34 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
      */
     protected function _getFieldSearchCodes($ModuleName, $FormName, $FieldName, $PureFieldName, $TranslatedFieldName,$LoadedDataSubClass)
     {
+
+        $obj=null;
         if(FieldType::fieldIsAutoGenerated($FieldName))
-            return $this->_getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::fieldIsLongitude($FieldName))
-            return $this->_getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::fieldIsLatitude($FieldName))
-            return $this->_getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::getFieldType($FieldName)==FieldType::$CLOCK)
-            return $this->_getClockFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
-            return $this->_getBooleanFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if (FieldType::getFieldType($FieldName) == FieldType::$FID) {
+            $obj=new autoField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::fieldIsLongitude($FieldName))
+            $obj=new locationField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::fieldIsLatitude($FieldName))
+            $obj=new locationField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::getFieldType($FieldName)==FieldType::$CLOCK)
+            $obj=new clockField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif (FieldType::getFieldType($FieldName) == FieldType::$BOOLEAN)
+            $obj=new booleanField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif (FieldType::getFieldType($FieldName) == FieldType::$FID) {
 
             if (FieldType::fieldIsCityAreaFid($FieldName))
-                return $this->_getCityAreaFieldSearchCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-            if (FieldType::fieldIsPlaceFid($FieldName))
-                return $this->_getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-            return $this->_getForeignIDFieldSearchCode($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+                $obj=new cityAreaField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+            elseif (FieldType::fieldIsPlaceFid($FieldName))
+                $obj=new emptyField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+            else
+                $obj=new foreignIDField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
         }
-        if (FieldType::fieldIsImageUpload($FieldName))
-            return $this->_getEmptyCodedFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-        if(FieldType::fieldIsNumber($FieldName))
-            return $this->_getNumericFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
-
-        return $this->_getGeneralFieldSearchCodes($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif (FieldType::fieldIsImageUpload($FieldName))
+            $obj=new imageUploadField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        elseif(FieldType::fieldIsNumber($FieldName))
+            $obj=new nummericField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        else
+            $obj=new reactNativeItemSearchField($ModuleName,$FormName,$FieldName,$PureFieldName,$TranslatedFieldName,$LoadedDataSubClass);
+        return $obj;
     }
 
     protected function makeReactNativeListDesign($formInfo)
@@ -134,6 +77,7 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
         $SearchFileName = ucfirst($ModuleName) . "_$FormName" . "Search";
         $StyleFileName = $FileName . "Styles";
         $ControllerFileName = $FileName . "Controller";
+        $RouteFileName = $ModuleName . "_$FormName" . "Routes";
         $AllFields = $this->getAllFormsOfFields();
         $Fields = $AllFields['fields'];
         $Translations = new Translator();
@@ -159,42 +103,33 @@ abstract class manageDBReactNativeListFormController extends manageDBReactNative
 import { Button } from 'react-native-elements';
 import {StyleSheet, View, Dimensions,Image,TouchableWithoutFeedback,Text,Picker,TextInput,ScrollView,FlatList} from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
-import SweetFetcher from '../../../../classes/sweet-fetcher';
-import SweetHttpRequest from '../../../../classes/sweet-http-request';
-import SweetListPage from '../../../../sweet/components/SweetListPage';
-import Common from '../../../../classes/Common';
-import AccessManager from '../../../../classes/AccessManager';
+import {SweetFetcher} from 'sweet-one-react-native-net';
+import {SweetListPage,ListTopBar,PageContainer,TextRow,PickerBox,TextBox,TimeSelector,CheckedRow} from 'sweet-react-native-components';
+import {Common,SweetHttpRequest} from 'sweet-js-common';
 import Constants from '../../../../classes/Constants';
 import SweetNavigation from '../../../../classes/sweetNavigation';
-import ListTopBar from '../../../../sweet/components/ListTopBar';
-import PageContainer from '../../../../sweet/components/PageContainer';
-import TextRow from '../../../../sweet/components/TextRow';
-import PickerBox from '../../../../sweet/components/PickerBox';
-import TextBox from '../../../../sweet/components/TextBox';
-import TimeSelector from '../../../../sweet/components/TimeSelector';
-import LocationSelector from '../../../../sweet/components/LocationSelector';
 import CityAreaSelector from '../../../../sweet/components/CityAreaSelector';
-import CheckedRow from '../../../../sweet/components/CheckedRow';
 import $SearchFileName from './$SearchFileName';
 import $StyleFileName from '../../values/styles/$FormName/$StyleFileName';
 import $ControllerFileName from '../../controllers/$FormName/$ControllerFileName';
-import LogoTitle from '../../../../components/LogoTitle';
+import $RouteFileName from '../../routes/$RouteFileName';
 import jMoment from 'moment-jalaali';
 import moment from 'moment';
 
 
 export default class $FileName extends SweetListPage {
+
     state =
     {
         ...super.state,
         $FormNames:[],
-        searchFields:null,
+        SearchFields:this.props.navigation.getParam('SearchFields',null),
         sortField: $ControllerFileName.SORTFIELD_ID,
     };
     async componentDidMount() {
         this._loadData(true, false);
     }
-    _loadData=(isRefreshing, forceHideSearchPage)=>{
+    _loadData=(isRefreshing)=>{
         let {nextStartRow,$FormNames}=this.state;
         if(isRefreshing)
         {
@@ -202,16 +137,12 @@ export default class $FileName extends SweetListPage {
             nextStartRow=0;
         }
         this.setState({isRefreshing:isRefreshing,isLoading:true},()=>{
-            new $ControllerFileName().loadData(this.state.searchText, this.state.searchFields, nextStartRow, this.state.sortField, (data) => {
-            if (forceHideSearchPage) {
-               this.removeBackHandler();
-            }
+            new $ControllerFileName().loadData(this.state.searchText, this.state.SearchFields, nextStartRow, this.state.sortField, (data) => {
                 this.setState({
                     $FormNames: [...".$FormNames.", ...data],
                     nextStartRow: nextStartRow + Constants.DEFAULT_PAGESIZE,
                     isLoading: false,
                     isRefreshing: false,
-                    displaySearchPage: forceHideSearchPage ? false : this.state.displaySearchPage,
                 });
                 
             });
@@ -222,7 +153,7 @@ export default class $FileName extends SweetListPage {
             const renderListItem=({item}) =>{
                         return <TouchableWithoutFeedback onPress={() => {
                                 global.".$FormName."ID=item.id;
-                                SweetNavigation.navigateToNormalPage(this.props.navigation,'$ModuleName" . "_" . $FormName . "Manage');
+                                SweetNavigation.navigateToNormalPage(this.props.navigation,$RouteFileName.".strtoupper($FormName)  . "_MANAGE" . ");
                             }}>
                             <View style={generalStyles.ListItem}>
                             $FieldDisplayCodes
@@ -230,17 +161,11 @@ export default class $FileName extends SweetListPage {
                             </TouchableWithoutFeedback>
                         };//renderListItem
             const content=<View style={{flex: 1}}>
-                    {this.state.displaySearchPage &&
-                    <$SearchFileName dataLoader={searchFields=>{
-                            this.setState({searchFields: searchFields}, () => {
-                                this._loadData(true, true);
-                            });
-                        }}
-                    />
-                    }
-                    {!this.state.displaySearchPage &&
                     <View style={generalStyles.listcontainer}>
-                {this._getTopBar([{id:$ControllerFileName.SORTFIELD_ID,name: 'جدیدترین ها'}])}
+                {
+                this._getTopBar([{id:$ControllerFileName.SORTFIELD_ID,name: 'جدیدترین ها'}],
+                () => {SweetNavigation.navigateToNormalPage(this.props.navigation,'trapp_villaSearch');})
+                }
                 <PageContainer isLoading={this.state.isLoading}
                                isEmpty={this.state.$FormNames == null || this.state.$FormNames.length == 0}>
                                <View style={generalStyles.listcontainer}>
@@ -249,7 +174,7 @@ export default class $FileName extends SweetListPage {
                 </PageContainer>
 
                     </View>
-                }
+                
                 </View>";
         $C .= "
     }
@@ -295,13 +220,10 @@ export default StyleSheet.create(
         $PureFields = $AllFields['purefields'];
 
         $C = "import controller from '../../../../sweet/architecture/controller';
-import SweetFetcher from '../../../../classes/sweet-fetcher';
-import SweetHttpRequest from '../../../../classes/sweet-http-request';
+import {SweetFetcher} from 'sweet-one-react-native-net';
+import {SweetHttpRequest,Common} from 'sweet-js-common';
 import Constants from '../../../../classes/Constants';
-import SweetConsole from '../../../../classes/SweetConsole';
-import SweetAlert from '../../../../classes/SweetAlert';
-import Common from '../../../../classes/Common';
-import AccessManager from '../../../../classes/AccessManager';
+import SweetAlert from 'sweet-react-native-alert';
 
 
 export default class $ControllerFileName extends controller {
@@ -332,6 +254,7 @@ export default class $ControllerFileName extends controller {
         $FormName = $formInfo['form']['name'];
         $FormNames = $FormName . "s";
         $FileName = ucfirst($ModuleName) . "_$FormName" . "Search";
+        $ListFileName = $ModuleName . "_$FormName" . "List";
         $AllFields = $this->getAllFormsOfFields();
         $Fields = $AllFields['fields'];
         $PersianFields = $AllFields['persianfields'];
@@ -363,20 +286,12 @@ export default class $ControllerFileName extends controller {
         $C = "import React, {Component} from 'react'
 import {StyleSheet, View, Alert, Dimensions,AsyncStorage,Image,TouchableWithoutFeedback,Text,Picker,TextInput,ScrollView,FlatList } from 'react-native';
 import generalStyles from '../../../../styles/generalStyles';
-import SweetFetcher from '../../../../classes/sweet-fetcher';
-import Common from '../../../../classes/Common';
-import AccessManager from '../../../../classes/AccessManager';
+
+import {PickerBox,TextBox,TimeSelector,SweetButton,CheckedRow,SweetPage} from 'sweet-react-native-components';
+import {SweetFetcher} from 'sweet-one-react-native-net';
+import {SweetHttpRequest,Common} from 'sweet-js-common';
 import Constants from '../../../../classes/Constants';
-import PickerBox from '../../../../sweet/components/PickerBox';
-import TextBox from '../../../../sweet/components/TextBox';
-import TimeSelector from '../../../../sweet/components/TimeSelector';
-import LocationSelector from '../../../../sweet/components/LocationSelector';
 import CityAreaSelector from '../../../../sweet/components/CityAreaSelector';
-import SweetButton from '../../../../sweet/components/SweetButton';
-import CheckedRow from '../../../../sweet/components/CheckedRow';
-import SweetHttpRequest from '../../../../classes/sweet-http-request';
-import SweetPage from '../../../../sweet/components/SweetPage';
-import LogoTitle from '../../../../components/LogoTitle';
 
 export default class $FileName extends SweetPage {
     state =
@@ -397,12 +312,7 @@ export default class $FileName extends SweetPage {
                             <View>
                                 $SearchCodes
                                 <SweetButton title={'جستجو'} onPress={(OnEnd) => {
-                                    if(this.props.dataLoader!=null)
-                                    {
-                                        this.props.dataLoader(this.state.SearchFields);
-                                        OnEnd(true);
-                                    }
-                                    else
+                                      SweetNavigation.navigateToNormalPage(this.props.navigation,'$ListFileName',{SearchFields:this.state.SearchFields});
                                         OnEnd(false);
                             }}/>
                             </View>

@@ -6,8 +6,9 @@
  * Time: 9:45 AM
  */
 
-namespace Modules\sfman\Controllers;
+namespace Modules\sfman\Classes\Field\React;
 
+use Modules\sfman\Classes\Field\FieldCode;
 
 class ReactFieldCode extends FieldCode
 {
@@ -38,7 +39,7 @@ class ReactFieldCode extends FieldCode
      * @param string $SaveCodes
      * @param int $AddPolicy
      */
-    public function __construct($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$StateVariableCodes,$DataStateVariableCodes, $InitialDataLoadFieldFillCodes,$LoaderMethodCodes, $LoaderMethodCallCodes, $ViewCodes ,$SaveCodes,$AddPolicy)
+    /*public function __construct($ImportCodes,$ClassFieldDefinitionCodes,$ConstructorCodes,$StateVariableCodes,$DataStateVariableCodes, $InitialDataLoadFieldFillCodes,$LoaderMethodCodes, $LoaderMethodCallCodes, $ViewCodes ,$SaveCodes,$AddPolicy)
     {
         $this->setAddPolicy($AddPolicy);
         $this->DataStateVariableCodes = $DataStateVariableCodes;
@@ -52,7 +53,7 @@ class ReactFieldCode extends FieldCode
         $this->ViewCodes = $ViewCodes;
         $this->SaveCodes = $SaveCodes;
     }
-
+*/
     /**
      * @return string
      */
